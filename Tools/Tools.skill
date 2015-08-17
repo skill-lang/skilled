@@ -1,0 +1,20 @@
+Tool {
+    string name;
+    Typ[] types;
+}
+
+Typ {
+    string name;
+    string filePath;
+    Field[] fields;
+    Hint[] typHints;
+}
+
+Field { 
+    string name;
+    Hint[] fieldHints;
+}
+
+Hint {
+    string name;
+}
