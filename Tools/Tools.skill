@@ -1,9 +1,10 @@
 Tool {
     string name;
-    Typ[] types;
+    Type[] types;
+    File[] files;
 }
 
-Typ {
+Type {
     string name;
     string filePath;
     Field[] fields;
@@ -17,4 +18,10 @@ Field {
 
 Hint {
     string name;
+}
+
+File {
+    string path;
+    string md5;
+    string sha;
 }
