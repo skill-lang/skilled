@@ -50,7 +50,7 @@ hs_err_pid*
 ## Plugin-specific files:
 
 # IntelliJ
-/out/
+out/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -105,3 +105,7 @@ local.properties
 # TeXlipse plugin
 .texlipse
 
+# META-INF
+META-INF
+*.classpath
+*.project
