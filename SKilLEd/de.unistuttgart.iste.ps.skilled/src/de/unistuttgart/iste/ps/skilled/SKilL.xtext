@@ -24,28 +24,28 @@ Declaration:
 ;
 
 Typedef:
-	comment = Comment? 'typedef' name = ID 
+	comment = ML_COMMENT? 'typedef' name = ID 
 	(restrictions += Restriction | hints += Hint)* type = Fieldtype ';'
 ;
 
 Enumtype : 
-	comment = Comment? 
+	comment = ML_COMMENT? 
 	'enum' name = ID '{' ID (',' ID)* ';' (fields += Field)* '}'
 ;
 
 Interfacetype:
-	comment = Comment? 
+	comment = ML_COMMENT? 
 	'interface' name = ID ((':' | 'with' | 'extends') (ref += [Declaration]))* '{' (fields += Field)* '}'
 ;
 
 Usertype:
-	comment = Comment? (restrictions += Restriction | hints += Hint)* 
+	comment = ML_COMMENT? (restrictions += Restriction | hints += Hint)* 
 	name = ID ((':' | 'with' | 'extends') (ref += [Declaration]))* 
 		'{' fields += Field* '}'
 ;
 
 Field:
-	comment = Comment? (restrictions += Restriction | hints += Hint)* 
+	comment = ML_COMMENT? (restrictions += Restriction | hints += Hint)* 
 	field = (Constant | Data) ';'
 ;
 
@@ -71,7 +71,7 @@ Data:
 ;
 
 Fieldtype:
-	Maptype| Settype | Listtype | Arraytype | Basetype | BuildInType
+	Maptype| Settype | Listtype | Arraytype | Basetype
 ;
 
 Maptype:
@@ -91,15 +91,11 @@ Arraytype:
 ;
 
 Basetype:
-	ref = [Usertype]
+	(ref = [Usertype]) | BuildInType
 ;
 
 BuildInType:
 	({Integerconstant} 'i8' | {Integerconstant} 'i16')
-;
-
-Comment:
-	'/**' '*/'
 ;
 
 

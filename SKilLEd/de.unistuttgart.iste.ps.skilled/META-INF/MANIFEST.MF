@@ -31,5 +31,6 @@ Export-Package: de.unistuttgart.iste.ps.skilled,
  de.unistuttgart.iste.ps.skilled.common,
  de.unistuttgart.iste.ps.skilled.common.services,
  de.unistuttgart.iste.ps.skilled.common.parseTreeConstruction,
- de.unistuttgart.iste.ps.skilled.common.serializer
+ de.unistuttgart.iste.ps.skilled.common.serializer,
+ de.unistuttgart.iste.ps.skilled.parser.antlr.lexer
 

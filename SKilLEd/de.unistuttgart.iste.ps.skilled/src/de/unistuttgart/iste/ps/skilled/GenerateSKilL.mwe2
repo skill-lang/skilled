@@ -20,8 +20,8 @@ Workflow {
     	scanClassPath = true
     	platformUri = "${runtimeProject}/.."
     	// The following two lines can be removed, if Xbase is not used.
-    	registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
-    	registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
+    	//registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
+    	//registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
     }
     
     component = DirectoryCleaner {
@@ -67,17 +67,28 @@ Workflow {
     		// a custom ResourceFactory for use with EMF
     		fragment = resourceFactory.ResourceFactoryFragment auto-inject {}
     
+    		/*
+    		 * predefined for case sensitive parsing
     		// The antlr parser generator fragment.
-    		fragment = parser.antlr.XtextAntlrGeneratorFragment auto-inject {
-    		//  options = {
-    		//      backtrack = true
-    		//  }
-    		}
+			fragment = parser.antlr.XtextAntlrGeneratorFragment {
+			//  options = {
+			//    backtrack = true
+			//  }
+			}
+    		*/
+ 
+ 			//case insensitive
+    		// The antlr parser generator fragment.
+    		fragment = parser.antlr.ex.rt.AntlrGeneratorFragment {
+    			options = {
+        			ignoreCase = true
+    			}
+			}
     
     		// Xtend-based API for validation
     		fragment = validation.ValidatorFragment auto-inject {
-    		//    composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
-    		//    composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+    		    composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
+    			composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
     		}
     
     		// old scoping and exporting API
@@ -85,7 +96,9 @@ Workflow {
     		// fragment = exporting.SimpleNamesFragment auto-inject {}
     
     		// scoping and exporting API
-    		fragment = scoping.ImportNamespacesScopingFragment auto-inject {}
+    		fragment = scoping.ImportNamespacesScopingFragment auto-inject {
+    			ignoreCase = true
+    		}
     		fragment = exporting.QualifiedNamesFragment auto-inject {}
     		fragment = builder.BuilderIntegrationFragment auto-inject {}
     
@@ -109,7 +122,16 @@ Workflow {
     		fragment = contentAssist.ContentAssistFragment auto-inject {}
     
     		// generates a more lightweight Antlr parser and lexer tailored for content assist
-    		fragment = parser.antlr.XtextAntlrUiGeneratorFragment auto-inject {}
+    		// predefined for case sensitive parsing
+    		//fragment = parser.antlr.XtextAntlrUiGeneratorFragment auto-inject {}
+    		
+    		//case insensitive
+    		// generates a more lightweight ANTLR parser and lexer tailored ...
+			fragment = parser.antlr.ex.ca.ContentAssistParserGeneratorFragment auto-inject{
+   				options = {
+        			ignoreCase = true
+   				}
+			}
     
     		// generates junit test support classes into Generator#pathTestProject
     		fragment = junit.Junit4Fragment auto-inject {}
