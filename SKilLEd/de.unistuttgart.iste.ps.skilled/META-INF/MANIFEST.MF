@@ -1,0 +1,35 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: de.unistuttgart.iste.ps.skilled
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: de.unistuttgart.iste.ps.skilled; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext;visibility:=reexport,
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.xtext.util,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common,
+ org.eclipse.xtext.xbase.lib,
+ org.antlr.runtime,
+ org.eclipse.xtext.common.types,
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional
+Import-Package: org.apache.log4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.unistuttgart.iste.ps.skilled,
+ de.unistuttgart.iste.ps.skilled.services,
+ de.unistuttgart.iste.ps.skilled.sKilL,
+ de.unistuttgart.iste.ps.skilled.sKilL.impl,
+ de.unistuttgart.iste.ps.skilled.sKilL.util,
+ de.unistuttgart.iste.ps.skilled.serializer,
+ de.unistuttgart.iste.ps.skilled.parser.antlr,
+ de.unistuttgart.iste.ps.skilled.parser.antlr.internal,
+ de.unistuttgart.iste.ps.skilled.validation,
+ de.unistuttgart.iste.ps.skilled.scoping,
+ de.unistuttgart.iste.ps.skilled.generator,
+ de.unistuttgart.iste.ps.skilled.formatting,
+ de.unistuttgart.iste.ps.skilled.common,
+ de.unistuttgart.iste.ps.skilled.common.services,
+ de.unistuttgart.iste.ps.skilled.common.parseTreeConstruction,
+ de.unistuttgart.iste.ps.skilled.common.serializer
+

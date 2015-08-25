@@ -1,0 +1,109 @@
+/** 
+ * Xtext grammar for SKilL (NOT FINISHED YET)
+ * TODO: Add missing stuff and replace predefined Terminals.
+ * @author Marco Link
+ */
+
+grammar de.unistuttgart.iste.ps.skilled.SKilL with org.eclipse.xtext.common.Terminals
+generate sKilL "http://www.unistuttgart.de/iste/ps/skilled/SKilL"
+
+File:
+	header = Header  (declarations += Declaration)*
+;
+
+Header:
+	{Header} (headComments += HEADCOMMENT)* (includes += Include)*
+;
+
+Include:
+	('include' | 'with') (importURI += STRING)+
+;
+
+Declaration:
+	Typedef |  Enumtype | Interfacetype | Usertype 
+;
+
+Typedef:
+	comment = Comment? 'typedef' name = ID 
+	(restrictions += Restriction | hints += Hint)* type = Fieldtype ';'
+;
+
+Enumtype : 
+	comment = Comment? 
+	'enum' name = ID '{' ID (',' ID)* ';' (fields += Field)* '}'
+;
+
+Interfacetype:
+	comment = Comment? 
+	'interface' name = ID ((':' | 'with' | 'extends') (ref += [Declaration]))* '{' (fields += Field)* '}'
+;
+
+Usertype:
+	comment = Comment? (restrictions += Restriction | hints += Hint)* 
+	name = ID ((':' | 'with' | 'extends') (ref += [Declaration]))* 
+		'{' fields += Field* '}'
+;
+
+Field:
+	comment = Comment? (restrictions += Restriction | hints += Hint)* 
+	field = (Constant | Data) ';'
+;
+
+
+Restriction:
+	'@' restrictionName = ID ('(' (rargs += R_ARG (',' rargs += R_ARG)*)?')')?
+;
+
+R_ARG:
+	(valueInt = INT | valueString = STRING)
+;
+
+Hint:
+	'!' hintName = ID
+;
+
+Constant:
+	'const' type = Fieldtype name = ID '=' value = INT
+;
+
+Data:
+	(isAuto ?= 'auto')? type = Fieldtype name = ID
+;
+
+Fieldtype:
+	Maptype| Settype | Listtype | Arraytype | Basetype | BuildInType
+;
+
+Maptype:
+	'map' '<' basetypes += Basetype (',' basetypes += Basetype)+ '>'
+;
+
+Settype:
+	'set' '<' basetype = Basetype '>'
+;
+
+Listtype:
+	'list' '<' basetype = Basetype '>'
+;
+
+Arraytype:
+	basetype = Basetype ('[' INT? ']')
+;
+
+Basetype:
+	ref = [Usertype]
+;
+
+BuildInType:
+	({Integerconstant} 'i8' | {Integerconstant} 'i16')
+;
+
+Comment:
+	'/**' '*/'
+;
+
+
+terminal
+HEADCOMMENT:
+	'#' !('\r'|'\n')* '\r'? '\n'
+;
