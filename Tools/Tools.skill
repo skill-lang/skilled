@@ -1,5 +1,7 @@
 Tool {
     string name;
+    string path;
+    string language;
     Type[] types;
     File[] files;
 }
