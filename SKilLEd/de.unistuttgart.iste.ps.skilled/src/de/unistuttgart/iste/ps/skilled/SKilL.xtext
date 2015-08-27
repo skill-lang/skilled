@@ -4,19 +4,21 @@
  * @author Marco Link
  */
 
-grammar de.unistuttgart.iste.ps.skilled.SKilL with org.eclipse.xtext.common.Terminals
+grammar de.unistuttgart.iste.ps.skilled.SKilL hidden (WHITESPACE)
 generate sKilL "http://www.unistuttgart.de/iste/ps/skilled/SKilL"
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
 
 File:
-	header = Header  (declarations += Declaration)*
-;
-
-Header:
-	{Header} (headComments += HEADCOMMENT)* (includes += Include)*
+	(headComments += HEADCOMMENT)* (includes += Include)*  (declarations += Declaration)*
 ;
 
 Include:
-	('include' | 'with') (importURI += STRING)+
+	('include' | 'with') (includeFiles += IncludeFile)+
+;
+
+IncludeFile:
+	importURI = STRING
 ;
 
 Declaration:
@@ -25,37 +27,43 @@ Declaration:
 
 Typedef:
 	comment = ML_COMMENT? 'typedef' name = ID 
-	(restrictions += Restriction | hints += Hint)* type = Fieldtype ';'
+	(restrictions += Restriction | hints += Hint)* fieldtype = Fieldtype ';'
 ;
 
 Enumtype : 
 	comment = ML_COMMENT? 
-	'enum' name = ID '{' ID (',' ID)* ';' (fields += Field)* '}'
+	'enum' name = ID '{' instances += ID (',' instances += ID)* ';' (fields += Field)* '}'
 ;
 
 Interfacetype:
 	comment = ML_COMMENT? 
-	'interface' name = ID ((':' | 'with' | 'extends') (ref += [Declaration]))* '{' (fields += Field)* '}'
+	'interface' name = ID ((':' | 'with' | 'extends') (supertypes += [Declaration]))*
+	'{' (fields += Field)* '}'
 ;
 
 Usertype:
 	comment = ML_COMMENT? (restrictions += Restriction | hints += Hint)* 
-	name = ID ((':' | 'with' | 'extends') (ref += [Declaration]))* 
+	name = ID ((':' | 'with' | 'extends') (supertypes += [Declaration]))* 
 		'{' fields += Field* '}'
 ;
 
 Field:
 	comment = ML_COMMENT? (restrictions += Restriction | hints += Hint)* 
-	field = (Constant | Data) ';'
+	fieldcontent = Fieldcontent ';'
 ;
 
+Fieldcontent:
+	Constant | Data
+;
 
 Restriction:
-	'@' restrictionName = ID ('(' (rargs += R_ARG (',' rargs += R_ARG)*)?')')?
+	'@' restrictionName = ID 
+	('(' (restrictionArguments += R_ARG (',' restrictionArguments += R_ARG)*)?')')?
 ;
 
+//TODO: Better name than list.
 R_ARG:
-	(valueInt = INT | valueString = STRING)
+	({Float} Float | {INT} INT | {STRING} STRING | (list += ID (=> ',' list += ID)*))
 ;
 
 Hint:
@@ -63,11 +71,11 @@ Hint:
 ;
 
 Constant:
-	'const' type = Fieldtype name = ID '=' value = INT
+	'const' fieldtype = Fieldtype name = ID '=' value = INT
 ;
 
 Data:
-	(isAuto ?= 'auto')? type = Fieldtype name = ID
+	(isAuto ?= 'auto')? fieldtype = Fieldtype name = ID
 ;
 
 Fieldtype:
@@ -94,6 +102,7 @@ Basetype:
 	(ref = [Usertype]) | BuildInType
 ;
 
+//TODO: Not sure if it is good to declare the BuildinTypes in the grammar.
 BuildInType:
 	({Integerconstant} 'i8' | {Integerconstant} 'i16')
 ;
@@ -103,3 +112,16 @@ terminal
 HEADCOMMENT:
 	'#' !('\r'|'\n')* '\r'? '\n'
 ;
+
+//TODO: CORRECT ID
+terminal ID  		: '^'?('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
+//TODO: CORRECT INTEGER AND HEXINTEGER
+terminal INT returns ecore::EInt: ('0'..'9')+;
+//TODO: CORRECT FLOAT
+Float returns ecore::EFloat: INT '.' INT;
+terminal STRING	: '"' -> '"'; 
+terminal ML_COMMENT	: '/*' -> '*/';
+
+terminal WHITESPACE			: (' '|'\t'|'\r'|'\n')+;
+
+terminal ANY_OTHER: .;
