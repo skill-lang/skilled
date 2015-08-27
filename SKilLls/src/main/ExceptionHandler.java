@@ -8,18 +8,23 @@ public class ExceptionHandler {
 
     /**
      * Logs the exception.
-     * @param e Exception to log.
+     * 
+     * @param e
+     *            Exception to log.
      */
     public static void handle(Exception e) {
-
+        // TODO
     }
 
     /**
      * Logs the exception.
-     * @param e Exception to log.
-     * @param message Message that should be shown to the user.
+     * 
+     * @param e
+     *            Exception to log.
+     * @param message
+     *            Message that should be shown to the user.
      */
     public static void handle(Exception e, String message) {
-
+        // TODO
     }
 }

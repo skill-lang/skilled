@@ -1,8 +1,5 @@
 package main;
 
-
-import Exceptions.ProjectException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,6 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import Exceptions.ProjectException;
+
+
 /**
  * This class starts the application and runs the generator if necessary.
  *
@@ -26,57 +26,36 @@ public class MainClass {
     /**
      * Text for the help message. Called with "skillls --help".
      */
-    private static final String helpText =
-            "SYNOPSIS\n" +
-                    "       skillls [-e] [--edit] [-a] [--all] [-g GENERATOR] [--generator GENERATOR] [-l LANGUAGE] [--lang LANGUAGE] " +
-                    "[--ls] EXEC PATH OUTPUT [TOOLS...] PACKAGE\n" +
-                    "\n" +
-                    "DESCRIPTION\n" +
-                    "       SKilLls generates or lists tools with the given generator.  It can also list all tools.\n" +
-                    "\n" +
-                    "OPTIONS\n" +
-                    "       -e, --edit\n" +
-                    "               Starts the tool editor." +
-                    "\n" +
-                    "       -a, --all\n" +
-                    "              When used with --ls, lists all tools not regarding changes.  When used without --ls, " +
-                    "generates all tools not regarding changes.\n" +
-                    "\n" +
-                    "       -g, --generator=GENERATOR\n" +
-                    "              Needed for generating bindings. Path to the generator that is being used.\n" +
-                    "\n" +
-                    "       -l, --lang=LANGUAGE\n" +
-                    "              Language the binding should be generated for.\n" +
-                    "\n" +
-                    "       --ls   Lists the tools of the project.\n" +
-                    "\n" +
-                    "       EXEC   Execution environment for the generator. E.g. scala" +
-                    "\n" +
-                    "       PATH   The path the project is located at.\n" +
-                    "\n" +
-                    "       OUTPUT The path the binding is generated in.\n" +
-                    "\n" +
-                    "       TOOLS...\n" +
-                    "              The tools the options should be applied to. If no tools are given the options are " +
-                    "applied to all available tools.\n" +
-                    "\n" +
-                    "       PACKAGE The package the binding should be generated in." +
-                    "\n" +
-                    "\n" +
-                    "SIDE NODE\n" +
-                    "       Single letter arguments can be combined. you can call SKilLls with following command:\n" +
-                    "       skillls -agl /path/to/generator Java /path/to/project\n" +
-                    "       This command generates all bindings for the tools of the project in Java.\n" +
-                    "       If l comes before g the language has to be given first.";
+    private static final String helpText = "SYNOPSIS\n"
+            + "       skillls [-e] [--edit] [-a] [--all] [-g GENERATOR] [--generator GENERATOR] [-l LANGUAGE] [--lang LANGUAGE] "
+            + "[--ls] EXEC PATH OUTPUT [TOOLS...] PACKAGE\n" + "\n" + "DESCRIPTION\n"
+            + "       SKilLls generates or lists tools with the given generator.  It can also list all tools.\n" + "\n"
+            + "OPTIONS\n" + "       -e, --edit\n" + "               Starts the tool editor." + "\n" + "       -a, --all\n"
+            + "              When used with --ls, lists all tools not regarding changes.  When used without --ls, "
+            + "generates all tools not regarding changes.\n" + "\n" + "       -g, --generator=GENERATOR\n"
+            + "              Needed for generating bindings. Path to the generator that is being used.\n" + "\n"
+            + "       -l, --lang=LANGUAGE\n" + "              Language the binding should be generated for.\n" + "\n"
+            + "       --ls   Lists the tools of the project.\n" + "\n"
+            + "       EXEC   Execution environment for the generator. E.g. scala" + "\n"
+            + "       PATH   The path the project is located at.\n" + "\n"
+            + "       OUTPUT The path the binding is generated in.\n" + "\n" + "       TOOLS...\n"
+            + "              The tools the options should be applied to. If no tools are given the options are "
+            + "applied to all available tools.\n" + "\n" + "       PACKAGE The package the binding should be generated in."
+            + "\n" + "\n" + "SIDE NODE\n"
+            + "       Single letter arguments can be combined. you can call SKilLls with following command:\n"
+            + "       skillls -agl /path/to/generator Java /path/to/project\n"
+            + "       This command generates all bindings for the tools of the project in Java.\n"
+            + "       If l comes before g the language has to be given first.";
 
     /**
-     * Entry Point.
-     * Generates flags for the generator execution.
-     * @param args The command line arguments.
+     * Entry Point. Generates flags for the generator execution.
+     * 
+     * @param args
+     *            The command line arguments.
      */
     public static void main(String[] args) {
         FileFlag changeFlag = FileFlag.Changed;
-        HintFlag hintFlag = HintFlag.No;
+        // HintFlag hintFlag = HintFlag.No;
         String lang = "";
         String pack = "";
         String exec = "";
@@ -95,7 +74,7 @@ public class MainClass {
                         break;
 
                     case "--hints":
-                        hintFlag = HintFlag.Yes;
+                        // hintFlag = HintFlag.Yes;
                         break;
 
                     case "--lang":
@@ -132,7 +111,7 @@ public class MainClass {
                             break;
 
                         case 'h':
-                            hintFlag = HintFlag.Yes;
+                            // hintFlag = HintFlag.Yes;
                             break;
 
                         case 'l':
@@ -156,7 +135,7 @@ public class MainClass {
                     project = new File(arg);
                 } else if (output == null) {
                     output = new File(arg);
-                } else if (i != args.length - 1){
+                } else if (i != args.length - 1) {
                     ts.add(arg);
                 } else {
                     pack = arg;
@@ -196,20 +175,30 @@ public class MainClass {
     /**
      * Work flow for generating bindings for tools.
      *
-     * @param project The directory the project is stored in.
-     * @param output The directory the output is stored in.
-     * @param pack The package the binding should be placed in.
-     * @param ts The tools being affected.
-     * @param language The language the binding will be generated in.
-     * @param exec The program executing the generator, e.g. scala.
-     * @param generator The generator used for the generation.
-     * @param changeFlag The flag for the whether to consider only one file or all.
-     * @throws ProjectException Thrown if project is not a directory or does not contain a tools.sf file. Also if output is not a directory.
-     * @throws IOException Thrown if there is a problem with the creation of temporary files.
+     * @param project
+     *            The directory the project is stored in.
+     * @param output
+     *            The directory the output is stored in.
+     * @param pack
+     *            The package the binding should be placed in.
+     * @param ts
+     *            The tools being affected.
+     * @param language
+     *            The language the binding will be generated in.
+     * @param exec
+     *            The program executing the generator, e.g. scala.
+     * @param generator
+     *            The generator used for the generation.
+     * @param changeFlag
+     *            The flag for the whether to consider only one file or all.
+     * @throws ProjectException
+     *             Thrown if project is not a directory or does not contain a tools.sf file. Also if output is not a
+     *             directory.
+     * @throws IOException
+     *             Thrown if there is a problem with the creation of temporary files.
      */
     private static void generate(File project, File output, String pack, ArrayList<String> ts, String language, String exec,
-                                 File generator, FileFlag changeFlag)
-            throws ProjectException, IOException {
+            File generator, FileFlag changeFlag) throws ProjectException, IOException {
         HashSet<tools.Tool> toolsToBuild = new HashSet<>();
         HashMap<String, ArrayList<File>> toolToFile = new HashMap<>();
         if (!project.isDirectory()) {
@@ -226,8 +215,8 @@ public class MainClass {
         }
 
         if (language.isEmpty() || !generator.exists()) {
-            throw new IllegalArgumentException("Language (--lang or -l [language]) and Generator (--generator or -g " +
-                    "[generator]) are required parameters for generation");
+            throw new IllegalArgumentException("Language (--lang or -l [language]) and Generator (--generator or -g "
+                    + "[generator]) are required parameters for generation");
         }
 
         tools.api.SkillFile sf;
@@ -271,7 +260,7 @@ public class MainClass {
                     md5Dis = new DigestInputStream(is, md5);
                     sha1Dis = new DigestInputStream(is, sha1);
                     while (md5Dis.read(buffer, 0, buffer.length) != -1) {
-                        //noinspection ResultOfMethodCallIgnored
+                        // noinspection ResultOfMethodCallIgnored
                         sha1Dis.read(buffer, 0, buffer.length);
                     }
                 } catch (IOException e) {
@@ -294,16 +283,23 @@ public class MainClass {
     /**
      * Method for accumulating Thread for Binding generation per tool. Also runs them.
      *
-     * @param toolsToBuild Tools that need to be built.
-     * @param toolToFile Map for mapping tools to their corresponding temporary files.
-     * @param language The language the binding should be in.
-     * @param exec The execution environment for the generator, e.g. scala.
-     * @param generator The generator used for the bindings.
-     * @param output The output directory.
-     * @param pack The package the bindings should be placed in.
+     * @param toolsToBuild
+     *            Tools that need to be built.
+     * @param toolToFile
+     *            Map for mapping tools to their corresponding temporary files.
+     * @param language
+     *            The language the binding should be in.
+     * @param exec
+     *            The execution environment for the generator, e.g. scala.
+     * @param generator
+     *            The generator used for the bindings.
+     * @param output
+     *            The output directory.
+     * @param pack
+     *            The package the bindings should be placed in.
      */
     private static void runGeneration(HashSet<tools.Tool> toolsToBuild, HashMap<String, ArrayList<File>> toolToFile,
-                                      String language, String exec, File generator, File output, String pack) {
+            String language, String exec, File generator, File output, String pack) {
         ArrayList<Thread> commands = new ArrayList<>();
         for (tools.Tool t : toolsToBuild) {
             StringBuilder builder = new StringBuilder();
@@ -338,10 +334,13 @@ public class MainClass {
     /**
      * Method for creating the temporary file for the tool.
      *
-     * @param tool The tool the file should be generated for.
-     * @param file The file that should be optimized for the tool.
+     * @param tool
+     *            The tool the file should be generated for.
+     * @param file
+     *            The file that should be optimized for the tool.
      * @return The file object of the temporary file.
-     * @throws IOException Thrown if there is a problem with creating temporary files.
+     * @throws IOException
+     *             Thrown if there is a problem with creating temporary files.
      */
     private static File createToolFile(File project, tools.Tool tool, tools.File file) throws IOException {
         boolean tempFound = false;
@@ -359,6 +358,7 @@ public class MainClass {
         }
         String name = file.getPath();
         name = name.substring(name.lastIndexOf(File.separator, name.length()));
+        @SuppressWarnings("null")
         File temp = new File(f.getAbsolutePath() + File.separator + name);
         temp.createNewFile();
         Files.copy(Paths.get(file.getPath()), new FileOutputStream(temp.getAbsolutePath()));
@@ -368,7 +368,8 @@ public class MainClass {
     /**
      * Encodes a byte array to a hex-String.
      *
-     * @param digest The array that should be encoded.
+     * @param digest
+     *            The array that should be encoded.
      * @return The hex-String equivalent to the byte array.
      */
     private static String encodeHex(byte[] digest) {
@@ -381,7 +382,9 @@ public class MainClass {
 
     /**
      * Deletes the directory with the temporary files.
-     * @param toolToFiles HashMap containing the Tools and the Files.
+     * 
+     * @param toolToFiles
+     *            HashMap containing the Tools and the Files.
      */
     public static void cleanUp(HashMap<String, ArrayList<File>> toolToFiles) {
         File f = toolToFiles.get(toolToFiles.keySet().toArray()[0]).get(0);
@@ -391,14 +394,11 @@ public class MainClass {
     }
 
     public static boolean deleteDir(File dir) {
-        if (dir.isDirectory())
-        {
+        if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i=0; i<children.length; i++)
-            {
+            for (int i = 0; i < children.length; i++) {
                 boolean success = deleteDir(new File(dir, children[i]));
-                if (!success)
-                {
+                if (!success) {
                     return false;
                 }
             }
