@@ -16,18 +16,32 @@ import org.eclipse.xtext.ui.editor.utils.TextStyle;
 public class SKilLHighlightingConfiguration extends DefaultHighlightingConfiguration {
 
     public static final String HEADCOMMENT_ID = "headcomment";
+    public static final String USERTYPE_ID = "usertype";
     public static final String INTERFACE_ID = "interface";
-    public final static String CROSS_REF = "CrossReference";
+    public static final String ENUM_ID = "enum";
+    public static final String TYPEDEF_ID = "typedef";
+    public static final String BUILDINTYPE_ID = "buildintype";
+    public static final String CROSS_REF = "crossreference";
 
     @Override
     public void configure(IHighlightingConfigurationAcceptor acceptor) {
         super.configure(acceptor);
         acceptor.acceptDefaultHighlighting(HEADCOMMENT_ID, "Headcomment", headcommentTextStyle());
+        acceptor.acceptDefaultHighlighting(USERTYPE_ID, "Usertype", usertypeTextStyle());
         acceptor.acceptDefaultHighlighting(INTERFACE_ID, "Interface", interfaceTextStyle());
+        acceptor.acceptDefaultHighlighting(ENUM_ID, "Enumeration", enumTextStyle());
+        acceptor.acceptDefaultHighlighting(TYPEDEF_ID, "Typedef", typedefTextStyle());
         acceptor.acceptDefaultHighlighting(CROSS_REF, "Cross-References", crossReferenceTextStyle());
+        acceptor.acceptDefaultHighlighting(BUILDINTYPE_ID, "Build In Type", buildintypeTextStyle());
     }
 
     public TextStyle crossReferenceTextStyle() {
+        TextStyle textStyle = new TextStyle();
+        textStyle.setStyle(SWT.ITALIC);
+        return textStyle;
+    }
+
+    public TextStyle usertypeTextStyle() {
         TextStyle textStyle = new TextStyle();
         textStyle.setStyle(SWT.ITALIC);
         return textStyle;
@@ -39,7 +53,25 @@ public class SKilLHighlightingConfiguration extends DefaultHighlightingConfigura
         return textStyle;
     }
 
+    public TextStyle enumTextStyle() {
+        TextStyle textStyle = new TextStyle();
+        textStyle.setStyle(SWT.ITALIC);
+        return textStyle;
+    }
+    
+    public TextStyle typedefTextStyle() {
+        TextStyle textStyle = new TextStyle();
+        textStyle.setStyle(SWT.ITALIC);
+        return textStyle;
+    }
+
     public TextStyle headcommentTextStyle() {
+        TextStyle textStyle = new TextStyle();
+        textStyle.setStyle(SWT.ITALIC);
+        return textStyle;
+    }
+
+    public TextStyle buildintypeTextStyle() {
         TextStyle textStyle = new TextStyle();
         textStyle.setStyle(SWT.ITALIC);
         return textStyle;

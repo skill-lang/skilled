@@ -14,6 +14,8 @@ import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
  * This class contains custom validation rules. 
  *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
+ * 
+ * @author Marco Link
  */
 class SKilLValidator extends AbstractSKilLValidator {
 	

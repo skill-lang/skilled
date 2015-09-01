@@ -37,14 +37,18 @@ Enumtype :
 
 Interfacetype:
 	comment = ML_COMMENT? 
-	'interface' name = ID ((':' | 'with' | 'extends') (supertypes += [Declaration]))*
+	'interface' name = ID ((':' | 'with' | 'extends') (supertypes += DeclarationReference))*
 	'{' (fields += Field)* '}'
 ;
 
 Usertype:
 	comment = ML_COMMENT? (restrictions += Restriction | hints += Hint)* 
-	name = ID ((':' | 'with' | 'extends') (supertypes += [Declaration]))* 
+	name = ID ((':' | 'with' | 'extends') (supertypes += DeclarationReference))* 
 		'{' fields += Field* '}'
+;
+
+DeclarationReference:
+	ref = [Declaration]
 ;
 
 Field:
@@ -98,13 +102,13 @@ Arraytype:
 	basetype = Basetype ('[' INT? ']')
 ;
 
+//TODO: ANNOTATION
 Basetype:
 	(ref = [Usertype]) | BuildInType
 ;
 
-//TODO: Not sure if it is good to declare the BuildinTypes in the grammar.
 BuildInType:
-	({Integerconstant} 'i8' | {Integerconstant} 'i16' | {Integerconstant} 'i32' | {Integerconstant} 'i64' | {Integerconstant} 'v64'   
+	 ( {Integerconstant} 'i8' | {Integerconstant} 'i16' | {Integerconstant} 'i32' | {Integerconstant}  'i64' | {Integerconstant} 'v64'   
 		| {Floatconstant} 'f32' | {Floatconstant} 'f64' | {Stringconstant} 'string' | {Booleanconstant} 'bool'
 	)
 ;
