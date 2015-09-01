@@ -104,7 +104,7 @@ Basetype:
 
 //TODO: Not sure if it is good to declare the BuildinTypes in the grammar.
 BuildInType:
-	({Integerconstant} 'i8' | {Integerconstant} 'i16')
+	({Integerconstant} 'i8' | {Integerconstant} 'i16' | {Floatconstant} 'f32')
 ;
 
 

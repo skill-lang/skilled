@@ -3,7 +3,12 @@
  */
 package de.unistuttgart.iste.ps.skilled.validation
 
-//import org.eclipse.xtext.validation.Check
+import de.unistuttgart.iste.ps.skilled.sKilL.Constant
+import org.eclipse.xtext.validation.Check
+import de.unistuttgart.iste.ps.skilled.sKilL.BuildInType
+import de.unistuttgart.iste.ps.skilled.sKilL.Integerconstant
+import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+
 
 /**
  * This class contains custom validation rules. 
@@ -11,15 +16,13 @@ package de.unistuttgart.iste.ps.skilled.validation
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 class SKilLValidator extends AbstractSKilLValidator {
-
-//  public static val INVALID_NAME = 'invalidName'
-//
-//	@Check
-//	def checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.name.charAt(0))) {
-//			warning('Name should start with a capital', 
-//					MyDslPackage.Literals.GREETING__NAME,
-//					INVALID_NAME)
-//		}
-//	}
+	
+	public static val INVALID_CONSTANT_TYPE = 'invalidConstantType'
+	
+	@Check
+	def checkConstantHasAnInteger(Constant constant) {
+		if(constant.fieldtype != Integerconstant) {
+			error('Only an Integer can be const.', constant, SKilLPackage.Literals.CONSTANT.getEStructuralFeature("fieldtype") ,INVALID_CONSTANT_TYPE)
+		} 
+	}
 }
