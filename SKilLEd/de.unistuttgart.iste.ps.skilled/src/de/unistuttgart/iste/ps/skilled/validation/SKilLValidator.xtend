@@ -21,7 +21,7 @@ class SKilLValidator extends AbstractSKilLValidator {
 	
 	@Check
 	def checkConstantHasAnInteger(Constant constant) {
-		if(constant.fieldtype != Integerconstant) {
+		if(!(constant.fieldtype instanceof Integerconstant)) {
 			error('Only an Integer can be const.', constant, SKilLPackage.Literals.CONSTANT.getEStructuralFeature("fieldtype") ,INVALID_CONSTANT_TYPE)
 		} 
 	}
