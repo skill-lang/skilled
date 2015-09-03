@@ -5,20 +5,16 @@ import org.eclipse.xtext.AbstractRule;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.CrossReference;
 import org.eclipse.xtext.RuleCall;
-import org.eclipse.xtext.TypeRef;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultSemanticHighlightingCalculator;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor;
-
-import de.unistuttgart.iste.ps.skilled.sKilL.BuildInType;
 import de.unistuttgart.iste.ps.skilled.sKilL.BuildInTypeReference;
 import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference;
 import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype;
 import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype;
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef;
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype;
-import de.unistuttgart.iste.ps.skilled.services.SKilLGrammarAccess.BuildInTypeElements;
 
 
 /**

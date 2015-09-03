@@ -35,43 +35,43 @@ public class SKilLHighlightingConfiguration extends DefaultHighlightingConfigura
         acceptor.acceptDefaultHighlighting(BUILDINTYPE_ID, "Build In Type", buildintypeTextStyle());
     }
 
-    public TextStyle crossReferenceTextStyle() {
+    public static TextStyle crossReferenceTextStyle() {
         TextStyle textStyle = new TextStyle();
         textStyle.setStyle(SWT.ITALIC);
         return textStyle;
     }
 
-    public TextStyle usertypeTextStyle() {
+    public static TextStyle usertypeTextStyle() {
         TextStyle textStyle = new TextStyle();
         textStyle.setStyle(SWT.ITALIC);
         return textStyle;
     }
 
-    public TextStyle interfaceTextStyle() {
+    public static TextStyle interfaceTextStyle() {
         TextStyle textStyle = new TextStyle();
         textStyle.setStyle(SWT.ITALIC);
         return textStyle;
     }
 
-    public TextStyle enumTextStyle() {
+    public static TextStyle enumTextStyle() {
         TextStyle textStyle = new TextStyle();
         textStyle.setStyle(SWT.ITALIC);
         return textStyle;
     }
     
-    public TextStyle typedefTextStyle() {
+    public static TextStyle typedefTextStyle() {
         TextStyle textStyle = new TextStyle();
         textStyle.setStyle(SWT.ITALIC);
         return textStyle;
     }
 
-    public TextStyle headcommentTextStyle() {
+    public static TextStyle headcommentTextStyle() {
         TextStyle textStyle = new TextStyle();
         textStyle.setStyle(SWT.ITALIC);
         return textStyle;
     }
 
-    public TextStyle buildintypeTextStyle() {
+    public static TextStyle buildintypeTextStyle() {
         TextStyle textStyle = new TextStyle();
         textStyle.setStyle(SWT.ITALIC);
         return textStyle;

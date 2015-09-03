@@ -5,10 +5,16 @@ package de.unistuttgart.iste.ps.skilled.validation
 
 import de.unistuttgart.iste.ps.skilled.sKilL.Constant
 import org.eclipse.xtext.validation.Check
-import de.unistuttgart.iste.ps.skilled.sKilL.BuildInType
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.services.SKilLGrammarAccess.BuildInTypeElements
 import de.unistuttgart.iste.ps.skilled.sKilL.BuildInTypeReference
+import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
+import de.unistuttgart.iste.ps.skilled.sKilL.Listtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Basetype
+import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.sKilL.Maptype
+import javax.lang.model.type.ArrayType
+import de.unistuttgart.iste.ps.skilled.sKilL.Arraytype
+import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
 
 /**
  * This class contains custom validation rules. 
@@ -20,6 +26,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.BuildInTypeReference
 class SKilLValidator extends AbstractSKilLValidator {
 
 	public static val INVALID_CONSTANT_TYPE = 'invalidConstantType'
+	public static val INVALID_NESTED_TYPEDEF = 'invalidNestedTypedef'
 
 	@Check
 	def checkConstantHasAnInteger(Constant constant) {
@@ -45,6 +52,52 @@ class SKilLValidator extends AbstractSKilLValidator {
 		} else {
 			error('Only an Integer can be const.', constant,
 				SKilLPackage.Literals.CONSTANT.getEStructuralFeature("fieldtype"), INVALID_CONSTANT_TYPE)
+		}
+	}
+
+	@Check
+	def checkInvalidNestedTypedef(Fieldtype fieldtype) {
+		if (fieldtype instanceof Listtype) {
+			val listtype = fieldtype;
+			if (listtype.basetype instanceof DeclarationReference) {
+				val dr = listtype.basetype as DeclarationReference
+				if (dr.type instanceof Typedef) {
+					val td = dr.type as Typedef
+					if ((td.fieldtype instanceof Listtype) || (td.fieldtype instanceof Maptype) ||
+						(td.fieldtype instanceof ArrayType)) {
+						error('It is forbidden to nest containers inside of other containers.', listtype,
+							SKilLPackage.Literals.LISTTYPE__BASETYPE, INVALID_NESTED_TYPEDEF)
+					}
+				}
+			}
+		} else if (fieldtype instanceof Arraytype) {
+			val arraytype = fieldtype;
+			if (arraytype.basetype instanceof DeclarationReference) {
+				val dr = arraytype.basetype as DeclarationReference
+				if (dr.type instanceof Typedef) {
+					val td = dr.type as Typedef
+					if ((td.fieldtype instanceof Listtype) || (td.fieldtype instanceof Maptype) ||
+						(td.fieldtype instanceof ArrayType)) {
+						error('It is forbidden to nest containers inside of other containers.', arraytype,
+							SKilLPackage.Literals.ARRAYTYPE__BASETYPE, INVALID_NESTED_TYPEDEF)
+					}
+				}
+			}
+		} else if (fieldtype instanceof Maptype) {
+			val maptype = fieldtype;
+			for (Basetype b : maptype.basetypes) {
+				if (b instanceof DeclarationReference) {
+					val dr = b
+					if (dr.type instanceof Typedef) {
+						val td = dr.type as Typedef
+						if ((td.fieldtype instanceof Listtype) || (td.fieldtype instanceof Maptype) ||
+							(td.fieldtype instanceof ArrayType)) {
+							error('It is forbidden to nest containers inside of other containers.', maptype,
+								SKilLPackage.Literals.CONSTANT.getEStructuralFeature("basetypes"), INVALID_NESTED_TYPEDEF)
+						}
+					}
+				}
+			}
 		}
 	}
 }
