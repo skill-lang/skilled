@@ -48,7 +48,7 @@ Usertype:
 ;
 
 DeclarationReference:
-	ref = [Declaration]
+	type = [Declaration]
 ;
 
 Field:
@@ -102,17 +102,18 @@ Arraytype:
 	basetype = Basetype ('[' INT? ']')
 ;
 
-//TODO: ANNOTATION
 Basetype:
-	(ref = [Usertype]) | BuildInType
+	DeclarationReference | BuildInTypeReference
 ;
 
-BuildInType:
-	 ( {Integerconstant} 'i8' | {Integerconstant} 'i16' | {Integerconstant} 'i32' | {Integerconstant}  'i64' | {Integerconstant} 'v64'   
-		| {Floatconstant} 'f32' | {Floatconstant} 'f64' | {Stringconstant} 'string' | {Booleanconstant} 'bool'
-	)
+BuildInTypeReference:
+	type = BuildInType
 ;
 
+enum BuildInType:
+	I8 = 'i8' | I16 = 'i16' | I32 = 'i32' | I64 = 'i64' | V64 = 'v64' 
+	| F32 = 'f32' | F64 = 'f64' | STRING = 'string' | BOOLEAN = 'bool' | ANNOTATION = 'annotation'
+;
 
 terminal
 HEADCOMMENT:

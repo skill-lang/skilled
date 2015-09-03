@@ -6,25 +6,45 @@ package de.unistuttgart.iste.ps.skilled.validation
 import de.unistuttgart.iste.ps.skilled.sKilL.Constant
 import org.eclipse.xtext.validation.Check
 import de.unistuttgart.iste.ps.skilled.sKilL.BuildInType
-import de.unistuttgart.iste.ps.skilled.sKilL.Integerconstant
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-
+import de.unistuttgart.iste.ps.skilled.services.SKilLGrammarAccess.BuildInTypeElements
+import de.unistuttgart.iste.ps.skilled.sKilL.BuildInTypeReference
 
 /**
  * This class contains custom validation rules. 
- *
+ * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  * 
  * @author Marco Link
  */
 class SKilLValidator extends AbstractSKilLValidator {
-	
+
 	public static val INVALID_CONSTANT_TYPE = 'invalidConstantType'
-	
+
 	@Check
 	def checkConstantHasAnInteger(Constant constant) {
-		if(!(constant.fieldtype instanceof Integerconstant)) {
-			error('Only an Integer can be const.', constant, SKilLPackage.Literals.CONSTANT.getEStructuralFeature("fieldtype") ,INVALID_CONSTANT_TYPE)
-		} 
+		if (constant.fieldtype instanceof BuildInTypeReference) {
+			val b = constant.fieldtype as BuildInTypeReference;
+			switch (b.type) {
+				case I8:
+					return
+				case I16:
+					return
+				case I32:
+					return
+				case I64:
+					return
+				case V64:
+					return
+				default: {
+					error('Only an Integer can be const.', constant,
+						SKilLPackage.Literals.CONSTANT.getEStructuralFeature("fieldtype"), INVALID_CONSTANT_TYPE)
+				}
+			}
+
+		} else {
+			error('Only an Integer can be const.', constant,
+				SKilLPackage.Literals.CONSTANT.getEStructuralFeature("fieldtype"), INVALID_CONSTANT_TYPE)
+		}
 	}
 }

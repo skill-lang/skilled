@@ -12,11 +12,13 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultSemanticHighlightingCal
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 
 import de.unistuttgart.iste.ps.skilled.sKilL.BuildInType;
+import de.unistuttgart.iste.ps.skilled.sKilL.BuildInTypeReference;
 import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference;
 import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype;
 import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype;
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef;
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype;
+import de.unistuttgart.iste.ps.skilled.services.SKilLGrammarAccess.BuildInTypeElements;
 
 
 /**
@@ -39,16 +41,14 @@ public class SKilLSemanticHighlightingCalculator extends DefaultSemanticHighligh
             EObject semanticElement = node.getSemanticElement();
             if ((grammarElement instanceof CrossReference) && (semanticElement instanceof DeclarationReference)) {
                 DeclarationReference dr = (DeclarationReference) node.getSemanticElement();
-                if (dr.getRef() instanceof Usertype) {
+                if (dr.getType() instanceof Usertype) {
                     acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.USERTYPE_ID);
-                }
-                else if(dr.getRef() instanceof Interfacetype) {
+                } else if (dr.getType() instanceof Interfacetype) {
                     acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.INTERFACE_ID);
-                }
-                else if(dr.getRef() instanceof Typedef) {
+                } else if (dr.getType() instanceof Typedef) {
                     acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.TYPEDEF_ID);
                 }
-            } else if (node.getSemanticElement() instanceof BuildInType) {
+            } else if (node.getSemanticElement() instanceof BuildInTypeReference) {
                 acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.BUILDINTYPE_ID);
             } else if (grammarElement instanceof RuleCall) {
                 RuleCall rc = (RuleCall) grammarElement;
@@ -72,7 +72,7 @@ public class SKilLSemanticHighlightingCalculator extends DefaultSemanticHighligh
                     else if (node.getSemanticElement() instanceof Enumtype) {
                         acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.ENUM_ID);
                     }
-                    
+
                     else if (node.getSemanticElement() instanceof Typedef) {
                         acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.TYPEDEF_ID);
                     }
