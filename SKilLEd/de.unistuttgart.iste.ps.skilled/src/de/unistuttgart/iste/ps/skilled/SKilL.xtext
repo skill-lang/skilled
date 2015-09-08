@@ -67,7 +67,7 @@ Restriction:
 
 //TODO: Better name than list.
 R_ARG:
-	({Float} Float | {INT} INT | {STRING} STRING | (list += ID (=> ',' list += ID)*))
+	({Float} FLOAT | {INT} INT | {STRING} STRING | (list += ID (=> ',' list += ID)*))
 ;
 
 Hint:
@@ -120,12 +120,26 @@ HEADCOMMENT:
 	'#' !('\r'|'\n')* '\r'? '\n'
 ;
 
-//TODO: CORRECT ID
-terminal ID  		: '^'?('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
-//TODO: CORRECT INTEGER AND HEXINTEGER
-terminal INT returns ecore::EInt: ('0'..'9')+;
-//TODO: CORRECT FLOAT
-Float returns ecore::EFloat: INT '.' INT;
+terminal ID:
+	('a' .. 'z' | 'A' .. 'Z' | '_' | '\u007f' .. '\uffff') ('a'..'z'|'A'..'Z'|'_'|'0'..'9' | '\u007f' .. '\uffff')*		
+;
+
+terminal INT returns ecore::EInt:
+	'-'? DIGIT+
+;
+
+terminal FLOAT returns ecore::EFloat:
+	(INT EXPONENT) | (INT '.' DIGIT* EXPONENT?)	
+;
+
+terminal fragment DIGIT:
+	'0'..'9'
+;
+
+terminal fragment EXPONENT:
+	('e' | 'E') ('+' | '-')? DIGIT+
+;
+
 terminal STRING	: '"' -> '"'; 
 terminal ML_COMMENT	: '/*' -> '*/';
 
