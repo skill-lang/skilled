@@ -129,7 +129,7 @@ terminal INT returns ecore::EInt:
 ;
 
 terminal FLOAT returns ecore::EFloat:
-	(INT EXPONENT) | (INT '.' DIGIT* EXPONENT?)	
+	((INT EXPONENT) | (INT '.' DIGIT* EXPONENT?)) ('f' | 'F' | 'd' | 'D')? 	
 ;
 
 terminal fragment DIGIT:

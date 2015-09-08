@@ -105,9 +105,12 @@ Workflow {
     		// generator API
     		fragment = generator.GeneratorFragment auto-inject {}
     
-    		// formatter API
-    		fragment = formatting.FormatterFragment auto-inject {}
-    
+    		// old formatter API
+    		//fragment = formatting.FormatterFragment auto-inject {}
+    		
+    		// new formatter API
+    		fragment = formatting2.Formatter2Fragment auto-inject {}
+    		
     		// labeling API
     		fragment = labeling.LabelProviderFragment auto-inject {}
     
