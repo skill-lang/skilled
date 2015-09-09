@@ -22,6 +22,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.impl.FieldtypeImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.BuildInType
 import de.unistuttgart.iste.ps.skilled.sKilL.BuildInTypeReference
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.ConstantImpl
+import org.eclipse.emf.ecore.util.EDataTypeEList
 
 /**
  * @author Tobias Heck
@@ -106,7 +107,7 @@ class TestSKilLParser {
 		Assert::assertEquals(ConstantImpl, field3.fieldcontent.class);
 		Assert::assertEquals(-0xABCD, (field3.fieldcontent as ConstantImpl).value);
 	}
-	
+
 	@Test
 	def void testHints() {
 		val specification = '''
@@ -137,12 +138,92 @@ class TestSKilLParser {
 
 		val usertype = specification.declarations.get(1) as Usertype;
 		Assert::assertEquals("removeUnknownRestrictions", usertype.hints.get(0).hintName);
+		Assert::assertEquals("unique", (usertype.hints.get(0).hintArguments.get(0).list as EDataTypeEList<String>).get(0));
+		Assert::assertEquals("monotone", (usertype.hints.get(0).hintArguments.get(0).list as EDataTypeEList<String>).get(1));
 		Assert::assertEquals("mixin", usertype.hints.get(1).hintName);
 		Assert::assertEquals("unique", usertype.hints.get(2).hintName);
 		Assert::assertEquals("pure", usertype.hints.get(3).hintName);
 		Assert::assertEquals("monotone", usertype.hints.get(4).hintName);
 		Assert::assertEquals("readOnly", usertype.hints.get(5).hintName);
-		//TODO field hints, second usertype, arguments
+		val fields = usertype.fields;
+		val field1 = fields.get(0);
+		Assert::assertEquals("constantMutator", field1.hints.get(0).hintName);
+		Assert::assertEquals("-17", field1.hints.get(0).hintArguments.get(0));
+		Assert::assertEquals("3000000000", field1.hints.get(0).hintArguments.get(1));
+		val field2 = fields.get(1);
+		Assert::assertEquals("distributed", field2.hints.get(0).hintName);
+		Assert::assertEquals("onDemand", field2.hints.get(1).hintName);
+		val field3 = fields.get(2);
+		Assert::assertEquals("ignore", field3.hints.get(0).hintName);
+		val field4 = fields.get(3);
+		Assert::assertEquals("hide", field4.hints.get(0).hintName);
+		
+		val usertype2 = specification.declarations.get(0) as Usertype;
+		Assert::assertEquals("flat", usertype2.hints.get(0).hintName);
+		val fields2 = usertype2.fields;
+		val field = fields2.get(0);
+		Assert::assertEquals("auto", field.hints.get(0).hintName);
 	}
+	
+	@Test
+	def void testComments() {
+		val specification = '''
+#head comment
+#head comment 2
+		
+/*usertype comment
+second line*/
+!unique
+Usertype {
+  /*field comment
+  second line*/
+  !auto
+  i32 field;
+}
+		'''.parse
+		
+		Assert::assertEquals("#head comment" + System.getProperty("line.separator"), specification.headComments.get(0));
+		Assert::assertEquals("#head comment 2" + System.getProperty("line.separator"), specification.headComments.get(1));
+		val usertype = specification.declarations.get(0) as Usertype;
+		Assert::assertEquals("/*usertype comment" + System.getProperty("line.separator") + "second line*/", usertype.comment);
+		val field = usertype.fields.get(0);
+		Assert::assertEquals("/*field comment" + System.getProperty("line.separator") + "  second line*/", field.comment);
+	}
+	/* TODO WIP
+	@Test
+	def void testRestrictions() {
+		val specification =
+		@unique
+		@default(Type2)
+		Type1 {
+			@default(-3000000000)
+			i64 field1;
+			@default("Akemi")
+			string field2;
+			@default(-123.456)
+			f64 field3;
+		}
+		
+		@singleton
+		@monotone
+		Type2 {
+			@nonnull
+			Type4 field4;
+		}
+		
+		@abstract
+		Type3 {
+			
+		}
+		
+		Type4 {
+			@min(-3000000000)
+			@min(-0xABCD, "inclusive")
+			@max(-3000000000)
+			@max(-0xABCD, "exclusive")
+			@range
+			@range
+		}
+	} */
 
 }
