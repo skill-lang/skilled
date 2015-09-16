@@ -11,13 +11,18 @@ Tool {
 HintParent {}
 
 Type : HintParent {
+    string comment;
+    string[] restrictions;
     string name;
     File file;
     Field[] fields;
     Hint[] typeHints;
+    string[] extends;
 }
 
-Field : HintParent { 
+Field : HintParent {
+    string comment;
+    string[] restrictions; 
     string name;
     Hint[] fieldHints;
     Type type;
@@ -29,6 +34,7 @@ Hint {
 }
 
 File {
+    string header;
     string path;
     string md5;
     string timestamp;
