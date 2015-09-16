@@ -91,7 +91,7 @@ class TestSKilLParser {
 		UserType {
 			const i32 field1 = -17;
 			const i64 field2 = 3000000000;
-			const i16 field3 = -0xABCD;
+			const i16 field3 = 0xABCD;
 		}
 		'''.parse
 		
@@ -105,13 +105,13 @@ class TestSKilLParser {
 		Assert::assertEquals(3000000000L, (field2.fieldcontent as ConstantImpl).value);
 		val field3 = fields.get(2);
 		Assert::assertEquals(ConstantImpl, field3.fieldcontent.class);
-		Assert::assertEquals(-0xABCD, (field3.fieldcontent as ConstantImpl).value);
+		Assert::assertEquals(0xABCD, (field3.fieldcontent as ConstantImpl).value);
 	}
 
 	@Test
 	def void testHints() {
 		val specification = '''
-		!removeUnknownRestrictions("unique, monotone")
+		!removeUnknownRestrictions("unique", "monotone")
 		!mixin
 		!unique
 		!pure
@@ -124,9 +124,9 @@ class TestSKilLParser {
 			!onDemand
 			i32 field2;
 			!ignore
-			field3;
+			i32 field3;
 			!hide
-			field4;
+			i32 field4;
 		}
 		
 		!flat
@@ -136,10 +136,10 @@ class TestSKilLParser {
 		}
 		'''.parse
 
-		val usertype = specification.declarations.get(1) as Usertype;
+		val usertype = specification.declarations.get(0) as Usertype;
 		Assert::assertEquals("removeUnknownRestrictions", usertype.hints.get(0).hintName);
-		Assert::assertEquals("unique", (usertype.hints.get(0).hintArguments.get(0).list as EDataTypeEList<String>).get(0));
-		Assert::assertEquals("monotone", (usertype.hints.get(0).hintArguments.get(0).list as EDataTypeEList<String>).get(1));
+		Assert::assertEquals("unique", (usertype.hints.get(0).hintArguments.get(0).valueString));
+		Assert::assertEquals("monotone", (usertype.hints.get(0).hintArguments.get(1).valueString));
 		Assert::assertEquals("mixin", usertype.hints.get(1).hintName);
 		Assert::assertEquals("unique", usertype.hints.get(2).hintName);
 		Assert::assertEquals("pure", usertype.hints.get(3).hintName);
@@ -148,8 +148,8 @@ class TestSKilLParser {
 		val fields = usertype.fields;
 		val field1 = fields.get(0);
 		Assert::assertEquals("constantMutator", field1.hints.get(0).hintName);
-		Assert::assertEquals("-17", field1.hints.get(0).hintArguments.get(0));
-		Assert::assertEquals("3000000000", field1.hints.get(0).hintArguments.get(1));
+		Assert::assertEquals(-17, field1.hints.get(0).hintArguments.get(0).valueLong);
+		Assert::assertEquals(3000000000L, field1.hints.get(0).hintArguments.get(1).valueLong);
 		val field2 = fields.get(1);
 		Assert::assertEquals("distributed", field2.hints.get(0).hintName);
 		Assert::assertEquals("onDemand", field2.hints.get(1).hintName);
@@ -158,10 +158,9 @@ class TestSKilLParser {
 		val field4 = fields.get(3);
 		Assert::assertEquals("hide", field4.hints.get(0).hintName);
 		
-		val usertype2 = specification.declarations.get(0) as Usertype;
+		val usertype2 = specification.declarations.get(1) as Usertype;
 		Assert::assertEquals("flat", usertype2.hints.get(0).hintName);
-		val fields2 = usertype2.fields;
-		val field = fields2.get(0);
+		val field = usertype2.fields.get(0);
 		Assert::assertEquals("auto", field.hints.get(0).hintName);
 	}
 	

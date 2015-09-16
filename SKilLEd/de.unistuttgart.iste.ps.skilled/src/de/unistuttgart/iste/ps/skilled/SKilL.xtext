@@ -1,6 +1,6 @@
 /** 
- * Xtext grammar for SKilL (NOT FINISHED YET)
- * TODO: Add missing stuff and replace predefined Terminals.
+ * Xtext grammar for SKilL
+ * TODO: Add hexInt
  * @author Marco Link
  */
 
@@ -62,20 +62,32 @@ Fieldcontent:
 
 Restriction:
 	'@' restrictionName = ID 
-	('(' (restrictionArguments += R_ARG (',' restrictionArguments += R_ARG)*)?')')?
-;
-
-//TODO: Better name than list.
-R_ARG:
-	({Float} FLOAT | {INT} INT | {STRING} STRING | (list += ID (=> ',' list += ID)*))
+	('(' (restrictionArguments += RestrictionArgument (',' restrictionArguments += RestrictionArgument)*)?')')?
 ;
 
 Hint:
 	'!' hintName = ID
+	('(' (hintArguments += HintArgument (',' hintArguments += HintArgument)*)?')')?
 ;
 
+RestrictionArgument:
+	(valueDouble = DoubleArgument | valueLong = LongArgument | valueString = STRING | valueType = DeclarationReference )	
+;
+
+HintArgument:
+	(valueDouble = DoubleArgument | valueLong = LongArgument | valueString = STRING | valueIdentifier = ID)	
+;
+
+LongArgument returns ecore::ELongObject:
+	LONG
+;
+DoubleArgument returns ecore::EDoubleObject:
+	DOUBLE
+;
+
+
 Constant:
-	'const' fieldtype = Fieldtype name = ID '=' value = INT
+	'const' fieldtype = Fieldtype name = ID '=' value = LONG
 ;
 
 Data:
@@ -99,7 +111,7 @@ Listtype:
 ;
 
 Arraytype:
-	basetype = Basetype ('[' INT? ']')
+	basetype = Basetype ('[' LONG? ']')
 ;
 
 Basetype:
@@ -124,12 +136,13 @@ terminal ID:
 	('a' .. 'z' | 'A' .. 'Z' | '_' | '\u007f' .. '\uffff') ('a'..'z'|'A'..'Z'|'_'|'0'..'9' | '\u007f' .. '\uffff')*		
 ;
 
-terminal INT returns ecore::EInt:
+terminal LONG returns ecore::ELong:
 	'-'? DIGIT+
 ;
 
-terminal FLOAT returns ecore::EFloat:
-	((INT EXPONENT) | (INT '.' DIGIT* EXPONENT?)) ('f' | 'F' | 'd' | 'D')? 	
+
+terminal DOUBLE returns ecore::EDouble:
+	((LONG EXPONENT) | (LONG? '.' DIGIT* EXPONENT?)) ('f' | 'F' | 'd' | 'D')? 	
 ;
 
 terminal fragment DIGIT:

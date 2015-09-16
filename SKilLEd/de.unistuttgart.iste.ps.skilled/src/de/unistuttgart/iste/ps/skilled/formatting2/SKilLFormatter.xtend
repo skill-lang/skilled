@@ -19,7 +19,6 @@ import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile;
 import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype;
 import de.unistuttgart.iste.ps.skilled.sKilL.Listtype;
 import de.unistuttgart.iste.ps.skilled.sKilL.Maptype;
-import de.unistuttgart.iste.ps.skilled.sKilL.R_ARG;
 import de.unistuttgart.iste.ps.skilled.sKilL.Restriction;
 import de.unistuttgart.iste.ps.skilled.sKilL.Settype;
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef;
@@ -28,6 +27,7 @@ import de.unistuttgart.iste.ps.skilled.services.SKilLGrammarAccess;
 import org.eclipse.xtext.formatting2.AbstractFormatter2;
 import org.eclipse.xtext.formatting2.IFormattableDocument;
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.sKilL.RestrictionArgument
 
 /**
  * @author Marco Link
@@ -141,7 +141,7 @@ class SKilLFormatter extends AbstractFormatter2 {
 		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
 		restriction.regionForKeyword("@").prepend[noSpace]
 		restriction.regionForKeyword("@").append[noSpace]
-		for (R_ARG restrictionArguments : restriction.getRestrictionArguments()) {
+		for (RestrictionArgument restrictionArguments : restriction.getRestrictionArguments()) {
 			format(restrictionArguments, document);
 		}
 		restriction.append[newLine]
