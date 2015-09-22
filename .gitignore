@@ -109,3 +109,6 @@ local.properties
 META-INF
 *.classpath
 *.project
+
+#xtend-gen: (are generated)
+xtend-gen
