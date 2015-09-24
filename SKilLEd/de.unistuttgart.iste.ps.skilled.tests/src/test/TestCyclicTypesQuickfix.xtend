@@ -1,5 +1,5 @@
 package test
 
 class TestCyclicTypesQuickfix {
-	//TODO
+	//TODO Test will be written when autoformat is implemented
 }

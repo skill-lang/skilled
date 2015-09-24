@@ -111,10 +111,10 @@ META-INF
 *.project
 
 #xtend-gen: (are generated)
-xtend-gen
+xtend-gen/
 bin/
 /.metadata
-src-gen
+src-gen/
 ant/
 *.xml_gen
 

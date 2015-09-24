@@ -1,0 +1,130 @@
+<project basedir="." default="build" name="SKilLls" xmlns:jacoco="antlib:org.jacoco.ant">
+    <property environment="env"/>
+    <property name="dir.buildfile" value="."/>
+    <mkdir dir="${dir.buildfile}/../SKilLANTLR/bin"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="SKilLANTLR.location" value="${dir.buildfile}/../SKilLANTLR/bin"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+    <path id="lib.userclasspath"/>
+    <path id="SKilLANTLR.classpath">
+        <pathelement location="${SKilLANTLR.location}/bin"/>
+    </path>
+    <path id="org.antlr:antlr4-runtime:4.5.1-1.userclasspath"/>
+    <path id="JUnit 4.libraryclasspath">
+        <pathelement location="${dir.buildfile}/lib/junit-4.12.jar"/>
+        <pathelement location="${dir.buildfile}/lib/hamcrest-core-1.3.jar"/>
+    </path>
+    <path id="SKilLls.classpath">
+        <pathelement location="out/production/SKilLls"/>
+        <path refid="lib.userclasspath"/>
+        <path refid="SKilLANTLR.classpath"/>
+        <path refid="org.antlr:antlr4-runtime:4.5.1-1.userclasspath"/>
+        <pathelement location="lib/antlr4-runtime-4.5.1-1.jar"/>
+        <pathelement location="lib/hamcrest-core-1.3.jar"/>
+        <pathelement location="lib/skill.java.common.jar"/>
+        <pathelement location="lib/skill.jvm.common.jar"/>
+        <path refid="JUnit 4.libraryclasspath"/>
+    </path>
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+        <classpath path="../SKilLEd/de.unistuttgart.iste.ps.skilled/lib/jacocoant.jar"/>
+    </taskdef>
+    <target name="init">
+        <mkdir dir="out/production/SKilLls"/>
+        <copy includeemptydirs="false" todir="out/production/SKilLls">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+                <exclude name="test/"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="out/production/SKilLls">
+            <fileset dir="src/test">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="out"/>
+    </target>
+    <target depends="clean" name="cleanall">
+        <ant antfile="build-SkilLANTLR.xml" dir="${SKilLANTLR.location}/.." inheritAll="false" target="clean"/>
+    </target>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects">
+        <ant antfile="build-SkilLANTLR.xml" dir="${SKilLANTLR.location}/.." inheritAll="false" target="build-project">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+    </target>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="out/production/SKilLls" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <src path="src/test"/>
+            <exclude name="test/"/>
+            <classpath refid="SKilLls.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="New_configuration">
+        <java classname="main.MainClass" failonerror="true" fork="yes">
+            <classpath refid="SKilLls.classpath"/>
+        </java>
+    </target>
+    <target depends="build" name="test">
+        <mkdir dir="${dir.buildfile}/out/test/SKilLls"/>
+        <jacoco:coverage destfile="${dir.buildfile}/out/test/SKilLls/jacoco_SKilLls.exec">
+        <junit fork="yes" printsummary="withOutAndErr" haltonerror="false" haltonfailure="false">
+            <classpath>
+                <path refid="SKilLls.classpath"/>
+                <path refid="JUnit 4.libraryclasspath"/>
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest todir="${dir.buildfile}/out/test/SKilLls">
+                <fileset dir="${dir.buildfile}/src/test">
+                    <include name="**/*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+       </jacoco:coverage>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+    <target depends="build" name="create_run_jar">
+        <jar destfile="${dir.buildfile}/out/skillls.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="main.MainClass"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="${dir.buildfile}/out/production/SKilLls"/>
+            <fileset dir="${dir.buildfile}/../SKilLANTLR/bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/antlr4-runtime-4.5.1-1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/hamcrest-core-1.3.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/skill.java.common.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/skill.jvm.common.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/junit-4.12.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/hamcrest-core-1.3.jar"/>
+        </jar>
+    </target>
+</project>

@@ -13,7 +13,6 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.unistuttgart.iste.ps.skilled;uses:="com.google.inject,org.eclipse.xtext.service,org.eclipse.xtext",
  de.unistuttgart.iste.ps.skilled.converter; uses:="org.eclipse.xtext.nodemodel,  org.eclipse.xtext.conversion,  org.eclipse.xtext.common.services,  org.eclipse.xtext.conversion.impl",
- de.unistuttgart.iste.ps.skilled.formatting,
  de.unistuttgart.iste.ps.skilled.formatting2;uses:="de.unistuttgart.iste.ps.skilled.sKilL,org.eclipse.xtext.formatting2",
  de.unistuttgart.iste.ps.skilled.generator;uses:="org.eclipse.xtext.generator,org.eclipse.emf.ecore.resource",
  de.unistuttgart.iste.ps.skilled.parser.antlr;uses:="org.eclipse.xtext.parser.antlr,de.unistuttgart.iste.ps.skilled.parser.antlr.internal,de.unistuttgart.iste.ps.skilled.services",

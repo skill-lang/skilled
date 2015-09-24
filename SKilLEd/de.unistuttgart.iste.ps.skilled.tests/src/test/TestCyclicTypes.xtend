@@ -100,7 +100,7 @@ class TestCyclicTypes {
 			} 	
 		'''.parse.validate.isNullOrEmpty )
 		
-		assertTrue('''
+		assertFalse('''
 			TypeA :TypeA {
 				const i16 a = 1;
 			}   
@@ -110,7 +110,7 @@ class TestCyclicTypes {
 			TypeC :TypeB{
 				
 			} 	
-		'''.parse.validate.size==3)
+		'''.parse.validate.isNullOrEmpty)
 		
 	}
 	
