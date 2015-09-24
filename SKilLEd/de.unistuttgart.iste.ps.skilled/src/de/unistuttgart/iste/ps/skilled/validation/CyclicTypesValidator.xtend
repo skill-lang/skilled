@@ -7,7 +7,6 @@ import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
 import java.util.HashSet
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
-import org.eclipse.emf.ecore.EValidator
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
 /**
@@ -19,11 +18,12 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
 class CyclicTypesValidator  extends AbstractDeclarativeValidator {
 
 	public static val CYCLIC_TYPES = 'cyclicTypes'
+	public static val TYPE_IS_HIS_OWN_PARENT = 'cycleError'
 	public static var index = 0
 	public static var Set<CyclicTypesNode> edges 
 	public static var Stack<CyclicTypesNode> nodes_stack = new Stack()
 	public static var CyclicTypesNode firstnode;
-
+	
 
 	override register(EValidatorRegistrar registar){
 		
@@ -44,24 +44,12 @@ class CyclicTypesValidator  extends AbstractDeclarativeValidator {
 		if(node.getindex == -1){
 			strongconnect(node)
 		}			
-	}	
-	 
-	/* 
-	//Prints the Graph for Testing 
-	for(CyclicTypesNode cy : edges){
-		System.out.print("Node: " + cy.typeDeclaration.name)
-		System.out.print(", Lowlink: " + cy.getlowlink)
-		System.out.println(", Index: " +cy.getindex)
-		System.out.println("Linked Nodes: ")
-		for(CyclicTypesNode nodes : cy.getsuccessors){
-			
-			System.out.println(nodes.typeDeclaration.name)
-		
-		}
-		System.out.println("------------------------------------------")
 	}
-	*/
-		
+	
+	//Test if Node is his own parent	
+	if(firstnode.getsuccessors.contains(firstnode)){
+		error("Error: type can't be his own parent." , firstnode.typeDeclaration, SKilLPackage.Literals.DECLARATION__NAME, TYPE_IS_HIS_OWN_PARENT, firstnode.typeDeclaration.name)
+	}		
 	}	
 	def strongconnect(CyclicTypesNode node){
 		node.setindex(index)
@@ -98,8 +86,8 @@ class CyclicTypesValidator  extends AbstractDeclarativeValidator {
 	}
 
 	/*
-	 * This Method gets a new Node that is added and adds all its supertypes.
-	 * The Node is already in the Nodeset.
+	 * This Method gets a new Node that was added and adds all supertypes.
+	 * The Node should already be in the Nodeset.
 	 * 
 	 */
 	def void addNode(CyclicTypesNode addednode){
@@ -130,19 +118,22 @@ class CyclicTypesValidator  extends AbstractDeclarativeValidator {
 	 *  
 	 */
 	def connectedcomponent(Set<CyclicTypesNode> nodes){
-		//If the strongly connected component has more than 1 Element, there is a Cycle
+		//If the strongly connected component has more than 1 Element, there is a Cycle.
+		//For every Node that is not part of a Cycle, there is a component with only this Node as Element.
 		if(nodes.size> 1){
+			//If firstnode is in the Cycle -> Error Message at this Place
 			if(nodes.contains(firstnode)){
-				//Error: Cycle
-				error("Error: can't use extend in a Cycle" , firstnode.typeDeclaration, SKilLPackage.Literals.DECLARATION__NAME, CYCLIC_TYPES)
+				//Create Array with the names of the Types of the component for the Quickfix
+				var int counter = 0
+				var String[] array_nodes = newArrayOfSize(nodes.size)
+				for(CyclicTypesNode n: nodes){
+					array_nodes.set(counter, n.typeDeclaration.name)
+					counter++
+				}
+				//Error Message
+				error("Error: can't use extend in a Cycle" , firstnode.typeDeclaration, SKilLPackage.Literals.DECLARATION__NAME, CYCLIC_TYPES, array_nodes)
+				}
 			}
-		}else if(nodes.size==1){
-			//Only 1 Node in strongly connected component -> can't extend the node itself
-			if(nodes.get(0).getsuccessors.contains(nodes.get(0))){
-				error("Error: type can't be his own parent." , firstnode.typeDeclaration, SKilLPackage.Literals.DECLARATION__NAME, CYCLIC_TYPES)
-			}
-			
 		}
-		
-	}
+	
 }

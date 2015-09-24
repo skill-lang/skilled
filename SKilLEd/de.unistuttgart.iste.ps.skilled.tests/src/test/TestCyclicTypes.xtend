@@ -13,9 +13,6 @@ import org.junit.runner.RunWith;
 
 import com.google.inject.Inject;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.validation.SKilLValidator
-
 
 
 @InjectWith(SKilLInjectorProvider)

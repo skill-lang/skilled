@@ -3,17 +3,72 @@
  */
 package de.unistuttgart.iste.ps.skilled.ui.quickfix
 
-//import org.eclipse.xtext.ui.editor.quickfix.Fix
-//import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
-//import org.eclipse.xtext.validation.Issue
+import org.eclipse.xtext.ui.editor.quickfix.Fix
+import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
+import org.eclipse.xtext.validation.Issue
+import de.unistuttgart.iste.ps.skilled.validation.CyclicTypesValidator
+import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
+import java.util.ArrayList
 
 /**
  * Custom quickfixes.
- *
+ * 
+ * @author Jan Berberich
+ * 
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#quick-fixes
  */
-class SKilLQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider {
+public class SKilLQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider {
+	
+	//Quickfix to remove the Parent that is the Type
+	@Fix(CyclicTypesValidator::TYPE_IS_HIS_OWN_PARENT)
+	def fixSupertype(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, "Remove Type", "Removes the supertype " + issue.data.get(0) + ".", "upcase.png", new ISemanticModification() {
+			override void apply(EObject element, IModificationContext context) {
+				var e =element as TypeDeclaration
+				var TypeDeclarationReference remove
+				var Supertypes = e.supertypes
+				//Remove Reference
+				for(TypeDeclarationReference tdr : Supertypes){
+					if(tdr.type.equals(e)) {
+						remove = tdr 
+					}					
+				}
+				Supertypes.remove(remove)
+			}
+		})
+	}
 
+
+	//Quickfix to remove Cyclic Types
+ 	@Fix(CyclicTypesValidator::CYCLIC_TYPES)
+	def fixCyclicType(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, "Remove Type", "Removes the supertype " + issue.data.get(0) + ".", "upcase.png", new ISemanticModification() {
+			override void apply(EObject element, IModificationContext context) {
+				var e =element as TypeDeclaration
+				var ArrayList<TypeDeclarationReference> remove = new ArrayList<TypeDeclarationReference>
+				var Supertypes = e.supertypes 
+				var names = issue.data		//Array with the Names of all Types of the Cyclic Component
+				//Search all References that are in the Cyclic Component
+				for(TypeDeclarationReference tdr : Supertypes){
+					for(String name: names){
+						if(tdr.type.name.equals(name)) {
+							remove.add(tdr)
+						}					
+					}
+				}
+				//Remove the references that were found
+				for(TypeDeclarationReference tdr: remove){
+					e.supertypes.remove(tdr)
+				}
+			}
+		})
+	}
+
+//  Example Validator
 //	@Fix(MyDslValidator::INVALID_NAME)
 //	def capitalizeName(Issue issue, IssueResolutionAcceptor acceptor) {
 //		acceptor.accept(issue, 'Capitalize name', 'Capitalize the name.', 'upcase.png') [
