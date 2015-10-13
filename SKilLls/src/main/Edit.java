@@ -1,132 +1,364 @@
 package main;
 
-import java.io.File;
+import tools.Field;
+import tools.Hint;
+import tools.Tool;
+import tools.Type;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * @author Armin Hüneburg
  * @since 25.08.15.
  */
+@SuppressWarnings("unused")
 class Edit {
-    private final Scanner scanner = new Scanner(System.in);
-    private tools.internal.ToolAccess ta;
-    private tools.internal.FileAccess fa;
+    private final String commandString;
     private tools.api.SkillFile sk;
 
-    public Edit() {
-
+    /**
+     * @param commandString String containing the commands that should be executed.
+     */
+    public Edit(String commandString) {
+        this.commandString = commandString;
     }
 
-    public void setProject(File project) {
-        File project1 = project;
-    }
-
-    public void setToolAccess(tools.internal.ToolAccess ta) {
-        this.ta = ta;
-    }
-
-    public void setFileAccess(tools.internal.FileAccess fa) {
-        this.fa = fa;
-    }
-
+    /**
+     * @param sk The skillfile containing the configuration of the project.
+     */
     public void setSkillFile(tools.api.SkillFile sk) {
         this.sk = sk;
     }
 
     public void start() {
-        System.out.println("Welcome to the Tool editor.\nWhat is the name of the Tool you want to add?");
-        String toolName;
-        toolName = getTool();
-        tools.Tool t;
-        if (toolName.startsWith("&") && Character.toLowerCase(toolName.charAt(1)) == 'n') {
-            toolName = newTool();
-            t = ta.make();
-            t.setFiles(new ArrayList<>());
-            t.setTypes(new ArrayList<>());
-            t.setName(toolName);
-        }
-        switch (chooseAction()) {
-            case 1:
-
-                break;
-
-            case 2:
-                break;
-
-            case 3:
-                break;
-
-            case 4:
-                break;
+        String[] commands = commandString.split(";");
+        for (String command : commands) {
+            processCommand(command);
         }
     }
 
-    private int chooseAction() {
-        while (true) {
-            System.out.println("1 - Add Type    2 - Remove Type\n3 - Edit Type    4 - Delete Tool");
-            String line = scanner.nextLine();
-            try {
-                int n = Integer.parseInt(line);
-                if (1 <= n && n <= 4) {
-                    return n;
-                } else {
-                    System.out.println("Invalid action");
+    private void processCommand(String command) {
+        String[] subCommands = command.split(":");
+        if (subCommands.length <= 1) {
+            return;
+        }
+        int index = 0;
+        Tool tool = selectTool(subCommands[index]);
+        index++;
+        if (tool == null) {
+            tool = newTool(subCommands[index]);
+            index++;
+        }
+        Command cmd = getCommand(subCommands[index]);
+        index++;
+
+        Method m;
+        try {
+            m = this.getClass().getMethod(cmd.name(), Tool.class, String[].class, int.class);
+        } catch (NoSuchMethodException e) {
+            ExceptionHandler.handle(e);
+            return;
+        }
+        try {
+            m.invoke(this, tool, subCommands, index);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            ExceptionHandler.handle(e);
+        }
+    }
+
+    private void setDefaults(Tool tool, String[] subCommands, int index) {
+        String execEnv = subCommands[index];
+        index++;
+        String path = subCommands[index];
+        index++;
+        tool.setGenerator(sk.Generators().make(execEnv, path));
+        tool.setLanguage(subCommands[index]);
+        index++;
+        tool.setModule(subCommands[index]);
+        index++;
+        tool.setOutPath(subCommands[index]);
+    }
+
+    private void removeTypeHint(Tool tool, String[] subCommands, int index) {
+        String typeName = subCommands[index];
+        index++;
+        String fieldName = subCommands[index];
+        index++;
+        String hintName = subCommands[index];
+
+        Type type = null;
+        for (Type t : tool.getTypes()) {
+            if (t.getName().equals(typeName)) {
+                type = t;
+                break;
+            }
+        }
+        if (type == null) {
+            return;
+        }
+
+        Field field = null;
+        for (Field f : type.getFields()) {
+            if (f.getName().equals(fieldName)) {
+                field = f;
+                break;
+            }
+        }
+        if (field == null) {
+            return;
+        }
+
+        Hint hint = null;
+        for (Hint h : field.getFieldHints()) {
+            if (h.getName().equals(hintName)) {
+                hint = h;
+                break;
+            }
+        }
+        if (hint == null) {
+            return;
+        }
+
+        field.getFieldHints().remove(hint);
+        hint.delete();
+    }
+
+    private void addTypeHint(Tool tool, String[] subCommands, int index) {
+        String typeName = subCommands[index];
+        index++;
+        String hintName = subCommands[index];
+
+        Type type = null;
+        for (Type t : tool.getTypes()) {
+            if (t.getName().equals(typeName)) {
+                type = t;
+                break;
+            }
+        }
+        if (type == null) {
+            return;
+        }
+
+        Hint hint = null;
+        for (Hint h : type.getTypeHints()) {
+            if (h.getName().equals(hintName)) {
+                hint = h;
+                break;
+            }
+        }
+        if (hint != null) {
+            return;
+        }
+
+        type.getTypeHints().add(sk.Hints().make(hintName, type));
+    }
+
+    private void removeFieldHint(Tool tool, String[] subCommands, int index) {
+        String typeName = subCommands[index];
+        index++;
+        String fieldName = subCommands[index];
+        index++;
+        String hintName = subCommands[index];
+
+        Type type = null;
+        for (Type t : tool.getTypes()) {
+            if (t.getName().equals(typeName)) {
+                type = t;
+                break;
+            }
+        }
+        if (type == null) {
+            return;
+        }
+
+        Field field = null;
+        for (Field f : type.getFields()) {
+            if (f.getName().equals(fieldName)) {
+                field = f;
+                break;
+            }
+        }
+        if (field == null) {
+            return;
+        }
+
+        Hint hint = null;
+        for (Hint h : field.getFieldHints()) {
+            if (h.getName().equals(hintName)) {
+                hint = h;
+                break;
+            }
+        }
+        if (hint == null) {
+            return;
+        }
+
+        field.getFieldHints().remove(hint);
+        hint.delete();
+    }
+
+    private void addFieldHint(Tool tool, String[] subCommands, int index) {
+        String typeName = subCommands[index];
+        index++;
+        String fieldName = subCommands[index];
+
+        Type type = null;
+        for (Type t : tool.getTypes()) {
+            if (t.getName().equals(typeName)) {
+                type = t;
+                break;
+            }
+        }
+        if (type == null) {
+            return;
+        }
+
+        Field field = null;
+        for (Field f : type.getFields()) {
+            if (f.getName().equals(fieldName)) {
+                field = f;
+                break;
+            }
+        }
+        if (field == null) {
+            return;
+        }
+
+        field.getFieldHints().add(sk.Hints().make(fieldName, field));
+    }
+
+    private void removeField(Tool tool, String[] subCommands, int index) {
+        String typeName = subCommands[index];
+        index++;
+        String fieldName = subCommands[index];
+
+        Type type = null;
+        for (Type t : tool.getTypes()) {
+            if (t.getName().equals(typeName)) {
+                type = t;
+                break;
+            }
+        }
+        if (type == null) {
+            return;
+        }
+
+        Field field = null;
+        for (Field f : type.getFields()) {
+            if (f.getName().equals(fieldName)) {
+                field = f;
+                break;
+            }
+        }
+        if (field == null) {
+            return;
+        }
+
+        type.getFields().remove(field);
+        field.delete();
+    }
+
+    private void addField(Tool tool, String[] subCommands, int index) {
+        String typeName = subCommands[index];
+        index++;
+        String fieldName = subCommands[index];
+
+        Type type = null;
+        for (Type t : tool.getTypes()) {
+            if (t.getName().equals(typeName)) {
+                type = t;
+                break;
+            }
+        }
+        if (type == null) {
+            return;
+        }
+
+        for (Field f : type.getFields()) {
+            if (f.getName().equals(fieldName)) {
+                return;
+            }
+        }
+        Field f = sk.Fields().make(new ArrayList<>(), fieldName, type);
+        type.getFields().add(f);
+    }
+
+    private void removeType(Tool tool, String[] subCommands, int index) {
+        String typeName = subCommands[index];
+        Type type = null;
+        for (Type t : sk.Types()) {
+            if (typeName.equals(t.getName())) {
+                tool.getTypes().remove(t);
+                type = t;
+                break;
+            }
+        }
+        if (type == null) {
+            return;
+        }
+        tools.File file = null;
+        for (tools.File f : tool.getFiles()) {
+            if (f.getPath().equals(type.getFilePath())) {
+                file = f;
+                tool.getFiles().remove(f);
+                break;
+            }
+        }
+        if (file == null) {
+            return;
+        }
+        for (Type t : tool.getTypes()) {
+            if (t.getFilePath().equals(file.getPath())) {
+                tool.getFiles().add(file);
+                break;
+            }
+        }
+    }
+
+    private void addType(Tool tool, String[] subCommands, int index) {
+        String typeName = subCommands[index];
+        for (Type t : sk.Types()) {
+            if (typeName.equals(t.getName())) {
+                tool.getTypes().add(t);
+                for (tools.File f : tool.getFiles()) {
+                    if (f.getPath().equals(t.getFilePath())) {
+                        tool.getFiles().add(f);
+                        return;
+                    }
                 }
-            } catch (NumberFormatException e) {
-                if (exit(line)) {
-                    System.exit(0);
+            }
+        }
+    }
+
+    private void rename(Tool tool, String[] subCommands, int index) {
+        tool.setName(subCommands[index]);
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    private void delete(Tool tool, String[] subCommands, int index) {
+        tool.delete();
+    }
+
+    private Command getCommand(String subCommand) {
+        return Command.values()[Integer.parseInt(subCommand)];
+    }
+
+    private Tool newTool(String subCommand) {
+        return sk.Tools().make(new ArrayList<>(), sk.Generators().make(), "", "", subCommand, "", new ArrayList<>());
+    }
+
+    private Tool selectTool(String subCommand) {
+        if (subCommand.equals("&n")) {
+            return null;
+        } else {
+            for (Tool t : sk.Tools()) {
+                if (t.getName().equals(subCommand)) {
+                    return t;
                 }
             }
         }
-    }
-
-    private String newTool() {
-        System.out.println("Please insert a name for the new tool.");
-        String line = scanner.nextLine();
-        while (line.startsWith("&")) {
-            if (exit(line)) {
-                System.exit(0);
-            }
-            System.out.println("Please don't use & as the first character in a tool.");
-            line = scanner.nextLine();
-        }
-        return line;
-    }
-
-    private String getTool() {
-        System.out.println("Please insert a tool for editing or insert &N for adding a new one.");
-        String line = scanner.nextLine();
-        while (line.startsWith("&")) {
-            if (exit(line)) {
-                System.exit(0);
-            }
-            if (line.length() > 1 && Character.toLowerCase(line.charAt(1)) == 'n') {
-                return line;
-            }
-            System.out.println("Please don't use & as the first character in a tool.");
-            line = scanner.nextLine();
-        }
-        return line;
-    }
-
-    private boolean exit(String line) {
-        if (line.startsWith("&")) {
-            switch (line.charAt(1)) {
-                case 'Q':
-                case 'q':
-                    return true;
-
-                case 'X':
-                case 'x':
-                    save();
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    private void save() {
-        sk.close();
+        return null;
     }
 }

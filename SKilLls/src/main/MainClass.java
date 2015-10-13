@@ -1,5 +1,8 @@
 package main;
 
+import tools.Generator;
+import tools.Tool;
+import tools.api.SkillFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,6 +15,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import Exceptions.ProjectException;
 
@@ -46,6 +51,11 @@ public class MainClass {
             + "       skillls -agl /path/to/generator Java /path/to/project\n"
             + "       This command generates all bindings for the tools of the project in Java.\n"
             + "       If l comes before g the language has to be given first.";
+    private static Generator generator;
+    private static String language;
+    private static FileFlag fileFlag = FileFlag.Changed;
+    private static String module;
+    private static File output;
 
     /**
      * Entry Point. Generates flags for the generator execution.
@@ -54,113 +64,167 @@ public class MainClass {
      *            The command line arguments.
      */
     public static void main(String[] args) {
-        FileFlag changeFlag = FileFlag.Changed;
-        // HintFlag hintFlag = HintFlag.No;
-        String lang = "";
-        String pack = "";
-        String exec = "";
-        Edit edit = null;
-        File gen = null;
-        ArrayList<String> ts = new ArrayList<>();
-        File project = null;
-        File output = null;
-        boolean generate = true;
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (arg.startsWith("--")) {
-                switch (arg) {
-                    case "--all":
-                        changeFlag = FileFlag.All;
-                        break;
-
-                    case "--hints":
-                        // hintFlag = HintFlag.Yes;
-                        break;
-
-                    case "--lang":
-                        lang = args[i + 1];
-                        i++;
-                        break;
-
-                    case "--generator":
-                        gen = new File(args[i + 1]);
-                        i++;
-                        break;
-
-                    case "--ls":
-                        generate = false;
-                        break;
-
-                    case "--help":
-                        printHelp();
-                        return;
-
-                    default:
-                        break;
+        if (args[0].equals("-e") || args[0].equals("--edit")) {
+            Edit e = new Edit(args[2]);
+            File file = new File(args[1]);
+            File sfFile = new File(file.getAbsolutePath() + File.separator + ".skills");
+            if (!sfFile.exists()) {
+                try {
+                    //noinspection ResultOfMethodCallIgnored
+                    sfFile.createNewFile();
+                } catch (IOException e1) {
+                    ExceptionHandler.handle(e1);
                 }
-            } else if (arg.startsWith("-")) {
-                for (char c : arg.toCharArray()) {
-                    switch (c) {
-                        case 'a':
-                            changeFlag = FileFlag.All;
-                            break;
-
-                        case 'e':
-                            generate = false;
-                            edit = new Edit();
-                            break;
-
-                        case 'h':
-                            // hintFlag = HintFlag.Yes;
-                            break;
-
-                        case 'l':
-                            lang = args[i + 1];
-                            i++;
-                            break;
-
-                        case 'g':
-                            gen = new File(args[i + 1]);
-                            i++;
-                            break;
-
-                        default:
-                            break;
+            }
+            SkillFile sf;
+            try {
+                sf = SkillFile.open(sfFile.getAbsolutePath());
+            } catch (IOException e1) {
+                ExceptionHandler.handle(e1);
+                return;
+            }
+            e.setSkillFile(sf);
+            e.start();
+        } else {
+            HashMap<String, ArgumentEvaluation> evaluations = new HashMap<>();
+            for (int i = 0; i < args.length; i++) {
+                if (args[i].equals("--help") || args[i].equals("-h")) {
+                    printHelp();
+                    return;
+                } else if (args[i].startsWith("--")) {
+                    ArgumentEvaluation e = doubleDashArg(args, i);
+                    if (e.getArgument() != null) {
+                        evaluations.put(e.getName(), e);
                     }
-                }
-            } else {
-                if (exec.isEmpty()) {
-                    exec = arg;
-                } else if (project == null) {
-                    project = new File(arg);
-                } else if (output == null) {
-                    output = new File(arg);
-                } else if (i != args.length - 1) {
-                    ts.add(arg);
+                    i = e.getIndex();
+                } else if (args[i].startsWith("-")) {
+                    ArgumentEvaluation e = singleDashArg(args, i);
+                    if (e.getArgument() != null) {
+                        evaluations.put(e.getName(), e);
+                    }
+                    i = e.getIndex();
                 } else {
-                    pack = arg;
+                    ArgumentEvaluation e = noDashArg(args, i);
+                    if (e.getArgument() != null) {
+                        evaluations.put(e.getName(), e);
+                    }
+                    i = e.getIndex();
                 }
             }
-        }
-        if (generate) {
+            SkillFile sf;
             try {
-                generate(project, output, pack, ts, lang, exec, gen, changeFlag);
-            } catch (ProjectException | IOException e) {
-                e.printStackTrace();
+                sf = SkillFile.open(evaluations.get("path").getArgument() + File.separator + ".skills");
+            } catch (IOException e) {
+                ExceptionHandler.handle(e);
+                return;
             }
-        } else if (edit != null) {
-            project = new File(exec);
-            edit.setProject(project);
+            Set<String> set = evaluations.keySet();
+            set.remove("path");
+            if (set.contains("generator")) {
+                generator = sf.Generators().make(evaluations.get("exec").getArgument(), evaluations.get("path").getArgument());
+                set.remove("exec");
+                set.remove("path");
+            }
+            if (set.contains("lang")) {
+                language = evaluations.get("lang").getArgument();
+                set.remove("lang");
+            }
+
+            if (set.contains("module")) {
+                module = evaluations.get("module").getArgument();
+                set.remove("module");
+            }
+
+            if (set.contains("output")) {
+                output = new File(evaluations.get("output").getArgument());
+                set.remove("output");
+            }
+
+            ArrayList<String> tools = new ArrayList<>();
+            if (set.isEmpty()) {
+                tools.addAll(sf.Tools().stream().map(t -> t.getName()).collect(Collectors.toList()));
+            } else {
+                tools.addAll(set.stream().map(s -> evaluations.get(s).getArgument()).collect(Collectors.toList()));
+            }
+
             try {
-                tools.api.SkillFile state = tools.api.SkillFile.open(project.getPath() + File.separator + "tools");
-                edit.setFileAccess(state.Files());
-                edit.setSkillFile(state);
-                edit.setToolAccess(state.Tools());
-                edit.start();
+                generate(new File(evaluations.get("path").getArgument()), tools, sf);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static ArgumentEvaluation noDashArg(String[] args, int index) {
+        return new ArgumentEvaluation(index, args[index], Integer.toString(index));
+    }
+
+    private static ArgumentEvaluation singleDashArg(String[] args, int index) {
+        for (char c : args[index].substring(1).toCharArray()) {
+            switch (c) {
+                case 'g':
+                    index += 1;
+                    return new ArgumentEvaluation(index, args[index], "generator");
+
+                case 'a':
+                    fileFlag = FileFlag.All;
+                    return new ArgumentEvaluation(index, null, "all");
+
+                case 'l':
+                    index += 1;
+                    return new ArgumentEvaluation(index, args[index], "lang");
+
+                case 'x':
+                    index += 1;
+                    return new ArgumentEvaluation(index, args[index], "exec");
+
+                case 'p':
+                    index += 1;
+                    return new ArgumentEvaluation(index, args[index], "path");
+
+                case 'o':
+                    index += 1;
+                    return new ArgumentEvaluation(index, args[index], "output");
+
+                case 'm':
+                    index += 1;
+                    return new ArgumentEvaluation(index, args[index], "module");
+            }
+        }
+        return new ArgumentEvaluation(-1, null, null);
+    }
+
+    private static ArgumentEvaluation doubleDashArg(String[] args, int index) {
+        switch (args[index]) {
+            case "--generator":
+                index += 1;
+                return new ArgumentEvaluation(index, args[index], "generator");
+
+            case "--all":
+                fileFlag = FileFlag.All;
+                return new ArgumentEvaluation(index, null, "all");
+
+            case "--lang":
+                index += 1;
+                return new ArgumentEvaluation(index, args[index], "lang");
+
+            case "--exec":
+                index += 1;
+                return new ArgumentEvaluation(index, args[index], "exec");
+
+            case "--path":
+                index += 1;
+                return new ArgumentEvaluation(index, args[index], "path");
+
+            case "--output":
+                index += 1;
+                return new ArgumentEvaluation(index, args[index], "output");
+
+            case "--module":
+                index += 1;
+                return new ArgumentEvaluation(index, args[index], "module");
+        }
+        return new ArgumentEvaluation(-1, null, null);
     }
 
     /**
@@ -173,150 +237,90 @@ public class MainClass {
     /**
      * Work flow for generating bindings for tools.
      *
-     * @param project
-     *            The directory the project is stored in.
-     * @param output
-     *            The directory the output is stored in.
-     * @param pack
-     *            The package the binding should be placed in.
-     * @param ts
-     *            The tools being affected.
-     * @param language
-     *            The language the binding will be generated in.
-     * @param exec
-     *            The program executing the generator, e.g. scala.
-     * @param generator
-     *            The generator used for the generation.
-     * @param changeFlag
-     *            The flag for the whether to consider only one file or all.
-     * @throws ProjectException
-     *             Thrown if project is not a directory or does not contain a tools.sf file. Also if output is not a
-     *             directory.
-     * @throws IOException
-     *             Thrown if there is a problem with the creation of temporary files.
+     * @param project   The directory the project is stored in.
+     * @param tools     The tools that should be built.
+     * @param skillFile The skillfile which was loaded.
+     * @throws IOException Thrown if there is a problem with the creation of temporary files.
      */
-    private static void generate(File project, File output, String pack, ArrayList<String> ts, String language, String exec,
-            File generator, FileFlag changeFlag) throws ProjectException, IOException {
+    private static void generate(File project, ArrayList<String> tools, SkillFile skillFile) throws IOException {
         HashSet<tools.Tool> toolsToBuild = new HashSet<>();
-        HashMap<String, ArrayList<File>> toolToFile = new HashMap<>();
-        if (!project.isDirectory()) {
-            throw new ProjectException(project.getPath() + " is not a directory.");
-        }
-
-        if (!output.isDirectory()) {
-            throw new ProjectException(project.getPath() + " is not a directory.");
-        }
-
-        File toolRoot = new File(project.getPath() + File.separator + ".skills");
-        if (!toolRoot.exists()) {
-            throw new ProjectException(project.getPath() + " does not contain tools");
-        }
-
-        if (language.isEmpty() || !generator.exists()) {
-            throw new IllegalArgumentException("Language (--lang or -l [language]) and Generator (--generator or -g "
-                    + "[generator]) are required parameters for generation");
-        }
-
-        tools.api.SkillFile sf;
-        try {
-            sf = tools.api.SkillFile.open(toolRoot);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        tools.internal.ToolAccess ta = sf.Tools();
-
+        HashMap<Tool, ArrayList<File>> toolToFile = new HashMap<>();
         MessageDigest md5;
         MessageDigest sha1;
         try {
-            md5 = MessageDigest.getInstance("MD5");
-            sha1 = MessageDigest.getInstance("SHA1");
+            md5 = MessageDigest.getInstance("md5");
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            ExceptionHandler.handle(e);
             return;
         }
 
-        for (tools.Tool t : ta) {
-            if (!ts.contains(t.getName())) {
-                continue;
-            }
-
-            for (tools.File f : t.getFiles()) {
-                File toolFile = createToolFile(project, t, f);
-
-                if (toolToFile.get(t.getName()) == null) {
-                    toolToFile.put(t.getName(), new ArrayList<>());
-                }
-
-                toolToFile.get(t.getName()).add(toolFile);
-
-                DigestInputStream md5Dis;
-                DigestInputStream sha1Dis;
-                byte[] buffer = new byte[4096];
-                try (InputStream is = Files.newInputStream(Paths.get(toolFile.getPath()))) {
-                    md5Dis = new DigestInputStream(is, md5);
-                    sha1Dis = new DigestInputStream(is, sha1);
-                    while (md5Dis.read(buffer, 0, buffer.length) != -1) {
-                        // noinspection ResultOfMethodCallIgnored
-                        sha1Dis.read(buffer, 0, buffer.length);
+        for (String t : tools) {
+            for (Tool tool : skillFile.Tools()) {
+                if (t.equals(tool.getName())) {
+                    toolsToBuild.add(tool);
+                    ArrayList<File> files = new ArrayList<>();
+                    for (tools.File f : tool.getFiles()) {
+                        File file = new File(f.getPath());
+                        try (InputStream is = Files.newInputStream(Paths.get(file.getAbsolutePath()))) {
+                            DigestInputStream dis = new DigestInputStream(is, md5);
+                            byte[] bytes = new byte[4096];
+                            while (dis.read(bytes, 0, bytes.length) != -1) {
+                                // digest file
+                            }
+                            bytes = md5.digest();
+                            if (!f.getMd5().equals(encodeHex(bytes)) || file.lastModified() != Long.parseLong(f.getTimestamp()) || fileFlag == FileFlag.All) {
+                                f.setMd5(encodeHex(bytes));
+                                f.setTimestamp(String.valueOf(file.lastModified()));
+                                files.add(file);
+                                break;
+                            }
+                        }
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    continue;
-                }
-
-                String md5String = encodeHex(md5Dis.getMessageDigest().digest());
-                String sha1String = encodeHex(sha1Dis.getMessageDigest().digest());
-                if (!(f.getMd5().equals(md5String) && f.getSha().equals(sha1String)) || changeFlag == FileFlag.All) {
-                    f.setMd5(md5String);
-                    f.setSha(sha1String);
-                    toolsToBuild.add(t);
+                    if (files.size() != 0) {
+                        files.clear();
+                        for (tools.File f : tool.getFiles()) {
+                            File file = new File(f.getPath());
+                            files.add(createToolFile(project, t, file));
+                        }
+                        toolToFile.put(tool, files);
+                    }
+                    break;
                 }
             }
         }
-        runGeneration(project, toolsToBuild, toolToFile, language, exec, generator, output, pack);
+
+        runGeneration(toolsToBuild, toolToFile, new File(project.getAbsolutePath() + File.separator + ".skillt"));
     }
 
     /**
      * Method for accumulating Thread for Binding generation per tool. Also runs them.
      *
-     * @param toolsToBuild
-     *            Tools that need to be built.
-     * @param toolToFile
-     *            Map for mapping tools to their corresponding temporary files.
-     * @param language
-     *            The language the binding should be in.
-     * @param exec
-     *            The execution environment for the generator, e.g. scala.
-     * @param generator
-     *            The generator used for the bindings.
-     * @param output
-     *            The output directory.
-     * @param pack
-     *            The package the bindings should be placed in.
+     * @param toolsToBuild Tools that need to be built.
+     * @param toolToFile   Map for mapping tools to their corresponding temporary files.
+     * @param tempDir      Directory which contains the tool specific files.
      */
-    private static void runGeneration(HashSet<tools.Tool> toolsToBuild, HashMap<String, ArrayList<File>> toolToFile,
-            String language, String exec, File generator, File output, String pack) {
+    private static void runGeneration(HashSet<tools.Tool> toolsToBuild, HashMap<Tool, ArrayList<File>> toolToFile,
+                                      File tempDir) {
         ArrayList<Thread> commands = new ArrayList<>();
         for (tools.Tool t : toolsToBuild) {
             StringBuilder builder = new StringBuilder();
-            builder.append(exec);
+            builder.append(generator == null ? t.getGenerator().getExecEnv() : generator.getExecEnv());
             builder.append(' ');
-            builder.append(generator.getAbsolutePath());
+            builder.append(generator == null ? t.getGenerator().getPath() : generator.getPath());
             builder.append(' ');
             builder.append("-L ");
-            builder.append(language);
+            builder.append(language == null ? t.getLanguage() : language);
             builder.append(' ');
             builder.append("-p ");
-            builder.append(pack);
+            builder.append(module == null ? t.getModule() : module);
             builder.append(' ');
+            //noinspection SuspiciousMethodCalls
             for (File f : toolToFile.get(t.getName())) {
                 builder.append(f.getAbsolutePath());
                 builder.append(' ');
             }
             builder.append(output.getAbsolutePath());
-            commands.add(new Thread(new GenerationThread(builder.toString(), generator, output)));
+            commands.add(new Thread(new GenerationThread(builder.toString(), new File(generator == null ? t.getGenerator().getPath() : generator.getPath()), output)));
         }
         commands.forEach(java.lang.Thread::start);
         commands.forEach((thread) -> {
@@ -326,7 +330,7 @@ public class MainClass {
                 e.printStackTrace();
             }
         });
-        cleanUp(projectRoot);
+        cleanUp(tempDir);
     }
 
     /**
@@ -341,25 +345,17 @@ public class MainClass {
      *             Thrown if there is a problem with creating temporary files.
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static File createToolFile(File project, tools.Tool tool, tools.File file) throws IOException {
-        boolean tempFound = false;
-        int counter = 0;
-        File f = null;
-        while (!tempFound) {
-            f = new File(project.getAbsolutePath() + File.separator + counter);
-            f = new File(f, tool.getName());
-            if (!f.exists()) {
-                tempFound = f.mkdirs();
-            } else {
-                counter++;
-            }
-        }
-        String name = file.getPath();
-        name = name.substring(name.lastIndexOf(File.separator, name.length()));
+    private static File createToolFile(File project, String tool, File file) throws IOException {
+        File f = new File(project.getAbsolutePath() + File.separator + ".skillt");
+        f = new File(f, tool);
+        String name = file.getAbsolutePath();
+        name = name.substring(project.getAbsolutePath().length());
         @SuppressWarnings("null")
         File temp = new File(f.getAbsolutePath() + File.separator + name);
         temp.createNewFile();
-        Files.copy(Paths.get(file.getPath()), new FileOutputStream(temp.getAbsolutePath()));
+        try (FileOutputStream fs = new FileOutputStream(temp.getAbsolutePath())) {
+            Files.copy(Paths.get(file.getAbsolutePath()), fs);
+        }
         return temp;
     }
 
@@ -406,5 +402,29 @@ public class MainClass {
         }
         // The directory is now empty or this is a file so delete it
         return dir.delete();
+    }
+
+    private static class ArgumentEvaluation {
+        private final int index;
+        private final String argument;
+        private final String name;
+
+        public ArgumentEvaluation(int index, String argument, String name) {
+            this.index = index;
+            this.argument = argument;
+            this.name = name;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public String getArgument() {
+            return argument;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 }

@@ -8,7 +8,7 @@ public class ExceptionHandler {
 
     /**
      * Logs the exception.
-     * 
+     *
      * @param e
      *            Exception to log.
      */
@@ -18,13 +18,15 @@ public class ExceptionHandler {
 
     /**
      * Logs the exception.
-     * 
+     *
      * @param e
      *            Exception to log.
      * @param message
      *            Message that should be shown to the user.
      */
-    public static void handle(Exception e, String message) {
-        // TODO
+    @SuppressWarnings("unused")
+    public static void handle(Exception e, @SuppressWarnings("SameParameterValue") String message) {
+        System.out.println(message);
+        e.printStackTrace();
     }
 }
