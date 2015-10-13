@@ -3,159 +3,134 @@
  * TODO: Add hexInt
  * @author Marco Link
  */
+grammar de.unistuttgart.iste.ps.skilled.SKilL hidden(WHITESPACE)
 
-grammar de.unistuttgart.iste.ps.skilled.SKilL hidden (WHITESPACE)
 generate sKilL "http://www.unistuttgart.de/iste/ps/skilled/SKilL"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
-
 File:
-	(headComments += HEADCOMMENT)* (includes += Include)*  (declarations += Declaration)*
-;
+	(headComments+=HEADCOMMENT)* (includes+=Include)* (declarations+=Declaration)*;
 
 Include:
-	('include' | 'with') (includeFiles += IncludeFile)+
-;
+	('include' | 'with') (includeFiles+=IncludeFile)+;
 
 IncludeFile:
-	importURI = STRING
-;
+	importURI=STRING;
 
 Declaration:
-	Typedef |  Enumtype | Interfacetype | Usertype 
-;
+	Typedef | Enumtype | TypeDeclaration;
+
+TypeDeclaration:
+	Interfacetype | Usertype;
 
 Typedef:
-	comment = ML_COMMENT? 'typedef' name = ID 
-	(restrictions += Restriction | hints += Hint)* fieldtype = Fieldtype ';'
-;
+	comment=ML_COMMENT? 'typedef' name=ID
+	(restrictions+=Restriction | hints+=Hint)* fieldtype=Fieldtype ';';
 
-Enumtype : 
-	comment = ML_COMMENT? 
-	'enum' name = ID '{' instances += ID (',' instances += ID)* ';' (fields += Field)* '}'
-;
+Enumtype:
+	comment=ML_COMMENT?
+	'enum' name=ID '{' instances+=ID (',' instances+=ID)* ';' (fields+=Field)* '}';
 
 Interfacetype:
-	comment = ML_COMMENT? 
-	'interface' name = ID ((':' | 'with' | 'extends') (supertypes += DeclarationReference))*
-	'{' (fields += Field)* '}'
-;
+	comment=ML_COMMENT?
+	'interface' name=ID ((':' | 'with' | 'extends') (supertypes+=TypeDeclarationReference))*
+	'{' (fields+=Field)* '}';
 
 Usertype:
-	comment = ML_COMMENT? (restrictions += Restriction | hints += Hint)* 
-	name = ID ((':' | 'with' | 'extends') (supertypes += DeclarationReference))* 
-		'{' fields += Field* '}'
-;
+	comment=ML_COMMENT? (restrictions+=Restriction | hints+=Hint)*
+	name=ID ((':' | 'with' | 'extends') (supertypes+=TypeDeclarationReference))*
+	'{' fields+=Field* '}';
 
 DeclarationReference:
-	type = [Declaration]
-;
+	type=[Declaration];
+
+TypeDeclarationReference:
+	type=[TypeDeclaration];
 
 Field:
-	comment = ML_COMMENT? (restrictions += Restriction | hints += Hint)* 
-	fieldcontent = Fieldcontent ';'
-;
+	comment=ML_COMMENT? (restrictions+=Restriction | hints+=Hint)*
+	fieldcontent=Fieldcontent ';';
 
 Fieldcontent:
-	Constant | Data
-;
+	Constant | Data;
 
 Restriction:
-	'@' restrictionName = ID 
-	('(' (restrictionArguments += RestrictionArgument (',' restrictionArguments += RestrictionArgument)*)?')')?
-;
+	'@' restrictionName=ID
+	('(' (restrictionArguments+=RestrictionArgument (',' restrictionArguments+=RestrictionArgument)*)? ')')?;
 
 Hint:
-	'!' hintName = ID
-	('(' (hintArguments += HintArgument (',' hintArguments += HintArgument)*)?')')?
-;
+	'!' hintName=ID
+	('(' (hintArguments+=HintArgument (',' hintArguments+=HintArgument)*)? ')')?;
 
 RestrictionArgument:
-	(valueDouble = DoubleArgument | valueLong = LongArgument | valueString = STRING | valueType = DeclarationReference )	
-;
+	(valueDouble=DoubleArgument | valueLong=LongArgument | valueString=STRING | valueType=TypeDeclarationReference);
 
 HintArgument:
-	(valueDouble = DoubleArgument | valueLong = LongArgument | valueString = STRING | valueIdentifier = ID)	
-;
+	(valueDouble=DoubleArgument | valueLong=LongArgument | valueString=STRING | valueIdentifier=ID);
 
 LongArgument returns ecore::ELongObject:
-	LONG
-;
-DoubleArgument returns ecore::EDoubleObject:
-	DOUBLE
-;
+	LONG;
 
+DoubleArgument returns ecore::EDoubleObject:
+	DOUBLE;
 
 Constant:
-	'const' fieldtype = Fieldtype name = ID '=' value = LONG
-;
+	'const' fieldtype=Fieldtype name=ID '=' value=LONG;
 
 Data:
-	(isAuto ?= 'auto')? fieldtype = Fieldtype name = ID
-;
+	(isAuto?='auto')? fieldtype=Fieldtype name=ID;
 
 Fieldtype:
-	Maptype| Settype | Listtype | Arraytype | Basetype
-;
+	Maptype | Settype | Listtype | Arraytype | Basetype;
 
 Maptype:
-	'map' '<' basetypes += Basetype (',' basetypes += Basetype)+ '>'
-;
+	'map' '<' basetypes+=Basetype (',' basetypes+=Basetype)+ '>';
 
 Settype:
-	'set' '<' basetype = Basetype '>'
-;
+	'set' '<' basetype=Basetype '>';
 
 Listtype:
-	'list' '<' basetype = Basetype '>'
-;
+	'list' '<' basetype=Basetype '>';
 
 Arraytype:
-	basetype = Basetype ('[' LONG? ']')
-;
+	basetype=Basetype ('[' LONG? ']');
 
 Basetype:
-	DeclarationReference | BuildInTypeReference
-;
+	DeclarationReference | BuildInTypeReference;
 
 BuildInTypeReference:
-	type = BuildInType
-;
+	type=BuildInType;
 
 enum BuildInType:
-	I8 = 'i8' | I16 = 'i16' | I32 = 'i32' | I64 = 'i64' | V64 = 'v64' 
-	| F32 = 'f32' | F64 = 'f64' | STRING = 'string' | BOOLEAN = 'bool' | ANNOTATION = 'annotation'
-;
+	I8='i8' | I16='i16' | I32='i32' | I64='i64' | V64='v64'
+	| F32='f32' | F64='f64' | STRING='string' | BOOLEAN='bool' | ANNOTATION='annotation';
 
-terminal
-HEADCOMMENT:
-	'#' !('\r'|'\n')* '\r'? '\n'
-;
+terminal HEADCOMMENT:
+	'#' !('\r' | '\n')* '\r'? '\n';
 
 terminal ID:
-	('a' .. 'z' | 'A' .. 'Z' | '_' | '\u007f' .. '\uffff') ('a'..'z'|'A'..'Z'|'_'|'0'..'9' | '\u007f' .. '\uffff')*		
-;
+	('a'..'z' | 'A'..'Z' | '_' | '\u007f'..'\uffff') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\u007f'..'\uffff')*;
 
 terminal LONG returns ecore::ELong:
-	'-'? DIGIT+
-;
-
+	'-'? DIGIT+;
 
 terminal DOUBLE returns ecore::EDouble:
-	((LONG EXPONENT) | (LONG? '.' DIGIT* EXPONENT?)) ('f' | 'F' | 'd' | 'D')? 	
-;
+	((LONG EXPONENT) | (LONG? '.' DIGIT* EXPONENT?)) ('f' | 'F' | 'd' | 'D')?;
 
 terminal fragment DIGIT:
-	'0'..'9'
-;
+	'0'..'9';
 
 terminal fragment EXPONENT:
-	('e' | 'E') ('+' | '-')? DIGIT+
-;
+	('e' | 'E') ('+' | '-')? DIGIT+;
 
-terminal STRING	: '"' -> '"'; 
-terminal ML_COMMENT	: '/*' -> '*/';
+terminal STRING:
+	'"'->'"';
 
-terminal WHITESPACE			: (' '|'\t'|'\r'|'\n')+;
+terminal ML_COMMENT:
+	'/*'->'*/';
 
-terminal ANY_OTHER: .;
+terminal WHITESPACE:
+	(' ' | '\t' | '\r' | '\n')+;
+
+terminal ANY_OTHER:
+	.;

@@ -12,7 +12,6 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Listtype
 import de.unistuttgart.iste.ps.skilled.sKilL.Basetype
 import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
 import de.unistuttgart.iste.ps.skilled.sKilL.Maptype
-import javax.lang.model.type.ArrayType
 import de.unistuttgart.iste.ps.skilled.sKilL.Arraytype
 import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
 import de.unistuttgart.iste.ps.skilled.sKilL.Settype
@@ -94,24 +93,25 @@ class SKilLValidator extends AbstractSKilLValidator {
 						if ((td.fieldtype instanceof Listtype) || (td.fieldtype instanceof Maptype) ||
 							(td.fieldtype instanceof Arraytype) || (td.fieldtype instanceof Settype)) {
 							error('It is forbidden to nest containers inside of other containers.', maptype,
-								SKilLPackage.Literals.CONSTANT.getEStructuralFeature("basetypes"), INVALID_NESTED_TYPEDEF)
+								SKilLPackage.Literals.CONSTANT.getEStructuralFeature("basetypes"),
+								INVALID_NESTED_TYPEDEF)
+							}
+						}
+					}
+				}
+			} else if (fieldtype instanceof Settype) {
+				val settype = fieldtype;
+				if (settype.basetype instanceof DeclarationReference) {
+					val dr = settype.basetype as DeclarationReference
+					if (dr.type instanceof Typedef) {
+						val td = dr.type as Typedef
+						if ((td.fieldtype instanceof Listtype) || (td.fieldtype instanceof Maptype) ||
+							(td.fieldtype instanceof Arraytype) || (td.fieldtype instanceof Settype)) {
+							error('It is forbidden to nest containers inside of other containers.', settype,
+								SKilLPackage.Literals.SETTYPE__BASETYPE, INVALID_NESTED_TYPEDEF)
 						}
 					}
 				}
 			}
-		} else if (fieldtype instanceof Settype) {
-			val settype = fieldtype;
-			if (settype.basetype instanceof DeclarationReference) {
-				val dr = settype.basetype as DeclarationReference
-				if (dr.type instanceof Typedef) {
-					val td = dr.type as Typedef
-					if ((td.fieldtype instanceof Listtype) || (td.fieldtype instanceof Maptype) ||
-						(td.fieldtype instanceof Arraytype) || (td.fieldtype instanceof Settype)) {
-						error('It is forbidden to nest containers inside of other containers.', settype,
-							SKilLPackage.Literals.SETTYPE__BASETYPE, INVALID_NESTED_TYPEDEF)
-					}
-				}
-			}
-		}		
+		}	
 	}
-}
