@@ -12,26 +12,25 @@ import de.unistuttgart.iste.ps.skilled.ui.editor.syntaxcoloring.SKilLAntlrTokenT
 import de.unistuttgart.iste.ps.skilled.ui.editor.syntaxcoloring.SKilLHighlightingConfiguration;
 import de.unistuttgart.iste.ps.skilled.ui.editor.syntaxcoloring.SKilLSemanticHighlightingCalculator;
 
-
 /**
  * Use this class to register components to be used within the IDE.
  */
 public class SKilLUiModule extends de.unistuttgart.iste.ps.skilled.ui.AbstractSKilLUiModule {
-    public SKilLUiModule(AbstractUIPlugin plugin) {
-        super(plugin);
-    }
+	public SKilLUiModule(AbstractUIPlugin plugin) {
+		super(plugin);
+	}
 
-    // Includes the custom settings for syntax coloring.
-    public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
-        return SKilLHighlightingConfiguration.class;
-    }
+	// Includes the custom settings for syntax coloring.
+	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
+		return SKilLHighlightingConfiguration.class;
+	}
 
-    // Includes the custom settings for syntax coloring.
-    public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
-        return SKilLAntlrTokenToAttributeIdMapper.class;
-    }
+	// Includes the custom settings for syntax coloring.
+	public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
+		return SKilLAntlrTokenToAttributeIdMapper.class;
+	}
 
-    public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
-        return SKilLSemanticHighlightingCalculator.class;
-    }
+	public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+		return SKilLSemanticHighlightingCalculator.class;
+	}
 }

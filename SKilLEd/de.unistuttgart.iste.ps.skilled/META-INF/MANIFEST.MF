@@ -3,30 +3,27 @@ Bundle-ManifestVersion: 2
 Bundle-Name: de.unistuttgart.iste.ps.skilled
 Bundle-Vendor: My Company
 Bundle-Version: 1.0.0.qualifier
-Bundle-SymbolicName: de.unistuttgart.iste.ps.skilled; singleton:=true
-Bundle-ActivationPolicy: lazy
+Bundle-SymbolicName: de.unistuttgart.iste.ps.skilled;singleton:=true
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
- org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.xtext.xbase.lib,
  org.eclipse.xtext.util,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
- org.eclipse.xtext.xbase.lib,
- org.antlr.runtime,
- org.eclipse.xtext.common.types,
- org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional
-Import-Package: org.apache.log4j
+ org.antlr.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: de.unistuttgart.iste.ps.skilled,
+Export-Package: de.unistuttgart.iste.ps.skilled;uses:="com.google.inject,org.eclipse.xtext.service,org.eclipse.xtext",
+ de.unistuttgart.iste.ps.skilled.converter; uses:="org.eclipse.xtext.nodemodel,  org.eclipse.xtext.conversion,  org.eclipse.xtext.common.services,  org.eclipse.xtext.conversion.impl",
  de.unistuttgart.iste.ps.skilled.formatting,
- de.unistuttgart.iste.ps.skilled.generator,
- de.unistuttgart.iste.ps.skilled.parser.antlr,
- de.unistuttgart.iste.ps.skilled.parser.antlr.internal,
- de.unistuttgart.iste.ps.skilled.parser.antlr.lexer,
- de.unistuttgart.iste.ps.skilled.sKilL,
- de.unistuttgart.iste.ps.skilled.sKilL.impl,
- de.unistuttgart.iste.ps.skilled.sKilL.util,
- de.unistuttgart.iste.ps.skilled.scoping,
- de.unistuttgart.iste.ps.skilled.serializer,
- de.unistuttgart.iste.ps.skilled.services,
- de.unistuttgart.iste.ps.skilled.validation
-
+ de.unistuttgart.iste.ps.skilled.formatting2;uses:="de.unistuttgart.iste.ps.skilled.sKilL,org.eclipse.xtext.formatting2",
+ de.unistuttgart.iste.ps.skilled.generator;uses:="org.eclipse.xtext.generator,org.eclipse.emf.ecore.resource",
+ de.unistuttgart.iste.ps.skilled.parser.antlr;uses:="org.eclipse.xtext.parser.antlr,de.unistuttgart.iste.ps.skilled.parser.antlr.internal,de.unistuttgart.iste.ps.skilled.services",
+ de.unistuttgart.iste.ps.skilled.parser.antlr.internal;x-internal:=true,
+ de.unistuttgart.iste.ps.skilled.parser.antlr.lexer;uses:="org.eclipse.xtext.parser.antlr,org.antlr.runtime",
+ de.unistuttgart.iste.ps.skilled.sKilL;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util",
+ de.unistuttgart.iste.ps.skilled.sKilL.impl; uses:="org.eclipse.emf.ecore,  org.eclipse.emf.ecore.impl,  org.eclipse.emf.common.util,  de.unistuttgart.iste.ps.skilled.sKilL,  org.eclipse.emf.common.notify",
+ de.unistuttgart.iste.ps.skilled.sKilL.util; uses:="org.eclipse.emf.ecore,  de.unistuttgart.iste.ps.skilled.sKilL,  org.eclipse.emf.common.notify,  org.eclipse.emf.common.notify.impl,  org.eclipse.emf.ecore.util",
+ de.unistuttgart.iste.ps.skilled.scoping;uses:="org.eclipse.xtext.scoping.impl",
+ de.unistuttgart.iste.ps.skilled.serializer; uses:="org.eclipse.emf.ecore,  org.eclipse.xtext.nodemodel,  org.eclipse.xtext.serializer.analysis,  de.unistuttgart.iste.ps.skilled.sKilL,  org.eclipse.xtext.serializer.sequencer,  de.unistuttgart.iste.ps.skilled.services,  org.eclipse.xtext",
+ de.unistuttgart.iste.ps.skilled.services;uses:="org.eclipse.xtext.service,org.eclipse.xtext",
+ de.unistuttgart.iste.ps.skilled.validation;uses:="de.unistuttgart.iste.ps.skilled.sKilL"
+Import-Package: org.apache.log4j
