@@ -29,6 +29,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.impl.HintImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.DeclarationImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.Arraytype
 import de.unistuttgart.iste.ps.skilled.sKilL.Data
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.DeclarationImpl
 
 /**
  * @author Tobias Heck
@@ -253,7 +254,7 @@ Usertype {
 	}
 
 	@Test
-	def void testHexint() {
+	def void hexint() {
 		val specification = '''
 			foo{
 			string[-0xCAB] bar;

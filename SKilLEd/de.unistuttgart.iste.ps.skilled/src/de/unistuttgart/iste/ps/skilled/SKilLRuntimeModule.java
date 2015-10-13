@@ -3,10 +3,18 @@
  */
 package de.unistuttgart.iste.ps.skilled;
 
+import org.eclipse.xtext.conversion.IValueConverterService;
+
+import de.unistuttgart.iste.ps.skilled.converter.SKilLTerminalConverters;
 
 /**
- * Use this class to register components to be used at runtime / without the Equinox extension registry.
+ * Use this class to register components to be used at runtime / without the
+ * Equinox extension registry.
  */
-public class SKilLRuntimeModule extends de.unistuttgart.iste.ps.skilled.AbstractSKilLRuntimeModule {
-	 //
+public class SKilLRuntimeModule extends
+		de.unistuttgart.iste.ps.skilled.AbstractSKilLRuntimeModule {
+	@Override
+	public Class<? extends IValueConverterService> bindIValueConverterService() {
+		return SKilLTerminalConverters.class;
+	}
 }

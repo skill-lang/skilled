@@ -63,10 +63,11 @@ Hint:
 	('(' (hintArguments+=HintArgument (',' hintArguments+=HintArgument)*)? ')')?;
 
 RestrictionArgument:
-	(valueDouble=DoubleArgument | valueLong=LongArgument | valueString=STRING | valueType=TypeDeclarationReference);
+	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING |
+	valueType=TypeDeclarationReference);
 
 HintArgument:
-	(valueDouble=DoubleArgument | valueLong=LongArgument | valueString=STRING | valueIdentifier=ID);
+	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING | valueIdentifier=ID);
 
 LongArgument returns ecore::ELongObject:
 	LONG;
@@ -75,7 +76,7 @@ DoubleArgument returns ecore::EDoubleObject:
 	DOUBLE;
 
 Constant:
-	'const' fieldtype=Fieldtype name=ID '=' value=LONG;
+	'const' fieldtype=Fieldtype name=ID '=' value=(LongArgument | HEXINT);
 
 Data:
 	(isAuto?='auto')? fieldtype=Fieldtype name=ID;
@@ -93,7 +94,7 @@ Listtype:
 	'list' '<' basetype=Basetype '>';
 
 Arraytype:
-	basetype=Basetype ('[' LONG? ']');
+	basetype=Basetype ('[' (length=(LongArgument | HEXINT))? ']');
 
 Basetype:
 	DeclarationReference | BuildInTypeReference;
@@ -110,6 +111,9 @@ terminal HEADCOMMENT:
 
 terminal ID:
 	('a'..'z' | 'A'..'Z' | '_' | '\u007f'..'\uffff') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\u007f'..'\uffff')*;
+
+terminal HEXINT returns ecore::ELongObject:
+	'-'? '0x' (DIGIT | ('a'..'f') | ('A'..'F'))*;
 
 terminal LONG returns ecore::ELong:
 	'-'? DIGIT+;
