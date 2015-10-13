@@ -49,7 +49,7 @@ public class MainClass {
 
     /**
      * Entry Point. Generates flags for the generator execution.
-     * 
+     *
      * @param args
      *            The command line arguments.
      */
@@ -145,9 +145,7 @@ public class MainClass {
         if (generate) {
             try {
                 generate(project, output, pack, ts, lang, exec, gen, changeFlag);
-            } catch (ProjectException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (ProjectException | IOException e) {
                 e.printStackTrace();
             }
         } else if (edit != null) {
@@ -209,7 +207,7 @@ public class MainClass {
             throw new ProjectException(project.getPath() + " is not a directory.");
         }
 
-        File toolRoot = new File(project.getPath() + File.separator + "tools");
+        File toolRoot = new File(project.getPath() + File.separator + ".skills");
         if (!toolRoot.exists()) {
             throw new ProjectException(project.getPath() + " does not contain tools");
         }
@@ -277,7 +275,7 @@ public class MainClass {
                 }
             }
         }
-        runGeneration(toolsToBuild, toolToFile, language, exec, generator, output, pack);
+        runGeneration(project, toolsToBuild, toolToFile, language, exec, generator, output, pack);
     }
 
     /**
@@ -328,7 +326,7 @@ public class MainClass {
                 e.printStackTrace();
             }
         });
-        cleanUp(toolToFile);
+        cleanUp(projectRoot);
     }
 
     /**
@@ -342,6 +340,7 @@ public class MainClass {
      * @throws IOException
      *             Thrown if there is a problem with creating temporary files.
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static File createToolFile(File project, tools.Tool tool, tools.File file) throws IOException {
         boolean tempFound = false;
         int counter = 0;
@@ -350,8 +349,7 @@ public class MainClass {
             f = new File(project.getAbsolutePath() + File.separator + counter);
             f = new File(f, tool.getName());
             if (!f.exists()) {
-                f.mkdirs();
-                tempFound = true;
+                tempFound = f.mkdirs();
             } else {
                 counter++;
             }
@@ -382,22 +380,25 @@ public class MainClass {
 
     /**
      * Deletes the directory with the temporary files.
-     * 
-     * @param toolToFiles
-     *            HashMap containing the Tools and the Files.
+     *
+     * @param projectRoot The root directory of the project.
      */
-    public static void cleanUp(HashMap<String, ArrayList<File>> toolToFiles) {
-        File f = toolToFiles.get(toolToFiles.keySet().toArray()[0]).get(0);
-        f = f.getParentFile();
-        f = f.getParentFile();
+    private static void cleanUp(File projectRoot) {
+        File f = new File(projectRoot.getAbsolutePath() + File.separator + ".skillt");
         deleteDir(f);
     }
 
-    public static boolean deleteDir(File dir) {
+    /**
+     * Deletes all children and the directory itself.
+     *
+     * @param dir The directory to delete.
+     * @return true if successful, false if not.
+     */
+    private static boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
+            for (String aChildren : children) {
+                boolean success = deleteDir(new File(dir, aChildren));
                 if (!success) {
                     return false;
                 }

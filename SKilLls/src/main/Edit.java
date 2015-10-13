@@ -10,7 +10,6 @@ import java.util.Scanner;
  */
 class Edit {
     private final Scanner scanner = new Scanner(System.in);
-    private File project;
     private tools.internal.ToolAccess ta;
     private tools.internal.FileAccess fa;
     private tools.api.SkillFile sk;
@@ -20,7 +19,7 @@ class Edit {
     }
 
     public void setProject(File project) {
-        this.project = project;
+        File project1 = project;
     }
 
     public void setToolAccess(tools.internal.ToolAccess ta) {
@@ -37,29 +36,97 @@ class Edit {
 
     public void start() {
         System.out.println("Welcome to the Tool editor.\nWhat is the name of the Tool you want to add?");
-        boolean found = false;
-        String toolname = null;
-        while (!found) {
-            toolname = scanner.nextLine();
-            if (toolname.startsWith("&")) {
-                System.out.println("Please don't use & as first character.");
-            } else {
-                found = true;
+        String toolName;
+        toolName = getTool();
+        tools.Tool t;
+        if (toolName.startsWith("&") && Character.toLowerCase(toolName.charAt(1)) == 'n') {
+            toolName = newTool();
+            t = ta.make();
+            t.setFiles(new ArrayList<>());
+            t.setTypes(new ArrayList<>());
+            t.setName(toolName);
+        }
+        switch (chooseAction()) {
+            case 1:
+
+                break;
+
+            case 2:
+                break;
+
+            case 3:
+                break;
+
+            case 4:
+                break;
+        }
+    }
+
+    private int chooseAction() {
+        while (true) {
+            System.out.println("1 - Add Type    2 - Remove Type\n3 - Edit Type    4 - Delete Tool");
+            String line = scanner.nextLine();
+            try {
+                int n = Integer.parseInt(line);
+                if (1 <= n && n <= 4) {
+                    return n;
+                } else {
+                    System.out.println("Invalid action");
+                }
+            } catch (NumberFormatException e) {
+                if (exit(line)) {
+                    System.exit(0);
+                }
             }
         }
-        tools.Tool t = ta.make();
-        t.setName(toolname);
-        System.out.println("Please insert a file name to add this file. &X to exit.");
-        String line;
-        t.setFiles(new ArrayList<tools.File>());
-        t.setTypes(new ArrayList<tools.Type>());
-        while (!(line = scanner.nextLine()).equals("&X")) {
-            if (line.isEmpty() || line.startsWith("&")) {
-                System.out.println("Please enter a file name that does not start with &");
-            } else {
-                t.getFiles().add(fa.make("", new File(line).getAbsolutePath(), ""));
+    }
+
+    private String newTool() {
+        System.out.println("Please insert a name for the new tool.");
+        String line = scanner.nextLine();
+        while (line.startsWith("&")) {
+            if (exit(line)) {
+                System.exit(0);
+            }
+            System.out.println("Please don't use & as the first character in a tool.");
+            line = scanner.nextLine();
+        }
+        return line;
+    }
+
+    private String getTool() {
+        System.out.println("Please insert a tool for editing or insert &N for adding a new one.");
+        String line = scanner.nextLine();
+        while (line.startsWith("&")) {
+            if (exit(line)) {
+                System.exit(0);
+            }
+            if (line.length() > 1 && Character.toLowerCase(line.charAt(1)) == 'n') {
+                return line;
+            }
+            System.out.println("Please don't use & as the first character in a tool.");
+            line = scanner.nextLine();
+        }
+        return line;
+    }
+
+    private boolean exit(String line) {
+        if (line.startsWith("&")) {
+            switch (line.charAt(1)) {
+                case 'Q':
+                case 'q':
+                    return true;
+
+                case 'X':
+                case 'x':
+                    save();
+                    return true;
             }
         }
+        return false;
+    }
+
+    private void save() {
         sk.close();
     }
 }
