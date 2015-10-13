@@ -13,21 +13,21 @@ import java.nio.file.Files;
  * @since 25.08.15.
  */
 class GenerationThread implements Runnable {
-    private final String command;
-    private final File jvmLib;
-    private final File javaLib;
-    private final File target;
+    private final String COMMAND;
+    private final File JVMLIB;
+    private final File JAVALIB;
+    private final File TARGET;
 
     /**
-     * @param command   The command to be executed.
+     * @param command   The COMMAND to be executed.
      * @param generator Path to the generator
      * @param target    Output path
      */
     public GenerationThread(String command, File generator, File target) {
-        this.command = command;
-        jvmLib = new File(generator.getParentFile().getAbsolutePath() + File.separator + "deps" + File.separator + "skill.jvm.common.jar");
-        javaLib = new File(generator.getParentFile().getAbsolutePath() + File.separator + "deps" + File.separator + "skill.java.common.jar");
-        this.target = target;
+        this.COMMAND = command;
+        this.JVMLIB = new File(generator.getParentFile().getAbsolutePath() + File.separator + "deps" + File.separator + "skill.jvm.common.jar");
+        this.JAVALIB = new File(generator.getParentFile().getAbsolutePath() + File.separator + "deps" + File.separator + "skill.java.common.jar");
+        this.TARGET = target;
     }
 
     /**
@@ -37,7 +37,7 @@ class GenerationThread implements Runnable {
     public void run() {
         Process p;
         try {
-            p = Runtime.getRuntime().exec(command);
+            p = Runtime.getRuntime().exec(COMMAND);
             p.waitFor();
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
@@ -45,8 +45,8 @@ class GenerationThread implements Runnable {
                 if (!line.equals("-FAILED-")) {
                     System.out.println(line);
                 } else {
-                    Files.copy(jvmLib.toPath(), new File(target.getAbsolutePath() + File.separator + "java/lib/skill.jvm.common.jar".replace('/', File.separatorChar)).toPath());
-                    Files.copy(javaLib.toPath(), new File(target.getAbsolutePath() + File.separator + "java/lib/skill.java.common.jar".replace('/', File.separatorChar)).toPath());
+                    Files.copy(JVMLIB.toPath(), new File(TARGET.getAbsolutePath() + File.separator + "java/lib/skill.jvm.common.jar".replace('/', File.separatorChar)).toPath());
+                    Files.copy(JAVALIB.toPath(), new File(TARGET.getAbsolutePath() + File.separator + "java/lib/skill.java.common.jar".replace('/', File.separatorChar)).toPath());
                 }
             }
         } catch (IOException | InterruptedException e) {

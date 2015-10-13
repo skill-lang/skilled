@@ -7,5 +7,6 @@ package main;
  * @since 18.08.15.
  */
 public enum FileFlag {
-    Changed, All
+    Changed,    //Index = 0
+    All         // 1
 }
