@@ -1,0 +1,40 @@
+Tool {
+    string name;
+    string outPath;
+    string language;
+    Type[] types;
+    File[] files;
+    Generator generator;
+    string module;
+}
+
+HintParent {}
+
+Type : HintParent {
+    string name;
+    File file;
+    Field[] fields;
+    Hint[] typeHints;
+}
+
+Field : HintParent { 
+    string name;
+    Hint[] fieldHints;
+    Type type;
+}
+
+Hint {
+    string name;
+    HintParent parent;
+}
+
+File {
+    string path;
+    string md5;
+    string timestamp;
+}
+
+Generator {
+    string path;
+    string execEnv;
+}
