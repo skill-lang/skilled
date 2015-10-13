@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/de.unistuttgart.iste.ps.skilled.sdk_1.0.0.qualifier.jar" id="de.unistuttgart.iste.ps.skilled.sdk" version="1.0.0.qualifier"/>
+</site>

@@ -112,3 +112,11 @@ META-INF
 
 #xtend-gen: (are generated)
 xtend-gen
+bin/
+/.metadata
+src-gen
+ant/
+*.xml_gen
+
+#generated
+SKilL.genmodel
