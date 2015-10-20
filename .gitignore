@@ -3,6 +3,9 @@
 ### Java ###
 *.class
 
+### Scala ###
+scala/
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
@@ -127,3 +130,6 @@ tools/
 
 #runtime eclipse
 runtime-SKilLEd/
+
+#output
+buildroot/
