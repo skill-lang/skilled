@@ -127,3 +127,6 @@ tools/
 
 #runtime eclipse
 runtime-SKilLEd/
+
+#ignore skill jars in lib folder
+SKilLls/lib/skill.j*
