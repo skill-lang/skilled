@@ -28,6 +28,7 @@ import org.eclipse.xtext.formatting2.AbstractFormatter2;
 import org.eclipse.xtext.formatting2.IFormattableDocument;
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import de.unistuttgart.iste.ps.skilled.sKilL.RestrictionArgument
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
 
 /**
  * @author Marco Link
@@ -93,7 +94,7 @@ class SKilLFormatter extends AbstractFormatter2 {
 		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
 		interfacetype.prepend[noSpace]
 		interfacetype.regionForKeyword("{").append[newLine; increaseIndentation]
-		for (DeclarationReference supertypes : interfacetype.getSupertypes()) {
+		for (TypeDeclarationReference supertypes : interfacetype.getSupertypes()) {
 			format(supertypes, document);
 		}
 		for (Field fields : interfacetype.getFields()) {
@@ -114,7 +115,7 @@ class SKilLFormatter extends AbstractFormatter2 {
 		for (Hint hints : usertype.getHints()) {
 			format(hints, document);
 		}
-		for (DeclarationReference supertypes : usertype.getSupertypes()) {
+		for (TypeDeclarationReference supertypes : usertype.getSupertypes()) {
 			format(supertypes, document);
 		}
 		for (Field fields : usertype.getFields()) {

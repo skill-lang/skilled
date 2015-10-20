@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="SKilLANTLR">
+    <property name="lib.location" value="lib"/>
+    <property name="grammar.location" value="../src/grammar" />
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+
+    <path id="classpath">
+        <pathelement location="${lib.location}/antlr-4.5.1-complete.jar"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="${grammar.location}"/>
+    </target>
+
+    <target depends="gensrc" name="build"/>
+
+    <target depends="clean" name="gensrc">
+        <mkdir dir="${grammar.location}"/>
+        <java jar="${lib.location}/antlr-4.5.1-complete.jar" fork="true">
+            <arg line="src/SKilLLexer.g4"/>
+            <arg line="-lib src/SKilLLexer.tokens"/>
+            <arg line="-o ${grammar.location}"/>
+            <arg line="-package grammar"/>
+            <arg line="-encoding UTF-8"/>
+        </java>
+        <copy todir="${grammar.location}">
+            <fileset dir="${grammar.location}/src"/>
+        </copy>
+        <delete dir="${grammar.location}/src" />
+        <java jar="${lib.location}/antlr-4.5.1-complete.jar" fork="true">
+            <arg line="src/SKilLParser.g4"/>
+            <!--<arg line="-visitor"/>-->
+            <arg line="-lib src/SKilLLexer.tokens"/>
+            <arg line="-o ${grammar.location}"/>
+            <arg line="-package grammar"/>
+            <arg line="-encoding UTF-8"/>
+        </java>
+        <copy todir="${grammar.location}">
+            <fileset dir="${grammar.location}/src"/>
+        </copy>
+        <delete dir="${grammar.location}/src" />
+    </target>
+
+    <target depends="gensrc" name="compilesrc">
+        <javac debug="true" debuglevel="${debuglevel}" includeantruntime="false" srcdir="${grammar.location}" destdir="${grammar.location}/../../out/production/SKilLls" source="${source}" target="${target}">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+</project>

@@ -77,6 +77,8 @@ tmp/
 local.properties
 .settings/
 .loadpath
+.recommenders/
+plugin.xml_gen
 
 # Eclipse Core
 #.project
@@ -119,4 +121,9 @@ ant/
 *.xml_gen
 
 #generated
-SKilL.genmodel
+model/
+grammar/
+tools/
+
+#runtime eclipse
+runtime-SKilLEd/
