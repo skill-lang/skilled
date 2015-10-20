@@ -5,24 +5,25 @@ import tools.Hint;
 import tools.Tool;
 import tools.Type;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Armin Hüneburg
  * @since 25.08.15.
+ *
+ * This class performs editing tasks on tools.
  */
-@SuppressWarnings("unused")
 public class Edit {
-    private final String COMMANDSTRING;
+    private final String COMMAND_STRING;
     private tools.api.SkillFile skillFile;
 
     /**
      * @param commandString String containing the commands that should be executed.
      */
     public Edit(String commandString) {
-        this.COMMANDSTRING = commandString;
+        this.COMMAND_STRING = commandString;
     }
 
     /**
@@ -36,7 +37,7 @@ public class Edit {
      * Starts processing the command.
      */
     public void start() {
-        String[] commands = COMMANDSTRING.split(";");
+        String[] commands = COMMAND_STRING.split(";");
         for (String command : commands) {
             processCommand(command);
         }
@@ -45,6 +46,7 @@ public class Edit {
 
     /**
      * Processes a single command.
+     *
      * @param command The single command, containing subcommands.
      */
     private void processCommand(String command) {
@@ -65,7 +67,7 @@ public class Edit {
 
             switch (cmd) {
                 case delete:
-                    delete(tool, subCommands, index);
+                    delete(tool);
                     break;
 
                 case rename:
@@ -113,12 +115,13 @@ public class Edit {
 
     /**
      * Sets the defaults for the binding generation.
-     * @param tool The tool the settings belong to.
+     *
+     * @param tool        The tool the settings belong to.
      * @param subCommands Array with the single subcommands.
-     * @param index The position the subcommand starts in the array.
+     * @param globalIndex The position the subcommand starts in the array.
      */
-    @SuppressWarnings("AssignmentToMethodParameter")
-    private void setDefaults(Tool tool, String[] subCommands, int index) {
+    private void setDefaults(Tool tool, String[] subCommands, int globalIndex) {
+        int index = globalIndex;
         String execEnv = subCommands[index];
         index++;
         String path = subCommands[index];
@@ -133,15 +136,14 @@ public class Edit {
 
     /**
      * Removes a hint from a type in a tool.
-     * @param tool The tool the settings belong to.
+     *
+     * @param tool        The tool the settings belong to.
      * @param subCommands Array with the single subcommands.
-     * @param index The position the subcommand starts in the array.
+     * @param globalIndex The position the subcommand starts in the array.
      */
-    @SuppressWarnings("AssignmentToMethodParameter")
-    private void removeTypeHint(Tool tool, String[] subCommands, int index) {
+    private void removeTypeHint(Tool tool, String[] subCommands, int globalIndex) {
+        int index = globalIndex;
         String typeName = subCommands[index];
-        index++;
-        String fieldName = subCommands[index];
         index++;
         String hintName = subCommands[index];
 
@@ -156,77 +158,81 @@ public class Edit {
             return;
         }
 
-        Field field = null;
-        for (Field f : type.getFields()) {
-            if (f.getName().equals(fieldName)) {
-                field = f;
-                break;
+        for (Hint hint : skillFile.Hints()) {
+            if (hint.getName().equals(hintName) && hint.getParent() instanceof Type) {
+                Type parent = (Type) hint.getParent();
+                if (parent.getName().equals(typeName)) {
+                    System.out.println("DELETED");
+                    parent.getTypeHints().remove(hint);
+                    skillFile.delete(hint);
+                    break;
+                }
             }
         }
-        if (field == null) {
-            return;
-        }
-
-        Hint hint = null;
-        for (Hint h : field.getFieldHints()) {
-            if (h.getName().equals(hintName)) {
-                hint = h;
-                break;
-            }
-        }
-        if (hint == null) {
-            return;
-        }
-
-        field.getFieldHints().remove(hint);
-        hint.delete();
     }
 
     /**
      * Adds a hint to a type.
-     * @param tool The tool the settings belong to.
+     *
+     * @param tool        The tool the settings belong to.
      * @param subCommands Array with the single subcommands.
-     * @param index The position the subcommand starts in the array.
+     * @param globalIndex       The position the subcommand starts in the array.
      */
-    @SuppressWarnings("AssignmentToMethodParameter")
-    private void addTypeHint(Tool tool, String[] subCommands, int index) {
+    private void addTypeHint(Tool tool, String[] subCommands, int globalIndex) {
+        int index = globalIndex;
         String typeName = subCommands[index];
         index++;
         String hintName = subCommands[index];
 
-        Type type = null;
+        Type toolType = null;
+        Type skType = null;
         for (Type t : tool.getTypes()) {
             if (t.getName().equals(typeName)) {
-                type = t;
+                toolType = t;
                 break;
             }
         }
-        if (type == null) {
+        for (Type t : skillFile.Types()) {
+            if (t.getName().equals(typeName)) {
+                skType = t;
+                break;
+            }
+        }
+        if (skType == null) {
             return;
         }
 
         Hint hint = null;
-        for (Hint h : type.getTypeHints()) {
+        for (Hint h : skType.getTypeHints()) {
             if (h.getName().equals(hintName)) {
                 hint = h;
                 break;
             }
         }
-        if (hint != null) {
-            return;
+        assert hint != null : "Hint not found";
+        for (Hint h : skillFile.Hints()) {
+            if (h.getName().equals(hintName) && h.getParent() instanceof Type) {
+                Type parent = (Type)h.getParent();
+                if (parent.getName().equals(skType.getName())) {
+                    if (toolType != null && toolType.getTypeHints() != null) {
+                        toolType.getTypeHints().add(skillFile.Hints().make(hintName, skType));
+                    }
+                    return;
+                }
+            }
         }
 
-        type.getTypeHints().add(skillFile.Hints().make(hintName, type));
     }
 
     /**
      * Removes a hint from a field.
-     * @param tool The tool the settings belong to.
+     *
+     * @param tool        The tool the settings belong to.
      * @param subCommands Array with the single subcommands.
-     * @param index The position the subcommand starts in the array.
+     * @param globalIndex       The position the subcommand starts in the array.
      */
-    @SuppressWarnings("AssignmentToMethodParameter")
-    private void removeFieldHint(Tool tool, String[] subCommands, int index) {
+    private void removeFieldHint(Tool tool, String[] subCommands, int globalIndex) {
+        int index = globalIndex;
         String typeName = subCommands[index];
         index++;
         String fieldName = subCommands[index];
@@ -246,7 +252,8 @@ public class Edit {
 
         Field field = null;
         for (Field f : type.getFields()) {
-            if (f.getName().equals(fieldName)) {
+            String[] splits = f.getName().trim().split(" ");
+            if (splits[splits.length - 1].equals(fieldName)) {
                 field = f;
                 break;
             }
@@ -255,32 +262,34 @@ public class Edit {
             return;
         }
 
-        Hint hint = null;
-        for (Hint h : field.getFieldHints()) {
-            if (h.getName().equals(hintName)) {
-                hint = h;
-                break;
+        for (Hint hint : skillFile.Hints()) {
+            if (hint.getName().equals(hintName) && hint.getParent() instanceof Field) {
+                Field parent = (Field) hint.getParent();
+                Type grandParent = field.getType();
+                String[] nameSplits = parent.getName().split(" ");
+                if (nameSplits[nameSplits.length - 1].equals(fieldName) && grandParent.getName().equals(typeName)) {
+                    System.out.println("DELETED");
+                    parent.getFieldHints().remove(hint);
+                    skillFile.delete(hint);
+                    break;
+                }
             }
         }
-        if (hint == null) {
-            return;
-        }
-
-        field.getFieldHints().remove(hint);
-        hint.delete();
     }
 
     /**
      * Adds a hint to a field.
      * @param tool The tool the settings belong to.
      * @param subCommands Array with the single subcommands.
-     * @param index The position the subcommand starts in the array.
+     * @param globalIndex The position the subcommand starts in the array.
      */
-    @SuppressWarnings("AssignmentToMethodParameter")
-    private void addFieldHint(Tool tool, String[] subCommands, int index) {
+    private void addFieldHint(Tool tool, String[] subCommands, int globalIndex) {
+        int index = globalIndex;
         String typeName = subCommands[index];
         index++;
         String fieldName = subCommands[index];
+        index++;
+        String hintName = subCommands[index];
 
         Type type = null;
         for (Type t : tool.getTypes()) {
@@ -295,7 +304,8 @@ public class Edit {
 
         Field field = null;
         for (Field f : type.getFields()) {
-            if (f.getName().equals(fieldName)) {
+            String[] splits = f.getName().trim().split(" ");
+            if (splits[splits.length - 1].equals(fieldName)) {
                 field = f;
                 break;
             }
@@ -304,17 +314,31 @@ public class Edit {
             return;
         }
 
-        field.getFieldHints().add(skillFile.Hints().make(fieldName, field));
+        boolean found = false;
+        for (Hint hint : skillFile.Hints()) {
+            if (hint.getName().equals(hintName) && hint.getParent() instanceof Field) {
+                Field parent = (Field)hint.getParent();
+                Type grandParent = field.getType();
+                String[] nameSplits = parent.getName().split(" ");
+                if (nameSplits[nameSplits.length - 1].equals(fieldName) && grandParent.getName().equals(typeName)) {
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (found) {
+            field.getFieldHints().add(skillFile.Hints().make(hintName, field));
+        }
     }
 
     /**
      * Removes a field from a tool.
      * @param tool The tool the settings belong to.
      * @param subCommands Array with the single subcommands.
-     * @param index The position the subcommand starts in the array.
+     * @param globalIndex The position the subcommand starts in the array.
      */
-    @SuppressWarnings("AssignmentToMethodParameter")
-    private void removeField(Tool tool, String[] subCommands, int index) {
+    private void removeField(Tool tool, String[] subCommands, int globalIndex) {
+        int index = globalIndex;
         String typeName = subCommands[index];
         index++;
         String fieldName = subCommands[index];
@@ -332,7 +356,8 @@ public class Edit {
 
         Field field = null;
         for (Field f : type.getFields()) {
-            if (f.getName().equals(fieldName)) {
+            String[] splits = f.getName().split(" ");
+            if (splits[splits.length - 1].equals(fieldName)) {
                 field = f;
                 break;
             }
@@ -340,19 +365,19 @@ public class Edit {
         if (field == null) {
             return;
         }
-
+        System.out.println("DELETED");
         type.getFields().remove(field);
-        field.delete();
+        skillFile.delete(field);
     }
 
     /**
      * Adds a field to a type.
      * @param tool The tool the settings belong to.
      * @param subCommands Array with the single subcommands.
-     * @param index The position the subcommand starts in the array.
+     * @param globalIndex The position the subcommand starts in the array.
      */
-    @SuppressWarnings("AssignmentToMethodParameter")
-    private void addField(Tool tool, String[] subCommands, int index) {
+    private void addField(Tool tool, String[] subCommands, int globalIndex) {
+        int index = globalIndex;
         String typeName = subCommands[index];
         index++;
         String fieldName = subCommands[index];
@@ -369,29 +394,39 @@ public class Edit {
         }
 
         for (Field f : type.getFields()) {
-            if (f.getName().equals(fieldName)) {
+            String[] splits = f.getName().split(" ");
+            if (splits[1].equals(fieldName)) {
                 return;
             }
         }
-        Field f = skillFile.Fields().make(new ArrayList<>(), fieldName, type);
-        type.getFields().add(f);
+
+        for (Field f : skillFile.Fields()) {
+            String[] splits = f.getName().split(" ");
+            if (splits.length > 1) {
+                if (splits[1].equals(fieldName)) {
+                    type.getFields().add(skillFile.Fields().make("", new ArrayList<>(), f.getName(), new ArrayList<>(), type));
+                }
+            }
+        }
     }
 
     /**
      * Removes a type from a tool.
      * @param tool The tool the settings belong to.
      * @param subCommands Array with the single subcommands.
-     * @param index The position the subcommand starts in the array.
+     * @param globalIndex The position the subcommand starts in the array.
      */
-    private void removeType(Tool tool, String[] subCommands, int index) {
-        String typeName = subCommands[index];
+    private void removeType(Tool tool, String[] subCommands, int globalIndex) {
+        String typeName = subCommands[globalIndex];
         Type type = null;
-        for (Type t : skillFile.Types()) {
+        int i = 0;
+        for (Type t : tool.getTypes()) {
             if (typeName.equals(t.getName())) {
-                tool.getTypes().remove(t);
+                tool.getTypes().remove(i);
                 type = t;
                 break;
             }
+            i++;
         }
         if (type == null) {
             return;
@@ -407,8 +442,10 @@ public class Edit {
         if (file == null) {
             return;
         }
+        skillFile.delete(type);
         for (Type t : tool.getTypes()) {
             if (t.getFile().equals(file)) {
+                System.out.println("DELETED");
                 tool.getFiles().add(file);
                 break;
             }
@@ -424,18 +461,51 @@ public class Edit {
     private void addType(Tool tool, String[] subCommands, int index) {
         String typeName = subCommands[index];
         for (Type t : skillFile.Types()) {
-            if (typeName.equals(t.getName())) {
-                if (!tool.getTypes().contains(t)) {
-                    tool.getTypes().add(t);
+            if (typeName.equals(t.getName()) || t.getName().toLowerCase().equals("enum " + typeName.toLowerCase()) || t.getName().toLowerCase().equals("interface " + typeName.toLowerCase())) {
+                Type type = null;
+                if (tool.getTypes().stream().noneMatch(typeName::equals)) {
+                    type = skillFile.Types().make(t.getComment(), new ArrayList<>(), new ArrayList<>(),t.getFile(), t.getName(), new ArrayList<>(), new ArrayList<>());
                 }
+                if (t.getFields().stream().anyMatch(f -> f.getName().matches("\\S+")) && type != null) {
+                    Field field = t.getFields().stream().filter(f -> f.getName().matches("\\S+")).findFirst().get();
+                    type.getFields().add(skillFile.Fields().make(field.getComment(), new ArrayList<>(), field.getName(), new ArrayList<>(), type));
+                }
+                tool.getTypes().add(type);
+                addExtensions(tool, t);
                 for (tools.File f : skillFile.Files()) {
-                    if (f.equals(t.getFile())) {
+                    if (f.getPath().equals(t.getFile().getPath())) {
                         if (!tool.getFiles().contains(f)) {
-                            tool.getFiles().add(f);
+                            tool.getFiles().add(skillFile.Files().make(new ArrayList<String>(), f.getHeader(), f.getMd5(), f.getPath(), f.getTimestamp()));
                         }
                         return;
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Adds the types a new user type extends.
+     * @param tool The tool the new type is added to.
+     * @param type The type that extends other types.
+     */
+    private void addExtensions(Tool tool, Type type) {
+        Type toolType = null;
+        for (Type t : tool.getTypes()) {
+            if (t.getName().equals(type.getName())) {
+                toolType = t;
+                break;
+            }
+        }
+        List<String> types = tool.getTypes().stream().map(Type::getName).collect(Collectors.toList());
+        for (String extension : type.getExtends()) {
+            List<Type> exts = skillFile.Types().stream().filter(t -> t.getName().equals(extension) && !types.contains(t.getName())).collect(Collectors.toList());
+            for (Type t : exts) {
+                tool.getTypes().add(skillFile.Types().make(t.getComment(), t.getExtends(), new ArrayList<>(), t.getFile(), t.getName(), t.getRestrictions(), new ArrayList<>()));
+                if (t.getExtends().size() > 0) {
+                    addExtensions(tool, t);
+                }
+                toolType.getExtends().add(t.getName());
             }
         }
     }
@@ -446,19 +516,17 @@ public class Edit {
      * @param subCommands Array with the single subcommands.
      * @param index The position the subcommand starts in the array.
      */
-    private void rename(Tool tool, String[] subCommands, int index) {
+    private static void rename(Tool tool, String[] subCommands, int index) {
         tool.setName(subCommands[index]);
     }
 
     /**
      * Deletes a tool.
      * @param tool The tool the settings belong to.
-     * @param subCommands Array with the single subcommands.
-     * @param index The position the subcommand starts in the array.
      */
-    @SuppressWarnings("UnusedParameters")
-    private void delete(Tool tool, String[] subCommands, int index) {
-        tool.delete();
+    private void delete(Tool tool) {
+        System.out.println("DELETED");
+        skillFile.delete(tool);
     }
 
     /**
@@ -466,7 +534,7 @@ public class Edit {
      * @param subCommand The command that has to be matched.
      * @return returns the corresponding enum value.
      */
-    private Command getCommand(String subCommand) {
+    private static Command getCommand(String subCommand) {
         return Command.values()[Integer.parseInt(subCommand)];
     }
 
@@ -487,13 +555,12 @@ public class Edit {
     private Tool selectTool(String subCommand) {
         if (subCommand.equals("&n")) {
             return null;
-        } else {
-            for (Tool t : skillFile.Tools()) {
-                if (t.getName().equals(subCommand)) {
-                    return t;
-                }
-            }
         }
-        return null;
+		for (Tool t : skillFile.Tools()) {
+		    if (t.getName().equals(subCommand)) {
+		        return t;
+		    }
+		}
+        throw new IllegalArgumentException(String.format("The specified Tool (%s) was not found", subCommand));
     }
 }

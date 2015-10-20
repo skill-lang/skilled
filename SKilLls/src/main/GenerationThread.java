@@ -14,8 +14,8 @@ import java.nio.file.Files;
  */
 class GenerationThread implements Runnable {
     private final String COMMAND;
-    private final File JVMLIB;
-    private final File JAVALIB;
+    private final File JVM_LIB;
+    private final File JAVA_LIB;
     private final File TARGET;
 
     /**
@@ -23,10 +23,11 @@ class GenerationThread implements Runnable {
      * @param generator Path to the generator
      * @param target    Output path
      */
+    @SuppressWarnings("SpellCheckingInspection")
     public GenerationThread(String command, File generator, File target) {
         this.COMMAND = command;
-        this.JVMLIB = new File(generator.getParentFile().getAbsolutePath() + File.separator + "deps" + File.separator + "skill.jvm.common.jar");
-        this.JAVALIB = new File(generator.getParentFile().getAbsolutePath() + File.separator + "deps" + File.separator + "skill.java.common.jar");
+        this.JVM_LIB = new File(generator.getParentFile().getAbsolutePath() + File.separator + "deps" + File.separator + "skill.jvm.common.jar");
+        this.JAVA_LIB = new File(generator.getParentFile().getAbsolutePath() + File.separator + "deps" + File.separator + "skill.java.common.jar");
         this.TARGET = target;
     }
 
@@ -40,13 +41,30 @@ class GenerationThread implements Runnable {
             p = Runtime.getRuntime().exec(COMMAND);
             p.waitFor();
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader errorReader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
             String line;
+            boolean knownError = false;
+            while ((line = errorReader.readLine()) != null) {
+                if (line.contains("java.nio.file.NoSuchFileException: deps/skill.jvm.common.jar") || knownError) {
+                    knownError = true;
+                } else {
+                    System.out.println(line);
+                }
+            }
             while ((line = reader.readLine()) != null) {
                 if (!line.equals("-FAILED-")) {
                     System.out.println(line);
                 } else {
-                    Files.copy(JVMLIB.toPath(), new File(TARGET.getAbsolutePath() + File.separator + "java/lib/skill.jvm.common.jar".replace('/', File.separatorChar)).toPath());
-                    Files.copy(JAVALIB.toPath(), new File(TARGET.getAbsolutePath() + File.separator + "java/lib/skill.java.common.jar".replace('/', File.separatorChar)).toPath());
+                    File jvmFile = new File(TARGET.getAbsolutePath() + File.separator + "java/lib/skill.jvm.common.jar".replace('/', File.separatorChar));
+                    File javaFile = new File(TARGET.getAbsolutePath() + File.separator + "java/lib/skill.java.common.jar".replace('/', File.separatorChar));
+                    if (jvmFile.exists()) {
+                        jvmFile.delete();
+                    }
+                    if (javaFile.exists()) {
+                        javaFile.delete();
+                    }
+                    Files.copy(JVM_LIB.toPath(), jvmFile.toPath());
+                    Files.copy(JAVA_LIB.toPath(), javaFile.toPath());
                 }
             }
         } catch (IOException | InterruptedException e) {

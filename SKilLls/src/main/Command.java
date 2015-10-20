@@ -3,6 +3,9 @@ package main;
 /**
  * @author Armin Hüneburg
  * @since 01.09.15.
+ *
+ * ENUM for the different commands the editor can do.
+ * These commands are only for editing tools.
  */
 public enum Command {
     delete,             //Index = 0

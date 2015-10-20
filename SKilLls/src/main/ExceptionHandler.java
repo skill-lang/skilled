@@ -1,32 +1,29 @@
 package main;
 
 /**
- * @Author Armin Hüneburg
+ * @author Armin Hüneburg
  * @since 25.08.15.
  */
-public class ExceptionHandler {
+class ExceptionHandler {
 
     /**
      * Logs the exception.
      *
-     * @param e
-     *            Exception to log.
+     * @param e Exception to log.
      */
     public static void handle(Exception e) {
-        // TODO
+        System.out.println(e.getMessage());
+        e.printStackTrace();
     }
 
     /**
      * Logs the exception.
      *
-     * @param e
-     *            Exception to log.
-     * @param message
-     *            Message that should be shown to the user.
+     * @param e Exception to log.
+     * @param message Message to log.
      */
-    @SuppressWarnings("unused")
-    public static void handle(Exception e, @SuppressWarnings("SameParameterValue") String message) {
-        System.out.println(message);
+    public static void handle(Exception e, String message) {
+        System.out.println(message + "\n" + e.getMessage());
         e.printStackTrace();
     }
 }

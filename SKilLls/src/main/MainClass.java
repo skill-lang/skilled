@@ -1,27 +1,27 @@
 package main;
 
+import grammar.SKilLLexer;
+import grammar.SKilLParser;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.ParseTree;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import tools.Generator;
-import tools.Tool;
+import tools.*;
 import tools.api.SkillFile;
 import grammar.*;
 
 import java.io.*;
+import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -101,7 +101,7 @@ public class MainClass {
         if (args[0].equals("-e") || args[0].equals("--edit")) {
             Edit e = new Edit(args[2]);
             File file = new File(args[1]);
-            File sfFile = new File(file.getAbsolutePath() + File.separator + "a.skills");
+            File sfFile = new File(file.getAbsolutePath() + File.separator + ".skills");
             if (!sfFile.exists()) {
                 try {
                     //noinspection ResultOfMethodCallIgnored
@@ -112,11 +112,12 @@ public class MainClass {
             }
             SkillFile skillFile;
             try {
-                skillFile = SkillFile.open(sfFile.getAbsolutePath());
+                skillFile = SkillFile.open(sfFile.getAbsolutePath(), de.ust.skill.common.java.api.SkillFile.Mode.Read, de.ust.skill.common.java.api.SkillFile.Mode.Write);
             } catch (IOException e1) {
                 ExceptionHandler.handle(e1);
                 return;
             }
+            indexFiles(file, skillFile);
             e.setSkillFile(skillFile);
             e.start();
         } else {
@@ -149,18 +150,29 @@ public class MainClass {
             }
             SkillFile sf;
             try {
-                sf = SkillFile.open(evaluations.get("path").getArgument() + File.separator + "a.skills");
+                sf = SkillFile.open(evaluations.get("path").getArgument() + File.separator + ".skills", de.ust.skill.common.java.api.SkillFile.Mode.Write, de.ust.skill.common.java.api.SkillFile.Mode.Read);
             } catch (IOException e) {
                 ExceptionHandler.handle(e);
                 return;
             }
-            indexFiles(new File(evaluations.get("path").getArgument()), sf);
+            buildDependencies(sf);
+            for (Tool tool : sf.Tools()) {
+                System.out.println(tool.getName());
+                for (tools.File file : tool.getFiles()) {
+                    System.out.println("  " + file.getPath());
+                    for (String dep : file.getDependencies()) {
+                        System.out.println("    " + dep);
+                    }
+                }
+            }
+            String path = evaluations.get("path").getArgument();
+            evaluations.remove("path");
+            indexFiles(new File(path), sf);
             Set<String> set = evaluations.keySet();
-            set.remove("path");
             if (set.contains("generator")) {
-                generator = sf.Generators().make(evaluations.get("exec").getArgument(), evaluations.get("path").getArgument());
+                generator = sf.Generators().make(evaluations.get("exec").getArgument(), evaluations.get("generator").getArgument());
                 set.remove("exec");
-                set.remove("path");
+                set.remove("generator");
             }
             if (set.contains("lang")) {
                 language = evaluations.get("lang").getArgument();
@@ -185,7 +197,7 @@ public class MainClass {
             }
 
             try {
-                generate(new File(evaluations.get("path").getArgument()), tools, sf);
+                generate(new File(path), tools, sf);
             } catch (IOException e) {
                 ExceptionHandler.handle(e);
             }
@@ -207,12 +219,13 @@ public class MainClass {
      * Evaluates arguments which have one leading dash.
      *
      * @param args  The array containing the arguments.
-     * @param index The current position in {@code args}.
+     * @param globalIndex The current position in {@code args}.
      * @return Returns an object with the unambiguous text what action has to perform and the new index.
      */
     @SuppressWarnings("AssignmentToMethodParameter")
-    private static ArgumentEvaluation[] singleDashArg(String[] args, int index) {
+    private static ArgumentEvaluation[] singleDashArg(String[] args, int globalIndex) {
         char last = ' ';
+        int index = globalIndex;
         ArrayList<ArgumentEvaluation> list = new ArrayList<>();
         for (char c : args[index].substring(1).toCharArray()) {
             switch (c) {
@@ -223,6 +236,7 @@ public class MainClass {
                     }
                     index++;
                     list.add(new ArgumentEvaluation(index, args[index], "generator"));
+                    break;
 
                 case 'a':
                     if (last == 'l') {
@@ -231,6 +245,7 @@ public class MainClass {
                     }
                     fileFlag = FileFlag.All;
                     list.add(new ArgumentEvaluation(index, null, "all"));
+                    break;
 
                 case 'l':
                     break;
@@ -242,6 +257,7 @@ public class MainClass {
                     }
                     index++;
                     list.add(new ArgumentEvaluation(index, args[index], "exec"));
+                    break;
 
                 case 'p':
                     if (last == 'l') {
@@ -250,6 +266,7 @@ public class MainClass {
                     }
                     index++;
                     list.add(new ArgumentEvaluation(index, args[index], "path"));
+                    break;
 
                 case 'o':
                     if (last == 'l') {
@@ -258,6 +275,7 @@ public class MainClass {
                     }
                     index++;
                     list.add(new ArgumentEvaluation(index, args[index], "output"));
+                    break;
 
                 case 'm':
                     if (last == 'l') {
@@ -266,6 +284,7 @@ public class MainClass {
                     }
                     index++;
                     list.add(new ArgumentEvaluation(index, args[index], "module"));
+                    break;
 
                 case 's':
                     if (last == 'l') {
@@ -287,11 +306,12 @@ public class MainClass {
      * Evaluates arguments which have two leading dashes.
      *
      * @param args  The array containing the arguments.
-     * @param index The current position in {@code args}.
+     * @param globalIndex The current position in {@code args}.
      * @return Returns an object with the unambiguous text what action has to perform and the new index.
      */
     @SuppressWarnings("AssignmentToMethodParameter")
-    private static ArgumentEvaluation doubleDashArg(String[] args, int index) {
+    private static ArgumentEvaluation doubleDashArg(String[] args, int globalIndex) {
+        int index = globalIndex;
         switch (args[index]) {
             case "--generator":
                 index++;
@@ -347,13 +367,6 @@ public class MainClass {
     private static void generate(File project, ArrayList<String> tools, SkillFile skillFile) throws IOException {
         HashSet<tools.Tool> toolsToBuild = new HashSet<>();
         HashMap<Tool, ArrayList<File>> toolToFile = new HashMap<>();
-        MessageDigest md5;
-        try {
-            md5 = MessageDigest.getInstance("md5");
-        } catch (NoSuchAlgorithmException e) {
-            ExceptionHandler.handle(e);
-            return;
-        }
 
         for (String t : tools) {
             for (Tool tool : skillFile.Tools()) {
@@ -362,26 +375,21 @@ public class MainClass {
                     ArrayList<File> files = new ArrayList<>();
                     for (tools.File f : tool.getFiles()) {
                         File file = new File(f.getPath());
-                        try (InputStream is = Files.newInputStream(Paths.get(file.getAbsolutePath()))) {
-                            DigestInputStream dis = new DigestInputStream(is, md5);
-                            byte[] bytes = new byte[4096];
-                            while (dis.read(bytes, 0, bytes.length) != -1) {
-                                // digest file
-                            }
-                            bytes = md5.digest();
-                            if (!f.getMd5().equals(encodeHex(bytes)) || file.lastModified() != Long.parseLong(f.getTimestamp()) || fileFlag == FileFlag.All) {
-                                f.setMd5(encodeHex(bytes));
-                                f.setTimestamp(String.valueOf(file.lastModified()));
-                                files.add(file);
-                                break;
-                            }
+                        String hash = hash(new File(file.getAbsolutePath()));
+                        if (!f.getMd5().equals(hash) || file.lastModified() != Long.parseLong(f.getTimestamp()) || fileFlag == FileFlag.All) {
+                            f.setMd5(hash);
+                            f.setTimestamp(String.valueOf(file.lastModified()));
+                            files.add(file);
                         }
                     }
                     if (files.size() != 0) {
                         files.clear();
                         for (tools.File f : tool.getFiles()) {
                             File file = new File(f.getPath());
-                            files.add(createToolFile(project, tool, file));
+                            File fi = createToolFile(project, tool, file);
+                            if (fi != null) {
+                                files.add(fi);
+                            }
                         }
                         toolToFile.put(tool, files);
                     }
@@ -416,12 +424,11 @@ public class MainClass {
             builder.append(module == null ? t.getModule() : module);
             builder.append(' ');
             //noinspection SuspiciousMethodCalls
-            for (File f : toolToFile.get(t.getName())) {
-                builder.append(f.getAbsolutePath());
-                builder.append(' ');
-            }
+            builder.append(" %s ");
             builder.append(output.getAbsolutePath());
-            commands.add(new Thread(new GenerationThread(builder.toString(), new File(generator == null ? t.getGenerator().getPath() : generator.getPath()), output)));
+            for (File f : toolToFile.get(t)) {
+                commands.add(new Thread(new GenerationThread(String.format(builder.toString(), f.getAbsolutePath()), new File(generator == null ? t.getGenerator().getPath() : generator.getPath()), output)));
+            }
         }
         commands.forEach(java.lang.Thread::start);
         commands.forEach((thread) -> {
@@ -444,24 +451,34 @@ public class MainClass {
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private static File createToolFile(File project, Tool tool, File file) throws IOException {
-        File f = new File(project.getAbsolutePath() + File.separator + ".skillt");
-        f = new File(f, tool.getName());
-        if (!f.exists()) {
-            f.mkdirs();
+        File tempDir = new File(project.getAbsolutePath() + File.separator + ".skillt");
+        tempDir = new File(tempDir, tool.getName());
+        if (!tempDir.exists()) {
+            tempDir.mkdirs();
         }
-        String name = file.getAbsolutePath();
-        name = name.substring(project.getAbsolutePath().length());
-        if (name.startsWith(File.separator)) {
-            name = name.substring(1);
+        Path relativizedPath = Paths.get(project.getAbsolutePath()).relativize(Paths.get(file.getAbsolutePath()));
+
+        File newFile = new File(tempDir, relativizedPath.toString());
+
+        if (!newFile.getParentFile().exists()) {
+            newFile.getParentFile().mkdirs();
         }
-        @SuppressWarnings("null")
-        File temp = new File(f.getAbsolutePath() + File.separator + name);
-        temp.createNewFile();
-        try (FileReader input = new FileReader(file); FileOutputStream fs = new FileOutputStream(temp.getAbsolutePath());
-             BufferedReader reader = new BufferedReader(input)) {
-            Files.copy(Paths.get(file.getAbsolutePath()), fs);
+        newFile.createNewFile();
+        try (FileOutputStream fs = new FileOutputStream(newFile.getAbsolutePath())) {
+            Lexer lexer;
+            try {
+                lexer = new SKilLLexer(new ANTLRFileStream(file.getAbsolutePath()));
+            } catch (IOException e) {
+                ExceptionHandler.handle(e);
+                return null;
+            }
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            SKilLParser parser = new SKilLParser(tokens);
+            parser.addParseListener(new SkillExtractListener(fs, file, tool));
+            // Call has side effect: the .skill-file is parsed.
+            @SuppressWarnings({"unused", "UnusedAssignment"}) ParseTree tree = parser.file();
         }
-        return temp;
+        return newFile;
     }
 
     /**
@@ -470,7 +487,7 @@ public class MainClass {
      * @param digest The array that should be encoded.
      * @return The hex-String equivalent to the byte array.
      */
-    private static String encodeHex(byte[] digest) {
+    public static String encodeHex(byte[] digest) {
         StringBuilder sb = new StringBuilder();
         for (byte b : digest) {
             sb.append(String.format("%02X", b));
@@ -523,13 +540,83 @@ public class MainClass {
                 if (child.isDirectory()) {
                     indexFiles(child, skillFile);
                 } else if (child.getAbsolutePath().endsWith(".skill")) {
-                    if (skillFile.Files().stream().noneMatch(f -> child.getAbsolutePath().endsWith(f.getPath()))) {
-                        skillFile.Files().make("", child.getAbsolutePath(), "");
+                    tools.File f = null;
+                    if (getStream(child, skillFile).count() != 0) {
+                        f = getStream(child, skillFile).findFirst().get();
+                    }
+                    String hash = hash(child);
+                    if (f == null) {
+                        f = skillFile.Files().make(new ArrayList<>(), "", hash, child.getAbsolutePath(), child.lastModified() + "");
                         indexTypes(child, skillFile);
+                    } else if (Paths.get(child.getAbsolutePath()).relativize(Paths.get(f.getPath())).toString().equals("")) {
+                        indexTypes(child, skillFile);
+                        f.setTimestamp("" + child.lastModified());
+                        f.setMd5(hash);
+                    } else if (Paths.get(child.getAbsolutePath()).relativize(Paths.get(f.getPath())).toString().equals("")
+                            && (!f.getMd5().equals(hash)
+                            || !f.getTimestamp().equals("" + child.lastModified()))) {
+                        indexTypes(child, skillFile);
+                        f.setTimestamp("" + child.lastModified());
+                        f.setMd5(hash);
                     }
                 }
             }
         }
+    }
+
+    static void buildDependencies(SkillFile skillFile) {
+        for (Tool tool : skillFile.Tools()) {
+            for (tools.File file : tool.getFiles()) {
+                ArrayList<Type> types = new ArrayList<>();
+                for (Type type : tool.getTypes()) {
+                    if (type.getFile().getPath().equals(file.getPath())) {
+                        types.add(type);
+                    }
+                }
+                for (Type type : types) {
+                    ArrayList<String> deps = new ArrayList<>();
+                    for (String extension : type.getExtends()) {
+                        tool.getTypes().stream().filter(t -> t.getName().equals(extension)).filter(t -> !t.getFile().getPath().equals(type.getFile().getPath()) && !deps.contains(t.getFile().getPath())).forEach(t -> {
+                            deps.add(t.getFile().getPath());
+                        });
+                    }
+                    for (Field field : type.getFields()) {
+                        for (Type t : skillFile.Types()) {
+                            String name = field.getName();
+                            if (name.startsWith("auto")) {
+                                name = name.substring(5);
+                            }
+                            int index = name.indexOf(' ');
+                            if (index == -1) {
+                                index = name.length();
+                            }
+                            if (t.getName().startsWith(name.substring(0, index))) {
+                                if (!t.getFile().getPath().equals(file.getPath()) && !deps.contains(t.getFile().getPath())) {
+                                    deps.add(t.getFile().getPath());
+                                }
+                            }
+                        }
+                    }
+                    for (String dep : deps) {
+                        if (!file.getDependencies().contains(dep)) {
+                            file.getDependencies().add(dep);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static Stream<tools.File> getStream(File file, SkillFile skillFile) {
+        ArrayList<tools.File> files = new ArrayList<>();
+        for (tools.File f : skillFile.Files()) {
+            Path p1 = Paths.get(file.getAbsolutePath());
+            Path p2 = Paths.get(new File(f.getPath()).getAbsolutePath());
+            if (p1.relativize(p2).toString().equals("")) {
+                files.add(f);
+            }
+        }
+        return files.stream();
     }
 
     /**
@@ -538,7 +625,6 @@ public class MainClass {
      * @param file      The file containing the types.
      * @param skillFile The skill file containing the definitions for the tools.
      */
-    @SuppressWarnings("UnusedParameters")
     private static void indexTypes(File file, SkillFile skillFile) {
         Lexer lexer;
         try {
@@ -549,9 +635,31 @@ public class MainClass {
         }
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         SKilLParser parser = new SKilLParser(tokens);
-        ParserRuleContext t = parser.file();
-        ParseTreeWalker walker = new ParseTreeWalker();
-        //walker.walk(new SkillIndexListener(skillFile, file.getPath()), t);
+        parser.addParseListener(new SkillIndexListener(skillFile, file));
+        // Call has side effect: the .skill-file is parsed.
+        @SuppressWarnings({"unused", "UnusedAssignment"}) ParseTree tree = parser.file();
+    }
+
+    private static String hash(File file) {
+        try (InputStream is = Files.newInputStream(Paths.get(file.getAbsolutePath()))) {
+            MessageDigest md5;
+            try {
+                md5 = MessageDigest.getInstance("md5");
+            } catch (NoSuchAlgorithmException e) {
+                ExceptionHandler.handle(e);
+                return "";
+            }
+            DigestInputStream dis = new DigestInputStream(is, md5);
+            byte[] bytes = new byte[4096];
+            while (dis.read(bytes, 0, bytes.length) != -1) {
+                // digest file
+            }
+            bytes = md5.digest();
+            return encodeHex(bytes);
+        } catch (IOException e) {
+            ExceptionHandler.handle(e);
+            return "";
+        }
     }
 
     /**
