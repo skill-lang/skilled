@@ -132,12 +132,6 @@ public class MainClassTest {
     @Test
     public void test1GenerateTwoTypeTool() {
         StringBuilder builder = new StringBuilder();
-        builder.append("..");
-        builder.append(File.separator);
-        builder.append("SKilLEd");
-        builder.append(File.separator);
-        builder.append("de.unistuttgart.iste.ps.skilled");
-        builder.append(File.separator);
         builder.append("lib");
         builder.append(File.separator);
         builder.append("skill_2.11-0.3.jar");
@@ -158,12 +152,6 @@ public class MainClassTest {
     @Test
     public void test2GenerateTwoTypeWithTypeFromOtherFile() {
         StringBuilder builder = new StringBuilder();
-        builder.append("..");
-        builder.append(File.separator);
-        builder.append("SKilLEd");
-        builder.append(File.separator);
-        builder.append("de.unistuttgart.iste.ps.skilled");
-        builder.append(File.separator);
         builder.append("lib");
         builder.append(File.separator);
         builder.append("skill_2.11-0.3.jar");
