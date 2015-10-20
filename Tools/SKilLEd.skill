@@ -34,6 +34,7 @@ Hint {
 }
 
 File {
+    string[] dependencies;
     string header;
     string path;
     string md5;
