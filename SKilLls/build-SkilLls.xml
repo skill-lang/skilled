@@ -29,7 +29,7 @@
 
     <target name="build-skill-binding">
         <mkdir dir="src/tools"/>
-        <exec executable="scala" dir="${libs.location}">
+        <exec executable="./../../scala/bin/scala" dir="${libs.location}">
             <arg value="skill_2.11-0.3.jar"/>
             <arg line="-p tools"/>
             <arg line="-L Java ../../Tools/SKilLEd.skill"/>
