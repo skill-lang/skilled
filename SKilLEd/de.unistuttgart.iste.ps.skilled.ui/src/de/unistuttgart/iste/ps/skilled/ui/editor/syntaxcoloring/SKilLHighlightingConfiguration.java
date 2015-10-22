@@ -82,7 +82,7 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
 
 	public TextStyle keywordTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(127, 0, 85));
+		textStyle.setColor(new RGB(149, 0, 85));
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
@@ -93,79 +93,66 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
 	}
 
 	public TextStyle usertypeTextStyle() {
-		TextStyle textStyle = new TextStyle();
-		textStyle.setStyle(SWT.ITALIC);
-		textStyle.setColor(new RGB(0, 0, 0));
+		TextStyle textStyle = defaultTextStyle().copy();
 		return textStyle;
 	}
 
 	public TextStyle interfaceTextStyle() {
-		TextStyle textStyle = new TextStyle();
-		textStyle.setStyle(SWT.ITALIC);
-		textStyle.setColor(new RGB(50, 63, 112));
+		TextStyle textStyle = defaultTextStyle().copy();
 		return textStyle;
 	}
 
 	public TextStyle enumTextStyle() {
-		TextStyle textStyle = new TextStyle();
-		textStyle.setStyle(SWT.ITALIC);
-		textStyle.setColor(new RGB(100, 70, 50));
+		TextStyle textStyle = defaultTextStyle().copy();
 		return textStyle;
 	}
 
 	public TextStyle typedefTextStyle() {
-		TextStyle textStyle = new TextStyle();
-		textStyle.setStyle(SWT.ITALIC);
-		textStyle.setColor(new RGB(0, 0, 0));
+		TextStyle textStyle = defaultTextStyle().copy();
 		return textStyle;
 	}
 
 	public TextStyle headcommentTextStyle() {
 		TextStyle textStyle = new TextStyle();
-		textStyle.setStyle(SWT.ITALIC);
-		textStyle.setColor(new RGB(241, 51, 127));
+		textStyle.setColor(new RGB(63, 95, 191));
 		return textStyle;
 	}
 
 	public TextStyle buildintypeTextStyle() {
-		TextStyle textStyle = new TextStyle();
-		textStyle.setStyle(SWT.ITALIC);
-		textStyle.setColor(new RGB(127, 0, 85));
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(149, 0, 85));
+		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 
 	public TextStyle dataFieldTextStyle() {
 		TextStyle textStyle = new TextStyle();
-		textStyle.setStyle(SWT.ITALIC);
-		textStyle.setColor(new RGB(127, 0, 85));
+		textStyle.setColor(new RGB(106, 62, 62));
 		return textStyle;
 	}
 
 	public TextStyle constantFieldTextStyle() {
 		TextStyle textStyle = new TextStyle();
-		textStyle.setStyle(SWT.ITALIC);
-		textStyle.setColor(new RGB(127, 0, 85));
+		textStyle.setStyle(SWT.ITALIC | SWT.BOLD);
+		textStyle.setColor(new RGB(0, 0, 192));
 		return textStyle;
 	}
 
 	public TextStyle compoundFieldTextStyle() {
 		TextStyle textStyle = new TextStyle();
-		textStyle.setStyle(SWT.ITALIC);
-		textStyle.setColor(new RGB(127, 0, 85));
+		textStyle.setColor(new RGB(106, 62, 62));
 		return textStyle;
 	}
 
 	public TextStyle hintTextStyle() {
 		TextStyle textStyle = new TextStyle();
-		textStyle.setStyle(SWT.ITALIC);
-		textStyle.setColor(new RGB(207, 207, 207));
+		textStyle.setColor(new RGB(127, 159, 191));
 		return textStyle;
 	}
 
 	public TextStyle restrictionTextStyle() {
 		TextStyle textStyle = new TextStyle();
-		textStyle.setStyle(SWT.ITALIC);
-		textStyle.setColor(new RGB(207, 207, 207));
+		textStyle.setColor(new RGB(100, 100, 100));
 		return textStyle;
 	}
 
