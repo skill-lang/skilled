@@ -77,7 +77,7 @@ IntegerConstant
 
 fragment
 DecimalConstant
-    :   NonzeroDigit Digit*
+    :   Sign? NonzeroDigit Digit*
     ;
 
 fragment
@@ -141,8 +141,8 @@ FloatingConstant
 
 fragment
 DecimalFloatingConstant
-    :   FractionalConstant ExponentPart? FloatingSuffix?
-    |   DigitSequence ExponentPart FloatingSuffix?
+    :  Sign? FractionalConstant ExponentPart? FloatingSuffix?
+    |  Sign? DigitSequence ExponentPart FloatingSuffix?
     ;
 
 fragment

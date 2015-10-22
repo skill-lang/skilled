@@ -6,15 +6,21 @@ file: header declaration*;
 
 header: HEAD_COMMENT* include*;
 
-include: ('include' | 'with') StringLiteral+;
+includeWord: ('include' | 'with');
+
+include: includeWord StringLiteral+;
 
 declaration: (usertype | enumtype | interfacetype | typedef);
 
-usertype: description name=Identifier ((':' | 'with' | 'extends') Identifier)* '{' field* '}';
+usertype: description name=Identifier extension* '{' field* '}';
 
-enumtype: COMMENT? 'enum' name=Identifier '{' Identifier (',' Identifier)* ';' field* '}';
+enumtype: COMMENT? 'enum' name=Identifier '{' enumvalues ';' field* '}';
 
-interfacetype: COMMENT? 'interface' name=Identifier ((':' | 'with' | 'extends') Identifier)* '{' field* '}';
+interfacetype: COMMENT? 'interface' name=Identifier extension* '{' field* '}';
+
+extendWord: (':' | 'with' | 'extends');
+
+extension: extendWord Identifier;
 
 typedef: COMMENT? 'typedef' name=Identifier (restriction | hint)* type ';';
 
@@ -41,3 +47,5 @@ restriction: '@' Identifier ('(' (rarg (',' rarg)*)?')')?;
 rarg: (FloatingConstant | IntegerConstant | StringLiteral | (Identifier (',' Identifier)*));
 
 hint: '!' Identifier ('(' (rarg (',' rarg)*)?')')?;
+
+enumvalues: Identifier (',' Identifier)*;
