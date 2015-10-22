@@ -7,6 +7,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+import org.eclipse.xtext.ui.resource.SimpleResourceSetProvider;
 
 import de.unistuttgart.iste.ps.skilled.ui.editor.syntaxcoloring.SKilLAntlrTokenToAttributeIdMapper;
 import de.unistuttgart.iste.ps.skilled.ui.editor.syntaxcoloring.SKilLHighlightingConfiguration;
@@ -19,6 +20,11 @@ public class SKilLUiModule extends de.unistuttgart.iste.ps.skilled.ui.AbstractSK
 	public SKilLUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
 	}
+	
+	@Override
+	public java.lang.Class<? extends org.eclipse.xtext.ui.resource.IResourceSetProvider> bindIResourceSetProvider() {
+		return SimpleResourceSetProvider.class;
+	};
 
 	// Includes the custom settings for syntax coloring.
 	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
