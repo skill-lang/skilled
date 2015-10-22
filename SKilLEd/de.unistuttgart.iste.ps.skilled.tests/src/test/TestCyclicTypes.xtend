@@ -13,7 +13,10 @@ import org.junit.runner.RunWith;
 
 import com.google.inject.Inject;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-
+/**
+ * This Class tests the CyclicTypesValidator.
+ * @author Jan Berberich
+ */
 
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)

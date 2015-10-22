@@ -8,6 +8,7 @@ import java.util.HashSet
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.EValidatorRegistrar
+import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype
 
 /**
  * This class contains the Validation rules for Cyclic Types. 
@@ -19,11 +20,13 @@ class CyclicTypesValidator  extends AbstractDeclarativeValidator {
 
 	public static val CYCLIC_TYPES = 'cyclicTypes'
 	public static val TYPE_IS_HIS_OWN_PARENT = 'cycleError'
+	public static val MULTIPLE_INHERITENCE = 'inheritenceError'
 	public static var index = 0
 	public static var Set<CyclicTypesNode> edges 
 	public static var Stack<CyclicTypesNode> nodes_stack = new Stack()
 	public static var CyclicTypesNode firstnode;
-	
+	public var boolean cyclic;
+	public static var Set<String> declarationsVisited
 
 	override register(EValidatorRegistrar registar){
 		
@@ -32,7 +35,9 @@ class CyclicTypesValidator  extends AbstractDeclarativeValidator {
 	def searchCyclicType(TypeDeclaration dec){
 	edges = new HashSet<CyclicTypesNode>;	//Set with all created graph nodes
 	index = 0								//Index counter for Tarjan's strongly connected components algorithm
-	nodes_stack = new Stack();			
+	nodes_stack = new Stack();		
+	declarationsVisited = new HashSet<String>;
+	cyclic = false//If there is a Cycle that includes dec, cyclic will be set and MultipleInheritence will not be validated for dec.	
 	//Creates the Graph
 	firstnode = new CyclicTypesNode(dec, -1)		
 	edges.add(firstnode)	
@@ -45,13 +50,53 @@ class CyclicTypesValidator  extends AbstractDeclarativeValidator {
 			strongconnect(node)
 		}			
 	}
-	
+		
 	//Test if Node is his own parent	
 	if(firstnode.getsuccessors.contains(firstnode)){
 		error("Error: type can't be his own parent." , firstnode.typeDeclaration, SKilLPackage.Literals.DECLARATION__NAME, TYPE_IS_HIS_OWN_PARENT, firstnode.typeDeclaration.name)
+		cyclic = true;
 	}		
+	if(!cyclic){
+		multipleInheritence(firstnode.typeDeclaration)	
+	}
 	}	
-	def strongconnect(CyclicTypesNode node){
+	
+
+	def void multipleInheritence(TypeDeclaration dec){
+			var int directSupertypes =0//Number of direct Supertypes that are not Interfaces
+			for(TypeDeclarationReference d: dec.supertypes){
+				if(!(d.type instanceof Interfacetype)){
+				directSupertypes++
+				}
+			}
+			if(directSupertypes>1){
+				error("Error: Type can only have one Supertype that is not an Interface.", firstnode.typeDeclaration,SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
+			}else{
+				println("Checking Supertypes for " + firstnode.typeDeclaration.name)
+				var int supertypes = numberOfSupertypes(dec) //Number of Supertypes that are not Interfaces
+				println("found:"+supertypes )
+				if(supertypes>1){
+					error("Error: Multiple Inheritence is not allowed.", firstnode.typeDeclaration,SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
+				}
+			}
+	}
+	
+	def int numberOfSupertypes(TypeDeclaration dec){
+		if(declarationsVisited.contains(dec.name)){
+			return 0 //Cycle
+		}
+		declarationsVisited.add(dec.name)
+		var int supertypes = 0
+		for(TypeDeclarationReference d: dec.supertypes){
+			if(!(d.type instanceof Interfacetype)){
+				supertypes++
+			}
+			supertypes = supertypes + numberOfSupertypes(d.type)	//Check Supertypes
+		}
+		return supertypes
+	}
+	
+	def void strongconnect(CyclicTypesNode node){
 		node.setindex(index)
 		node.setlowlink(index)
 		index++
@@ -132,6 +177,7 @@ class CyclicTypesValidator  extends AbstractDeclarativeValidator {
 				}
 				//Error Message
 				error("Error: can't use extend in a Cycle" , firstnode.typeDeclaration, SKilLPackage.Literals.DECLARATION__NAME, CYCLIC_TYPES, array_nodes)
+				cyclic = true
 				}
 			}
 		}
