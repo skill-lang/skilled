@@ -26,8 +26,8 @@ class TestMultipleInheritence {
 	@Inject extension ParseHelper<File> parser;
 	@Inject extension ValidationTestHelper
 	@Test
-	def void testError() {
-		assertFalse('''
+	def void testNoError() {
+		assertTrue('''
 			TypeA :TypeC{
 				const i8 a = 1;
 			}    	
@@ -71,6 +71,24 @@ class TestMultipleInheritence {
 		'''.parse.validate.isNullOrEmpty)
 		
 	}
-	
+	@Test
+	def void testErrorMultipleInheritence() {
+		assertFalse('''
+			TypeA :TypeC:TypeD{
+				const i8 a = 1;
+			}    	
+			Interface TypeD:TypeB{
+				
+			}
+			TypeB{
+				
+			}
+			TypeC{
+				
+			}
+		'''.parse.validate.isNullOrEmpty)
+		
+	}
+		
 		
 }

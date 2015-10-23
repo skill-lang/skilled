@@ -63,6 +63,7 @@ class CyclicTypesValidator  extends AbstractDeclarativeValidator {
 	
 
 	def void multipleInheritence(TypeDeclaration dec){
+		if(dec.supertypes.size > 1){
 			var int directSupertypes =0//Number of direct Supertypes that are not Interfaces
 			for(TypeDeclarationReference d: dec.supertypes){
 				if(!(d.type instanceof Interfacetype)){
@@ -72,13 +73,18 @@ class CyclicTypesValidator  extends AbstractDeclarativeValidator {
 			if(directSupertypes>1){
 				error("Error: Type can only have one Supertype that is not an Interface.", firstnode.typeDeclaration,SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
 			}else{
+				var int supertypes = 0;//Number of Supertypes of Interfaces inherited by dec that are not Interfaces
+				for(TypeDeclarationReference r: dec.supertypes){
+					if(r.type instanceof Interfacetype){
+					supertypes = supertypes + numberOfSupertypes(r.type)
+					}
+				}
 				println("Checking Supertypes for " + firstnode.typeDeclaration.name)
-				var int supertypes = numberOfSupertypes(dec) //Number of Supertypes that are not Interfaces
-				println("found:"+supertypes )
-				if(supertypes>1){
+				if(supertypes+directSupertypes>1){
 					error("Error: Multiple Inheritence is not allowed.", firstnode.typeDeclaration,SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
 				}
-			}
+			}	
+		}
 	}
 	
 	def int numberOfSupertypes(TypeDeclaration dec){
