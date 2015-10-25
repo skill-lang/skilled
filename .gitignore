@@ -127,9 +127,15 @@ ant/
 model/
 grammar/
 tools/
+SKilLls/lib/skill.j*
 
 #runtime eclipse
 runtime-SKilLEd/
 
 #output
 buildroot/
+
+#generated through tests
+SKilLls/generated/
+SKilLls/resources/.skillt/
+SKilLls/resources/.skills
