@@ -25,7 +25,7 @@ import org.eclipse.xtext.validation.ComposedChecks
  * 
  */
  @ComposedChecks(validators =
-#[CyclicTypesValidator
+#[CyclicTypesValidator, FieldRestrictionsValidator
 ])
 class SKilLValidator extends AbstractSKilLValidator {
 
