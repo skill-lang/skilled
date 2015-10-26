@@ -22,6 +22,9 @@
 
     <target depends="clean" name="gensrc">
         <mkdir dir="${grammar.location}"/>
+        <copy todir="${grammar.location}">
+            <file name="src/SKilLLexer.tokens"/>
+        </copy>
         <java jar="${lib.location}/antlr-4.5.1-complete.jar" fork="true">
             <arg line="src/SKilLLexer.g4"/>
             <arg line="-lib src/SKilLLexer.tokens"/>
