@@ -54,13 +54,5 @@ class TestGarbage3 {
 		
 		Assert::assertTrue(issueCount > 0);
 	}
-	
-	@Test
-	def void testGarbage14() {
-		val issueCount = '''
-			
-		'''.parse.validate.size;
-		
-		Assert::assertTrue(issueCount > 0);
-	}
+
 }
