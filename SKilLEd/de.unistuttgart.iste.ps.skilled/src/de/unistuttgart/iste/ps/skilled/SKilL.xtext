@@ -64,7 +64,7 @@ Hint:
 
 RestrictionArgument:
 	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING |
-	valueType=TypeDeclarationReference);
+	valueType=DeclarationReference);
 
 HintArgument:
 	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING | valueIdentifier=ID);

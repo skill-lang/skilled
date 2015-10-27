@@ -95,9 +95,14 @@ class TestDefaultFieldRestriction {
 	
 	@Test
 	def void testDefaultUsertypeWithoutArgs() {
-		assertFalse('''
+		assertTrue('''
+			TypeA {
+			}
+			@singleton
+			TypeB : TypeA {
+			}
 			TypeC {
-				@default
+				@default(TypeB)
 				TypeA a;
 			}   
 		'''.parse.validate.isNullOrEmpty)

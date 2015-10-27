@@ -12,6 +12,10 @@ import de.unistuttgart.iste.ps.skilled.sKilL.RestrictionArgument
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import de.unistuttgart.iste.ps.skilled.sKilL.Settype
 import org.eclipse.xtext.validation.Check
+import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
+import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype
+import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype
 
 /** 
  * This class contains the Validation rules for Cyclic Types. 
@@ -21,7 +25,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 
 	/*
 	 * If field type is instance of DeclarationReference, it means that this is a user-type.
-	 * Look at the error message - it gives context to the if()s.
+	 * The error message gives context to the if()s.
 	 * 
 	 */
 	@Check
@@ -49,7 +53,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 								SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 							errorFound = true;
 						} else if (fieldType instanceof BuildInTypeReference) {
-							val fieldBuiltInType = (fieldType as BuildInTypeReference).getType();
+							val fieldBuiltInType = fieldType.getType();
 							if (fieldBuiltInType == BuildInType.STRING) {
 								if (restriction.getRestrictionArguments().size() != 0) {
 									error("The Non Null restriction can't have arguments.", restriction,
@@ -75,67 +79,122 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 						nonNullUsed = true;
 					}
 					case 'default': {
-						if (fieldType instanceof Settype || fieldType instanceof Listtype ||
-							fieldType instanceof Arraytype || fieldType instanceof DeclarationReference) {
-							error("The Default restriction can only be used on strings, integers, floats, annotations and user-types.",
-								restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
-						} else if (fieldType instanceof BuildInTypeReference) {
-							val fieldBuiltInType = (fieldType as BuildInTypeReference).getType();
-							if (fieldBuiltInType != BuildInType.BOOLEAN) {
+						if (!defaultUsed) {
+							if (fieldType instanceof Settype || fieldType instanceof Listtype || fieldType instanceof Arraytype) {
+								error("The Default restriction can only be used on strings, integers, floats, annotations and user-types.",
+									restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+							} else if (fieldType instanceof BuildInTypeReference) {
+								val fieldBuiltInType = fieldType.getType();
+								if (fieldBuiltInType != BuildInType.BOOLEAN) {
+									if (restriction.getRestrictionArguments().size() == 1) {
+										val argument1 = restriction.getRestrictionArguments().get(0);
+										if (fieldBuiltInType == BuildInType.I8 || fieldBuiltInType == BuildInType.I16 ||
+											fieldBuiltInType == BuildInType.I32 || fieldBuiltInType == BuildInType.I64 ||
+											fieldBuiltInType == BuildInType.V64) {
+											if (argument1.valueLong == null) {
+												error("Restriction argument must be an integer.", restriction,
+													SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+											}
+										} else if (fieldBuiltInType == BuildInType.F32 || fieldBuiltInType == BuildInType.F64) {
+											if (argument1.valueDouble == null) {
+												error("Restriction argument must be a float.", restriction,
+													SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+											}
+										} else if (fieldBuiltInType == BuildInType.STRING) {
+											if (argument1.valueString == null) {
+												error("Restriction argument must be a string.", restriction,
+													SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+											}
+										} 
+										else if (fieldBuiltInType == BuildInType.ANNOTATION) {
+											if (argument1.valueType == null) {
+												error("Restriction argument must be an enum or a singleton restricted type.", restriction,
+													SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+											} else {
+												val restrictionArgumentType = (argument1.valueType).type;
+												if (restrictionArgumentType instanceof Interfacetype) {
+													error("Restriction argument must be an enum or a singleton restricted type.", restriction,
+														SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+												} else if (restrictionArgumentType instanceof Typedef) {
+													val restrictions = restrictionArgumentType.restrictions;
+													var isRestrictionArgumentSingletonRestricted = false;
+													for (typedefRestriction : restrictions) {
+														if ("singleton".equals(typedefRestriction.restrictionName)) {
+															isRestrictionArgumentSingletonRestricted = true;
+														}
+													}
+													if (!isRestrictionArgumentSingletonRestricted) {
+														error("Restriction argument must be an enum or a singleton restricted type.", restriction,
+															SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+													}
+												} else if (restrictionArgumentType instanceof Usertype) {		//Yes, the logic here duplicates the typedef block.
+													val restrictions = restrictionArgumentType.restrictions;
+													var singletonFound = false;
+													for (typedefRestriction : restrictions) {
+														if ("singleton".equals(typedefRestriction.restrictionName)) {
+															singletonFound = true;
+														}
+													}
+													if (!singletonFound) {
+														error("Restriction argument must be an enum or a singleton restricted type.", restriction,
+															SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+													}
+												}
+											}
+										}
+									} else {
+										error("The Default restriction requires one argument.", restriction,
+											SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+									}
+								} else {
+									error("The Default restriction can only be used on strings, integers, floats, annotations and user-types.",
+										restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+								}
+							} else if (fieldType instanceof DeclarationReference) {
 								if (restriction.getRestrictionArguments().size() == 1) {
 									val argument1 = restriction.getRestrictionArguments().get(0);
-									if (fieldBuiltInType == BuildInType.I8 || fieldBuiltInType == BuildInType.I16 ||
-										fieldBuiltInType == BuildInType.I32 || fieldBuiltInType == BuildInType.I64 ||
-										fieldBuiltInType == BuildInType.V64) {
-										if (argument1.valueLong == null) {
-											error("Restriction argument must be an integer.", restriction,
+									if (argument1.valueType == null) {
+										error("Restriction argument must be a singleton restricted sub-type.", restriction,
+											SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+									} else {
+										val restrictionArgumentType = (argument1.valueType).type;
+										if (restrictionArgumentType instanceof Interfacetype || restrictionArgumentType instanceof Enumtype || 
+											restrictionArgumentType instanceof Typedef) {
+											error("Restriction argument must be a singleton restricted sub-type.", restriction,
 												SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+										} else if (restrictionArgumentType instanceof Usertype) {
+											val restrictionArgumentSupertypes = restrictionArgumentType.supertypes;
+											var isRestrictionArgumentSubTypeOfField = false;
+											for (supertype : restrictionArgumentSupertypes) {
+												if ((fieldType.type.name).equals(supertype.type.name)) {
+													isRestrictionArgumentSubTypeOfField = true;
+												}
+											}
+											var isRestrictionArgumentTypeSingletonRestricted = false;
+											if (isRestrictionArgumentSubTypeOfField) {
+												val restrictions = restrictionArgumentType.restrictions;
+												for (typedefRestriction : restrictions) {
+													if ("singleton".equals(typedefRestriction.restrictionName)) {
+														isRestrictionArgumentTypeSingletonRestricted = true;
+													}
+												}
+											}
+											if (!isRestrictionArgumentSubTypeOfField || !isRestrictionArgumentTypeSingletonRestricted) {
+												error("Restriction argument must be a singleton restricted sub-type.", restriction,
+													SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+											}
 										}
-									} else if (fieldBuiltInType == BuildInType.F32 || fieldBuiltInType == BuildInType.F64) {
-										if (argument1.valueDouble == null) {
-											error("Restriction argument must be a float.", restriction,
-												SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
-										}
-									} else if (fieldBuiltInType == BuildInType.STRING) {
-										if (argument1.valueString == null) {
-											error("Restriction argument must be a string.", restriction,
-												SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
-										}
-									} 
-//									else if (fieldBuiltInType == BuildInType.ANNOTATION) {
-//										if (argument1.valueType == null) {
-//											error("Restriction argument must be an enum or singleton restricted type.", restriction,
-//												SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
-//										} else {
-//											val type = (argument1.valueType).type;
-//											if (type instanceof Interfacetype) {
-//												error("Restriction argument must be an enum or singleton restricted type.!!", restriction,
-//													SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
-//											} else if (type instanceof Typedef) {
-//												val restrictions = (type as Typedef).restrictions;
-//												var singletonFound = false;
-//												for (typedefRestriction : restrictions) {
-//													if ("singleton".equals(typedefRestriction.restrictionName)) {
-//														singletonFound = true;
-//													}
-//												}
-//												if (!singletonFound) {
-//													error("Restriction argument must be an enum or singleton restricted type.!!", restriction,
-//														SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
-//												}
-//											}
-//										}
-//									}
+									}
 								} else {
 									error("The Default restriction requires one argument.", restriction,
 										SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 								}
-							} else {
-								error("The Default restriction can only be used on strings, integers, floats, annotations and user-types.",
-									restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 							}
-						}
-						defaultUsed = true;
+							defaultUsed = true;				
+						} else {
+							error("The Default restriction is already used on this field.",
+								restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+						}	
 					}
 					case 'range': {
 						if (fieldType instanceof Settype || fieldType instanceof Listtype ||
@@ -143,7 +202,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 							error("The Range restriction can only be used on integers and floats.", restriction,
 								SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 						} else if (fieldType instanceof BuildInTypeReference) {
-							val fieldBuiltInType = (fieldType as BuildInTypeReference).getType();
+							val fieldBuiltInType = fieldType.getType();
 							if (fieldBuiltInType != BuildInType.STRING && fieldBuiltInType != BuildInType.BOOLEAN &&
 								fieldBuiltInType != BuildInType.ANNOTATION) {
 								if (restriction.getRestrictionArguments().size() == 2) {
@@ -213,7 +272,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 							error("The Max restriction can only be used on integers and floats.", restriction,
 								SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 						} else if (fieldType instanceof BuildInTypeReference) {
-							val fieldBuiltInType = (fieldType as BuildInTypeReference).getType();
+							val fieldBuiltInType = fieldType.getType();
 							if (fieldBuiltInType != BuildInType.STRING && fieldBuiltInType != BuildInType.BOOLEAN &&
 								fieldBuiltInType != BuildInType.ANNOTATION) {
 								if (restriction.getRestrictionArguments().size() == 1) {
@@ -269,7 +328,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 							error("The Min restriction can only be used on integers and floats.", restriction,
 								SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 						} else if (fieldType instanceof BuildInTypeReference) {
-							val fieldBuiltInType = (fieldType as BuildInTypeReference).getType();
+							val fieldBuiltInType = fieldType.getType();
 							if (fieldBuiltInType != BuildInType.STRING && fieldBuiltInType != BuildInType.BOOLEAN &&
 								fieldBuiltInType != BuildInType.ANNOTATION) {
 								if (restriction.getRestrictionArguments().size() == 1) {
@@ -327,7 +386,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 									SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 							}
 						} else {
-							error("The Coding restriction requires an argument.", restriction,
+							error("The Coding restriction must have one argument.", restriction,
 								SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 						}
 					}
@@ -339,7 +398,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 								restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 							errorFound = true;
 						} else if (fieldType instanceof BuildInTypeReference) {
-							val fieldBuiltInType = (fieldType as BuildInTypeReference).getType();
+							val fieldBuiltInType = fieldType.getType();
 							if (fieldBuiltInType == BuildInType.STRING || fieldBuiltInType == BuildInType.ANNOTATION) {
 								if (restriction.getRestrictionArguments().size() != 0) {
 									error("The Constant Length Pointer restriction can't have arguments.", restriction,
@@ -370,7 +429,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 							error("The One Of restriction can only be used on annotations and user-types.", restriction,
 								SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 						} else if (fieldType instanceof BuildInTypeReference) {
-							val fieldBuiltInType = (fieldType as BuildInTypeReference).getType();
+							val fieldBuiltInType = fieldType.getType();
 							if (fieldBuiltInType == BuildInType.ANNOTATION) {
 								if (restriction.getRestrictionArguments().size() >= 1) {
 									for (RestrictionArgument argument : restriction.getRestrictionArguments()) {
