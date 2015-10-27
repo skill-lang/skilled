@@ -79,7 +79,6 @@ class CyclicTypesValidator  extends AbstractDeclarativeValidator {
 					supertypes = supertypes + numberOfSupertypes(r.type)
 					}
 				}
-				println("Checking Supertypes for " + firstnode.typeDeclaration.name)
 				if(supertypes+directSupertypes>1){
 					error("Error: Multiple Inheritence is not allowed.", firstnode.typeDeclaration,SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
 				}
