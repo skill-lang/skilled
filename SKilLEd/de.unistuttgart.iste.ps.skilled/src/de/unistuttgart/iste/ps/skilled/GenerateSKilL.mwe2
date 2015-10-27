@@ -84,6 +84,7 @@ Workflow {
         			ignoreCase = true
     			}
 			}
+		
     
     		// Xtend-based API for validation
     		fragment = validation.ValidatorFragment auto-inject {
@@ -92,13 +93,15 @@ Workflow {
     		}
     
     		// old scoping and exporting API
-    		 fragment = scoping.ImportURIScopingFragment auto-inject {}
+    		 fragment = scoping.ImportURIScopingFragment auto-inject {
+    		 	ignoreCase = true
+    		 }
     		// fragment = exporting.SimpleNamesFragment auto-inject {}
     
     		// scoping and exporting API
-    		//fragment = scoping.ImportNamespacesScopingFragment auto-inject {
-    		//	ignoreCase = true
-    		//}
+    		fragment = scoping.ImportNamespacesScopingFragment auto-inject {
+    			ignoreCase = true
+    		}
     		fragment = exporting.QualifiedNamesFragment auto-inject {}
     		fragment = builder.BuilderIntegrationFragment auto-inject {}
     
