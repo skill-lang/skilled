@@ -5,6 +5,13 @@ import org.eclipse.xtext.conversion.impl.AbstractLexerBasedConverter;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.util.Strings;
 
+/**
+ * 
+ * @author Tobias Heck
+ * 
+ * Removes underscores from type names, so that 'car' and 'c_a_r' are equivalent.
+ *
+ */
 public class TypeValueConverter extends AbstractLexerBasedConverter<String> {
 
 	@Override
