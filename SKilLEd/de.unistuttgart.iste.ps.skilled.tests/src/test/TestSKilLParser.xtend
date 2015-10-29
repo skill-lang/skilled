@@ -1,35 +1,22 @@
 package test
 
-import static org.junit.Assert.*;
-
-import org.eclipse.xtext.junit4.InjectWith;
-import org.eclipse.xtext.junit4.XtextRunner;
-import org.eclipse.xtext.junit4.util.ParseHelper;
-
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider;
-import de.unistuttgart.iste.ps.skilled.sKilL.File;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import com.google.inject.Inject;
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.validation.SKilLValidator
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import org.junit.Assert
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.FieldtypeImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.BuildInType
-import de.unistuttgart.iste.ps.skilled.sKilL.BuildInTypeReference
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.ConstantImpl
-import org.eclipse.emf.ecore.util.EDataTypeEList
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypeDeclarationImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.UsertypeImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.HintImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.DeclarationImpl
+import com.google.inject.Inject
+import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
 import de.unistuttgart.iste.ps.skilled.sKilL.Arraytype
 import de.unistuttgart.iste.ps.skilled.sKilL.Data
+import de.unistuttgart.iste.ps.skilled.sKilL.File
+import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.ConstantImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.DeclarationImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.HintImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypeDeclarationImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.UsertypeImpl
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.junit4.util.ParseHelper
+import org.junit.Assert
+import org.junit.Test
+import org.junit.runner.RunWith
 
 /**
  * @author Tobias Heck

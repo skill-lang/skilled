@@ -7,12 +7,11 @@ import org.eclipse.xtext.CrossReference;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultSemanticHighlightingCalculator;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 
 import de.unistuttgart.iste.ps.skilled.sKilL.Basetype;
-import de.unistuttgart.iste.ps.skilled.sKilL.BuildInTypeReference;
+import de.unistuttgart.iste.ps.skilled.sKilL.BuiltInType;
 import de.unistuttgart.iste.ps.skilled.sKilL.Constant;
 import de.unistuttgart.iste.ps.skilled.sKilL.Data;
 import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference;
@@ -52,7 +51,7 @@ public class SKilLSemanticHighlightingCalculator implements ISemanticHighlightin
 				} else if (dr.getType() instanceof Typedef) {
 					acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.TYPEDEF_ID);
 				}
-			} else if (semanticElement instanceof BuildInTypeReference) {
+			} else if (semanticElement instanceof BuiltInType) {
 				acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.BUILDINTYPE_ID);
 			} else if (semanticElement instanceof Restriction) {
 				for (INode resNode : node.getAsTreeIterable()) {

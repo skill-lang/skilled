@@ -3,33 +3,27 @@ package test
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
 import de.unistuttgart.iste.ps.skilled.sKilL.Arraytype
-import de.unistuttgart.iste.ps.skilled.sKilL.BuildInType
-import de.unistuttgart.iste.ps.skilled.sKilL.BuildInTypeReference
 import de.unistuttgart.iste.ps.skilled.sKilL.Data
 import de.unistuttgart.iste.ps.skilled.sKilL.File
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.ConstantImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.DataImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.DeclarationImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.DeclarationReferenceImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.HintImpl
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider;
-import de.unistuttgart.iste.ps.skilled.sKilL.File;
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.InterfacetypeImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.ListtypeImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypeDeclarationImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypedefImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.UsertypeImpl
+import java.io.PrintWriter
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypedefImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.InterfacetypeImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.DeclarationReferenceImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.ListtypeImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.BuildInTypeReferenceImpl
-import java.io.PrintWriter
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.DataImpl
 
 /**
  * @author Tobias Heck

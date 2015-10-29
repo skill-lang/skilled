@@ -5,7 +5,6 @@ package de.unistuttgart.iste.ps.skilled.validation
 import de.unistuttgart.iste.ps.skilled.sKilL.Constant
 import org.eclipse.xtext.validation.Check
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.sKilL.BuildInTypeReference
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Listtype
 import de.unistuttgart.iste.ps.skilled.sKilL.Basetype
@@ -15,13 +14,14 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Arraytype
 import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
 import de.unistuttgart.iste.ps.skilled.sKilL.Settype
 import org.eclipse.xtext.validation.ComposedChecks
+import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
 
 /**
  * This class contains custom validation rules. 
  * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  * 
- * @author Marco Link
+ * @author Marco Link and Nikolay Fateev
  * 
  */
  @ComposedChecks(validators =
@@ -34,28 +34,9 @@ class SKilLValidator extends AbstractSKilLValidator {
 		
 	@Check
 	def checkConstantHasAnInteger(Constant constant) {
-		if (constant.fieldtype instanceof BuildInTypeReference) {
-			val b = constant.fieldtype as BuildInTypeReference;
-			switch (b.type) {
-				case I8:
-					return
-				case I16:
-					return
-				case I32:
-					return
-				case I64:
-					return
-				case V64:
-					return
-				default: {
-					error('Only an Integer can be const.', constant,
-						SKilLPackage.Literals.CONSTANT.getEStructuralFeature("fieldtype"), INVALID_CONSTANT_TYPE)
-				}
-			}
-
-		} else {
-			error('Only an Integer can be const.', constant,
-				SKilLPackage.Literals.CONSTANT.getEStructuralFeature("fieldtype"), INVALID_CONSTANT_TYPE)
+		if (!(constant.fieldtype instanceof Integertype)) {
+			error('Only an iInteger can be constant.', constant,
+				SKilLPackage.Literals.CONSTANT__CONSTANT_NAME, INVALID_CONSTANT_TYPE)
 		}
 	}
 
@@ -119,4 +100,3 @@ class SKilLValidator extends AbstractSKilLValidator {
 			}
 		}
 }
-

@@ -1,7 +1,6 @@
 /** 
  * Xtext grammar for SKilL
- * TODO: Add hexInt
- * @author Marco Link
+ * @author Marco Link and Nikolay Fateev
  */
 grammar de.unistuttgart.iste.ps.skilled.SKilL hidden(WHITESPACE)
 
@@ -20,8 +19,16 @@ IncludeFile:
 Declaration:
 	Typedef | Enumtype | TypeDeclaration;
 
+/* A "Goto" link */
+DeclarationReference:
+	type=[Declaration];
+
 TypeDeclaration:
 	Interfacetype | Usertype;
+	
+/* A "Goto" link */
+TypeDeclarationReference:
+	type=[TypeDeclaration];
 
 Typedef:
 	comment=ML_COMMENT? 'typedef' name=ID
@@ -41,42 +48,15 @@ Usertype:
 	name=ID ((':' | 'with' | 'extends') (supertypes+=TypeDeclarationReference))*
 	'{' fields+=Field* '}';
 
-DeclarationReference:
-	type=[Declaration];
-
-TypeDeclarationReference:
-	type=[TypeDeclaration];
-
 Field:
 	comment=ML_COMMENT? (restrictions+=Restriction | hints+=Hint)*
 	fieldcontent=Fieldcontent ';';
 
 Fieldcontent:
 	Constant | Data;
-
-Restriction:
-	'@' restrictionName=ID
-	('(' (restrictionArguments+=RestrictionArgument (',' restrictionArguments+=RestrictionArgument)*)? ')')?;
-
-Hint:
-	'!' hintName=ID
-	('(' (hintArguments+=HintArgument (',' hintArguments+=HintArgument)*)? ')')?;
-
-RestrictionArgument:
-	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING |
-	valueType=DeclarationReference);
-
-HintArgument:
-	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING | valueIdentifier=ID);
-
-LongArgument returns ecore::ELongObject:
-	LONG;
-
-DoubleArgument returns ecore::EDoubleObject:
-	DOUBLE;
-
+	
 Constant:
-	'const' fieldtype=Fieldtype name=ID '=' value=(LongArgument | HEXINT);
+	constantName='const' fieldtype=Fieldtype name=ID '=' value=(LongArgument | HEXINT);
 
 Data:
 	(isAuto?='auto')? fieldtype=Fieldtype name=ID;
@@ -97,14 +77,52 @@ Arraytype:
 	basetype=Basetype ('[' (length=(LongArgument | HEXINT))? ']');
 
 Basetype:
-	DeclarationReference | BuildInTypeReference;
+	DeclarationReference | BuiltInType;
 
-BuildInTypeReference:
-	type=BuildInType;
+BuiltInType:
+	Integertype | Floattype | Stringtype | Annotationtype | Booleantype;
+	
+Integertype:
+	type=Integer;
+	
+enum Integer:
+	I8='i8' | I16='i16' | I32='i32' | I64='i64' | V64='v64';
+	
+Floattype:
+	type=Float;
+	
+enum Float:
+	F32='f32' | F64='f64';
 
-enum BuildInType:
-	I8='i8' | I16='i16' | I32='i32' | I64='i64' | V64='v64'
-	| F32='f32' | F64='f64' | STRING='string' | BOOLEAN='bool' | ANNOTATION='annotation';
+Stringtype:
+	type='string';
+
+Annotationtype:
+	type='annotation';
+	
+Booleantype:
+	type='bool';
+	
+Restriction:
+	'@' restrictionName=ID
+	('(' (restrictionArguments+=RestrictionArgument (',' restrictionArguments+=RestrictionArgument)*)? ')')?;
+	
+RestrictionArgument:
+	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING |
+	valueType=DeclarationReference);
+
+Hint:
+	'!' hintName=ID
+	('(' (hintArguments+=HintArgument (',' hintArguments+=HintArgument)*)? ')')?;
+
+HintArgument:
+	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING | valueIdentifier=ID);
+	
+LongArgument returns ecore::ELongObject:
+	LONG;
+
+DoubleArgument returns ecore::EDoubleObject:
+	DOUBLE;
 
 terminal HEADCOMMENT:
 	'#' !('\r' | '\n')* '\r'? '\n';

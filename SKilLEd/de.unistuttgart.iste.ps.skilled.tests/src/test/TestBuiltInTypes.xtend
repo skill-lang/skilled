@@ -1,28 +1,30 @@
 package test
 
-import org.eclipse.xtext.junit4.InjectWith;
-import org.eclipse.xtext.junit4.XtextRunner;
-import org.eclipse.xtext.junit4.util.ParseHelper;
-
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider;
-import de.unistuttgart.iste.ps.skilled.sKilL.File;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import com.google.inject.Inject;
-import org.junit.Assert
-import de.unistuttgart.iste.ps.skilled.sKilL.BuildInType
-import de.unistuttgart.iste.ps.skilled.sKilL.BuildInTypeReference
+import com.google.inject.Inject
+import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
+import de.unistuttgart.iste.ps.skilled.sKilL.File
+import de.unistuttgart.iste.ps.skilled.sKilL.Integer
+import de.unistuttgart.iste.ps.skilled.sKilL.Float
+import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.ArraytypeImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.ConstantImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypeDeclarationImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.UsertypeImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.MaptypeImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.ListtypeImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.DataImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.DeclarationReferenceImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.ArraytypeImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.ListtypeImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.MaptypeImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.SettypeImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypeDeclarationImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.UsertypeImpl
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.junit4.util.ParseHelper
+import org.junit.Assert
+import org.junit.Test
+import org.junit.runner.RunWith
+import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
+import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Booleantype
 
 /**
  * @author Tobias Heck
@@ -55,7 +57,8 @@ class TestBuiltInTypes {
 		val fields = usertype.fields;
 		val field1 = fields.get(0);
 		Assert::assertEquals("int1", field1.fieldcontent.name);
-		Assert::assertEquals(BuildInType.I8, (field1.fieldcontent.fieldtype as BuildInTypeReference).type)
+		//EXAMPLE FOR NEW STRUCTURE FOR INT
+		Assert::assertEquals(Integer.I8, (field1.fieldcontent.fieldtype as Integertype).type)	
 		val field2 = fields.get(1);
 		Assert::assertEquals("int2", field2.fieldcontent.name);
 		Assert::assertEquals(BuildInType.I16, (field2.fieldcontent.fieldtype as BuildInTypeReference).type)
@@ -70,19 +73,23 @@ class TestBuiltInTypes {
 		Assert::assertEquals(BuildInType.V64, (field5.fieldcontent.fieldtype as BuildInTypeReference).type)
 		val field6 = fields.get(5);
 		Assert::assertEquals("float1", field6.fieldcontent.name);
-		Assert::assertEquals(BuildInType.F32, (field6.fieldcontent.fieldtype as BuildInTypeReference).type)
+		//EXAMPLE FOR NEW STRUCTURE FOR FLOAT
+		Assert::assertEquals(Float.F32, (field6.fieldcontent.fieldtype as Floattype).type)
 		val field7 = fields.get(6);
 		Assert::assertEquals("float2", field7.fieldcontent.name);
 		Assert::assertEquals(BuildInType.F64, (field7.fieldcontent.fieldtype as BuildInTypeReference).type)
 		val field8 = fields.get(7);
 		Assert::assertEquals("str", field8.fieldcontent.name);
-		Assert::assertEquals(BuildInType.STRING, (field8.fieldcontent.fieldtype as BuildInTypeReference).type)
+		//EXAMPLE FOR NEW STRUCTURE FOR STRING
+		Assert::assertEquals("string", (field8.fieldcontent.fieldtype as Stringtype).type)
 		val field9 = fields.get(8);
 		Assert::assertEquals("b", field9.fieldcontent.name);
-		Assert::assertEquals(BuildInType.BOOLEAN, (field9.fieldcontent.fieldtype as BuildInTypeReference).type)
+		//EXAMPLE FOR NEW STRUCTURE FOR BOOLEAN
+		Assert::assertEquals("bool", (field9.fieldcontent.fieldtype as Booleantype).type)
 		val field10 = fields.get(9);
 		Assert::assertEquals("a", field10.fieldcontent.name);
-		Assert::assertEquals(BuildInType.ANNOTATION, (field10.fieldcontent.fieldtype as BuildInTypeReference).type)
+		//EXAMPLE FOR NEW STRUCTURE FOR ANNOTATION
+		Assert::assertEquals("annotation", (field10.fieldcontent.fieldtype as Annotationtype).type)
 	}
 
 	@Test
@@ -146,6 +153,7 @@ class TestBuiltInTypes {
   		val type = specification.declarations.get(0) as UsertypeImpl;
   		val a = type.fields.get(0);
   		Assert::assertEquals(typeof(ArraytypeImpl), a.fieldcontent.fieldtype.class);
+  		// How to solve this?
   		Assert::assertEquals(BuildInType.BOOLEAN, ((a.fieldcontent.fieldtype as ArraytypeImpl).basetype as BuildInTypeReference).type);
   		Assert::assertEquals("/*comment*/", a.comment);
   		val b = type.fields.get(1);
