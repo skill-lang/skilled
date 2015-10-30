@@ -1,5 +1,7 @@
 /** 
  * Xtext grammar for SKilL
+ * TODO: Views
+ * 
  * @author Marco Link and Nikolay Fateev
  */
 grammar de.unistuttgart.iste.ps.skilled.SKilL hidden(WHITESPACE)
@@ -23,10 +25,11 @@ Declaration:
 DeclarationReference:
 	type=[Declaration];
 
+	// Restricts that only interfaces and usertypes can be supertypes.
 TypeDeclaration:
 	Interfacetype | Usertype;
-	
-/* A "Goto" link */
+
+	// This indirection is needed for semantic syntax coloring.
 TypeDeclarationReference:
 	type=[TypeDeclaration];
 
@@ -41,12 +44,12 @@ Enumtype:
 Interfacetype:
 	comment=ML_COMMENT?
 	'interface' name=ID ((':' | 'with' | 'extends') (supertypes+=TypeDeclarationReference))*
-	'{' (fields+=Field)* '}';
+	('{' (fields+=Field)* '}')?;
 
 Usertype:
 	comment=ML_COMMENT? (restrictions+=Restriction | hints+=Hint)*
 	name=ID ((':' | 'with' | 'extends') (supertypes+=TypeDeclarationReference))*
-	'{' fields+=Field* '}';
+	('{' fields+=Field* '}')?;
 
 Field:
 	comment=ML_COMMENT? (restrictions+=Restriction | hints+=Hint)*
@@ -54,7 +57,7 @@ Field:
 
 Fieldcontent:
 	Constant | Data;
-	
+
 Constant:
 	constantName='const' fieldtype=Fieldtype name=ID '=' value=(LongArgument | HEXINT);
 
@@ -81,16 +84,16 @@ Basetype:
 
 BuiltInType:
 	Integertype | Floattype | Stringtype | Annotationtype | Booleantype;
-	
+
 Integertype:
 	type=Integer;
-	
+
 enum Integer:
 	I8='i8' | I16='i16' | I32='i32' | I64='i64' | V64='v64';
-	
+
 Floattype:
 	type=Float;
-	
+
 enum Float:
 	F32='f32' | F64='f64';
 
@@ -99,17 +102,17 @@ Stringtype:
 
 Annotationtype:
 	type='annotation';
-	
+
 Booleantype:
 	type='bool';
-	
+
 Restriction:
 	'@' restrictionName=ID
 	('(' (restrictionArguments+=RestrictionArgument (',' restrictionArguments+=RestrictionArgument)*)? ')')?;
-	
+
 RestrictionArgument:
 	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING |
-	valueType=DeclarationReference);
+	valueType=DeclarationReference (('.' | '::') ID));
 
 Hint:
 	'!' hintName=ID
@@ -117,7 +120,7 @@ Hint:
 
 HintArgument:
 	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING | valueIdentifier=ID);
-	
+
 LongArgument returns ecore::ELongObject:
 	LONG;
 
