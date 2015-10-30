@@ -22,6 +22,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Maptype
 import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
 import de.unistuttgart.iste.ps.skilled.sKilL.RestrictionArgument
 import de.unistuttgart.iste.ps.skilled.sKilL.Settype
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
@@ -31,26 +32,37 @@ import org.eclipse.xtext.formatting2.IFormattableDocument
 import org.eclipse.xtext.formatting2.regionaccess.ISemanticRegion
 
 /**
- * TODO Comments!
- * @author Marco Link
+ * Formatting for SKilL 
+ * The Formatting2 API from Xtext is still provisional, hence the many warnings from eclipse.
+ * 
+ * TODO: Supertypesreferences - don't know why they get no surrounding space.
+ * 
+ * @author Marco Link 
  */
+@SuppressWarnings("all")
 class SKilLFormatter extends AbstractFormatter2 {
 
 	@Inject extension SKilLGrammarAccess
 
 	def dispatch void format(File file, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc.
-		for (ISemanticRegion isr : file.regionsForRuleCallsTo(HEADCOMMENTRule)) {
-			if (isr.equals(file.headComments.last)) {
-				isr.prepend[noSpace].append[newLines = 2]
-			} else {
-				isr.prepend[noSpace].append[newLine]
-			}
+
+		// Formats the headcomments - default newline 1 but also possible 2 or 3 if the user wants it.
+		for (ISemanticRegion headComment : file.regionsForRuleCallsTo(HEADCOMMENTRule)) {
+			headComment.append[setNewLines(1, 1, 3)]
 		}
 
+		// The last headcomment gets 2 newlines
+		file.regionsForRuleCallsTo(HEADCOMMENTRule).last.append[priority = 1; newLines = 2]
+
+		// Formats the includes
 		for (Include includes : file.getIncludes()) {
 			format(includes, document);
 		}
+
+		// The last include gets 2 newlines.
+		file.includes.last.append[priority = 1; newLines = 2]
+
+		// Formats the declarations
 		for (Declaration declarations : file.getDeclarations()) {
 			format(declarations, document);
 		}
@@ -58,20 +70,50 @@ class SKilLFormatter extends AbstractFormatter2 {
 	}
 
 	def dispatch void format(Include include, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc.
-		include.regionForKeyword('include').prepend[noSpace].append[oneSpace]
-		include.regionForKeyword('with').prepend[noSpace].append[oneSpace]
+
+		// Before the keywords should be no space.
+		include.regionForKeyword('include').prepend[noSpace]
+		include.regionForKeyword('with').prepend[noSpace]
+
+		// Formats the actually included skill files and they should be sourrounded by one space.
 		for (IncludeFile includeFiles : include.getIncludeFiles()) {
-			format(includeFiles, document);
+			includeFiles.surround[oneSpace]
 		}
-		include.append[newLines = 2]
+
+		// After each include they should be at least be 1 newline, but 2 or 3 are also allowed.
+		include.append[setNewLines(1, 1, 3)]
+	}
+
+	def void formatDeclaration(Declaration declaration, extension IFormattableDocument document) {
+
+		// The name should be surrounded by one space
+		declaration.regionForRuleCallTo(IDRule).surround[priority = -1; oneSpace]
+
+		// The Comment should be followed by one newline.
+		declaration.regionForRuleCallTo(ML_COMMENTRule).append[newLine];
+	}
+
+	def void formatTypeDeclaration(TypeDeclaration typeDeclaration, extension IFormattableDocument document) {
+		formatDeclaration(typeDeclaration, document);
+
+		// Format the braces and increase the indentation between them.
+		if (typeDeclaration.fields.size > 0) {
+			typeDeclaration.regionForKeyword("{").prepend[oneSpace].append[setNewLines(1, 1, 2); increaseIndentation]
+			typeDeclaration.regionForKeyword("}").prepend[priority = 1; newLines = 1; decreaseIndentation].append [
+				newLines = 2
+			]
+		} // If there are no fields, the curly braces will be in one line.
+		else {
+			typeDeclaration.regionForKeyword("{").prepend[oneSpace].append[noSpace]
+			typeDeclaration.regionForKeyword("}").prepend[noSpace].append[newLines = 2]
+		}
+		
 	}
 
 	def dispatch void format(Typedef typedef, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
-		typedef.prepend[noSpace]
-		typedef.regionForKeyword('typedef').append[oneSpace]
+		formatDeclaration(typedef, document);
 
+		// The restrictions and hints should be indented.
 		for (Restriction restrictions : typedef.getRestrictions()) {
 			restrictions.prepend[newLine; increaseIndentation]
 			format(restrictions, document);
@@ -89,30 +131,32 @@ class SKilLFormatter extends AbstractFormatter2 {
 	}
 
 	def dispatch void format(Enumtype enumtype, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc.
-		enumtype.prepend[noSpace]
+		formatDeclaration(enumtype, document);
+
 		if ((enumtype.fields.size > 0) || (enumtype.instances.size > 0)) {
-			enumtype.regionForKeyword("{").prepend[oneSpace].append[newLine; increaseIndentation]
-			enumtype.regionForKeyword("}").prepend[decreaseIndentation].append[newLines = 2]
+			enumtype.regionForKeyword("{").prepend[oneSpace].append[setNewLines(1, 1, 2); increaseIndentation];
+			enumtype.regionForKeyword("}").prepend[priority = 1; newLines = 1; decreaseIndentation].
+				append[newLines = 2];
 		} else {
-			enumtype.regionForKeyword("{").prepend[oneSpace].append[noSpace]
-			enumtype.regionForKeyword("}").prepend[noSpace].append[newLines = 2]
+			enumtype.regionForKeyword("{").prepend[oneSpace].append[noSpace];
+			enumtype.regionForKeyword("}").prepend[noSpace].append[newLines = 2];
 		}
+
+		for (ISemanticRegion comma : enumtype.regionsForKeywords(",")) {
+			comma.prepend[noSpace]
+			comma.append[oneSpace]
+		}
+
+		enumtype.regionForKeyword(";").prepend[noSpace].append[newLines = 2]
+
 		for (Field fields : enumtype.getFields()) {
 			format(fields, document);
 		}
 	}
 
 	def dispatch void format(Interfacetype interfacetype, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
-		interfacetype.prepend[noSpace]
-		if (interfacetype.fields.size > 0) {
-			interfacetype.regionForKeyword("{").prepend[oneSpace].append[newLine; increaseIndentation]
-			interfacetype.regionForKeyword("}").prepend[decreaseIndentation].append[newLines = 2]
-		} else {
-			interfacetype.regionForKeyword("{").prepend[oneSpace].append[noSpace]
-			interfacetype.regionForKeyword("}").prepend[noSpace].append[newLines = 2]
-		}
+		formatTypeDeclaration(interfacetype, document);
+
 		for (TypeDeclarationReference supertypes : interfacetype.getSupertypes()) {
 			format(supertypes, document);
 		}
@@ -123,15 +167,7 @@ class SKilLFormatter extends AbstractFormatter2 {
 	}
 
 	def dispatch void format(Usertype usertype, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
-		usertype.prepend[noSpace]
-		if (usertype.fields.size > 0) {
-			usertype.regionForKeyword("{").prepend[oneSpace].append[newLine; increaseIndentation]
-			usertype.regionForKeyword("}").prepend[decreaseIndentation].append[newLines = 2]
-		} else {
-			usertype.regionForKeyword("{").prepend[oneSpace].append[noSpace]
-			usertype.regionForKeyword("}").prepend[noSpace].append[newLines = 2]
-		}
+		formatTypeDeclaration(usertype, document);
 
 		for (Restriction restrictions : usertype.getRestrictions()) {
 			format(restrictions, document);
@@ -147,9 +183,15 @@ class SKilLFormatter extends AbstractFormatter2 {
 		}
 	}
 
+	def dispatch void format(TypeDeclarationReference typeDeclarationReference,
+		extension IFormattableDocument document) {
+		typeDeclarationReference.surround[oneSpace]
+	}
+
 	def dispatch void format(Field field, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
 		field.prepend[noSpace]
+		field.regionForRuleCallTo(ML_COMMENTRule).prepend[priority = 1; newLines = 2].append[newLine]
+
 		for (Restriction restrictions : field.getRestrictions()) {
 			format(restrictions, document);
 		}
@@ -157,11 +199,17 @@ class SKilLFormatter extends AbstractFormatter2 {
 			format(hints, document);
 		}
 		format(field.getFieldcontent(), document);
-		field.regionForKeyword(";").append[newLine]
+
+		if ((field.hints.size() == 0) && (field.restrictions.size() == 0)) {
+			field.regionForKeyword(";").append[setNewLines(1, 1, 2)]
+		} else {
+			// If there are restrictions or hints, there should be a newline before and also after it there should be 2 newlines.
+			field.prepend[priority = 1; newLines = 2]
+			field.regionForKeyword(";").append[newLines = 2]
+		}
 	}
 
 	def dispatch void format(Restriction restriction, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
 		restriction.regionForKeyword("@").surround[noSpace]
 		for (RestrictionArgument restrictionArguments : restriction.getRestrictionArguments()) {
 			format(restrictionArguments, document);
@@ -184,21 +232,18 @@ class SKilLFormatter extends AbstractFormatter2 {
 	}
 
 	def dispatch void format(Constant constant, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
 		constant.surround[noSpace]
 		constant.regionForKeyword("const").append[oneSpace]
 		format(constant.getFieldtype(), document);
 	}
 
 	def dispatch void format(Data data, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
 		data.surround[noSpace]
+		data.regionForKeyword("auto").append[oneSpace]
 		format(data.getFieldtype(), document);
 	}
 
 	def dispatch void format(Maptype maptype, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
-		maptype.prepend[oneSpace].append[noSpace]
 		maptype.regionForKeyword("<").surround[noSpace]
 		maptype.regionForKeyword(">").surround[noSpace]
 		for (Basetype basetypes : maptype.getBasetypes()) {
@@ -206,26 +251,25 @@ class SKilLFormatter extends AbstractFormatter2 {
 		}
 	}
 
-	def dispatch void format(Settype settype, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
-		settype.prepend[oneSpace].append[noSpace]
+	def dispatch void format(Settype settype, extension IFormattableDocument document) { 
 		settype.regionForKeyword("<").surround[noSpace]
 		settype.regionForKeyword(">").surround[noSpace]
 		format(settype.getBasetype(), document);
 	}
 
 	def dispatch void format(Listtype listtype, extension IFormattableDocument document) {
-		listtype.prepend[oneSpace].append[noSpace]
 		listtype.regionForKeyword("<").surround[noSpace]
 		listtype.regionForKeyword(">").surround[noSpace]
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
 		format(listtype.getBasetype(), document);
 	}
 
 	def dispatch void format(Arraytype arraytype, extension IFormattableDocument document) {
-		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
 		arraytype.regionForKeyword("[").surround[noSpace]
 		arraytype.regionForKeyword("]").surround[noSpace]
 		format(arraytype.getBasetype(), document);
+	}
+
+	def dispatch void format(Basetype basetype, extension IFormattableDocument document) {
+		basetype.append[oneSpace]
 	}
 }
