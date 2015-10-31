@@ -1,4 +1,5 @@
 package test
+
 import static org.junit.Assert.*;
 
 import org.eclipse.xtext.junit4.InjectWith;
@@ -13,18 +14,18 @@ import org.junit.runner.RunWith;
 
 import com.google.inject.Inject;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-
+import org.eclipse.xtext.validation.Issue
 
 /**
  * @author Jan Berberich
  * 
  */
-
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
 class TestMultipleInheritence {
 	@Inject extension ParseHelper<File> parser;
 	@Inject extension ValidationTestHelper
+
 	@Test
 	def void testNoError() {
 		assertTrue('''
@@ -38,8 +39,8 @@ class TestMultipleInheritence {
 				
 			}
 		'''.parse.validate.isNullOrEmpty)
-		
 	}
+
 	@Test
 	def void testNoErrorValid() {
 		assertTrue('''
@@ -53,9 +54,9 @@ class TestMultipleInheritence {
 				
 			}
 		'''.parse.validate.isNullOrEmpty)
-		
+
 	}
-	
+
 	@Test
 	def void testErrorDirectInheritence() {
 		assertFalse('''
@@ -69,8 +70,8 @@ class TestMultipleInheritence {
 				
 			}
 		'''.parse.validate.isNullOrEmpty)
-		
 	}
+
 	@Test
 	def void testErrorMultipleInheritence() {
 		assertFalse('''
@@ -87,8 +88,39 @@ class TestMultipleInheritence {
 				
 			}
 		'''.parse.validate.isNullOrEmpty)
-		
 	}
-		
-		
+
+	@Test
+	def void testNoErrorInterfaces() {
+		assertTrue('''
+			S {
+				
+			}
+			interface E : S {
+				
+			}
+			interface C : S {
+				
+			}
+			Y : C : E {
+				
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+
+	@Test
+	def void testNoErrorInheritence() {
+		assertTrue('''
+			S {
+				
+			}
+			interface A : S {
+				
+			}
+			Y : A : S {
+				
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+
 }
