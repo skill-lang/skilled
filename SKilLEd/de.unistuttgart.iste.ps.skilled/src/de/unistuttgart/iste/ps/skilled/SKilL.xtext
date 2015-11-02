@@ -112,7 +112,7 @@ Restriction:
 
 RestrictionArgument:
 	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING |
-	valueType=DeclarationReference (('.' | '::') ID));
+	valueType=DeclarationReference (('.' | '::') enumInstance = ID)?);
 
 Hint:
 	'!' hintName=ID
