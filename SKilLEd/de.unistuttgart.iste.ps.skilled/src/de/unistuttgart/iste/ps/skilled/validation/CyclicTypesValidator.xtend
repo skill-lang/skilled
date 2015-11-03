@@ -138,9 +138,11 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 			// New Cyclic component
 			var Set<CyclicTypesNode> cyclic = new HashSet<CyclicTypesNode>
 			var CyclicTypesNode nextnode = nodes_stack.pop;
-			while ((!nextnode.equals(node)) && (nextnode != null)) {
+			nextnode.setonstack(false)
+			while ((nextnode != null) && (!nextnode.equals(node))) {
 				cyclic.add(nextnode)
 				nextnode = nodes_stack.pop;
+				nextnode.setonstack(false)
 			}
 			if (nextnode.equals(node)) {
 				cyclic.add(nextnode)

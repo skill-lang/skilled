@@ -21,6 +21,7 @@ class CyclicTypesNode {
 	new(TypeDeclaration type, int i) {
 		index = i
 		this.type = type
+		onstack = false
 		successors = new HashSet<CyclicTypesNode>	
 	}		
 	def void setonstack(boolean stack){
