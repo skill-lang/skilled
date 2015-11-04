@@ -9,10 +9,11 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import tools.*;
 import tools.api.SkillFile;
-import grammar.*;
 
-import java.io.*;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -98,6 +99,7 @@ public class MainClass {
      */
     @SuppressWarnings("ConstantConditions")
     public static void main(String[] args) {
+        boolean list = false;
         if (args[0].equals("-e") || args[0].equals("--edit")) {
             Edit e = new Edit(args[2]);
             File file = new File(args[1]);
@@ -129,7 +131,11 @@ public class MainClass {
                 } else if (args[i].startsWith("--")) {
                     ArgumentEvaluation e = doubleDashArg(args, i);
                     if (e.getArgument() != null) {
-                        evaluations.put(e.getName(), e);
+                        if (e.getArgument().equals("list")) {
+                            list = true;
+                        } else {
+                            evaluations.put(e.getName(), e);
+                        }
                     }
                     i = e.getIndex();
                 } else if (args[i].startsWith("-")) {
@@ -153,6 +159,10 @@ public class MainClass {
                 sf = SkillFile.open(evaluations.get("path").getArgument() + File.separator + ".skills", de.ust.skill.common.java.api.SkillFile.Mode.Write, de.ust.skill.common.java.api.SkillFile.Mode.Read);
             } catch (IOException e) {
                 ExceptionHandler.handle(e);
+                return;
+            }
+            if (list) {
+                list(sf, evaluations);
                 return;
             }
             buildDependencies(sf);
@@ -191,6 +201,47 @@ public class MainClass {
                 generate(new File(path), tools, sf);
             } catch (IOException e) {
                 ExceptionHandler.handle(e);
+            }
+        }
+    }
+
+    private static void list(SkillFile sf, HashMap<String, ArgumentEvaluation> evaluations) {
+        ArrayList<Tool> tools = new ArrayList<>();
+        for (String key : evaluations.keySet()) {
+            int index;
+            try {
+                index = Integer.parseInt(key);
+            } catch (NullPointerException | NumberFormatException ignored) {
+                index = -1;
+            }
+            if (index > -1) {
+                tools.addAll(sf.Tools().stream().filter(tool -> tool.getName().equals(evaluations.get(key).getArgument())).collect(Collectors.toList()));
+            }
+        }
+        if (tools.isEmpty()) {
+            tools.addAll(sf.Tools());
+        }
+        for (Tool tool : tools) {
+            for (tools.File file : tool.getFiles()) {
+                File f = new File(file.getPath());
+                String hash = hash(f);
+                if (fileFlag == FileFlag.All || !file.getMd5().equals(hash) || ("" + f.lastModified()).equals(file.getTimestamp())) {
+                    System.out.println(file.getPath());
+                    tool.getTypes().stream().filter(t -> t.getFile().getPath().equals(file.getPath())).forEach(type -> {
+                        for (Hint hint : type.getTypeHints()) {
+                            System.out.println(hint.getName());
+                        }
+                        System.out.println("  " + type.getName());
+                        for (Field field : type.getFields()) {
+                            for (Hint hint : field.getFieldHints()) {
+                                System.out.println("    " + hint.getName());
+                            }
+                            System.out.println("    " + field.getName());
+                        }
+                        System.out.println();
+                    });
+
+                }
             }
         }
     }
@@ -333,7 +384,8 @@ public class MainClass {
                 return new ArgumentEvaluation(index, args[index], "module");
 
             case "--list":
-                throw new NotImplementedException();
+                index++;
+                return new ArgumentEvaluation(index, args[index], "list");
 
             default:
                 throw new IllegalArgumentException();
@@ -417,9 +469,7 @@ public class MainClass {
             //noinspection SuspiciousMethodCalls
             builder.append(" %s ");
             builder.append(output.getAbsolutePath());
-            for (File f : toolToFile.get(t)) {
-                commands.add(new Thread(new GenerationThread(String.format(builder.toString(), f.getAbsolutePath()), new File(generator == null ? t.getGenerator().getPath() : generator.getPath()))));
-            }
+            commands.addAll(toolToFile.get(t).stream().map(f -> new Thread(new GenerationThread(String.format(builder.toString(), f.getAbsolutePath()), new File(generator == null ? t.getGenerator().getPath() : generator.getPath())))).collect(Collectors.toList()));
         }
         commands.forEach(java.lang.Thread::start);
         commands.forEach((thread) -> {
@@ -537,6 +587,7 @@ public class MainClass {
                     }
                     String hash = hash(child);
                     if (f == null) {
+                        //noinspection UnusedAssignment
                         f = skillFile.Files().make(new ArrayList<>(), "", hash, child.getAbsolutePath(), child.lastModified() + "");
                         indexTypes(child, skillFile);
                     } else if (Paths.get(child.getAbsolutePath()).relativize(Paths.get(f.getPath())).toString().equals("")) {
@@ -558,18 +609,11 @@ public class MainClass {
     static void buildDependencies(SkillFile skillFile) {
         for (Tool tool : skillFile.Tools()) {
             for (tools.File file : tool.getFiles()) {
-                ArrayList<Type> types = new ArrayList<>();
-                for (Type type : tool.getTypes()) {
-                    if (type.getFile().getPath().equals(file.getPath())) {
-                        types.add(type);
-                    }
-                }
+                ArrayList<Type> types = tool.getTypes().stream().filter(type -> type.getFile().getPath().equals(file.getPath())).collect(Collectors.toCollection(ArrayList::new));
                 for (Type type : types) {
                     ArrayList<String> deps = new ArrayList<>();
                     for (String extension : type.getExtends()) {
-                        tool.getTypes().stream().filter(t -> t.getName().equals(extension)).filter(t -> !t.getFile().getPath().equals(type.getFile().getPath()) && !deps.contains(t.getFile().getPath())).forEach(t -> {
-                            deps.add(t.getFile().getPath());
-                        });
+                        tool.getTypes().stream().filter(t -> t.getName().equals(extension)).filter(t -> !t.getFile().getPath().equals(type.getFile().getPath()) && !deps.contains(t.getFile().getPath())).forEach(t -> deps.add(t.getFile().getPath()));
                     }
                     for (Field field : type.getFields()) {
                         for (Type t : skillFile.Types()) {
@@ -588,11 +632,7 @@ public class MainClass {
                             }
                         }
                     }
-                    for (String dep : deps) {
-                        if (!file.getDependencies().contains(dep)) {
-                            file.getDependencies().add(dep);
-                        }
-                    }
+                    deps.stream().filter(dep -> !file.getDependencies().contains(dep)).forEach(dep -> file.getDependencies().add(dep));
                 }
             }
         }

@@ -2,7 +2,6 @@ package main;
 
 import grammar.SKilLParser;
 import grammar.SKilLParserBaseListener;
-import org.antlr.v4.runtime.tree.TerminalNode;
 import tools.Field;
 import tools.Hint;
 import tools.Type;

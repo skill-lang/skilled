@@ -1,22 +1,10 @@
 package main;
 
-import grammar.SKilLLexer;
-import grammar.SKilLParser;
-import org.antlr.v4.runtime.ANTLRFileStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import tools.Field;
-import tools.Hint;
-import tools.Tool;
-import tools.Type;
 import tools.api.SkillFile;
 
 import java.io.File;
@@ -392,5 +380,23 @@ public class EditCorrectInputTest {
         } catch (IOException e) {
             fail();
         }
+    }
+
+    @Test
+    public void test94ExtractingTestTool() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("lib");
+        builder.append(File.separator);
+        builder.append("skill_2.11-0.3.jar");
+        try {
+            Files.createDirectory(Paths.get("generated"));
+        } catch (IOException ignored) {
+        }
+        String[] args = new String[] { "-agloxmp", builder.toString(), "Java", "generated",
+                "scala", "onetypetool", "resources", "testTool" };
+        MainClass.main(args);
+        assertTrue("not generated", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "onetypetool")));
+        assertTrue("skill.java.common.jar missing", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "lib" + File.separator + "skill.java.common.jar")));
+        assertTrue("skill.jvm.common.jar missing", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "lib" + File.separator + "skill.jvm.common.jar")));
     }
 }

@@ -1,8 +1,7 @@
 package main;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.*;
+import org.junit.runners.MethodSorters;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -11,11 +10,8 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.junit.*;
-
-import org.junit.runners.MethodSorters;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import tools.api.SkillFile;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Armin Hüneburg
