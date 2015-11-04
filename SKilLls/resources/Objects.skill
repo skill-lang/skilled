@@ -1,0 +1,63 @@
+# This file holds the declarations
+# of all small objects
+
+with "Utility.skill"
+with "Devices.skill"
+with "Furniture.skill"
+
+Socket {
+  !ignore
+  i16 voltage;
+  !hide
+  i8 frequency;
+}
+
+!readOnly
+PowerStrip {
+  Socket[6] sockets;
+}
+
+Sheet {
+  @max(3.0, "inclusive")
+  f32 height;
+
+  @max(10.0, "exclusive")
+  f32 width;
+
+  /* image resolution */
+  @range(0, 32000)
+  i16 maxX;
+
+  @range(0, 32000)
+  i16 maxY;
+
+  @coding("zip")
+  map<Position, Color> pixels;
+}
+
+Scissors {
+}
+
+Tape {
+  /* in metres */
+  f64 tapeLeft;
+}
+
+Bottle {
+  Material material;
+  string content;
+
+  /* in litres */
+  f64 quantity;
+}
+
+Remote {
+  TV controlledTV;
+}
+
+Magazine {
+  string title;
+  i16 pages;
+  set<string> pageContents;
+  map<i16, Picture> pictures;
+}

@@ -1,0 +1,83 @@
+# This file holds the declarations
+# of all rooms and the house itself
+
+with "Furniture.skill"
+with "Devices.skill"
+with "Roofs.skill"
+with "Objects.skill"
+with "Plants.skill"
+
+/**
+The main object of the entire specification: A common house
+@author Tobias Heck
+@version 0.9
+@note a lot of important objects are missing
+@todo add more rooms?
+*/
+@singleton
+House {
+  !constantMutator(4, 6)
+  const v64 numberOfRooms = 5;
+
+  Bathroom bathroom;
+  DiningRoom diningRoom;
+  Kitchen kitchen;
+  LivingRoom livingRoom;
+  Bedroom bedroom;
+
+  !onDemand
+  @oneOf(FlatRoof, PitchedRoof)
+  annotation roof;
+}
+
+interface Room {
+  @max(20.0)
+  f32 length;
+
+  f32 width;
+  set<Lamp> lamps;
+  set<Socket> sockets;
+  list<Window> windows;
+  Carpet carpet;
+  set<Cupboard> cupboards;
+  set<Plant> plants;
+}
+
+!removeUnknownRestrictions
+Bathroom extends Room {
+  @nonnull
+  Toilet toilet;
+
+  Shower shower;
+  Bathtub bathtub;
+  set<Sink> sinks;
+  Washer washer;
+  Dryer dryer;
+}
+
+!mixin
+DiningRoom extends Room {
+  map<Table, Tablecloth> tablecloths;
+  set<Table> tables;
+  set<Chair> chairs;
+}
+
+!monotone
+Kitchen extends Room {
+  Sink sink;
+  Stove stove;
+  Microwave microwave;
+  MainRefridgerator refridgerator;
+  Freezer freezer;
+}
+
+LivingRoom {
+  set<Sofa> sofas;
+  TV tv;
+  Table table;
+}
+
+Bedroom {
+  Bed[2] beds;
+  Table[2] nightstands;
+}

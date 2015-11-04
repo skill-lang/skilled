@@ -1,0 +1,79 @@
+# This file holds the declarations
+# of electric devices.
+
+with "Food.skill"
+with "Utility.skill"
+
+Microwave {
+  i32 requiredPower;
+
+  @constantlengthpointer
+  set<Food> content;
+
+  list<i16> powerLevels;
+}
+
+Refridgerator {
+  @default(4)
+  i8 floors;
+  set<Food> content;
+
+  /* in K */
+  @min(0.0)
+  f32 temperature;
+}
+
+typedef MainRefridgerator Refridgerator;
+
+Freezer {
+  i8 drawers;
+  set<annotation> content;
+
+  /* in K */
+  @min(0.0)
+  f32 temperature;
+}
+
+TV {
+  /* in m */
+  f32 screenDiagonal;
+
+  Position resolution;
+  Date dateOfManufacture;
+}
+
+Stove {
+  i8 hotplates;
+}
+
+interface Lamp {
+  /* in W */
+  i16 power;
+}
+
+ShadeLamp extends Lamp {
+  /* in m */
+  f32 shadeDiameter;
+
+  Color shadeColor;
+}
+
+FlourescentLamp extends Lamp {
+  f32 length;
+}
+
+BedsideLamp extends Lamp {
+  f32 height;
+}
+
+Washer {
+  f32 height;
+  f32 width;
+  f32 length;
+}
+
+Dryer {
+  f32 height;
+  f32 width;
+  f32 length;
+}

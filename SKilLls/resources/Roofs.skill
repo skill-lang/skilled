@@ -1,0 +1,16 @@
+# This file holds the definitions
+# of different roofs
+
+with "Utility.skill"
+with "Furniture.skill"
+
+FlatRoof {
+  set<Window> skylights;
+  Color color;
+}
+
+PitchedRoof {
+  set<Window> skylights;
+  Color color;
+  f64 slope;
+}
