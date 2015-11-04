@@ -11,12 +11,19 @@ import de.unistuttgart.iste.ps.skilled.sKilL.impl.DeclarationImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.HintImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypeDeclarationImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.UsertypeImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.Integer
+import de.unistuttgart.iste.ps.skilled.sKilL.Float
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
+import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
+import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Booleantype
+import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
 
 /**
  * @author Tobias Heck
@@ -49,34 +56,34 @@ class TestSKilLParser {
 		val fields = usertype.fields;
 		val field1 = fields.get(0);
 		Assert::assertEquals("int1", field1.fieldcontent.name);
-		Assert::assertEquals(BuildInType.I8, (field1.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals(Integer.I8, (field1.fieldcontent.fieldtype as Integertype).type)
 		val field2 = fields.get(1);
 		Assert::assertEquals("int2", field2.fieldcontent.name);
-		Assert::assertEquals(BuildInType.I16, (field2.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals(Integer.I16, (field2.fieldcontent.fieldtype as Integertype).type)
 		val field3 = fields.get(2);
 		Assert::assertEquals("int3", field3.fieldcontent.name);
-		Assert::assertEquals(BuildInType.I32, (field3.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals(Integer.I32, (field3.fieldcontent.fieldtype as Integertype).type)
 		val field4 = fields.get(3);
 		Assert::assertEquals("int4", field4.fieldcontent.name);
-		Assert::assertEquals(BuildInType.I64, (field4.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals(Integer.I64, (field4.fieldcontent.fieldtype as Integertype).type)
 		val field5 = fields.get(4);
 		Assert::assertEquals("int5", field5.fieldcontent.name);
-		Assert::assertEquals(BuildInType.V64, (field5.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals(Integer.V64, (field5.fieldcontent.fieldtype as Integertype).type)
 		val field6 = fields.get(5);
 		Assert::assertEquals("float1", field6.fieldcontent.name);
-		Assert::assertEquals(BuildInType.F32, (field6.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals(Float.F32, (field6.fieldcontent.fieldtype as Floattype).type)
 		val field7 = fields.get(6);
 		Assert::assertEquals("float2", field7.fieldcontent.name);
-		Assert::assertEquals(BuildInType.F64, (field7.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals(Float.F64, (field7.fieldcontent.fieldtype as Floattype).type)
 		val field8 = fields.get(7);
 		Assert::assertEquals("str", field8.fieldcontent.name);
-		Assert::assertEquals(BuildInType.STRING, (field8.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals("string", (field8.fieldcontent.fieldtype as Stringtype).type)
 		val field9 = fields.get(8);
 		Assert::assertEquals("b", field9.fieldcontent.name);
-		Assert::assertEquals(BuildInType.BOOLEAN, (field9.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals("bool", (field9.fieldcontent.fieldtype as Booleantype).type)
 		val field10 = fields.get(9);
 		Assert::assertEquals("a", field10.fieldcontent.name);
-		Assert::assertEquals(BuildInType.ANNOTATION, (field10.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals("annotation", (field10.fieldcontent.fieldtype as Annotationtype).type)
 	}
 
 	@Test

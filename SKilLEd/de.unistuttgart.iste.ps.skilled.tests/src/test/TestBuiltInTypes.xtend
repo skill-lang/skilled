@@ -61,23 +61,23 @@ class TestBuiltInTypes {
 		Assert::assertEquals(Integer.I8, (field1.fieldcontent.fieldtype as Integertype).type)	
 		val field2 = fields.get(1);
 		Assert::assertEquals("int2", field2.fieldcontent.name);
-		Assert::assertEquals(BuildInType.I16, (field2.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals(Integer.I16, (field2.fieldcontent.fieldtype as Integertype).type)
 		val field3 = fields.get(2);
 		Assert::assertEquals("int3", field3.fieldcontent.name);
-		Assert::assertEquals(BuildInType.I32, (field3.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals(Integer.I32, (field3.fieldcontent.fieldtype as Integertype).type)
 		val field4 = fields.get(3);
 		Assert::assertEquals("int4", field4.fieldcontent.name);
-		Assert::assertEquals(BuildInType.I64, (field4.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals(Integer.I64, (field4.fieldcontent.fieldtype as Integertype).type)
 		val field5 = fields.get(4);
 		Assert::assertEquals("int5", field5.fieldcontent.name);
-		Assert::assertEquals(BuildInType.V64, (field5.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals(Integer.V64, (field5.fieldcontent.fieldtype as Integertype).type)
 		val field6 = fields.get(5);
 		Assert::assertEquals("float1", field6.fieldcontent.name);
 		//EXAMPLE FOR NEW STRUCTURE FOR FLOAT
 		Assert::assertEquals(Float.F32, (field6.fieldcontent.fieldtype as Floattype).type)
 		val field7 = fields.get(6);
 		Assert::assertEquals("float2", field7.fieldcontent.name);
-		Assert::assertEquals(BuildInType.F64, (field7.fieldcontent.fieldtype as BuildInTypeReference).type)
+		Assert::assertEquals(Float.F64, (field7.fieldcontent.fieldtype as Floattype).type)
 		val field8 = fields.get(7);
 		Assert::assertEquals("str", field8.fieldcontent.name);
 		//EXAMPLE FOR NEW STRUCTURE FOR STRING
@@ -154,11 +154,11 @@ class TestBuiltInTypes {
   		val a = type.fields.get(0);
   		Assert::assertEquals(typeof(ArraytypeImpl), a.fieldcontent.fieldtype.class);
   		// How to solve this?
-  		Assert::assertEquals(BuildInType.BOOLEAN, ((a.fieldcontent.fieldtype as ArraytypeImpl).basetype as BuildInTypeReference).type);
+  		Assert::assertEquals("bool", ((a.fieldcontent.fieldtype as ArraytypeImpl).basetype as Booleantype).type);
   		Assert::assertEquals("/*comment*/", a.comment);
   		val b = type.fields.get(1);
   		Assert::assertEquals(typeof(ListtypeImpl), b.fieldcontent.fieldtype.class);
-  		Assert::assertEquals(BuildInType.F64, ((b.fieldcontent.fieldtype as ListtypeImpl).basetype as BuildInTypeReference).type);
+  		Assert::assertEquals(Float.F64, ((b.fieldcontent.fieldtype as ListtypeImpl).basetype as Floattype).type);
   		Assert::assertEquals("nonnull", b.restrictions.get(0).restrictionName);
   	}
   	
@@ -184,10 +184,10 @@ class TestBuiltInTypes {
   		val type = specification.declarations.get(0) as UsertypeImpl;
   		val c = type.fields.get(2);
   		Assert::assertEquals(typeof(MaptypeImpl), c.fieldcontent.fieldtype.class);
-  		Assert::assertEquals(BuildInType.I32, ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(0) as BuildInTypeReference).type);
+  		Assert::assertEquals(Integer.I32, ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(0) as Integertype).type);
   		Assert::assertEquals(type, ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(1) as DeclarationReferenceImpl).type);
-  		Assert::assertEquals(BuildInType.STRING, ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(2) as BuildInTypeReference).type);
-  		Assert::assertEquals(BuildInType.BOOLEAN, ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(3) as BuildInTypeReference).type);
+  		Assert::assertEquals("string", ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(2) as Stringtype).type);
+  		Assert::assertEquals("bool", ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(3) as Booleantype).type);
   		Assert::assertEquals("readOnly", c.hints.get(0).hintName);
   	}
   	
@@ -213,7 +213,7 @@ class TestBuiltInTypes {
   		val type = specification.declarations.get(0) as UsertypeImpl;
   		val d = type.fields.get(3);
   		Assert::assertEquals(typeof(SettypeImpl), d.fieldcontent.fieldtype.class);
-  		Assert::assertEquals(BuildInType.V64, ((d.fieldcontent.fieldtype as SettypeImpl).basetype as BuildInTypeReference).type);
+  		Assert::assertEquals(Integer.V64, ((d.fieldcontent.fieldtype as SettypeImpl).basetype as Integertype).type);
   		val e = type.fields.get(4);
   		Assert::assertEquals(type, ((e.fieldcontent.fieldtype as ArraytypeImpl).basetype as DeclarationReferenceImpl).type);
   		//the boundary (80 in this case) seems to be not testable (yet?)

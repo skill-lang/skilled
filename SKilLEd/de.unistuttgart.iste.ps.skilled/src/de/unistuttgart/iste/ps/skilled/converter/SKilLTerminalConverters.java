@@ -6,6 +6,7 @@ import org.eclipse.xtext.conversion.ValueConverter;
 
 import com.google.inject.Inject;
 
+
 /**
  * 
  * @author Marco Link
@@ -14,17 +15,18 @@ import com.google.inject.Inject;
 public class SKilLTerminalConverters extends DefaultTerminalConverters {
     @Inject
     private HEXINTValueConverter hexintValueConverter;
-    
+
     @Inject
     private TypeValueConverter typeValueConverter;
-    
+
     @ValueConverter(rule = "HEXINT")
     public IValueConverter<Long> HEXINT() {
-            return hexintValueConverter;
+        return hexintValueConverter;
     }
-    
+
+    @Override
     @ValueConverter(rule = "ID")
     public IValueConverter<String> ID() {
-    	return typeValueConverter;
+        return typeValueConverter;
     }
 }

@@ -17,6 +17,8 @@ import de.unistuttgart.iste.ps.skilled.sKilL.impl.ListtypeImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypeDeclarationImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypedefImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.UsertypeImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.Integer
+import de.unistuttgart.iste.ps.skilled.sKilL.Float
 import java.io.PrintWriter
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -24,6 +26,10 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
+import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
 
 /**
  * @author Tobias Heck
@@ -787,13 +793,13 @@ class TestCommentsHintsRestrictions {
   		Assert::assertEquals("field3", fields1.get(2).fieldcontent.name);
   		Assert::assertEquals("field4", fields1.get(3).fieldcontent.name);
   		Assert::assertEquals("field5", fields1.get(4).fieldcontent.name);
-  		Assert::assertEquals(BuildInType.ANNOTATION, (fields1.get(0).fieldcontent.fieldtype as BuildInTypeReference).type);
-  		Assert::assertEquals(BuildInType.STRING, (fields1.get(1).fieldcontent.fieldtype as BuildInTypeReference).type);
-  		Assert::assertEquals(BuildInType.I32, (fields1.get(2).fieldcontent.fieldtype as BuildInTypeReference).type);
+  		Assert::assertEquals("annotation", (fields1.get(0).fieldcontent.fieldtype as Annotationtype).type);
+  		Assert::assertEquals("string", (fields1.get(1).fieldcontent.fieldtype as Stringtype).type);
+  		Assert::assertEquals(Integer.I32, (fields1.get(2).fieldcontent.fieldtype as Integertype).type);
   		Assert::assertEquals(type1, (fields1.get(3).fieldcontent.fieldtype as DeclarationReferenceImpl).type);
   		Assert::assertEquals(ListtypeImpl, fields1.get(4).fieldcontent.fieldtype.class);
   		Assert::assertEquals(1234, (fields1.get(2).fieldcontent as ConstantImpl).value);
-  		Assert::assertEquals(BuildInType.F64, ((fields1.get(4).fieldcontent.fieldtype as ListtypeImpl).basetype as BuildInTypeReferenceImpl).type);
+  		Assert::assertEquals(Float.F64, ((fields1.get(4).fieldcontent.fieldtype as ListtypeImpl).basetype as Floattype).type);
   		
   		val type2 = specification.declarations.get(2) as TypeDeclarationImpl;
   		val int2 = specification.declarations.get(3) as InterfacetypeImpl;

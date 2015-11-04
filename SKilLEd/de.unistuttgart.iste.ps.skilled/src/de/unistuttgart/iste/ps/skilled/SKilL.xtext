@@ -39,7 +39,7 @@ Typedef:
 
 Enumtype:
 	comment=ML_COMMENT?
-	'enum' name=ID '{' instances+=ID (',' instances+=ID)* ';' (fields+=Field)* '}';
+	'enum' name=ID '{' instances+=XID (',' instances+=XID)* ';' (fields+=Field)* '}';
 
 Interfacetype:
 	comment=ML_COMMENT?
@@ -59,10 +59,10 @@ Fieldcontent:
 	Constant | Data;
 
 Constant:
-	constantName='const' fieldtype=Fieldtype name=ID '=' value=(LongArgument | HEXINT);
+	constantName='const' fieldtype=Fieldtype name=XID '=' value=(LongArgument | HEXINT);
 
 Data:
-	(isAuto?='auto')? fieldtype=Fieldtype name=ID;
+	(isAuto?='auto')? fieldtype=Fieldtype name=XID;
 
 Fieldtype:
 	Maptype | Settype | Listtype | Arraytype | Basetype;
@@ -112,7 +112,7 @@ Restriction:
 
 RestrictionArgument:
 	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING |
-	valueType=DeclarationReference (('.' | '::') enumInstance = ID)?);
+	valueType=DeclarationReference (('.' | '::') enumInstance=XID)?);
 
 Hint:
 	'!' hintName=ID
@@ -132,6 +132,11 @@ terminal HEADCOMMENT:
 
 terminal ID:
 	('a'..'z' | 'A'..'Z' | '_' | '\u007f'..'\uffff') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\u007f'..'\uffff')*;
+
+XID:
+	ID | 'auto'
+	| 'include' | 'with' | 'typedef' | 'enum' | 'interface' | 'extends' | 'const' | 'map' | 'set' | 'list' |
+	'string' | 'bool' | 'annotation';
 
 terminal HEXINT returns ecore::ELongObject:
 	'-'? '0x' (DIGIT | ('a'..'f') | ('A'..'F'))*;

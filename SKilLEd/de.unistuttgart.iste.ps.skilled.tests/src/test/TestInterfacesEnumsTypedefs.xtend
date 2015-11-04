@@ -11,12 +11,18 @@ import de.unistuttgart.iste.ps.skilled.sKilL.impl.ListtypeImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypeDeclarationImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypedefImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.UsertypeImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.Integer
+import de.unistuttgart.iste.ps.skilled.sKilL.Float
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
+import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
 
 /**
  * @author Tobias Heck
@@ -106,13 +112,13 @@ class TestInterfacesEnumsTypedefs {
   		val fields1 = int1.fields;
   		val type1 = specification.declarations.get(1) as TypeDeclarationImpl;
   		
-  		Assert::assertEquals(BuildInType.ANNOTATION, (fields1.get(0).fieldcontent.fieldtype as BuildInTypeReference).type);
-  		Assert::assertEquals(BuildInType.STRING, (fields1.get(1).fieldcontent.fieldtype as BuildInTypeReference).type);
-  		Assert::assertEquals(BuildInType.I32, (fields1.get(2).fieldcontent.fieldtype as BuildInTypeReference).type);
+  		Assert::assertEquals("annotation", (fields1.get(0).fieldcontent.fieldtype as Annotationtype).type);
+  		Assert::assertEquals("string", (fields1.get(1).fieldcontent.fieldtype as Stringtype).type);
+  		Assert::assertEquals(Integer.I32, (fields1.get(2).fieldcontent.fieldtype as Integertype).type);
   		Assert::assertEquals(type1, (fields1.get(3).fieldcontent.fieldtype as DeclarationReferenceImpl).type);
   		Assert::assertEquals(ListtypeImpl, fields1.get(4).fieldcontent.fieldtype.class);
   		Assert::assertEquals(1234, (fields1.get(2).fieldcontent as ConstantImpl).value);
-  		Assert::assertEquals(BuildInType.F64, ((fields1.get(4).fieldcontent.fieldtype as ListtypeImpl).basetype as BuildInTypeReferenceImpl).type);
+  		Assert::assertEquals(Float.F64, ((fields1.get(4).fieldcontent.fieldtype as ListtypeImpl).basetype as Floattype).type);
   	}
   	
   	@Test
@@ -187,7 +193,7 @@ class TestInterfacesEnumsTypedefs {
   		Assert::assertEquals("Monday", enum.instances.get(0));
   		Assert::assertEquals("Sunday", enum.instances.get(6));
   		Assert::assertEquals("day", enum.fields.get(0).fieldcontent.name);
-  		Assert::assertEquals(BuildInType.I8, (enum.fields.get(0).fieldcontent.fieldtype as BuildInTypeReference).type);
+  		Assert::assertEquals(Integer.I8, (enum.fields.get(0).fieldcontent.fieldtype as Integertype).type);
   		val day = (specification.declarations.get(1) as UsertypeImpl).fields.get(2);
   		Assert::assertEquals(enum, (day.fieldcontent.fieldtype as DeclarationReferenceImpl).type);
   	}
@@ -241,11 +247,11 @@ class TestInterfacesEnumsTypedefs {
 		Assert::assertEquals("Natural", natural.name);
 		Assert::assertEquals("min", natural.restrictions.get(0).restrictionName);
 		Assert::assertEquals(0, natural.restrictions.get(0).restrictionArguments.get(0).valueLong);
-		Assert::assertEquals(BuildInType.I64, (natural.fieldtype as BuildInTypeReference).type);
+		Assert::assertEquals(Integer.I64, (natural.fieldtype as Integertype).type);
 		
 		Assert::assertEquals("oneOf", aORb.restrictions.get(0).restrictionName);
 		Assert::assertEquals(b, aORb.restrictions.get(0).restrictionArguments.get(1).valueType.type);
 		Assert::assertEquals("AorB", aORb.name);
-		Assert::assertEquals(BuildInType.ANNOTATION, (aORb.fieldtype as BuildInTypeReference).type);
+		Assert::assertEquals("annotation", (aORb.fieldtype as Annotationtype).type);
   	}
 }
