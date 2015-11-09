@@ -111,7 +111,6 @@ plugin.xml_gen
 .texlipse
 
 # META-INF
-META-INF
 *.classpath
 *.project
 
