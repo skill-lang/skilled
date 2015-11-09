@@ -6,7 +6,6 @@ import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.tree.ParseTree;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import tools.*;
 import tools.api.SkillFile;
 
@@ -20,7 +19,10 @@ import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -91,6 +93,7 @@ public class MainClass {
     private static FileFlag fileFlag = FileFlag.Changed;
     private static String module;
     private static File output;
+    private static boolean cleanUp = true;
 
     /**
      * Entry Point. Generates flags for the generator execution.
@@ -99,7 +102,6 @@ public class MainClass {
      */
     @SuppressWarnings("ConstantConditions")
     public static void main(String[] args) {
-        boolean list = false;
         if (args[0].equals("-e") || args[0].equals("--edit")) {
             Edit e = new Edit(args[2]);
             File file = new File(args[1]);
@@ -132,7 +134,6 @@ public class MainClass {
                     ArgumentEvaluation e = doubleDashArg(args, i);
                     if (e.getArgument() != null) {
                         if (e.getArgument().equals("list")) {
-                            list = true;
                         } else {
                             evaluations.put(e.getName(), e);
                         }
@@ -161,7 +162,7 @@ public class MainClass {
                 ExceptionHandler.handle(e);
                 return;
             }
-            if (list) {
+            if (evaluations.containsKey("list")) {
                 list(sf, evaluations);
                 return;
             }
@@ -215,7 +216,12 @@ public class MainClass {
                 index = -1;
             }
             if (index > -1) {
-                tools.addAll(sf.Tools().stream().filter(tool -> tool.getName().equals(evaluations.get(key).getArgument())).collect(Collectors.toList()));
+                for (Tool tool : sf.Tools()) {
+                    if (tool.getName().equals(evaluations.get(key).getArgument())) {
+                        tools.add(tool);
+                        break;
+                    }
+                }
             }
         }
         if (tools.isEmpty()) {
@@ -330,8 +336,8 @@ public class MainClass {
 
                 case 's':
                     if (last == 'l') {
-                        throw new NotImplementedException();
-                        //list.add(new ArgumentEvaluation(index, args[index], "list"));
+                        list.add(new ArgumentEvaluation(index, args[index], "list"));
+                        break;
                     }
                     throw new IllegalArgumentException();
 
@@ -386,6 +392,11 @@ public class MainClass {
             case "--list":
                 index++;
                 return new ArgumentEvaluation(index, args[index], "list");
+
+            case "--no-cleanup":
+                cleanUp = false;
+                return new ArgumentEvaluation(index, args[index], "cleanup");
+
 
             default:
                 throw new IllegalArgumentException();
@@ -479,7 +490,9 @@ public class MainClass {
                 ExceptionHandler.handle(e);
             }
         });
-        cleanUp(tempDir);
+        if (cleanUp) {
+            cleanUp(tempDir);
+        }
     }
 
     /**
@@ -543,7 +556,7 @@ public class MainClass {
      */
     private static void cleanUp(File projectRoot) {
         //noinspection SpellCheckingInspection
-        File f = new File(projectRoot.getAbsolutePath() + File.separator + ".skillt");
+        File f = new File(projectRoot.getAbsolutePath());
         deleteDir(f);
     }
 

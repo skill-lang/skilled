@@ -469,7 +469,13 @@ public class Edit {
                 addExtensions(tool, t);
                 for (tools.File f : skillFile.Files()) {
                     if (f.getPath().equals(t.getFile().getPath())) {
-                        if (!tool.getFiles().contains(f)) {
+                        boolean found = false;
+                        for (tools.File fi : tool.getFiles()) {
+                            if (fi.getPath().equals(f.getPath())) {
+                                found = true;
+                            }
+                        }
+                        if (!found) {
                             tool.getFiles().add(skillFile.Files().make(new ArrayList<>(), f.getHeader(), f.getMd5(), f.getPath(), f.getTimestamp()));
                         }
                         return;

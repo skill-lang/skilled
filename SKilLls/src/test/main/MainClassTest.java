@@ -2,16 +2,22 @@ package main;
 
 import org.junit.*;
 import org.junit.runners.MethodSorters;
+import sun.applet.Main;
+import tools.*;
 
-import java.io.ByteArrayOutputStream;
+import java.io.*;
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.math.BigInteger;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.security.SecureRandom;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Armin Hüneburg
@@ -164,6 +170,53 @@ public class MainClassTest {
         assertTrue("not generated", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "onetypetool")));
         assertTrue("skill.java.common.jar missing", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "lib" + File.separator + "skill.java.common.jar")));
         assertTrue("skill.jvm.common.jar missing", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "lib" + File.separator + "skill.jvm.common.jar")));
+    }
+
+    @Test
+    public void test3ListingOfAlteredTools() {
+        outStream = new ByteArrayOutputStream();
+        errStream = new ByteArrayOutputStream();
+        out = new PrintStream(outStream);
+        err = new PrintStream(errStream);
+
+        System.setOut(out);
+        System.setErr(err);
+
+        // Add random type so that the file is changed.
+        SecureRandom random = new SecureRandom();
+        String type = "a" + new BigInteger(130, random).toString(32);
+
+        try {
+            Files.write(Paths.get("resources" + File.separator + "Furniture.skill"), (type + " {}").getBytes(), StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            fail();
+        }
+
+        String[] args = new String[] { "-lsp", "resources", "twoTypeTool" };
+        MainClass.main(args);
+
+        String[] got = outStream.toString().trim().split("\n");
+        System.setOut(origOut);
+        System.setErr(origErr);
+        assertTrue("First line does not contain file.", got[0].endsWith("resources" + File.separator + "Furniture.skill"));
+        assertTrue("SecondLine is not a type", got[1].trim().equals("Bathtub"));
+        assertTrue("SecondLine is not a type", got[2].trim().isEmpty());
+        assertTrue("SecondLine is not a type", got[3].trim().equals("Window"));
+        int i = 4;
+        String line;
+        while (i < got.length && (line = got[i]) != null) {
+            assertTrue("more output", line.trim().isEmpty());
+        }
+
+        try {
+            RandomAccessFile raf = new RandomAccessFile("resources" + File.separator + "Furniture.skill", "rw");
+            FileChannel channel = raf.getChannel();
+            channel = channel.truncate(channel.size() - type.length() - 3);
+            channel.close();
+        } catch (IOException e) {
+            fail();
+        }
+
     }
 
     private static void deleteDirectory(File file) {

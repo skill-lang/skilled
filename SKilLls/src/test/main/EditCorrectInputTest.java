@@ -399,4 +399,23 @@ public class EditCorrectInputTest {
         assertTrue("skill.java.common.jar missing", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "lib" + File.separator + "skill.java.common.jar")));
         assertTrue("skill.jvm.common.jar missing", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "lib" + File.separator + "skill.jvm.common.jar")));
     }
+
+    @Test
+    public void test95ExtractingTestToolNoCleanup() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("lib");
+        builder.append(File.separator);
+        builder.append("skill_2.11-0.3.jar");
+        try {
+            Files.createDirectory(Paths.get("generated"));
+        } catch (IOException ignored) {
+        }
+        String[] args = new String[] { "--no-cleanup", "-agloxmp", builder.toString(), "Java", "generated",
+                "scala", "onetypetool", "resources", "testTool" };
+        MainClass.main(args);
+        assertTrue("not generated", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "onetypetool")));
+        assertTrue("skill.java.common.jar missing", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "lib" + File.separator + "skill.java.common.jar")));
+        assertTrue("skill.jvm.common.jar missing", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "lib" + File.separator + "skill.jvm.common.jar")));
+        assertTrue(".skillt does not exist", Files.exists(Paths.get("resources" + File.separator + ".skillt")));
+    }
 }
