@@ -48,7 +48,7 @@ public class TestSKilLValidator {
 				const string a = 1;
 			}    	
 		'''.parse.assertError(SKilLPackage::eINSTANCE.constant, SKilLValidator::INVALID_CONSTANT_TYPE,
-			"Only an Integer can be const.")
+			"Only an Integer can be constant.")
 	}
 
 	@Test
@@ -58,7 +58,7 @@ public class TestSKilLValidator {
 				const TypeA a = 1;
 			}    	
 		'''.parse.assertError(SKilLPackage::eINSTANCE.constant, SKilLValidator::INVALID_CONSTANT_TYPE,
-			"Only an Integer can be const.")
+			"Only an Integer can be constant.")
 	}
 
 	@Test
@@ -69,7 +69,7 @@ public class TestSKilLValidator {
 			}
 			Typedef abc list<TypeA>;
 			Typedef abcd list<abc>;
-		'''.parse.assertError(SKilLPackage::eINSTANCE.listtype, SKilLValidator::INVALID_NESTED_TYPEDEF,
+		'''.parse.assertError(SKilLPackage::eINSTANCE.declarationReference, SKilLValidator::INVALID_NESTED_TYPEDEF,
 			"It is forbidden to nest containers inside of other containers.")
 
 	}
@@ -81,7 +81,7 @@ public class TestSKilLValidator {
 				list<abc> abcd;
 			}
 			Typedef abc list<i8>;
-		'''.parse.assertError(SKilLPackage::eINSTANCE.listtype, SKilLValidator::INVALID_NESTED_TYPEDEF,
+		'''.parse.assertError(SKilLPackage::eINSTANCE.declarationReference, SKilLValidator::INVALID_NESTED_TYPEDEF,
 			"It is forbidden to nest containers inside of other containers.")
 
 	}
@@ -94,7 +94,7 @@ public class TestSKilLValidator {
 			}
 			Typedef abc TypeA[];
 			Typedef abcd abc[];
-		'''.parse.assertError(SKilLPackage::eINSTANCE.arraytype, SKilLValidator::INVALID_NESTED_TYPEDEF,
+		'''.parse.assertError(SKilLPackage::eINSTANCE.declarationReference, SKilLValidator::INVALID_NESTED_TYPEDEF,
 			"It is forbidden to nest containers inside of other containers.")
 
 	}
@@ -106,7 +106,7 @@ public class TestSKilLValidator {
 				abc[] abcd;
 			}
 			Typedef abc i8[];
-		'''.parse.assertError(SKilLPackage::eINSTANCE.arraytype, SKilLValidator::INVALID_NESTED_TYPEDEF,
+		'''.parse.assertError(SKilLPackage::eINSTANCE.declarationReference, SKilLValidator::INVALID_NESTED_TYPEDEF,
 			"It is forbidden to nest containers inside of other containers.")
 
 	}
@@ -118,7 +118,7 @@ public class TestSKilLValidator {
 				set<abc> abcd;
 			}
 			Typedef abc i8[];
-		'''.parse.assertError(SKilLPackage::eINSTANCE.settype, SKilLValidator::INVALID_NESTED_TYPEDEF,
+		'''.parse.assertError(SKilLPackage::eINSTANCE.declarationReference, SKilLValidator::INVALID_NESTED_TYPEDEF,
 			"It is forbidden to nest containers inside of other containers.")
 
 	}
@@ -130,7 +130,7 @@ public class TestSKilLValidator {
 				map<i8, abc> abcd;
 			}
 			Typedef abc i8[];
-		'''.parse.assertError(SKilLPackage::eINSTANCE.maptype, SKilLValidator::INVALID_NESTED_TYPEDEF,
+		'''.parse.assertError(SKilLPackage::eINSTANCE.declarationReference, SKilLValidator::INVALID_NESTED_TYPEDEF,
 			"It is forbidden to nest containers inside of other containers.")
 
 	}
