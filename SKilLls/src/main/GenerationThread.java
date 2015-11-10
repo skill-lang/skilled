@@ -13,17 +13,15 @@ import java.io.InputStreamReader;
  */
 class GenerationThread implements Runnable {
     private final String COMMAND;
-    private final String GENERATOR;
     private final File PARENT;
 
     /**
      * @param command   Command to be executed
      * @param generator Path to the generator
      */
-    @SuppressWarnings("SpellCheckingInspection")
     public GenerationThread(String command, File generator) {
         this.COMMAND = command;
-        this.GENERATOR = generator.getName();
+        generator.getName();
         this.PARENT = generator.getParentFile().getAbsoluteFile();
     }
 

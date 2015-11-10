@@ -37,7 +37,6 @@ public class MainClass {
     /**
      * Text for the help message. Called with "skillls --help".
      */
-    @SuppressWarnings("SpellCheckingInspection")
     private static final String HELPTEXT = "SYNOPSIS\n"
             + "       skillls\n"
             + "       [-a]  [--all]\n"
@@ -100,7 +99,6 @@ public class MainClass {
      *
      * @param args The command line arguments.
      */
-    @SuppressWarnings("ConstantConditions")
     public static void main(String[] args) {
         if (args[0].equals("-e") || args[0].equals("--edit")) {
             Edit e = new Edit(args[2]);
@@ -133,8 +131,7 @@ public class MainClass {
                 } else if (args[i].startsWith("--")) {
                     ArgumentEvaluation e = doubleDashArg(args, i);
                     if (e.getArgument() != null) {
-                        if (e.getArgument().equals("list")) {
-                        } else {
+                        if (!e.getArgument().equals("list")) {
                             evaluations.put(e.getName(), e);
                         }
                     }
@@ -212,7 +209,7 @@ public class MainClass {
             int index;
             try {
                 index = Integer.parseInt(key);
-            } catch (NullPointerException | NumberFormatException ignored) {
+            } catch (@SuppressWarnings("unused") NullPointerException | NumberFormatException ignored) {
                 index = -1;
             }
             if (index > -1) {
@@ -270,7 +267,6 @@ public class MainClass {
      * @param globalIndex The current position in {@code args}.
      * @return Returns an object with the unambiguous text what action has to perform and the new index.
      */
-    @SuppressWarnings("AssignmentToMethodParameter")
     private static ArgumentEvaluation[] singleDashArg(String[] args, int globalIndex) {
         char last = ' ';
         int index = globalIndex;
@@ -357,7 +353,6 @@ public class MainClass {
      * @param globalIndex The current position in {@code args}.
      * @return Returns an object with the unambiguous text what action has to perform and the new index.
      */
-    @SuppressWarnings("AssignmentToMethodParameter")
     private static ArgumentEvaluation doubleDashArg(String[] args, int globalIndex) {
         int index = globalIndex;
         switch (args[index]) {
@@ -503,7 +498,6 @@ public class MainClass {
      * @return The file object of the temporary file.
      * @throws IOException Thrown if there is a problem with creating temporary files.
      */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static File createToolFile(File project, Tool tool, File file) throws IOException {
         File tempDir = new File(project.getAbsolutePath() + File.separator + ".skillt");
         tempDir = new File(tempDir, tool.getName());
@@ -530,7 +524,7 @@ public class MainClass {
             SKilLParser parser = new SKilLParser(tokens);
             parser.addParseListener(new SkillExtractListener(fs, file, tool));
             // Call has side effect: the .skill-file is parsed.
-            @SuppressWarnings({"unused", "UnusedAssignment"}) ParseTree tree = parser.file();
+            @SuppressWarnings({"unused"}) ParseTree tree = parser.file();
         }
         return newFile;
     }
@@ -681,7 +675,7 @@ public class MainClass {
         SKilLParser parser = new SKilLParser(tokens);
         parser.addParseListener(new SkillIndexListener(skillFile, file));
         // Call has side effect: the .skill-file is parsed.
-        @SuppressWarnings({"unused", "UnusedAssignment"}) ParseTree tree = parser.file();
+        @SuppressWarnings({"unused"}) ParseTree tree = parser.file();
     }
 
     private static String hash(File file) {

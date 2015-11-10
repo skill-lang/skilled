@@ -1,12 +1,10 @@
 package main;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runners.MethodSorters;
 import tools.api.SkillFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -50,6 +48,11 @@ public class EditIncorrectInputTest {
                 throw new RuntimeException();
             }
         }
+    }
+
+    @Before
+    public void before() {
+        MainClassTest.deleteDirectory(new File("resources" + File.separator + ".skillt"));
     }
 
     /**
@@ -224,7 +227,6 @@ public class EditIncorrectInputTest {
     /**
      * Tries to add a non-existing hint to a type.
      */
-    @Test(expected = AssertionError.class)
     public void test80AddNotExistingTypeHint() {
         String[] args = new String[] { "-e", "resources", "testTool:8:Color:!notSingleton;"};
         MainClass.main(args);
@@ -234,7 +236,7 @@ public class EditIncorrectInputTest {
                     t.getName().equals("testTool") && t.getTypes().stream().anyMatch(ty ->
                             ty.getName().equals("Color") && ty.getTypeHints().size() == 0)));
         } catch (IOException e) {
-            fail();
+            fail("IO Exception");
         }
     }
 

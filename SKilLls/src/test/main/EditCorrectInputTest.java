@@ -391,6 +391,7 @@ public class EditCorrectInputTest {
         try {
             Files.createDirectory(Paths.get("generated"));
         } catch (IOException ignored) {
+        	//ignored
         }
         String[] args = new String[] { "-agloxmp", builder.toString(), "Java", "generated",
                 "scala", "onetypetool", "resources", "testTool" };
@@ -409,6 +410,7 @@ public class EditCorrectInputTest {
         try {
             Files.createDirectory(Paths.get("generated"));
         } catch (IOException ignored) {
+        	//ignored
         }
         String[] args = new String[] { "--no-cleanup", "-agloxmp", builder.toString(), "Java", "generated",
                 "scala", "onetypetool", "resources", "testTool" };

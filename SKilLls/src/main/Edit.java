@@ -466,6 +466,10 @@ public class Edit {
                     type.getFields().add(skillFile.Fields().make(field.getComment(), new ArrayList<>(), field.getName(), new ArrayList<>(), type));
                 }
                 tool.getTypes().add(type);
+                if (type == null) return;
+                if (type.getName().toLowerCase().startsWith("typedef ")) {
+                    addGroundType(type, tool);
+                }
                 addExtensions(tool, t);
                 for (tools.File f : skillFile.Files()) {
                     if (f.getPath().equals(t.getFile().getPath())) {
@@ -481,6 +485,24 @@ public class Edit {
                         return;
                     }
                 }
+            }
+        }
+    }
+
+    private void addGroundType(Type type, Tool tool) {
+        String groundTypeName = type.getName().split(" ")[type.getName().split(" ").length - 1].toLowerCase();
+        List<Type> candidates = skillFile.Types().stream().filter(t -> t.getName().toLowerCase().contains(groundTypeName)).collect(Collectors.toList());
+        for (Type candidate : candidates) {
+            String candidateName = candidate.getName().toLowerCase();
+            if (candidateName.startsWith("typedef " + groundTypeName)
+                    || candidateName.startsWith("enum " + groundTypeName)
+                    || candidateName.equals(groundTypeName)
+                    || candidateName.startsWith("interface " + groundTypeName)) {
+                if (tool.getTypes().stream().filter(t -> t.getName().equals(candidate.getName())).count() > 0) {
+                    break;
+                }
+				tool.getTypes().add(skillFile.Types().make(candidate.getComment(), candidate.getExtends(), new ArrayList<>(), candidate.getFile(), candidate.getName(), candidate.getRestrictions(), new ArrayList<>()));
+				break;
             }
         }
     }
@@ -504,6 +526,15 @@ public class Edit {
                 continue;
             }
             List<Type> exts = skillFile.Types().stream().filter(t -> t.getName().equals(extension) && !types.contains(t.getName())).collect(Collectors.toList());
+            for (int i = 0; i < exts.size(); i++) {
+                Type t = exts.get(i);
+                exts.remove(t);
+                if (exts.stream().noneMatch(t1 -> t1.getName().equals(t.getName()))) {
+                    exts.add(t);
+                } else {
+                    i--;
+                }
+            }
             for (Type t : exts) {
                 if (tool.getTypes().stream().map(Type::getName).collect(Collectors.toList()).contains(t.getName())) {
                     continue;
@@ -512,6 +543,7 @@ public class Edit {
                 if (t.getExtends().size() > 0) {
                     addExtensions(tool, t);
                 }
+                if (toolType == null) return;
                 toolType.getExtends().add(t.getName());
             }
         }

@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
  * @author Armin Hüneburg
  * Created on 15.09.15.
  */
-@SuppressWarnings("Convert2streamapi")
 class SkillIndexListener extends SKilLParserBaseListener {
     private final SkillFile skillFile;
     private tools.File file;
@@ -102,7 +101,7 @@ class SkillIndexListener extends SKilLParserBaseListener {
     }
 
     private void processTypedef(SKilLParser.TypedefContext typedef) {
-        String name = "typedef " + typedef.name.getText() + " " + typedef.type().getText();
+        String name = "typedef " + typedef.name.getText() + " %s " + typedef.type().getText();
 
         ArrayList<String> restrictions = new ArrayList<>();
 

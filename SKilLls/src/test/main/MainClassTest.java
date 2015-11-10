@@ -2,22 +2,16 @@ package main;
 
 import org.junit.*;
 import org.junit.runners.MethodSorters;
-import sun.applet.Main;
-import tools.*;
 
 import java.io.*;
-import java.io.File;
 import java.math.BigInteger;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.SecureRandom;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * @author Armin Hüneburg
@@ -143,6 +137,7 @@ public class MainClassTest {
         try {
             Files.createDirectory(Paths.get("generated"));
         } catch (IOException ignored) {
+        	//ignored
         }
         String[] args = new String[] { "-agloxmp", builder.toString(), "Java", "generated",
                 "scala", "twotypetool", "resources", "twoTypeTool" };
@@ -163,6 +158,7 @@ public class MainClassTest {
         try {
             Files.createDirectory(Paths.get("generated"));
         } catch (IOException ignored) {
+        	//ignored
         }
         String[] args = new String[] { "-agloxmp", builder.toString(), "Java", "generated",
                 "scala", "onetypetool", "resources", "oneTypeTool" };
@@ -213,13 +209,14 @@ public class MainClassTest {
             FileChannel channel = raf.getChannel();
             channel = channel.truncate(channel.size() - type.length() - 3);
             channel.close();
+            raf.close();
         } catch (IOException e) {
             fail();
         }
 
     }
 
-    private static void deleteDirectory(File file) {
+    public static void deleteDirectory(File file) {
         if (file.isDirectory()) {
             for (File f : file.listFiles()) {
                 deleteDirectory(f);
