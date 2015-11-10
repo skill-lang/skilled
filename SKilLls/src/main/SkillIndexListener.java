@@ -18,9 +18,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+
 /**
- * @author Armin Hüneburg
- * Created on 15.09.15.
+ * @author Armin Hüneburg Created on 15.09.15.
  */
 class SkillIndexListener extends SKilLParserBaseListener {
     private final SkillFile skillFile;
@@ -50,16 +50,16 @@ class SkillIndexListener extends SKilLParserBaseListener {
                     this.file = null;
                     break;
                 }
-				this.file = f;
-				this.file.setMd5(new String(bytes));
-				this.file.setTimestamp("" + file.lastModified());
+                this.file = f;
+                this.file.setMd5(new String(bytes));
+                this.file.setTimestamp("" + file.lastModified());
             }
         }
     }
 
     @Override
     public void exitFile(SKilLParser.FileContext ctx) {
-    	ctx.declaration().forEach(this::processDeclaration);
+        ctx.declaration().forEach(this::processDeclaration);
         skillFile.flush();
     }
 
@@ -84,8 +84,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
             if (extOccurrence > o && o != -1) {
                 extOccurrence = o;
             }
-            if (declarationContext.typedef() == null && occurrence != -1 && occurrence + type.getName().length() == extOccurrence ||
-                    declarationContext.typedef() != null && occurrence == 7) {
+            if (declarationContext.typedef() == null && occurrence != -1
+                    && occurrence + type.getName().length() == extOccurrence
+                    || declarationContext.typedef() != null && occurrence == 7) {
                 return;
             }
         }
@@ -117,7 +118,8 @@ class SkillIndexListener extends SKilLParserBaseListener {
             hints.add(hint);
         }
 
-        Type type = skillFile.Types().make(typedef.COMMENT() == null ? "" : typedef.COMMENT().getText(), new ArrayList<>(), new ArrayList<>(), file, name, restrictions, hints);
+        Type type = skillFile.Types().make(typedef.COMMENT() == null ? "" : typedef.COMMENT().getText(), new ArrayList<>(),
+                new ArrayList<>(), file, name, restrictions, hints);
         for (Hint hint : hints) {
             hint.setParent(type);
         }
@@ -132,7 +134,8 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
         fields.addAll(enumtype.field().stream().map(this::processField).collect(Collectors.toList()));
 
-        Type type = skillFile.Types().make(enumtype.COMMENT() == null ? "" : enumtype.COMMENT().getText(), new ArrayList<>(), fields, file, name, new ArrayList<>(), new ArrayList<>());
+        Type type = skillFile.Types().make(enumtype.COMMENT() == null ? "" : enumtype.COMMENT().getText(), new ArrayList<>(),
+                fields, file, name, new ArrayList<>(), new ArrayList<>());
         for (Field f : fields) {
             f.setType(type);
         }
@@ -159,7 +162,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
             restrictions.add(r.getText());
         }
 
-        Field field = skillFile.Fields().make(fieldContext.description().COMMENT() == null ? "" : fieldContext.description().COMMENT().getText(), hints, name, restrictions, null);
+        Field field = skillFile.Fields().make(
+                fieldContext.description().COMMENT() == null ? "" : fieldContext.description().COMMENT().getText(), hints,
+                name, restrictions, null);
         for (Hint h : hints) {
             h.setParent(field);
         }
@@ -195,8 +200,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
             fields.add(processField(f));
         }
 
-        Type type = skillFile.Types().make(usertype.description().COMMENT() == null ? "" : usertype.description().COMMENT().getText(),
-                extensions, fields, file, name, restrictions, hints);
+        Type type = skillFile.Types().make(
+                usertype.description().COMMENT() == null ? "" : usertype.description().COMMENT().getText(), extensions,
+                fields, file, name, restrictions, hints);
 
         for (Field f : fields) {
             f.setType(type);

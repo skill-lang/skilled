@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
 
+
 /**
  * Created on 01.10.15.
  *
@@ -63,13 +64,15 @@ public class EditIncorrectInputTest {
         String command = "&n:testTool;";
         edit = new Edit(command);
         try {
-            edit.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read, de.ust.skill.common.java.api.SkillFile.Mode.Write));
+            edit.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
+                    de.ust.skill.common.java.api.SkillFile.Mode.Write));
         } catch (IOException e) {
             fail();
         }
         edit.start();
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read, de.ust.skill.common.java.api.SkillFile.Mode.Write);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
+                    de.ust.skill.common.java.api.SkillFile.Mode.Write);
             assertEquals("no tool created.", 1, sk.Tools().size());
         } catch (IOException e) {
             fail();
@@ -84,13 +87,15 @@ public class EditIncorrectInputTest {
         String command = "notTestTool:0;";
         edit = new Edit(command);
         try {
-            edit.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read, de.ust.skill.common.java.api.SkillFile.Mode.Write));
+            edit.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
+                    de.ust.skill.common.java.api.SkillFile.Mode.Write));
         } catch (IOException e) {
             fail();
         }
         edit.start();
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read, de.ust.skill.common.java.api.SkillFile.Mode.Write);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
+                    de.ust.skill.common.java.api.SkillFile.Mode.Write);
             assertEquals("testTool not deleted. Failing ok, because not yet implemented in SKilL.", 1, sk.Tools().size());
         } catch (IOException e) {
             fail();
@@ -106,7 +111,8 @@ public class EditIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            assertTrue("Color in Tool", sk.Tools().stream().allMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 0));
+            assertTrue("Color in Tool",
+                    sk.Tools().stream().allMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 0));
         } catch (IOException e) {
             fail();
         }
@@ -121,7 +127,8 @@ public class EditIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            assertTrue("Color in Tool", sk.Tools().stream().allMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 0));
+            assertTrue("Color in Tool",
+                    sk.Tools().stream().allMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 0));
         } catch (IOException e) {
             fail();
         }
@@ -136,7 +143,8 @@ public class EditIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            assertTrue("Color in Tool", sk.Tools().stream().allMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 0));
+            assertTrue("Color in Tool",
+                    sk.Tools().stream().allMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 0));
         } catch (IOException e) {
             fail();
         }
@@ -151,7 +159,8 @@ public class EditIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            assertTrue("Color not in Tool", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 1));
+            assertTrue("Color not in Tool",
+                    sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 1));
         } catch (IOException e) {
             fail();
         }
@@ -162,11 +171,12 @@ public class EditIncorrectInputTest {
      */
     @Test
     public void test60AddNotExistingField() {
-        String[] args = new String[] { "-e", "resources", "testTool:4:Color:notRed;"};
+        String[] args = new String[] { "-e", "resources", "testTool:4:Color:notRed;" };
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            assertTrue("red not in Color in testTool", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream().allMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 0)));
+            assertTrue("red not in Color in testTool", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool")
+                    && t.getTypes().stream().allMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 0)));
         } catch (IOException e) {
             fail();
         }
@@ -177,11 +187,13 @@ public class EditIncorrectInputTest {
      */
     @Test
     public void test91RemoveNotExistingField() {
-        String[] args = new String[] { "-e", "resources", "testTool:5:Color:notRed;"};
+        String[] args = new String[] { "-e", "resources", "testTool:5:Color:notRed;" };
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            assertTrue("red still in Color in testTool. Failing ok, because not yet implemented in SKilL.", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream().allMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 0)));
+            assertTrue("red still in Color in testTool. Failing ok, because not yet implemented in SKilL.",
+                    sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
+                            .allMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 0)));
         } catch (IOException e) {
             fail();
         }
@@ -192,14 +204,15 @@ public class EditIncorrectInputTest {
      */
     @Test
     public void test70AddNotExistingFieldHint() {
-        String[] args = new String[] { "-e", "resources", "testTool:6:Color:red:!ignore;"};
+        String[] args = new String[] { "-e", "resources", "testTool:6:Color:red:!ignore;" };
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            assertTrue("red has a wrong hint", sk.Tools().stream().anyMatch(t ->
-                    t.getName().equals("testTool") && t.getTypes().stream().anyMatch(ty ->
-                            ty.getName().equals("Color") && ty.getFields().stream().allMatch(f ->
-                                    f.getName().endsWith("red") && f.getFieldHints().size() == 0))));
+            assertTrue("red has a wrong hint",
+                    sk.Tools().stream()
+                            .anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
+                                    .anyMatch(ty -> ty.getName().equals("Color") && ty.getFields().stream()
+                                            .allMatch(f -> f.getName().endsWith("red") && f.getFieldHints().size() == 0))));
         } catch (IOException e) {
             fail();
         }
@@ -210,15 +223,15 @@ public class EditIncorrectInputTest {
      */
     @Test
     public void test71RemoveNotExistingFieldHint() {
-        String[] args = new String[] { "-e", "resources", "testTool:7:Color:red:!ignore;"};
+        String[] args = new String[] { "-e", "resources", "testTool:7:Color:red:!ignore;" };
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
             assertTrue("red is nonNull in Color in testTool. Failing ok, not yet implemented in SKilL.",
-                    sk.Tools().stream().anyMatch(t ->
-                            t.getName().equals("testTool") && t.getTypes().stream().anyMatch(ty ->
-                                    ty.getName().endsWith("Color") && ty.getFields().stream().allMatch(f ->
-                                            f.getName().endsWith("red") && f.getFieldHints().size() == 0))));
+                    sk.Tools().stream()
+                            .anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
+                                    .anyMatch(ty -> ty.getName().endsWith("Color") && ty.getFields().stream()
+                                            .allMatch(f -> f.getName().endsWith("red") && f.getFieldHints().size() == 0))));
         } catch (IOException e) {
             fail();
         }
@@ -228,13 +241,12 @@ public class EditIncorrectInputTest {
      * Tries to add a non-existing hint to a type.
      */
     public void test80AddNotExistingTypeHint() {
-        String[] args = new String[] { "-e", "resources", "testTool:8:Color:!notSingleton;"};
+        String[] args = new String[] { "-e", "resources", "testTool:8:Color:!notSingleton;" };
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            assertTrue("Color is not singleton in testTool", sk.Tools().stream().anyMatch(t ->
-                    t.getName().equals("testTool") && t.getTypes().stream().anyMatch(ty ->
-                            ty.getName().equals("Color") && ty.getTypeHints().size() == 0)));
+            assertTrue("Color is not singleton in testTool", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool")
+                    && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color") && ty.getTypeHints().size() == 0)));
         } catch (IOException e) {
             fail("IO Exception");
         }
@@ -245,14 +257,14 @@ public class EditIncorrectInputTest {
      */
     @Test
     public void test81RemoveNotExistingTypeHint() {
-        String[] args = new String[] { "-e", "resources", "testTool:9:Color:!singleton;"};
+        String[] args = new String[] { "-e", "resources", "testTool:9:Color:!singleton;" };
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            assertTrue("Color is not singleton in testTool", sk.Tools().stream().anyMatch(t ->
-                    t.getName().equals("testTool") && t.getTypes().stream().anyMatch(ty ->
-                            ty.getName().equals("Color") && ty.getTypeHints().stream().noneMatch(h ->
-                                    h.getName().equals("!singleton")))));
+            assertTrue("Color is not singleton in testTool", sk.Tools().stream()
+                    .anyMatch(t -> t.getName().equals("testTool")
+                            && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color")
+                                    && ty.getTypeHints().stream().noneMatch(h -> h.getName().equals("!singleton")))));
         } catch (IOException e) {
             fail();
         }

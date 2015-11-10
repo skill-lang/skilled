@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+
 /**
  * Created on 13.10.15.
  *
@@ -49,7 +50,8 @@ public class SkillExtractListener extends SKilLParserBaseListener {
                 line.append(" ");
                 for (TerminalNode i : include.StringLiteral()) {
                     String text = i.getSymbol().getText().substring(1, i.getSymbol().getText().length() - 1);
-                    if (file == null) return;
+                    if (file == null)
+                        return;
                     for (String dep : file.getDependencies()) {
                         if (dep.endsWith(text)) {
                             line.append(i.getSymbol().getText());
@@ -116,7 +118,8 @@ public class SkillExtractListener extends SKilLParserBaseListener {
             builder.append(extend);
         }
         builder.append(";\n\n");
-        outFile.write(String.format(builder.toString(), hintsRestrictions.length() == 0 ? "" : hintsRestrictions.toString()).getBytes());
+        outFile.write(String.format(builder.toString(), hintsRestrictions.length() == 0 ? "" : hintsRestrictions.toString())
+                .getBytes());
     }
 
     private void processEnumtype(SKilLParser.EnumtypeContext ctx) throws IOException {

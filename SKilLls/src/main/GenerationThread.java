@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+
 /**
  * Class running a command line command in an extra thread.
  *
@@ -16,8 +17,10 @@ class GenerationThread implements Runnable {
     private final File PARENT;
 
     /**
-     * @param command   Command to be executed
-     * @param generator Path to the generator
+     * @param command
+     *            Command to be executed
+     * @param generator
+     *            Path to the generator
      */
     public GenerationThread(String command, File generator) {
         this.COMMAND = command;
