@@ -67,71 +67,63 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 
 	def void multipleInheritence(TypeDeclaration dec) {
 		if (dec.supertypes.size > 1) {
-			/*var int directSupertypes = 0 // Number of direct Supertypes that are not Interfaces
-			for (TypeDeclarationReference d : dec.supertypes) {
-				if (!(d.type instanceof Interfacetype)) {
-					directSupertypes++
+			var Set<TypeDeclaration> inheritedNoninterfaceSupertypes = new HashSet<TypeDeclaration>
+			for (TypeDeclarationReference r : dec.supertypes) {
+				if (r.type instanceof Interfacetype) {
+					inheritedNoninterfaceSupertypes.addAll(numberOfSupertypes(r.type))
+				} else {
+					inheritedNoninterfaceSupertypes.add(r.type)
 				}
 			}
-			if (directSupertypes > 1) {
-				error("Error: Type can only have one Supertype that is not an Interface.", firstnode.typeDeclaration,
-					SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
-			} else*/
-				var Set<TypeDeclaration> inheritedNoninterfaceSupertypes = new HashSet<TypeDeclaration>
-				for (TypeDeclarationReference r : dec.supertypes) {
-					if (r.type instanceof Interfacetype) {
-						inheritedNoninterfaceSupertypes.addAll(numberOfSupertypes(r.type))
-					} else {
-						inheritedNoninterfaceSupertypes.add(r.type)
+			if (inheritedNoninterfaceSupertypes.size > 1) {
+				//There are more than 1 non-Interface Supertypes for firstnode -> Check if they have a minimum
+				var boolean minimum = false // Will become true if there is a minimum, else there is an error
+				for (TypeDeclaration declara : inheritedNoninterfaceSupertypes) {
+					if (checkMinimum(declara, inheritedNoninterfaceSupertypes)) {
+						minimum = true
 					}
 				}
-				if (inheritedNoninterfaceSupertypes.size > 1) {
-					
-					var boolean minimum = false //Will become true if there is a minimum, else there is an error
-					for (TypeDeclaration declara : inheritedNoninterfaceSupertypes) {
-						if(checkMinimum(declara, inheritedNoninterfaceSupertypes)){
-							minimum = true
-						}
-					}
-					
-					if(!minimum){
-						var String l = ""
-						for (TypeDeclaration declara : inheritedNoninterfaceSupertypes) {
-							l = l + declara.name
-						}
-					
-						error("Error: Multiple Inheritence is not allowed." + l, firstnode.typeDeclaration,
-							SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)	
-					}
+				if (!minimum) {
+					//No minimum found -> Error
+					error("Error: Multiple Inheritence is not allowed." , firstnode.typeDeclaration,
+						SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
 				}
-			
+			}
+
 		}
 	}
 
-	def boolean checkMinimum(TypeDeclaration dec, Set<TypeDeclaration> declarations){
-		for(TypeDeclaration type: declarations){
-			if(!type.name.equals(dec.name)){
+	/**
+	 * Checks if dec is a Minimum for the Nodes in declarations
+	 */
+	def boolean checkMinimum(TypeDeclaration dec, Set<TypeDeclaration> declarations) {
+		for (TypeDeclaration type : declarations) {
+			if (!type.name.equals(dec.name)) {
 				var visited = new HashSet<TypeDeclaration>
-				if(!searchSupertype(type.name, dec, visited)){
-					return false
+				if (!searchSupertype(type.name, dec, visited)) {
+					return false //type is no Supertype for dec -> dec is not a minimum for the Types in declarations
 				}
 			}
 		}
 		return true;
 	}
-	
-	def boolean searchSupertype(String name, TypeDeclaration dec, Set<TypeDeclaration> visited){
+
+	/**
+	 *  Checks if there is a supertype with the name name that can be reached starting with dec
+	 * 	visited contains all visited supertypes to avoid cycles
+	 */
+	def boolean searchSupertype(String name, TypeDeclaration dec, Set<TypeDeclaration> visited) {
 		var boolean found = false
-		for(TypeDeclarationReference d: dec.supertypes){
-			if(!visited.contains(d.type)){
+		for (TypeDeclarationReference d : dec.supertypes) {
+			if (!visited.contains(d.type)) {
 				visited.add(d.type)
-				if(d.type.name.equals(name)){
-					found = true;
-				}else{
-					if(!found){
-						found = searchSupertype(name, d.type, visited)					
+				if (d.type.name.equals(name)) {
+					return true;	//Found Supertype
+				} else {
+					if (!found) {
+						found = searchSupertype(name, d.type, visited) //Search the Supertypes of d for name
 					}
-				}	
+				}
 			}
 		}
 		return found
@@ -150,7 +142,7 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 		for (TypeDeclarationReference d : dec.supertypes) {
 			if (d.type instanceof Interfacetype) {
 				noninterfaceSupertypesOfDeclaration.addAll(numberOfSupertypes(d.type)) // Check Supertypes
-			}else{
+			} else {
 				noninterfaceSupertypesOfDeclaration.add(d.type)
 			}
 		}
