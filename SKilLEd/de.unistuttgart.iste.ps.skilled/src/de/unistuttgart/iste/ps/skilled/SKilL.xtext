@@ -44,12 +44,12 @@ Enumtype:
 Interfacetype:
 	comment=ML_COMMENT?
 	'interface' name=ID ((':' | 'with' | 'extends') (supertypes+=TypeDeclarationReference))*
-	('{' (fields+=Field)* '}')?;
+	'{' (fields+=Field)* '}';
 
 Usertype:
 	comment=ML_COMMENT? (restrictions+=Restriction | hints+=Hint)*
 	name=ID ((':' | 'with' | 'extends') (supertypes+=TypeDeclarationReference))*
-	('{' fields+=Field* '}')?;
+	'{' (fields+=Field)* '}';
 
 Field:
 	comment=ML_COMMENT? (restrictions+=Restriction | hints+=Hint)*
