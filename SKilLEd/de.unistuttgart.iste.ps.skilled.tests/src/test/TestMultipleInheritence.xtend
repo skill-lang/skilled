@@ -76,24 +76,7 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
-	
-	@Test
-	def void testNoError4() {
-		assertTrue('''
-			interface IA:D{
-				const i8 a = 1;
-			}    	
-			interface IB:D{
-				
-			}
-			C:IA:IB{
-				
-			}
-			D{
-				
-			}
-		'''.parse.validate.isNullOrEmpty)
-	}
+
 	
 	@Test
 	def void testNoError5() {
@@ -198,78 +181,6 @@ class TestMultipleInheritence {
 		'''.parse.validate.isNullOrEmpty)
 	}
 	
-	@Test
-	def void testNoError10() {
-		assertTrue('''
-			A:IA:IB{
-				
-			}
-			interface IA:B{
-				
-			}
-			interface IB:C{
-				
-			}
-			B{
-				
-			}
-			C{
-				
-			}
-		'''.parse.validate.isNullOrEmpty)
-	}
-	
-	@Test
-	def void testNoError11() {
-		assertTrue('''
-			A:IA:IB{
-				
-			}
-			interface IA:B{
-				
-			}
-			interface IB:C{
-				
-			}
-			B:D{
-				
-			}
-			C:D{
-				
-			}
-			D{
-				
-			}
-		'''.parse.validate.isNullOrEmpty)
-	}
-
-	@Test
-	def void testNoError12() {
-		assertTrue('''
-			A:IA:IB:IC{
-				
-			}
-			interface IA:B{
-				
-			}
-			interface IB:C{
-				
-			}
-			interface IC:C{
-				
-			}
-			B:D{
-				
-			}
-			C:D{
-				
-			}
-			D{
-				
-			}
-		'''.parse.validate.isNullOrEmpty)
-	}
-
 	@Test
 	def void testNoError13() {
 		assertTrue('''
@@ -535,6 +446,79 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
+
+	@Test
+	def void testError8() {
+		assertFalse('''
+			A:IA:IB{
+				
+			}
+			interface IA:B{
+				
+			}
+			interface IB:C{
+				
+			}
+			B{
+				
+			}
+			C{
+				
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+	
+	@Test
+	def void testError9() {
+		assertFalse('''
+			A:IA:IB{
+				
+			}
+			interface IA:B{
+				
+			}
+			interface IB:C{
+				
+			}
+			B:D{
+				
+			}
+			C:D{
+				
+			}
+			D{
+				
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+
+	@Test
+	def void testError10() {
+		assertFalse('''
+			A:IA:IB:IC{
+				
+			}
+			interface IA:B{
+				
+			}
+			interface IB:C{
+				
+			}
+			interface IC:C{
+				
+			}
+			B:D{
+				
+			}
+			C:D{
+				
+			}
+			D{
+				
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+
 
 	@Test
 	def void testNoErrorValid() {
