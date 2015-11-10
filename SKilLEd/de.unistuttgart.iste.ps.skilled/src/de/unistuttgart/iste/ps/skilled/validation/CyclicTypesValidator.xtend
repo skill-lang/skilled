@@ -67,7 +67,7 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 
 	def void multipleInheritence(TypeDeclaration dec) {
 		if (dec.supertypes.size > 1) {
-			var int directSupertypes = 0 // Number of direct Supertypes that are not Interfaces
+			/*var int directSupertypes = 0 // Number of direct Supertypes that are not Interfaces
 			for (TypeDeclarationReference d : dec.supertypes) {
 				if (!(d.type instanceof Interfacetype)) {
 					directSupertypes++
@@ -76,7 +76,7 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 			if (directSupertypes > 1) {
 				error("Error: Type can only have one Supertype that is not an Interface.", firstnode.typeDeclaration,
 					SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
-			} else {
+			} else*/
 				var Set<TypeDeclaration> inheritedNoninterfaceSupertypes = new HashSet<TypeDeclaration>
 				for (TypeDeclarationReference r : dec.supertypes) {
 					if (r.type instanceof Interfacetype) {
@@ -86,15 +86,55 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 					}
 				}
 				if (inheritedNoninterfaceSupertypes.size > 1) {
-					var String l = ""
+					
+					var boolean minimum = false //Will become true if there is a minimum, else there is an error
 					for (TypeDeclaration declara : inheritedNoninterfaceSupertypes) {
-						l = l + declara.name
+						if(checkMinimum(declara, inheritedNoninterfaceSupertypes)){
+							minimum = true
+						}
 					}
-					error("Error: Multiple Inheritence is not allowed." + l, firstnode.typeDeclaration,
-						SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
+					
+					if(!minimum){
+						var String l = ""
+						for (TypeDeclaration declara : inheritedNoninterfaceSupertypes) {
+							l = l + declara.name
+						}
+					
+						error("Error: Multiple Inheritence is not allowed." + l, firstnode.typeDeclaration,
+							SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)	
+					}
+				}
+			
+		}
+	}
+
+	def boolean checkMinimum(TypeDeclaration dec, Set<TypeDeclaration> declarations){
+		for(TypeDeclaration type: declarations){
+			if(!type.name.equals(dec.name)){
+				var visited = new HashSet<TypeDeclaration>
+				if(!searchSupertype(type.name, dec, visited)){
+					return false
 				}
 			}
 		}
+		return true;
+	}
+	
+	def boolean searchSupertype(String name, TypeDeclaration dec, Set<TypeDeclaration> visited){
+		var boolean found = false
+		for(TypeDeclarationReference d: dec.supertypes){
+			if(!visited.contains(d.type)){
+				visited.add(d.type)
+				if(d.type.name.equals(name)){
+					found = true;
+				}else{
+					if(!found){
+						found = searchSupertype(name, d.type, visited)					
+					}
+				}	
+			}
+		}
+		return found
 	}
 
 	/**
@@ -108,10 +148,11 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 		}
 		declarationsVisited.add(dec.name)
 		for (TypeDeclarationReference d : dec.supertypes) {
-			if (!(d.type instanceof Interfacetype)) {
+			if (d.type instanceof Interfacetype) {
+				noninterfaceSupertypesOfDeclaration.addAll(numberOfSupertypes(d.type)) // Check Supertypes
+			}else{
 				noninterfaceSupertypesOfDeclaration.add(d.type)
 			}
-			noninterfaceSupertypesOfDeclaration.addAll(numberOfSupertypes(d.type)) // Check Supertypes
 		}
 		return noninterfaceSupertypesOfDeclaration
 	}
