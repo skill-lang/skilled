@@ -532,6 +532,11 @@ public class Edit {
         }
     }
 
+    /**
+     * Adds the groundtype of typedefs to a tool.
+     * @param type typedef which has a groundtype.
+     * @param tool tool the new types are added to.
+     */
     private void addGroundType(Type type, Tool tool) {
         String groundTypeName = type.getName().split(" ")[type.getName().split(" ").length - 1].toLowerCase();
         List<Type> candidates = skillFile.Types().stream().filter(t -> t.getName().toLowerCase().contains(groundTypeName))

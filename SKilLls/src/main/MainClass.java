@@ -183,6 +183,11 @@ public class MainClass {
         }
     }
 
+    /**
+     * Prints a tool with its corresponding types and their fields on the stdout.
+     * @param sf skillfile containing the tools and their types.
+     * @param evaluations the evaluations of the arguments that were given on the command line.
+     */
     private static void list(SkillFile sf, HashMap<String, ArgumentEvaluation> evaluations) {
         ArrayList<Tool> tools = new ArrayList<>();
         for (String key : evaluations.keySet()) {
@@ -618,6 +623,10 @@ public class MainClass {
         }
     }
 
+    /**
+     * Adds the dependencies of a file to the file.
+     * @param skillFile the skillfile containing the files.
+     */
     static void buildDependencies(SkillFile skillFile) {
         for (Tool tool : skillFile.Tools()) {
             for (tools.File file : tool.getFiles()) {
@@ -656,6 +665,12 @@ public class MainClass {
         }
     }
 
+    /**
+     * returns a stream of tools.File with identical path.
+     * @param file the original file.
+     * @param skillFile the skillfile containing the files.
+     * @return a stream of the tool.Files.
+     */
     private static Stream<tools.File> getStream(File file, SkillFile skillFile) {
         ArrayList<tools.File> files = new ArrayList<>();
         for (tools.File f : skillFile.Files()) {
@@ -692,6 +707,11 @@ public class MainClass {
         ParseTree tree = parser.file();
     }
 
+    /**
+     * Creates a MD5 hash of a file and transforms it into a hexadecimal String.
+     * @param file The file that should be hashed.
+     * @return The MD5 hash of the given file as hexadecimal string.
+     */
     private static String hash(File file) {
         try (InputStream is = Files.newInputStream(Paths.get(file.getAbsolutePath()))) {
             MessageDigest md5;

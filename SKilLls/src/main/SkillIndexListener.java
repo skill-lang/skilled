@@ -26,6 +26,12 @@ class SkillIndexListener extends SKilLParserBaseListener {
     private final SkillFile skillFile;
     private tools.File file;
 
+    /**
+     * Constructor.
+     * This object indexes all types, fields, and other attributes of a specification file.
+     * @param skillFile the skillfile dedicated to saving the attributes of the specification.
+     * @param file the file to be indexed.
+     */
     public SkillIndexListener(SkillFile skillFile, File file) {
         super();
         this.skillFile = skillFile;
@@ -57,12 +63,20 @@ class SkillIndexListener extends SKilLParserBaseListener {
         }
     }
 
+    /**
+     * Method for the end of parsing a file.
+     * @param ctx the content of the parsed file tokenized.
+     */
     @Override
     public void exitFile(SKilLParser.FileContext ctx) {
         ctx.declaration().forEach(this::processDeclaration);
         skillFile.flush();
     }
 
+    /**
+     * method for processing a typedeclaration.
+     * @param declarationContext the content of the typedeclaration.
+     */
     private void processDeclaration(SKilLParser.DeclarationContext declarationContext) {
         for (Type type : skillFile.Types()) {
             int occurrence = declarationContext.getText().indexOf(type.getName());
@@ -101,6 +115,10 @@ class SkillIndexListener extends SKilLParserBaseListener {
         }
     }
 
+    /**
+     * processes a typedef typedeclaration.
+     * @param typedef the context of the declaration.
+     */
     private void processTypedef(SKilLParser.TypedefContext typedef) {
         String name = "typedef " + typedef.name.getText() + " %s " + typedef.type().getText();
 
@@ -125,6 +143,10 @@ class SkillIndexListener extends SKilLParserBaseListener {
         }
     }
 
+    /**
+     * processes a enumtype typedeclaration.
+     * @param enumtype the context of the declaration.
+     */
     private void processEnumtype(SKilLParser.EnumtypeContext enumtype) {
         String name = "enum " + enumtype.name.getText();
 
@@ -141,6 +163,11 @@ class SkillIndexListener extends SKilLParserBaseListener {
         }
     }
 
+    /**
+     * processes a field in a typedeclaration
+     * @param fieldContext the context of the declaration.
+     * @return the found field.
+     */
     private Field processField(SKilLParser.FieldContext fieldContext) {
         ArrayList<Hint> hints = new ArrayList<>();
 
@@ -171,6 +198,10 @@ class SkillIndexListener extends SKilLParserBaseListener {
         return field;
     }
 
+    /**
+     * processes a usertype typedeclaration.
+     * @param usertype the context of the declaration.
+     */
     private void processUsertype(SKilLParser.UsertypeContext usertype) {
         ArrayList<Hint> hints = new ArrayList<>();
 
@@ -213,6 +244,10 @@ class SkillIndexListener extends SKilLParserBaseListener {
         }
     }
 
+    /**
+     * processes an interfacetype typedeclaration.
+     * @param interfacetype the context of the declaration.
+     */
     private void processInterface(SKilLParser.InterfacetypeContext interfacetype) {
         ArrayList<Hint> hints = new ArrayList<>();
 
