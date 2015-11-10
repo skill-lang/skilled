@@ -1,0 +1,22 @@
+!removeUnknownRestrictions("unique", "monotone")
+!mixin
+!unique
+!pure
+!monotone
+!readOnly
+UserType1 {
+  !constantMutator(-17, 3000000000)
+  const i64 field1 = 2500000000;
+  !distributed
+  !onDemand
+  i32 field2;
+  !ignore
+  i32 field3;
+  !hide
+  i32 field4;
+}
+			
+!flat
+UserType2 {
+  i32 field;
+}

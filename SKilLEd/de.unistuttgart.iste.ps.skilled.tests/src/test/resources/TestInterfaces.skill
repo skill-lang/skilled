@@ -1,0 +1,27 @@
+/*interface comment*/
+interface Int1 {
+  annotation field1;
+  string field2;
+  const i32 field3 = 1234;
+  Type1 field4;
+  list<f64> field5;
+}
+  			
+Type1 {
+  bool field6;
+}
+  			
+Type2 with I:I extends Type1:I {
+  string[] field7;
+}
+  			
+interface Int2:I:Type1 with I {
+  annotation field8;
+}
+  			
+Type3:Type2 extends Int2 with Int3:Int3 {
+  f64 field9;
+}
+  			
+interface Int3 {
+}

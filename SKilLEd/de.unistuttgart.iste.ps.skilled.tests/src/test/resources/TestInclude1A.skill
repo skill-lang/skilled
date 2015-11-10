@@ -1,0 +1,6 @@
+include "TestInclude1B.skill"
+
+/*first imported type*/
+Type1 {
+  i32 field;
+}

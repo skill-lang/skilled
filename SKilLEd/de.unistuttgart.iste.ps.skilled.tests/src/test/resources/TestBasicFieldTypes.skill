@@ -1,0 +1,12 @@
+UserType {
+  i8 int1;
+  i16 int2;
+  i32 int3;
+  i64 int4;
+  v64 int5;
+  f32 float1;
+  f64 float2;
+  string str;
+  bool b;
+  annotation a;
+}

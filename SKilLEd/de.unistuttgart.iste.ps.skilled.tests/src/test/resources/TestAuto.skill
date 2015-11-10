@@ -1,0 +1,5 @@
+Rectangle {
+  i32 width;
+  i32 length;
+  auto i32 area;
+}

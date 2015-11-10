@@ -1,0 +1,14 @@
+Type {
+  /*comment*/
+  bool[] a;
+  				
+  @nonnull
+  list<f64> b;
+  				
+  !readOnly
+  map<i32,Type,string,bool> c;
+  				
+  set<v64> d;
+  				
+  Type[80] e;
+}

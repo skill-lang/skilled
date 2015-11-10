@@ -1,15 +1,16 @@
 package test
 
-import org.eclipse.xtext.junit4.InjectWith
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
-import org.junit.runner.RunWith
-import org.eclipse.xtext.junit4.XtextRunner
 import com.google.inject.Inject
-import org.eclipse.xtext.junit4.util.ParseHelper
+import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
 import de.unistuttgart.iste.ps.skilled.sKilL.File
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import org.junit.Test
 import org.junit.Assert
+import org.junit.BeforeClass
+import org.junit.Test
+import org.junit.runner.RunWith
 
 /**
  * @author Tobias Heck
@@ -21,12 +22,16 @@ class TestDate {
 	@Inject extension ParseHelper<File> parser;
 	@Inject extension ValidationTestHelper;
 	
+	var static String specification = "";
+	
+	@BeforeClass
+	def static void setup() {
+		specification = FileLoader.loadFile("date");
+	}
+	
 	@Test
 	def void test() {
-		val issueCount = '''
-			/** A simple date test with known Translation */
-			Date { /** seconds since 1.1.1970 UTC */ v64 date; }
-		'''.parse.validate.size;
+		val issueCount = specification.parse.validate.size;
 		
 		Assert::assertTrue(issueCount == 0);
 	}

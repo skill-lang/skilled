@@ -1,0 +1,12 @@
+#head comment
+#head comment 2
+			
+/*usertype comment
+second line*/
+!unique
+Usertype {
+  /*field comment
+  second line*/
+  !auto
+  i32 field;
+}

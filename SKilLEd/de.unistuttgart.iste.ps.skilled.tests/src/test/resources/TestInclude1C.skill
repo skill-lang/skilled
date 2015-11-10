@@ -1,0 +1,6 @@
+include "TestInclude1A.skill"
+
+Type {
+  Type1 field1;
+  Type2 field2;
+}

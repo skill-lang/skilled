@@ -1,19 +1,20 @@
 package test
 
-import org.eclipse.xtext.junit4.InjectWith
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
-import org.junit.runner.RunWith
-import org.eclipse.xtext.junit4.XtextRunner
 import com.google.inject.Inject
-import org.eclipse.xtext.junit4.util.ParseHelper
-import de.unistuttgart.iste.ps.skilled.sKilL.File
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import org.junit.Test
-import org.junit.Assert
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.InterfacetypeImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.UsertypeImpl
+import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
 import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
 import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype
+import de.unistuttgart.iste.ps.skilled.sKilL.File
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.InterfacetypeImpl
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.UsertypeImpl
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.junit4.util.ParseHelper
+import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.junit.Assert
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.BeforeClass
 
 /**
  * @author Tobias Heck
@@ -26,12 +27,41 @@ class TestEdgeCases {
 	@Inject extension ParseHelper<File> parser;
 	@Inject extension ValidationTestHelper;
 	
+	var static String testBracketsNotNecessary = "";
+	var static String testInheritageOfASingleTypeViaSeveralInterfaces = "";
+	var static String testInheritageOfASingleTypeViaInterfaceAndType = "";
+	var static String testInheritageOfASingleTypeTwiceViaOneInterface = "";
+	var static String testDeclarationOfInheritedField = "";
+	var static String testDuplicateFieldNames = "";
+	var static String test = "";
+	var static String testRestrictionCaseInsensitive = "";
+	var static String testDefault1 = "";
+	var static String testDefault2 = "";
+	
+	@BeforeClass
+	def static void setup() {
+		testBracketsNotNecessary = FileLoader.loadFile("TestBracketsNotNecessary");
+		testInheritageOfASingleTypeViaSeveralInterfaces = FileLoader.loadFile(
+			"TestInheritageOfASingleTypeViaSeveralInterfaces");
+		testInheritageOfASingleTypeViaInterfaceAndType = FileLoader.loadFile(
+			"testInheritageOfASingleTypeViaInterfaceAndType");
+		testInheritageOfASingleTypeTwiceViaOneInterface = FileLoader.loadFile(
+			"testInheritageOfASingleTypeTwiceViaOneInterface");
+		testDeclarationOfInheritedField = FileLoader.loadFile(
+			"testDeclarationOfInheritedField");
+		testDuplicateFieldNames = FileLoader.loadFile("testDuplicateFieldNames");
+		test = FileLoader.loadFile("test");
+		testRestrictionCaseInsensitive = FileLoader.loadFile(
+			"testRestrictionCaseInsensitive");
+		testDefault1 = FileLoader.loadFile(
+			"testDefault1");
+		testDefault2 = FileLoader.loadFile(
+			"testDefault2");
+	}
+	
 	@Test
 	def void testBracketsNotNecessary() {
-		val specification = '''
-			A {}
-			B : A  	
-		'''.parse
+		val specification = testBracketsNotNecessary.parse
 		
 		val issueCount = specification.validate.size;
 		Assert::assertTrue(issueCount == 0);

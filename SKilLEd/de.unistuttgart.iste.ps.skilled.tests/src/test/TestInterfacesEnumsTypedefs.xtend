@@ -2,7 +2,13 @@ package test
 
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
+import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
 import de.unistuttgart.iste.ps.skilled.sKilL.File
+import de.unistuttgart.iste.ps.skilled.sKilL.Float
+import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
+import de.unistuttgart.iste.ps.skilled.sKilL.Integer
+import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
+import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.ConstantImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.DeclarationReferenceImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.EnumtypeImpl
@@ -11,18 +17,13 @@ import de.unistuttgart.iste.ps.skilled.sKilL.impl.ListtypeImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypeDeclarationImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.TypedefImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.UsertypeImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.Integer
-import de.unistuttgart.iste.ps.skilled.sKilL.Float
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
-import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
-import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
+import org.junit.BeforeClass
 
 /**
  * @author Tobias Heck
@@ -32,6 +33,11 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
 class TestInterfacesEnumsTypedefs {
 
 	@Inject extension ParseHelper<File> parser;
+	
+	@BeforeClass
+	def static void setup() {
+		specification = FileLoader.loadFile("date");
+	}
 	
 	@Test
 	def void testInterfaces1() {

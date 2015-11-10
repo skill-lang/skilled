@@ -2,10 +2,14 @@ package test
 
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
+import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Booleantype
 import de.unistuttgart.iste.ps.skilled.sKilL.File
-import de.unistuttgart.iste.ps.skilled.sKilL.Integer
 import de.unistuttgart.iste.ps.skilled.sKilL.Float
+import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
+import de.unistuttgart.iste.ps.skilled.sKilL.Integer
 import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
+import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.ArraytypeImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.ConstantImpl
 import de.unistuttgart.iste.ps.skilled.sKilL.impl.DataImpl
@@ -19,12 +23,9 @@ import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Assert
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
-import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
-import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Booleantype
 
 /**
  * @author Tobias Heck
@@ -34,23 +35,27 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Booleantype
 class TestBuiltInTypes {
 
 	@Inject extension ParseHelper<File> parser;
+	
+	var static String testBasicFieldTypes = "";
+	var static String testConstants = "";
+	var static String testAuto = "";
+	var static String testCompoundTypes1 = "";
+	var static String testCompoundTypes2 = "";
+	var static String testCompoundTypes3 = "";
+	
+	@BeforeClass
+	def static void setup() {
+		testBasicFieldTypes = ("TestBasicFieldTypes");
+		testConstants = FileLoader.loadFile("TestConstants");
+		testAuto = FileLoader.loadFile("TestAuto");
+		testCompoundTypes1 = FileLoader.loadFile("TestCompoundTypes1");
+		testCompoundTypes2 = FileLoader.loadFile("TestCompoundTypes2");
+		testCompoundTypes3 = FileLoader.loadFile("TestCompoundTypes3");
+	}
 
 	@Test
 	def void testBasicFieldTypes() {
-		val specification = '''
-			UserType {
-				i8 int1;
-				i16 int2;
-				i32 int3;
-				i64 int4;
-				v64 int5;
-				f32 float1;
-				f64 float2;
-				string str;
-				bool b;
-				annotation a;
-			}    	
-		'''.parse
+		val specification = testBasicFieldTypes.parse
 
 		val usertype = specification.declarations.get(0) as TypeDeclarationImpl;
 		Assert::assertEquals("UserType", usertype.name);

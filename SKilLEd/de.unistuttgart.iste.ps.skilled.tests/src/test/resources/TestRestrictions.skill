@@ -1,0 +1,47 @@
+@unique
+@default(Type2)
+Type1 {
+  @default(-3000000000)
+  i64 field1;
+  @default("Akemi")
+  string field2;
+  @default(-123.456)
+  f64 field3;
+}
+			
+@singleton
+@monotone
+Type2 {
+  @nonnull
+  @constantLengthPointer
+  Type4 field4;
+  @constantLengthPointer
+  string s;
+  @constantLengthPointer
+  @oneOf(Type1, Type2, Type3, Type4)
+  annotation a;
+}
+			
+@abstract
+Type3 {
+  @coding("zip")
+  i32 field5;
+}
+			
+Type4 {
+  @min(-0xABCD)
+  i32 field6;
+  @min(12345.6789, "inclusive")
+  f32 field7;
+  @max(-3000000000)
+  i32 field8;
+  @max(-1.1, "exclusive")
+  f32 field9;
+  @range(-10, 10)
+  i32 field10;
+  @range(-10.7, 10.2, "exclusive, inclusive")
+  f32 field11;
+}
+			
+@oneOf(Type1, Type2)
+typedef annotation Type5;

@@ -1,0 +1,5 @@
+UserType {
+  const i32 field1 = -17;
+  const i64 field2 = 3000000000;
+  const i16 field3 = 0xABCD;
+}
