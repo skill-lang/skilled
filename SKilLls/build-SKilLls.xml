@@ -1,16 +1,19 @@
 <project basedir="." default="build-all" name="SKilLls" xmlns:jacoco="antlib:org.jacoco.ant">
-    <property name="dir.buildfile" value="."/>
-    <property name="SKilLANTLR.location" value="${dir.buildfile}/SKilLANTLR"/>
-    <property name="libs.location" value="${dir.buildfile}/lib"/>
+    <property name="SKilLANTLR.location" value="SKilLANTLR"/>
+    <property name="grammar.location" value="src/grammar" />
+    <property name="libs.location" value="lib"/>
     <property name="libs_skilled.location" value="../SKilLEd/de.unistuttgart.iste.ps.skilled/lib"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
     <property name="source" value="1.8"/>
+   
+     <condition property="isUnix">
+         <os family="unix" />
+     </condition>
 
     <path id="SKilLls.classpath">
         <pathelement location="out/production/SKilLls"/>
-        <fileset dir="src/tools"/>
-        <fileset dir="${libs.location}"/>
+        <fileset dir="${libs.location}" includes="*.jar"/>
     </path>
 
     <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
@@ -20,16 +23,46 @@
     <target name="clean">
         <delete dir="out"/>
         <delete dir="src/tools"/>
+        <delete dir="${grammar.location}"/>
         <delete file="lib/skill.java.common.jar"/>
         <delete file="lib/skill.jvm.common.jar"/>
     </target>
 
-    <target depends="clean,build-skill-binding,build-skillls" name="build"/>
-    <target depends="build,test,create_run_jar" name="build-all"/>
+    <target depends="clean" name="gensrc-skill-antlr">
+        <mkdir dir="${grammar.location}"/>
+        <copy todir="${grammar.location}">
+            <fileset dir="SKilLANTLR" includes="SKilLLexer.tokens"/>
+        </copy>
+        <java jar="${libs.location}/antlr-4.5.1-complete.jar" fork="true">
+            <arg line="${SKilLANTLR.location}/SKilLLexer.g4"/>
+            <arg line="-lib ${SKilLANTLR.location}/SKilLLexer.tokens"/>
+            <arg line="-o ${grammar.location}"/>
+            <arg line="-package grammar"/>
+            <arg line="-encoding UTF-8"/>
+        </java>
+        <java jar="${libs.location}/antlr-4.5.1-complete.jar" fork="true">
+            <arg line="${SKilLANTLR.location}/SKilLParser.g4"/>
+            <arg line="-lib ${SKilLANTLR.location}/SKilLLexer.tokens"/>
+            <arg line="-o ${grammar.location}"/>
+            <arg line="-package grammar"/>
+            <arg line="-encoding UTF-8"/>
+        </java>
+    </target>
+
+    <target name="gensrc-skill-antlr-post" if="isUnix">
+        <copy todir="${grammar.location}">
+            <fileset dir="${grammar.location}/SKilLANTLR"/>
+        </copy>
+        <delete dir="${grammar.location}/SKilLANTLR" />
+    </target>
+
+    <target depends="gensrc-skill-antlr,gensrc-skill-antlr-post" name="build-skill-antlr"/>
+    <target depends="build-skill-binding,build-skillls" name="build-skillls-complete"/>
+    <target depends="clean,build-skill-antlr,build-skillls-complete,test,create_run_jar" name="build-all"/>
 
     <target name="build-skill-binding">
         <mkdir dir="src/tools"/>
-        <exec executable="./../../scala/bin/scala" dir="${libs.location}">
+        <exec executable="scala" dir="${libs.location}">
             <arg value="skill_2.11-0.3.jar"/>
             <arg line="-p tools"/>
             <arg line="-L Java ../../Tools/SKilLEd.skill"/>
@@ -51,7 +84,7 @@
         </javac>
     </target>
 
-    <target depends="build" name="test">
+    <target depends="build-skillls-complete" name="test">
         <mkdir dir="out/test/SKilLls"/>
         <jacoco:coverage destfile="out/test/SKilLls/jacoco_SKilLls.exec">
         <junit fork="yes" printsummary="withOutAndErr" haltonerror="false" haltonfailure="false">
@@ -68,7 +101,7 @@
        </jacoco:coverage>
     </target>
 
-    <target depends="build" name="create_run_jar">
+    <target depends="build-skillls-complete" name="create_run_jar">
         <jar destfile="out/skillls.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="main.MainClass"/>
