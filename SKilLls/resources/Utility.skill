@@ -1,0 +1,56 @@
+# This file holds declarations
+# of utility types
+
+with "Furniture.skill"
+
+!unique
+Color {
+  !nonNull
+  @range(0, 256, "inclusive", "exclusive")
+  i16 red;
+
+  @range(0, 255)
+  i16 green;
+
+  @range(1, 255 , "exclusive", "inclusive")
+  i16 blue;
+}
+
+/**
+With this type it's possible to
+specify transparent colors
+@see Color
+@deprecated it's not really necessary
+*/
+!ignore
+TransparentColor 
+extends Color{
+  @range(0, 255)
+  i16 alpha;
+}
+
+!pure
+Position : Chair {
+  @range(0, 32000)
+  i16 x;
+
+  @range(0, 32000)
+  i16 y;
+}
+
+!flat
+Material {
+  @default("Wood")
+  string material;
+}
+
+Date {
+  @range(1, 31)
+  i8 day;
+
+  @range(1,12)
+  i8 month;
+
+  @range(1950, 2050)
+  i8 year;
+}
