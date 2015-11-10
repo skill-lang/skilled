@@ -48,11 +48,11 @@ class SKilLFormatter extends AbstractFormatter2 {
 
 		// Formats the headcomments - default newline 1 but also possible 2 or 3 if the user wants it.
 		for (ISemanticRegion headComment : file.regionsForRuleCallsTo(HEADCOMMENTRule)) {
-			headComment.append[setNewLines(1, 1, 3)]
+			headComment.append[setNewLines(1, 1, 3)];
 		}
 
 		// The last headcomment gets 2 newlines
-		file.regionsForRuleCallsTo(HEADCOMMENTRule).last.append[priority = 1; newLines = 2]
+		file.regionsForRuleCallsTo(HEADCOMMENTRule).last.append[priority = 1; newLines = 2];
 
 		// Formats the includes
 		for (Include includes : file.getIncludes()) {
@@ -60,7 +60,7 @@ class SKilLFormatter extends AbstractFormatter2 {
 		}
 
 		// The last include gets 2 newlines.
-		file.includes.last.append[priority = 1; newLines = 2]
+		file.includes.last.append[priority = 1; newLines = 2];
 
 		// Formats the declarations
 		for (Declaration declarations : file.getDeclarations()) {
@@ -72,22 +72,24 @@ class SKilLFormatter extends AbstractFormatter2 {
 	def dispatch void format(Include include, extension IFormattableDocument document) {
 
 		// Before the keywords should be no space.
-		include.regionForKeyword('include').prepend[noSpace]
-		include.regionForKeyword('with').prepend[noSpace]
+		include.regionForKeyword('include').prepend[priority = -1; noSpace];
+		include.regionForKeyword('with').prepend[priority = -1; noSpace];
 
 		// Formats the actually included skill files and they should be sourrounded by one space.
 		for (IncludeFile includeFiles : include.getIncludeFiles()) {
-			includeFiles.surround[oneSpace]
+			includeFiles.surround[oneSpace];
 		}
 
 		// After each include they should be at least be 1 newline, but 2 or 3 are also allowed.
-		include.append[setNewLines(1, 1, 3)]
+		include.append[setNewLines(1, 1, 3)];
 	}
 
 	def void formatDeclaration(Declaration declaration, extension IFormattableDocument document) {
 
+		declaration.prepend[priority = 1; noSpace];
+	
 		// The name should be surrounded by one space
-		declaration.regionForRuleCallTo(IDRule).surround[priority = -1; oneSpace]
+		declaration.regionForRuleCallTo(IDRule).surround[priority = -1; oneSpace];
 
 		// The Comment should be followed by one newline.
 		declaration.regionForRuleCallTo(ML_COMMENTRule).append[newLine];
@@ -98,14 +100,14 @@ class SKilLFormatter extends AbstractFormatter2 {
 
 		// Format the braces and increase the indentation between them.
 		if (typeDeclaration.fields.size > 0) {
-			typeDeclaration.regionForKeyword("{").prepend[oneSpace].append[setNewLines(1, 1, 2); increaseIndentation]
+			typeDeclaration.regionForKeyword("{").prepend[oneSpace].append[setNewLines(1, 1, 2); increaseIndentation];
 			typeDeclaration.regionForKeyword("}").prepend[priority = 1; newLines = 1; decreaseIndentation].append [
 				newLines = 2
-			]
+			];
 		} // If there are no fields, the curly braces will be in one line.
 		else {
-			typeDeclaration.regionForKeyword("{").prepend[oneSpace].append[noSpace]
-			typeDeclaration.regionForKeyword("}").prepend[noSpace].append[newLines = 2]
+			typeDeclaration.regionForKeyword("{").prepend[oneSpace].append[noSpace];
+			typeDeclaration.regionForKeyword("}").prepend[noSpace].append[newLines = 2];
 		}
 		
 	}
@@ -115,19 +117,21 @@ class SKilLFormatter extends AbstractFormatter2 {
 
 		// The restrictions and hints should be indented.
 		for (Restriction restrictions : typedef.getRestrictions()) {
-			restrictions.prepend[newLine; increaseIndentation]
+			restrictions.prepend[newLine; increaseIndentation];
 			format(restrictions, document);
-			restrictions.append[decreaseIndentation]
+			restrictions.append[decreaseIndentation];
 		}
+		
 		for (Hint hints : typedef.getHints()) {
-			hints.prepend[newLine; increaseIndentation]
+			hints.prepend[newLine; increaseIndentation];
 			format(hints, document);
-			hints.append[decreaseIndentation]
+			hints.append[decreaseIndentation];
 		}
-		typedef.fieldtype.prepend[increaseIndentation]
+		
+		typedef.fieldtype.prepend[increaseIndentation];
 		format(typedef.getFieldtype(), document);
-		typedef.fieldtype.append[decreaseIndentation]
-		typedef.regionForKeyword(";").prepend[noSpace].append[newLines = 2]
+		typedef.fieldtype.append[decreaseIndentation];
+		typedef.regionForKeyword(";").prepend[priority = 2; noSpace].append[newLines = 2];
 	}
 
 	def dispatch void format(Enumtype enumtype, extension IFormattableDocument document) {
@@ -143,8 +147,8 @@ class SKilLFormatter extends AbstractFormatter2 {
 		}
 
 		for (ISemanticRegion comma : enumtype.regionsForKeywords(",")) {
-			comma.prepend[noSpace]
-			comma.append[oneSpace]
+			comma.prepend[noSpace];
+			comma.append[oneSpace];
 		}
 
 		enumtype.regionForKeyword(";").prepend[noSpace].append[newLines = 2]
@@ -160,6 +164,7 @@ class SKilLFormatter extends AbstractFormatter2 {
 		for (TypeDeclarationReference supertypes : interfacetype.getSupertypes()) {
 			format(supertypes, document);
 		}
+		
 		for (Field fields : interfacetype.getFields()) {
 			format(fields, document);
 		}
@@ -172,104 +177,114 @@ class SKilLFormatter extends AbstractFormatter2 {
 		for (Restriction restrictions : usertype.getRestrictions()) {
 			format(restrictions, document);
 		}
+		
 		for (Hint hints : usertype.getHints()) {
 			format(hints, document);
 		}
+		
 		for (TypeDeclarationReference supertypes : usertype.getSupertypes()) {
 			format(supertypes, document);
 		}
+		
 		for (Field fields : usertype.getFields()) {
 			format(fields, document);
 		}
+
 	}
 
 	def dispatch void format(TypeDeclarationReference typeDeclarationReference,
 		extension IFormattableDocument document) {
-		typeDeclarationReference.surround[oneSpace]
+		typeDeclarationReference.surround[oneSpace];
 	}
 
 	def dispatch void format(Field field, extension IFormattableDocument document) {
-		field.prepend[noSpace]
-		field.regionForRuleCallTo(ML_COMMENTRule).prepend[priority = 1; newLines = 2].append[newLine]
+		field.prepend[noSpace];
+		field.regionForRuleCallTo(ML_COMMENTRule).prepend[priority = 1; newLines = 2].append[newLine];
 
 		for (Restriction restrictions : field.getRestrictions()) {
 			format(restrictions, document);
 		}
+		
 		for (Hint hints : field.getHints()) {
 			format(hints, document);
 		}
+		
 		format(field.getFieldcontent(), document);
 
 		if ((field.hints.size() == 0) && (field.restrictions.size() == 0)) {
-			field.regionForKeyword(";").append[setNewLines(1, 1, 2)]
+			field.regionForKeyword(";").append[setNewLines(1, 1, 2)];
 		} else {
 			// If there are restrictions or hints, there should be a newline before and also after it there should be 2 newlines.
-			field.prepend[priority = 1; newLines = 2]
-			field.regionForKeyword(";").append[newLines = 2]
+			field.prepend[priority = 1; newLines = 2];
+			field.regionForKeyword(";").append[newLines = 2];
 		}
 	}
 
 	def dispatch void format(Restriction restriction, extension IFormattableDocument document) {
-		restriction.regionForKeyword("@").surround[noSpace]
+		restriction.regionForKeyword("@").surround[noSpace];
+		
 		for (RestrictionArgument restrictionArguments : restriction.getRestrictionArguments()) {
 			format(restrictionArguments, document);
 		}
-		restriction.regionForKeyword("(").surround[noSpace]
-		restriction.regionForKeyword(")").surround[noSpace]
-		restriction.regionForKeyword(",").prepend[noSpace].append[oneSpace]
-		restriction.append[newLine]
+		
+		restriction.regionForKeyword("(").surround[noSpace];
+		restriction.regionForKeyword(")").surround[noSpace];
+		restriction.regionForKeyword(",").prepend[noSpace].append[oneSpace];
+		restriction.append[newLine];
 	}
 
 	def dispatch void format(Hint hint, extension IFormattableDocument document) {
-		hint.regionForKeyword("!").surround[noSpace]
+		hint.regionForKeyword("!").surround[noSpace];
+		
 		for (HintArgument hintArguments : hint.getHintArguments()) {
 			format(hintArguments, document);
 		}
-		hint.regionForKeyword("(").surround[noSpace]
-		hint.regionForKeyword(")").surround[noSpace]
-		hint.regionForKeyword(",").prepend[noSpace].append[oneSpace]
-		hint.append[newLine]
+		
+		hint.regionForKeyword("(").surround[noSpace];
+		hint.regionForKeyword(")").surround[noSpace];
+		hint.regionForKeyword(",").prepend[noSpace].append[oneSpace];
+		hint.append[newLine];
 	}
 
 	def dispatch void format(Constant constant, extension IFormattableDocument document) {
-		constant.surround[noSpace]
-		constant.regionForKeyword("const").append[oneSpace]
+		constant.surround[noSpace];
+		constant.regionForKeyword("const").append[oneSpace];
 		format(constant.getFieldtype(), document);
 	}
 
 	def dispatch void format(Data data, extension IFormattableDocument document) {
-		data.surround[noSpace]
-		data.regionForKeyword("auto").append[oneSpace]
+		data.surround[noSpace];
+		data.regionForKeyword("auto").append[oneSpace];
 		format(data.getFieldtype(), document);
 	}
 
 	def dispatch void format(Maptype maptype, extension IFormattableDocument document) {
-		maptype.regionForKeyword("<").surround[noSpace]
-		maptype.regionForKeyword(">").surround[noSpace]
+		maptype.regionForKeyword("<").surround[noSpace];
+		maptype.regionForKeyword(">").surround[noSpace];
 		for (Basetype basetypes : maptype.getBasetypes()) {
 			format(basetypes, document);
 		}
 	}
 
 	def dispatch void format(Settype settype, extension IFormattableDocument document) { 
-		settype.regionForKeyword("<").surround[noSpace]
-		settype.regionForKeyword(">").surround[noSpace]
+		settype.regionForKeyword("<").surround[noSpace];
+		settype.regionForKeyword(">").surround[noSpace];
 		format(settype.getBasetype(), document);
 	}
 
 	def dispatch void format(Listtype listtype, extension IFormattableDocument document) {
-		listtype.regionForKeyword("<").surround[noSpace]
-		listtype.regionForKeyword(">").surround[noSpace]
+		listtype.regionForKeyword("<").surround[noSpace];
+		listtype.regionForKeyword(">").surround[noSpace];
 		format(listtype.getBasetype(), document);
 	}
 
 	def dispatch void format(Arraytype arraytype, extension IFormattableDocument document) {
-		arraytype.regionForKeyword("[").surround[noSpace]
-		arraytype.regionForKeyword("]").surround[noSpace]
+		arraytype.regionForKeyword("[").surround[noSpace];
+		arraytype.regionForKeyword("]").surround[noSpace];
 		format(arraytype.getBasetype(), document);
 	}
 
 	def dispatch void format(Basetype basetype, extension IFormattableDocument document) {
-		basetype.append[oneSpace]
+		basetype.append[priority = 1; oneSpace];
 	}
 }
