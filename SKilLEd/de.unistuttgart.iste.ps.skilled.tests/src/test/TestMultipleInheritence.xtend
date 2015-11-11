@@ -448,27 +448,6 @@ class TestMultipleInheritence {
 	}
 
 	@Test
-	def void testError8() {
-		assertFalse('''
-			A:IA:IB{
-				
-			}
-			interface IA:B{
-				
-			}
-			interface IB:C{
-				
-			}
-			B{
-				
-			}
-			C{
-				
-			}
-		'''.parse.validate.isNullOrEmpty)
-	}
-
-	@Test
 	def void testError9() {
 		assertFalse('''
 			A:IA:IB{
@@ -544,57 +523,6 @@ class TestMultipleInheritence {
 				
 			}
 			TypeC{
-				
-			}
-		'''.parse.validate.isNullOrEmpty)
-	}
-
-	@Test
-	def void testErrorMultipleInheritence() {
-		assertFalse('''
-			TypeA :TypeC:TypeD{
-				const i8 a = 1;
-			}    	
-			Interface TypeD:TypeB{
-				
-			}
-			TypeB{
-				
-			}
-			TypeC{
-				
-			}
-		'''.parse.validate.isNullOrEmpty)
-	}
-
-	@Test
-	def void testNoErrorInterfaces() {
-		assertTrue('''
-			S {
-				
-			}
-			interface E : S {
-				
-			}
-			interface C : S {
-				
-			}
-			Y : C : E {
-				
-			}
-		'''.parse.validate.isNullOrEmpty)
-	}
-
-	@Test
-	def void testNoErrorInheritence() {
-		assertTrue('''
-			S {
-				
-			}
-			interface A : S {
-				
-			}
-			Y : A : S {
 				
 			}
 		'''.parse.validate.isNullOrEmpty)
