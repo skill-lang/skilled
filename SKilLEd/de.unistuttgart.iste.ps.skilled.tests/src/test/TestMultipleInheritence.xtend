@@ -14,11 +14,11 @@ import org.junit.runner.RunWith;
 
 import com.google.inject.Inject;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import org.eclipse.xtext.validation.Issue
 
 /**
- * @author Jan Berberich
  * 
+ * This Class tests Multiple Inheritence Validation from the InheritenceValidator.
+ * @author Jan Berberich 
  */
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
@@ -39,9 +39,9 @@ class TestMultipleInheritence {
 				
 			}
 		'''.parse.validate.isNullOrEmpty)
-	}	
-	
-	
+
+	}
+
 	@Test
 	def void testNoError2() {
 		assertTrue('''
@@ -56,9 +56,9 @@ class TestMultipleInheritence {
 			}
 			
 		'''.parse.validate.isNullOrEmpty)
-		
+
 	}
-	
+
 	@Test
 	def void testNoError3() {
 		assertTrue('''
@@ -77,7 +77,6 @@ class TestMultipleInheritence {
 		'''.parse.validate.isNullOrEmpty)
 	}
 
-	
 	@Test
 	def void testNoError5() {
 		assertTrue('''
@@ -98,7 +97,7 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
-	
+
 	@Test
 	def void testNoError6() {
 		assertTrue('''
@@ -119,7 +118,7 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
-	
+
 	@Test
 	def void testNoError7() {
 		assertTrue('''
@@ -140,7 +139,7 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
-	
+
 	@Test
 	def void testNoError8() {
 		assertTrue('''
@@ -164,7 +163,7 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
-	
+
 	@Test
 	def void testNoError9() {
 		assertTrue('''
@@ -180,7 +179,7 @@ class TestMultipleInheritence {
 			
 		'''.parse.validate.isNullOrEmpty)
 	}
-	
+
 	@Test
 	def void testNoError13() {
 		assertTrue('''
@@ -231,7 +230,7 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
-	
+
 	@Test
 	def void testNoError15() {
 		assertTrue('''
@@ -252,7 +251,7 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
-	
+
 	@Test
 	def void testNoError16() {
 		assertTrue('''
@@ -369,7 +368,7 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
-	
+
 	@Test
 	def void testError4() {
 		assertFalse('''
@@ -414,6 +413,7 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
+
 	@Test
 	def void testError6() {
 		assertFalse('''
@@ -428,7 +428,7 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
-	
+
 	@Test
 	def void testError7() {
 		assertFalse('''
@@ -467,7 +467,7 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
-	
+
 	@Test
 	def void testError9() {
 		assertFalse('''
@@ -519,7 +519,6 @@ class TestMultipleInheritence {
 		'''.parse.validate.isNullOrEmpty)
 	}
 
-
 	@Test
 	def void testNoErrorValid() {
 		assertTrue('''
@@ -533,7 +532,6 @@ class TestMultipleInheritence {
 				
 			}
 		'''.parse.validate.isNullOrEmpty)
-
 	}
 
 	@Test
@@ -601,5 +599,4 @@ class TestMultipleInheritence {
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
-
 }

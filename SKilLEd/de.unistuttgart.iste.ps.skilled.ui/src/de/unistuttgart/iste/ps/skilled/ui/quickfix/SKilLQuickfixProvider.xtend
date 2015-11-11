@@ -6,13 +6,13 @@ package de.unistuttgart.iste.ps.skilled.ui.quickfix
 import org.eclipse.xtext.ui.editor.quickfix.Fix
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
 import org.eclipse.xtext.validation.Issue
-import de.unistuttgart.iste.ps.skilled.validation.CyclicTypesValidator
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
 import java.util.ArrayList
+import de.unistuttgart.iste.ps.skilled.validation.InheritenceValidator
 
 /**
  * Custom quickfixes.
@@ -24,7 +24,7 @@ import java.util.ArrayList
 public class SKilLQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider {
 	
 	//Quickfix to remove the Parent that is the Type
-	@Fix(CyclicTypesValidator::TYPE_IS_HIS_OWN_PARENT)
+	@Fix(InheritenceValidator::TYPE_IS_HIS_OWN_PARENT)
 	def fixSupertype(Issue issue, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Remove Type", "Removes the supertype " + issue.data.get(0) + ".", "upcase.png", new ISemanticModification() {
 			override void apply(EObject element, IModificationContext context) {
@@ -44,7 +44,7 @@ public class SKilLQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.
 
 
 	//Quickfix to remove Cyclic Types
- 	@Fix(CyclicTypesValidator::CYCLIC_TYPES)
+ 	@Fix(InheritenceValidator::CYCLIC_TYPES)
 	def fixCyclicType(Issue issue, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Remove Type", "Removes the supertype " + issue.data.get(0) + ".", "upcase.png", new ISemanticModification() {
 			override void apply(EObject element, IModificationContext context) {

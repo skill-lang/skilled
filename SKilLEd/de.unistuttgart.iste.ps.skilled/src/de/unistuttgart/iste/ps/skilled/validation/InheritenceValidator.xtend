@@ -19,7 +19,7 @@ import java.util.ArrayList
  * @author Jan Berberich
  * 
  */
-class CyclicTypesValidator extends AbstractDeclarativeValidator {
+class InheritenceValidator extends AbstractDeclarativeValidator {
 
 	public static val CYCLIC_TYPES = 'cyclicTypes'
 	public static val TYPE_IS_HIS_OWN_PARENT = 'cycleError'
@@ -36,11 +36,14 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 
 	@Check
 	def searchCyclicType(TypeDeclaration dec) {
-		edges = new HashSet<CyclicTypesNode>; // Set with all created graph nodes
-		index = 0 // Index counter for Tarjan's strongly connected components algorithm
+		// Set with all created graph nodes
+		edges = new HashSet<CyclicTypesNode>;
+		// Index counter for Tarjan's strongly connected components algorithm
+		index = 0
 		nodes_stack = new Stack();
 		declarationsVisited = new HashSet<String>;
-		cyclic = false // If there is a Cycle that includes dec, cyclic will be set and MultipleInheritence will not be validated for dec.	
+		// If there is a Cycle that includes dec, cyclic will be set and MultipleInheritence will not be validated for dec.		
+		cyclic = false
 		// Creates the Graph
 		firstnode = new CyclicTypesNode(dec, -1)
 		edges.add(firstnode)
@@ -64,7 +67,10 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 			multipleInheritence(firstnode.typeDeclaration)
 		}
 	}
-
+	/**
+	 * Validates Multiple Inheritence for TypeDeclaration dec
+	 * 
+	 */
 	def void multipleInheritence(TypeDeclaration dec) {
 		if (dec.supertypes.size > 1) {
 			var Set<TypeDeclaration> inheritedNoninterfaceSupertypes = new HashSet<TypeDeclaration>
@@ -76,7 +82,7 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 				}
 			}
 			if (inheritedNoninterfaceSupertypes.size > 1) {
-				//There are more than 1 non-Interface Supertypes for firstnode -> Check if they have a minimum
+				// There are more than 1 non-Interface Supertypes for firstnode -> Check if they have a minimum
 				var boolean minimum = false // Will become true if there is a minimum, else there is an error
 				for (TypeDeclaration declara : inheritedNoninterfaceSupertypes) {
 					if (checkMinimum(declara, inheritedNoninterfaceSupertypes)) {
@@ -84,8 +90,8 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 					}
 				}
 				if (!minimum) {
-					//No minimum found -> Error
-					error("Error: Multiple Inheritence is not allowed." , firstnode.typeDeclaration,
+					// No minimum found -> Error
+					error("Error: Multiple Inheritence is not allowed.", firstnode.typeDeclaration,
 						SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
 				}
 			}
@@ -101,7 +107,7 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 			if (!type.name.equals(dec.name)) {
 				var visited = new HashSet<TypeDeclaration>
 				if (!searchSupertype(type.name, dec, visited)) {
-					return false //type is no Supertype for dec -> dec is not a minimum for the Types in declarations
+					return false // type is no Supertype for dec -> dec is not a minimum for the Types in declarations
 				}
 			}
 		}
@@ -118,10 +124,10 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 			if (!visited.contains(d.type)) {
 				visited.add(d.type)
 				if (d.type.name.equals(name)) {
-					return true;	//Found Supertype
+					return true; // Found Supertype
 				} else {
 					if (!found) {
-						found = searchSupertype(name, d.type, visited) //Search the Supertypes of d for name
+						found = searchSupertype(name, d.type, visited) // Search the Supertypes of d for name
 					}
 				}
 			}
@@ -149,6 +155,10 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 		return noninterfaceSupertypesOfDeclaration
 	}
 
+	/**
+	 * The strongconnect method from Tarjan's strongly connected components algorithm
+	 * 
+	 */
 	def void strongconnect(CyclicTypesNode node) {
 		node.setindex(index)
 		node.setlowlink(index)
@@ -185,7 +195,7 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 
 	}
 
-	/*
+	/**
 	 * This Method gets a new Node that was added and adds all supertypes.
 	 * The Node should already be in the Nodeset.
 	 * 
@@ -212,7 +222,7 @@ class CyclicTypesValidator extends AbstractDeclarativeValidator {
 		}
 	}
 
-	/*
+	/**
 	 * This Method gets the strongly connected component and 
 	 * creates the error message if there is an error.
 	 *  

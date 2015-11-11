@@ -14,7 +14,7 @@ import org.junit.runner.RunWith;
 import com.google.inject.Inject;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 /**
- * This Class tests the CyclicTypesValidator.
+ * This Class tests Cyclic Types Validation from the InheritenceValidator.
  * @author Jan Berberich
  */
 
