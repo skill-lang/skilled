@@ -1,4 +1,6 @@
-package main;
+package test;
+
+import main.MainClass;
 
 import org.junit.*;
 import org.junit.runners.MethodSorters;

@@ -7,7 +7,12 @@
     <property name="target" value="1.8" />
 
     <path id="classpath">
-        <fileset dir="lib" includes="*.jar"/>
+        <fileset dir="lib">
+            <patternset>
+                <include name="*.jar"/>
+                <exclude name="*antlr*4*.jar"/>
+            </patternset>
+        </fileset>
         <fileset dir="lib2" includes="*.jar"/>
         <fileset dir="." includes=".antlr-generator-3.2.0.jar"/>
         <pathelement location="src"/>

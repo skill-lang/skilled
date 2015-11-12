@@ -1,4 +1,7 @@
-package main;
+package test;
+
+import main.Edit;
+import main.MainClass;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

@@ -1,8 +1,7 @@
 <project basedir="." default="build-all" name="SKilLls" xmlns:jacoco="antlib:org.jacoco.ant">
-    <property name="SKilLANTLR.location" value="SKilLANTLR"/>
-    <property name="grammar.location" value="src/grammar" />
-    <property name="libs.location" value="lib"/>
-    <property name="libs_skilled.location" value="../SKilLEd/de.unistuttgart.iste.ps.skilled/lib"/>
+    <property name="libs.location" value="../de.unistuttgart.iste.ps.skilled/lib"/>
+    <property name="grammar.location" value="src/grammar"/>
+    <property name="tools.location" value="src/tools"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
     <property name="source" value="1.8"/>
@@ -12,37 +11,59 @@
      </condition>
 
     <path id="SKilLls.classpath">
-        <pathelement location="out/production/SKilLls"/>
         <fileset dir="${libs.location}" includes="*.jar"/>
+        <pathelement location="out/production/SKilLls"/>
+        <fileset dir="lib" includes="*.jar"/>
     </path>
 
     <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
-        <classpath path="${libs_skilled.location}/jacocoant.jar"/>
+        <classpath path="${libs.location}/jacocoant.jar"/>
     </taskdef>
 
     <target name="clean">
         <delete dir="out"/>
-        <delete dir="src/tools"/>
+        <delete dir="lib"/>
+        <delete dir="generated"/>
+        <delete dir="bin"/>
+        <delete dir="${tools.location}"/>
         <delete dir="${grammar.location}"/>
-        <delete file="lib/skill.java.common.jar"/>
-        <delete file="lib/skill.jvm.common.jar"/>
+        <delete file="${libs.location}/skill.java.common.jar"/>
+        <delete file="${libs.location}/skill.jvm.common.jar"/>
+    </target>
+    
+    <target depends="clean" name="setup">
+        <mkdir dir="lib"/>
+        <mkdir dir="out/test/SKilLls"/>
+        <copy todir="lib">
+            <fileset dir="${libs.location}">
+                <include name="**"/>
+            </fileset>
+        </copy>
     </target>
 
-    <target depends="clean" name="gensrc-skill-antlr">
+    <target name="teardown">
+        <delete dir="lib"/>
+        <delete dir="generated"/>
+        <delete dir="bin"/>
+        <delete file="${libs.location}/skill.java.common.jar"/>
+        <delete file="${libs.location}/skill.jvm.common.jar"/>
+    </target>
+
+    <target depends="setup" name="gensrc-skill-antlr">
         <mkdir dir="${grammar.location}"/>
         <copy todir="${grammar.location}">
             <fileset dir="SKilLANTLR" includes="SKilLLexer.tokens"/>
         </copy>
         <java jar="${libs.location}/antlr-4.5.1-complete.jar" fork="true">
-            <arg line="${SKilLANTLR.location}/SKilLLexer.g4"/>
-            <arg line="-lib ${SKilLANTLR.location}/SKilLLexer.tokens"/>
+            <arg line="SKilLANTLR/SKilLLexer.g4"/>
+            <arg line="-lib SKilLANTLR/SKilLLexer.tokens"/>
             <arg line="-o ${grammar.location}"/>
             <arg line="-package grammar"/>
             <arg line="-encoding UTF-8"/>
         </java>
         <java jar="${libs.location}/antlr-4.5.1-complete.jar" fork="true">
-            <arg line="${SKilLANTLR.location}/SKilLParser.g4"/>
-            <arg line="-lib ${SKilLANTLR.location}/SKilLLexer.tokens"/>
+            <arg line="SKilLANTLR/SKilLParser.g4"/>
+            <arg line="-lib SKilLANTLR/SKilLLexer.tokens"/>
             <arg line="-o ${grammar.location}"/>
             <arg line="-package grammar"/>
             <arg line="-encoding UTF-8"/>
@@ -58,26 +79,26 @@
 
     <target depends="gensrc-skill-antlr,gensrc-skill-antlr-post" name="build-skill-antlr"/>
     <target depends="build-skill-binding,build-skillls" name="build-skillls-complete"/>
-    <target depends="clean,build-skill-antlr,build-skillls-complete,test,create_run_jar" name="build-all"/>
+    <target depends="build-skill-antlr,build-skillls-complete,test,create_run_jar,teardown" name="build-all"/>
 
-    <target name="build-skill-binding">
-        <mkdir dir="src/tools"/>
+    <target depends="setup" name="build-skill-binding">
+        <mkdir dir="${tools.location}"/>
         <exec executable="scala" dir="${libs.location}">
             <arg value="skill_2.11-0.3.jar"/>
             <arg line="-p tools"/>
-            <arg line="-L Java ../../Tools/SKilLEd.skill"/>
+            <arg line="-L Java ../../de.unistuttgart.iste.ps.skillls/Tools/SKilLEd.skill"/>
             <arg line="temp"/>
         </exec>
-        <copy todir="src/tools">
+        <copy todir="${tools.location}">
             <fileset dir="${libs.location}/temp/java/src/main/java/tools"/>
         </copy>
-        <copy todir="lib">
+        <copy todir="${libs.location}">
             <fileset dir="${libs.location}/temp/java/lib"/>
         </copy>
         <delete dir="${libs.location}/temp"/>
     </target>
 
-    <target name="build-skillls">
+    <target depends="setup" name="build-skillls">
         <mkdir dir="out/production/SKilLls"/>
         <javac srcdir="src" fork="true" debug="true" debuglevel="${debuglevel}" destdir="out/production/SKilLls" includeantruntime="false" source="${source}" target="${target}">
             <classpath refid="SKilLls.classpath"/>
@@ -85,7 +106,6 @@
     </target>
 
     <target depends="build-skillls-complete" name="test">
-        <mkdir dir="out/test/SKilLls"/>
         <jacoco:coverage destfile="out/test/SKilLls/jacoco_SKilLls.exec">
         <junit fork="yes" printsummary="withOutAndErr" haltonerror="false" haltonfailure="false">
             <classpath>
@@ -93,8 +113,8 @@
             </classpath>
             <formatter type="xml"/>
             <batchtest todir="out/test/SKilLls">
-                <fileset dir="src/test">
-                    <include name="**/*.java"/>
+                <fileset dir="src">
+                    <include name="test/**/*.java"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -108,12 +128,12 @@
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="out/production/SKilLls"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/antlr4-runtime-4.5.1-1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/hamcrest-core-1.3.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/skill.java.common.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/skill.jvm.common.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/junit-4.12.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/hamcrest-core-1.3.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${libs.location}/antlr4-runtime-4.5.1-1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${libs.location}/hamcrest-core-1.3.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${libs.location}/skill.java.common.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${libs.location}/skill.jvm.common.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${libs.location}/junit-4.12.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${libs.location}/hamcrest-core-1.3.jar"/>
         </jar>
     </target>
 </project>
