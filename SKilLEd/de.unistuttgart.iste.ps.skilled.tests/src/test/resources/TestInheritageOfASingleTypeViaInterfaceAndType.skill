@@ -1,0 +1,4 @@
+A {}
+interface B : A
+C : A
+D : B : C

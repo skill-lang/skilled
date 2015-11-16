@@ -1,0 +1,12 @@
+A {
+  v64 field;
+}
+interface B : A {
+  C field;
+}
+interface C : A {
+  B field;
+}
+D : C {
+  B field;
+}

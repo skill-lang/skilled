@@ -39,18 +39,14 @@ class TestBuiltInTypes {
 	var static String testBasicFieldTypes = "";
 	var static String testConstants = "";
 	var static String testAuto = "";
-	var static String testCompoundTypes1 = "";
-	var static String testCompoundTypes2 = "";
-	var static String testCompoundTypes3 = "";
+	var static String testCompoundTypes = "";
 	
 	@BeforeClass
 	def static void setup() {
 		testBasicFieldTypes = ("TestBasicFieldTypes");
 		testConstants = FileLoader.loadFile("TestConstants");
 		testAuto = FileLoader.loadFile("TestAuto");
-		testCompoundTypes1 = FileLoader.loadFile("TestCompoundTypes1");
-		testCompoundTypes2 = FileLoader.loadFile("TestCompoundTypes2");
-		testCompoundTypes3 = FileLoader.loadFile("TestCompoundTypes3");
+		testCompoundTypes = FileLoader.loadFile("TestCompoundTypes");
 	}
 
 	@Test
@@ -99,13 +95,7 @@ class TestBuiltInTypes {
 
 	@Test
 	def void testConstants() {
-		val specification = '''
-			UserType {
-				const i32 field1 = -17;
-				const i64 field2 = 3000000000;
-				const i16 field3 = 0xABCD;
-			}
-		'''.parse
+		val specification = testConstants.parse
 
 		val usertype = specification.declarations.get(0) as TypeDeclarationImpl;
 		val fields = usertype.fields;
@@ -122,14 +112,7 @@ class TestBuiltInTypes {
 
   	@Test
   	def void testAuto() {
-  		val specification = '''
-  			Rectangle {
-  				i32 width;
-  				i32 length;
-  				auto i32 area;
-  				}
-  			}
-  		'''.parse
+  		val specification = testAuto.parse
   		
   		val int1 = specification.declarations.get(0) as UsertypeImpl;
   		val area = int1.fields.get(2);
@@ -138,22 +121,7 @@ class TestBuiltInTypes {
   	
   	@Test
   	def void testCompoundTypes1() {
-  		val specification = '''
-  			Type {
-  				/*comment*/
-  				bool[] a;
-  				
-  				@nonnull
-  				list<f64> b;
-  				
-  				!readOnly
-  				map<i32,Type,string,bool> c;
-  				
-  				set<v64> d;
-  				
-  				Type[80] e;
-  			}
-  		'''.parse
+  		val specification = testCompoundTypes.parse
   		
   		val type = specification.declarations.get(0) as UsertypeImpl;
   		val a = type.fields.get(0);
@@ -169,22 +137,7 @@ class TestBuiltInTypes {
   	
   	@Test
   	def void testCompoundTypes2() {
-  		val specification = '''
-  			Type {
-  				/*comment*/
-  				bool[] a;
-  				
-  				@nonnull
-  				list<f64> b;
-  				
-  				!readOnly
-  				map<i32,Type,string,bool> c;
-  				
-  				set<v64> d;
-  				
-  				Type[80] e;
-  			}
-  		'''.parse
+  		val specification = testCompoundTypes.parse
   		
   		val type = specification.declarations.get(0) as UsertypeImpl;
   		val c = type.fields.get(2);
@@ -198,22 +151,7 @@ class TestBuiltInTypes {
   	
   	@Test
   	def void testCompoundTypes3() {
-  		val specification = '''
-  			Type {
-  				/*comment*/
-  				bool[] a;
-  				
-  				@nonnull
-  				list<f64> b;
-  				
-  				!readOnly
-  				map<i32,Type,string,bool> c;
-  				
-  				set<v64> d;
-  				
-  				Type[80] e;
-  			}
-  		'''.parse
+  		val specification = testCompoundTypes.parse
   		
   		val type = specification.declarations.get(0) as UsertypeImpl;
   		val d = type.fields.get(3);

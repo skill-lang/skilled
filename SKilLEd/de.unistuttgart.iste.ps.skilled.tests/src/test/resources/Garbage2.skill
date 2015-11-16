@@ -1,0 +1,5 @@
+﻿Type1 {
+  Type2 {
+    i32 field;
+  }
+}

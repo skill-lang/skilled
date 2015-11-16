@@ -34,9 +34,8 @@ class TestEdgeCases {
 	var static String testDeclarationOfInheritedField = "";
 	var static String testDuplicateFieldNames = "";
 	var static String test = "";
-	var static String testRestrictionCaseInsensitive = "";
-	var static String testDefault1 = "";
-	var static String testDefault2 = "";
+	var static String testRestrictionCaseInsensitivity = "";
+	var static String testDefault = "";
 	
 	@BeforeClass
 	def static void setup() {
@@ -51,12 +50,9 @@ class TestEdgeCases {
 			"testDeclarationOfInheritedField");
 		testDuplicateFieldNames = FileLoader.loadFile("testDuplicateFieldNames");
 		test = FileLoader.loadFile("test");
-		testRestrictionCaseInsensitive = FileLoader.loadFile(
-			"testRestrictionCaseInsensitive");
-		testDefault1 = FileLoader.loadFile(
-			"testDefault1");
-		testDefault2 = FileLoader.loadFile(
-			"testDefault2");
+		testRestrictionCaseInsensitivity = FileLoader.loadFile(
+			"testRestrictionCaseInsensitivity");
+		testDefault = FileLoader.loadFile("testDefault");
 	}
 	
 	@Test
@@ -72,12 +68,7 @@ class TestEdgeCases {
 	
 	@Test
 	def void testInheritageOfASingleTypeViaSeveralInterfaces() {
-		val specification = '''
-			A {}
-			interface B : A
-			interface C : A
-			D : B : C
-		'''.parse
+		val specification = testInheritageOfASingleTypeViaSeveralInterfaces.parse
 		
 		val issueCount = specification.validate.size;
 		Assert::assertTrue(issueCount == 0);
@@ -90,12 +81,7 @@ class TestEdgeCases {
 	
 	@Test
 	def void testInheritageOfASingleTypeViaInterfaceAndType() {
-		val specification = '''
-			A {}
-			interface B : A
-			C : A
-			D : B : C
-		'''.parse
+		val specification = testInheritageOfASingleTypeViaInterfaceAndType.parse
 		
 		val issueCount = specification.validate.size;
 		Assert::assertTrue(issueCount == 0);
@@ -108,11 +94,7 @@ class TestEdgeCases {
 	
 	@Test
 	def void testInheritageOfASingleTypeTwiceViaOneInterface() {
-		val specification = '''
-			A {}
-			interface B : A
-			C : B : A
-		'''.parse
+		val specification = testInheritageOfASingleTypeTwiceViaOneInterface.parse
 		
 		val issueCount = specification.validate.size;
 		Assert::assertTrue(issueCount == 0);
@@ -123,16 +105,7 @@ class TestEdgeCases {
 	
 	@Test
 	def void testDeclarationOfInheritedField() {
-		val specification = '''
-			A {}
-			interface B : A
-			interface C : A {
-				B field;
-			}
-			D : C {
-				B field;
-			}
-		'''.parse
+		val specification = testDeclarationOfInheritedField.parse
 		
 		val issueCount = specification.validate.size;
 		Assert::assertTrue(issueCount == 0);
@@ -148,20 +121,7 @@ class TestEdgeCases {
 	
 	@Test
 	def void testDuplicateFieldNames() {
-		val specification = '''
-			A {
-				v64 field;
-			}
-			interface B : A {
-				C field;
-			}
-			interface C : A {
-				B field;
-			}
-			D : C {
-				B field;
-			}
-		'''.parse
+		val specification = testDuplicateFieldNames.parse
 		
 		val issueCount = specification.validate.size;
 		Assert::assertTrue(issueCount > 0);
@@ -170,18 +130,7 @@ class TestEdgeCases {
 	//TODO what is the expected behavior in the following situation?
 	@Test
 	def void test() {
-		val specification = '''
-			A {}
-			interface B : A {
-				C field;
-			}
-			interface C : A {
-				B field;
-			}
-			D : C {
-				B field;
-			}
-		'''.parse
+		val specification = test.parse
 		
 		val issueCount = specification.validate.size;
 		Assert::assertTrue(issueCount > 0);
@@ -189,12 +138,7 @@ class TestEdgeCases {
 	
 	@Test
 	def void testRestrictionCaseInsensitivity() {
-		val specification = '''
-			T {
-				@nonnull
-				i8 x;
-			}
-		'''.parse
+		val specification = testRestrictionCaseInsensitivity.parse
 		
 		val issue = specification.validate.get(0);
 		Assert::assertNotEquals("Unknown Restriction", issue.message);
@@ -202,16 +146,7 @@ class TestEdgeCases {
 	
 	@Test
 	def void testDefault1() {
-		val specification = '''
-			T {
-				@default(foo)
-				string x;	
-			}
-
-			enum E {
-				foo, bar;
-			}
-		'''.parse
+		val specification = testDefault.parse
 		
 		val issueCount = specification.validate.size;
 		Assert::assertTrue(issueCount == 0);
@@ -223,16 +158,7 @@ class TestEdgeCases {
 	
 	@Test
 	def void testDefault2() {
-		val specification = '''
-			T {
-				@default(foo)
-				E x;	
-			}
-
-			enum E {
-				foo, bar;
-			}
-		'''.parse
+		val specification = testDefault.parse
 		
 		val issueCount = specification.validate.size;
 		Assert::assertTrue(issueCount == 0);

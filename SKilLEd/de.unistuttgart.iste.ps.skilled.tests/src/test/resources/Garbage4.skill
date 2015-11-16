@@ -1,0 +1,1 @@
+﻿interface typedef Name !readOnly @max(1234) i32;

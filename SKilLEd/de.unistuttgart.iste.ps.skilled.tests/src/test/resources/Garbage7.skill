@@ -1,0 +1,4 @@
+﻿MathConstants {
+  //approximately
+  i32 pi = 3;
+}

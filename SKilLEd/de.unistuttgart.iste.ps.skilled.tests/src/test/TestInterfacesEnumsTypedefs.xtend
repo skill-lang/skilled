@@ -34,42 +34,20 @@ class TestInterfacesEnumsTypedefs {
 
 	@Inject extension ParseHelper<File> parser;
 	
+	var static String testInterfaces = "";
+	var static String testEnum = "";
+	var static String testTypedef = "";
+	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("date");
+		testInterfaces = FileLoader.loadFile("TestInterfaces");
+		testEnum = FileLoader.loadFile("TestEnum");
+		testTypedef = FileLoader.loadFile("TestTypedef");
 	}
 	
 	@Test
 	def void testInterfaces1() {
-  		val specification = '''
-  			/*interface comment*/
-  			interface Int1 {
-  				annotation field1;
-  				string field2;
-  				const i32 field3 = 1234;
-  				Type1 field4;
-  				list<f64> field5;
-  			}
-  			
-  			Type1 {
-  				bool field6;
-  			}
-  			
-  			Type2 with I:I extends Type1:I {
-  				string[] field7;
-  			}
-  			
-  			interface Int2:I:Type1 with I {
-  				annotation field8;
-  			}
-  			
-  			Type3:Type2 extends Int2 with Int3:Int3 {
-  				f64 field9;
-  			}
-  			
-  			interface Int3 {
-  			}
-  		'''.parse
+  		val specification = testInterfaces.parse
   		
   		val int1 = specification.declarations.get(0) as InterfacetypeImpl;
   		Assert::assertEquals("/*interface comment*/", int1.comment);
@@ -84,35 +62,7 @@ class TestInterfacesEnumsTypedefs {
   	
   	@Test
 	def void testInterfaces2() {
-  		val specification = '''
-  			/*interface comment*/
-  			interface Int1 {
-  				annotation field1;
-  				string field2;
-  				const i32 field3 = 1234;
-  				Type1 field4;
-  				list<f64> field5;
-  			}
-  			
-  			Type1 {
-  				bool field6;
-  			}
-  			
-  			Type2 with Int1:Int1 extends Type1:Int1 {
-  				string[] field7;
-  			}
-  			
-  			interface Int2:Int1:Type1 with Int1 {
-  				annotation field8;
-  			}
-  			
-  			Type3:Type2 extends Int2 with Int3:Int3 {
-  				f64 field9;
-  			}
-  			
-  			interface Int3 {
-  			}
-  		'''.parse
+  		val specification = testInterfaces.parse
   		
   		val int1 = specification.declarations.get(0) as InterfacetypeImpl;
   		val fields1 = int1.fields;
@@ -129,35 +79,7 @@ class TestInterfacesEnumsTypedefs {
   	
   	@Test
 	def void testInterfaces3() {
-  		val specification = '''
-  			/*interface comment*/
-  			interface Int1 {
-  				annotation field1;
-  				string field2;
-  				const i32 field3 = 1234;
-  				Type1 field4;
-  				list<f64> field5;
-  			}
-  			
-  			Type1 {
-  				bool field6;
-  			}
-  			
-  			Type2 with Int1:Int1 extends Type1:Int1 {
-  				string[] field7;
-  			}
-  			
-  			interface Int2:Int1:Type1 with Int1 {
-  				annotation field8;
-  			}
-  			
-  			Type3:Type2 extends Int2 with Int3:Int3 {
-  				f64 field9;
-  			}
-  			
-  			interface Int3 {
-  			}
-  		'''.parse
+  		val specification = testInterfaces.parse
   		
   		val int1 = specification.declarations.get(0) as InterfacetypeImpl;
   		val type1 = specification.declarations.get(1) as TypeDeclarationImpl;
@@ -178,20 +100,7 @@ class TestInterfacesEnumsTypedefs {
   	
   	@Test
   	def void testEnum() {
-  		val specification = '''
-  			/*enum description*/
-  			enum Day {
-  				Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday;
-  				i8 day;
-  				i8 month;
-  			}
-  			
-  			Birthday {
-  				i8 receivedPresents;
-  				i8 invitedGuests;
-  				Day day;
-  			}
-  		'''.parse
+  		val specification = testEnum.parse
   		
   		val enum = specification.declarations.get(0) as EnumtypeImpl;
   		Assert::assertEquals("/*enum description*/", enum.comment);
@@ -206,18 +115,7 @@ class TestInterfacesEnumsTypedefs {
   	
   	@Test
   	def void testTypedef1() {
-  		val specification = '''
-  			/*typedef description*/
-  			typedef Asdf @unique !removeUnknownRestrictions("unknown") @monotone A;
-
-  			A {}
-  			
-  			B {}
-  			
-  			typedef Natural @min(0) i64;
-  			
-  			typedef AorB @oneOf(A, B) annotation;
-  		'''.parse
+  		val specification = testTypedef.parse
   		
   		val asdf = specification.declarations.get(0) as TypedefImpl;
   		Assert::assertEquals("/*typedef description*/", asdf.comment);
@@ -230,18 +128,7 @@ class TestInterfacesEnumsTypedefs {
   	
   	@Test
   	def void testTypedef2() {
-  		val specification = '''
-  			/*typedef description*/
-  			typedef Asdf @unique !removeUnknownRestrictions("unknown") @monotone A;
-
-  			A {}
-  			
-  			B {}
-  			
-  			typedef Natural @min(0) i64;
-  			
-  			typedef AorB @oneOf(A, B) annotation;
-  		'''.parse
+  		val specification = testTypedef.parse
   		
   		val asdf = specification.declarations.get(0) as TypedefImpl;
 		val a = specification.declarations.get(1) as UsertypeImpl;

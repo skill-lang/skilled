@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import com.google.inject.Inject;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Assert
+import org.junit.BeforeClass
 
 /**
  * @author Tobias Heck
@@ -24,33 +25,34 @@ class TestGarbage3 {
 	@Inject extension ParseHelper<File> parser;
 	@Inject extension ValidationTestHelper;
 	
+	var static String garbage11 = "";
+	var static String garbage12 = "";
+	var static String garbage13 = "";
+	
+	@BeforeClass
+	def static void setup() {
+		garbage11 = FileLoader.loadFile("Garbage11");
+		garbage12 = FileLoader.loadFile("Garbage12");
+		garbage13 = FileLoader.loadFile("Garbage13");
+	}
+	
 	@Test
 	def void testGarbage11() {
-		val issueCount = '''
-			Type {
-				;
-			}
-		'''.parse.validate.size;
+		val issueCount = garbage11.parse.validate.size;
 		
 		Assert::assertTrue(issueCount > 0);
 	}
 	
 	@Test
 	def void testGarbage12() {
-		val issueCount = '''
-			typedef @max(7) i32;
-		'''.parse.validate.size;
+		val issueCount = garbage12.parse.validate.size;
 		
 		Assert::assertTrue(issueCount > 0);
 	}
 	
 	@Test
 	def void testGarbage13() {
-		val issueCount = '''
-			Type {
-				const i64 = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
-			}
-		'''.parse.validate.size;
+		val issueCount = garbage13.parse.validate.size;
 		
 		Assert::assertTrue(issueCount > 0);
 	}

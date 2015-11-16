@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import com.google.inject.Inject;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Assert
+import org.junit.BeforeClass
 
 /**
  * @author Tobias Heck
@@ -24,57 +25,52 @@ class TestGarbage {
 	@Inject extension ParseHelper<File> parser;
 	@Inject extension ValidationTestHelper;
 	
+	var static String garbage1 = "";
+	var static String garbage2 = "";
+	var static String garbage3 = "";
+	var static String garbage4 = "";
+	var static String garbage5 = "";
+	
+	@BeforeClass
+	def static void setup() {
+		garbage1 = FileLoader.loadFile("Garbage1");
+		garbage2 = FileLoader.loadFile("Garbage2");
+		garbage3 = FileLoader.loadFile("Garbage3");
+		garbage4 = FileLoader.loadFile("Garbage4");
+		garbage5 = FileLoader.loadFile("Garbage5");
+	}
+	
 	@Test
 	def void testGarbage1() {
-		val issueCount = '''chraehuioaeruiowe34ewz0u9s fe45r3z8uewz9rse87uft7zxdfwrz9
-		I)/W§HDU h9 8zEW(7 z(/ZSA(7 8as/DZTf8 7tg6gt as87t ))'''.parse.validate.size;
+		val issueCount = garbage1.parse.validate.size;
 		
 		Assert::assertTrue(issueCount > 0);
 	}
 	
 	@Test
 	def void testGarbage2() {
-		val issueCount = '''
-			Type1 {
-				Type2 {
-					i32 field;
-				}
-			}
-		'''.parse.validate.size;
+		val issueCount = garbage2.parse.validate.size;
 		
 		Assert::assertTrue(issueCount > 0);
 	}
 	
 	@Test
 	def void testGarbage3() {
-		val issueCount = '''
-			Type {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
-			{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
-			{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
-			{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
-			{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
-			{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
-			'''.parse.validate.size;
+		val issueCount = garbage3.parse.validate.size;
 			
 		Assert::assertTrue(issueCount > 0);
 	}
 	
 	@Test
 	def void testGarbage4() {
-		val issueCount = '''
-			interface typedef Name !readOnly @max(1234) i32;
-		'''.parse.validate.size;
+		val issueCount = garbage4.parse.validate.size;
 		
 		Assert::assertTrue(issueCount > 0);
 	}
 	
 	@Test
 	def void testGarbage5() {
-		val issueCount = '''
-			Type : {
-				i32 field;
-			}
-		'''.parse.validate.size;
+		val issueCount = garbage5.parse.validate.size;
 		
 		Assert::assertTrue(issueCount > 0);
 	}

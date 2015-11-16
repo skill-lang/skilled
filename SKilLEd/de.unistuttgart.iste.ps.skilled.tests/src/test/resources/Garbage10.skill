@@ -1,0 +1,4 @@
+﻿Type {
+  @max((50)
+  string name;
+}

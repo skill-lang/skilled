@@ -1,0 +1,10 @@
+/*typedef description*/
+typedef Asdf @unique !removeUnknownRestrictions("unknown") @monotone A;
+
+A {}
+  			
+B {}
+  			
+typedef Natural @min(0) i64;
+  			
+typedef AorB @oneOf(A, B) annotation;

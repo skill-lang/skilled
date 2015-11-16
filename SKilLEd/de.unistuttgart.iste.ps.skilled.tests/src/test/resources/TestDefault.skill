@@ -1,0 +1,8 @@
+T {
+  @default(foo)
+  string x;	
+}
+
+enum E {
+  foo, bar;
+}
