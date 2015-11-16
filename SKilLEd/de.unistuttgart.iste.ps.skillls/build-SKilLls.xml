@@ -1,7 +1,7 @@
 <project basedir="." default="build-all" name="SKilLls" xmlns:jacoco="antlib:org.jacoco.ant">
     <property name="libs.location" value="../de.unistuttgart.iste.ps.skilled/lib"/>
-    <property name="grammar.location" value="src/grammar"/>
-    <property name="tools.location" value="src/tools"/>
+    <property name="grammar.location" value="src/de/unistuttgart/iste/ps/skillls/grammar"/>
+    <property name="tools.location" value="src/de/unistuttgart/iste/ps/skillls/tools"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
     <property name="source" value="1.8"/>
@@ -9,6 +9,12 @@
      <condition property="isUnix">
          <os family="unix" />
      </condition>
+
+     <condition property="scala.call" value="scala">
+         <os family="unix" />
+     </condition>
+     
+     <property name="scala.call" value="scala.bat"/>
 
     <path id="SKilLls.classpath">
         <fileset dir="${libs.location}" includes="*.jar"/>
@@ -58,14 +64,14 @@
             <arg line="SKilLANTLR/SKilLLexer.g4"/>
             <arg line="-lib SKilLANTLR/SKilLLexer.tokens"/>
             <arg line="-o ${grammar.location}"/>
-            <arg line="-package grammar"/>
+            <arg line="-package de.unistuttgart.iste.ps.skillls.grammar"/>
             <arg line="-encoding UTF-8"/>
         </java>
         <java jar="${libs.location}/antlr-4.5.1-complete.jar" fork="true">
             <arg line="SKilLANTLR/SKilLParser.g4"/>
             <arg line="-lib SKilLANTLR/SKilLLexer.tokens"/>
             <arg line="-o ${grammar.location}"/>
-            <arg line="-package grammar"/>
+            <arg line="-package de.unistuttgart.iste.ps.skillls.grammar"/>
             <arg line="-encoding UTF-8"/>
         </java>
     </target>
@@ -83,14 +89,14 @@
 
     <target depends="setup" name="build-skill-binding">
         <mkdir dir="${tools.location}"/>
-        <exec executable="scala" dir="${libs.location}">
+        <exec executable="${scala.call}" dir="${libs.location}">
             <arg value="skill_2.11-0.3.jar"/>
-            <arg line="-p tools"/>
+            <arg line="-p de.unistuttgart.iste.ps.skillls.tools"/>
             <arg line="-L Java ../../de.unistuttgart.iste.ps.skillls/Tools/SKilLEd.skill"/>
             <arg line="temp"/>
         </exec>
         <copy todir="${tools.location}">
-            <fileset dir="${libs.location}/temp/java/src/main/java/tools"/>
+            <fileset dir="${libs.location}/temp/java/src/main/java/de/unistuttgart/iste/ps/skillls/tools"/>
         </copy>
         <copy todir="${libs.location}">
             <fileset dir="${libs.location}/temp/java/lib"/>
@@ -122,7 +128,7 @@
     </target>
 
     <target depends="build-skillls-complete" name="create_run_jar">
-        <jar destfile="out/skillls.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="out/SKilLls.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="main.MainClass"/>
                 <attribute name="Class-Path" value="."/>
