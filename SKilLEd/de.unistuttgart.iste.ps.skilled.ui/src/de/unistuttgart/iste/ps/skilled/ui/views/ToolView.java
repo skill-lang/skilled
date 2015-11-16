@@ -3,6 +3,7 @@ package de.unistuttgart.iste.ps.skilled.ui.views;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -24,7 +25,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.part.ViewPart;
 
-import de.unistuttgart.iste.ps.skilled.ui.internal.SKilLActivator;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.SKilLToolWizard;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.WizardOption;
 import de.ust.skill.common.java.api.SkillException;
@@ -44,7 +44,7 @@ import tools.api.SkillFile;
  */
 public class ToolView extends ViewPart {
 
-    private static final String path = SKilLActivator.getInstance().getBundle().getLocation().substring(16) + "tools.sf";
+    private String path = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
     private CTabFolder tabFolder;
 
     private ArrayList<Tool> allToolList = new ArrayList<Tool>();
@@ -64,6 +64,7 @@ public class ToolView extends ViewPart {
 
     @Override
     public void createPartControl(Composite parent) {
+        System.out.println(path);
         tabFolder = new CTabFolder(parent, SWT.BORDER);
         tabFolder.setVisible(true);
         shell = parent.getShell();
