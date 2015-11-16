@@ -120,7 +120,7 @@
             <formatter type="xml"/>
             <batchtest todir="out/test/SKilLls">
                 <fileset dir="src">
-                    <include name="test/**/*.java"/>
+                    <include name="de/unistuttgart/iste/ps/skillls/test/**/*.java"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -130,7 +130,7 @@
     <target depends="build-skillls-complete" name="create_run_jar">
         <jar destfile="out/SKilLls.jar" filesetmanifest="mergewithoutmain">
             <manifest>
-                <attribute name="Main-Class" value="main.MainClass"/>
+                <attribute name="Main-Class" value="de.unistuttgart.iste.ps.skillls.main.MainClass"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="out/production/SKilLls"/>

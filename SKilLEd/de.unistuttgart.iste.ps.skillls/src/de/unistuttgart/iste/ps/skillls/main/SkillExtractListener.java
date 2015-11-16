@@ -1,12 +1,12 @@
-package main;
+package de.unistuttgart.iste.ps.skillls.main;
 
-import grammar.SKilLParser;
-import grammar.SKilLParserBaseListener;
+import de.unistuttgart.iste.ps.skillls.grammar.SKilLParser;
+import de.unistuttgart.iste.ps.skillls.grammar.SKilLParserBaseListener;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import tools.Field;
-import tools.Hint;
-import tools.Tool;
-import tools.Type;
+import de.unistuttgart.iste.ps.skillls.tools.Field;
+import de.unistuttgart.iste.ps.skillls.tools.Hint;
+import de.unistuttgart.iste.ps.skillls.tools.Tool;
+import de.unistuttgart.iste.ps.skillls.tools.Type;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,8 +44,8 @@ public class SkillExtractListener extends SKilLParserBaseListener {
     @Override
     public void exitFile(SKilLParser.FileContext fileContext) {
         try {
-            tools.File file = null;
-            for (tools.File f : tool.getFiles()) {
+        	de.unistuttgart.iste.ps.skillls.tools.File file = null;
+            for (de.unistuttgart.iste.ps.skillls.tools.File f : tool.getFiles()) {
                 if (Paths.get(f.getPath()).relativize(Paths.get(inFile.getAbsolutePath())).toString().isEmpty()) {
                     file = f;
                     break;

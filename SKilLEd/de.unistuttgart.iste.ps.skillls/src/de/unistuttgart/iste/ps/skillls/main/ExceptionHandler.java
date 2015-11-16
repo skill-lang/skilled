@@ -1,4 +1,4 @@
-package main;
+package de.unistuttgart.iste.ps.skillls.main;
 
 /**
  * @author Armin Hüneburg

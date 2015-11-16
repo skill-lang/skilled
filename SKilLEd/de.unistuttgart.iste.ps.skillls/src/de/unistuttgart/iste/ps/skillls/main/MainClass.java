@@ -1,13 +1,13 @@
-package main;
+package de.unistuttgart.iste.ps.skillls.main;
 
-import grammar.SKilLLexer;
-import grammar.SKilLParser;
+import de.unistuttgart.iste.ps.skillls.grammar.SKilLLexer;
+import de.unistuttgart.iste.ps.skillls.grammar.SKilLParser;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.tree.ParseTree;
-import tools.*;
-import tools.api.SkillFile;
+import de.unistuttgart.iste.ps.skillls.tools.*;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -194,7 +194,7 @@ public class MainClass {
             int index;
             try {
                 index = Integer.parseInt(key);
-            } catch (@SuppressWarnings("unused") NullPointerException | NumberFormatException ignored) {
+            } catch (NullPointerException | NumberFormatException ignored) {
                 index = -1;
             }
             if (index > -1) {
@@ -210,7 +210,7 @@ public class MainClass {
             tools.addAll(sf.Tools());
         }
         for (Tool tool : tools) {
-            for (tools.File file : tool.getFiles()) {
+            for (de.unistuttgart.iste.ps.skillls.tools.File file : tool.getFiles()) {
                 File f = new File(file.getPath());
                 String hash = hash(f);
                 if (fileFlag == FileFlag.All || !file.getMd5().equals(hash)
@@ -409,7 +409,7 @@ public class MainClass {
      *             Thrown if there is a problem with the creation of temporary files.
      */
     private static void generate(File project, ArrayList<String> tools, SkillFile skillFile) throws IOException {
-        HashSet<tools.Tool> toolsToBuild = new HashSet<>();
+        HashSet<de.unistuttgart.iste.ps.skillls.tools.Tool> toolsToBuild = new HashSet<>();
         HashMap<Tool, ArrayList<File>> toolToFile = new HashMap<>();
 
         for (String t : tools) {
@@ -417,7 +417,7 @@ public class MainClass {
                 if (t.equals(tool.getName())) {
                     toolsToBuild.add(tool);
                     ArrayList<File> files = new ArrayList<>();
-                    for (tools.File f : tool.getFiles()) {
+                    for (de.unistuttgart.iste.ps.skillls.tools.File f : tool.getFiles()) {
                         File file = new File(f.getPath());
                         String hash = hash(new File(file.getAbsolutePath()));
                         if (!f.getMd5().equals(hash) || file.lastModified() != Long.parseLong(f.getTimestamp())
@@ -429,7 +429,7 @@ public class MainClass {
                     }
                     if (files.size() != 0) {
                         files.clear();
-                        for (tools.File f : tool.getFiles()) {
+                        for (de.unistuttgart.iste.ps.skillls.tools.File f : tool.getFiles()) {
                             File file = new File(f.getPath());
                             File fi = createToolFile(project, tool, file);
                             if (fi != null) {
@@ -456,10 +456,10 @@ public class MainClass {
      * @param tempDir
      *            Directory which contains the tool specific files.
      */
-    private static void runGeneration(HashSet<tools.Tool> toolsToBuild, HashMap<Tool, ArrayList<File>> toolToFile,
+    private static void runGeneration(HashSet<de.unistuttgart.iste.ps.skillls.tools.Tool> toolsToBuild, HashMap<Tool, ArrayList<File>> toolToFile,
             File tempDir) {
         ArrayList<Thread> commands = new ArrayList<>();
-        for (tools.Tool t : toolsToBuild) {
+        for (de.unistuttgart.iste.ps.skillls.tools.Tool t : toolsToBuild) {
             StringBuilder builder = new StringBuilder();
             builder.append(generator == null ? t.getGenerator().getExecEnv() : generator.getExecEnv());
             builder.append(' ');
@@ -598,7 +598,7 @@ public class MainClass {
                 if (child.isDirectory()) {
                     indexFiles(child, skillFile);
                 } else if (child.getAbsolutePath().endsWith(".skill")) {
-                    tools.File f = null;
+                	de.unistuttgart.iste.ps.skillls.tools.File f = null;
                     if (getStream(child, skillFile).count() != 0) {
                         f = getStream(child, skillFile).findFirst().get();
                     }
@@ -629,7 +629,7 @@ public class MainClass {
      */
     static void buildDependencies(SkillFile skillFile) {
         for (Tool tool : skillFile.Tools()) {
-            for (tools.File file : tool.getFiles()) {
+            for (de.unistuttgart.iste.ps.skillls.tools.File file : tool.getFiles()) {
                 ArrayList<Type> types = tool.getTypes().stream()
                         .filter(type -> type.getFile().getPath().equals(file.getPath()))
                         .collect(Collectors.toCollection(ArrayList::new));
@@ -671,9 +671,9 @@ public class MainClass {
      * @param skillFile the skillfile containing the files.
      * @return a stream of the tool.Files.
      */
-    private static Stream<tools.File> getStream(File file, SkillFile skillFile) {
-        ArrayList<tools.File> files = new ArrayList<>();
-        for (tools.File f : skillFile.Files()) {
+    private static Stream<de.unistuttgart.iste.ps.skillls.tools.File> getStream(File file, SkillFile skillFile) {
+        ArrayList<de.unistuttgart.iste.ps.skillls.tools.File> files = new ArrayList<>();
+        for (de.unistuttgart.iste.ps.skillls.tools.File f : skillFile.Files()) {
             Path p1 = Paths.get(file.getAbsolutePath());
             Path p2 = Paths.get(new File(f.getPath()).getAbsolutePath());
             if (p1.relativize(p2).toString().equals("")) {

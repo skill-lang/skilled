@@ -1,4 +1,4 @@
-package main;
+package de.unistuttgart.iste.ps.skillls.main;
 
 /**
  * Flag indicating whether all files should be considered for the commands, or only those files, which have changed.

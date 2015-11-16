@@ -1,11 +1,11 @@
-package main;
+package de.unistuttgart.iste.ps.skillls.main;
 
-import grammar.SKilLParser;
-import grammar.SKilLParserBaseListener;
-import tools.Field;
-import tools.Hint;
-import tools.Type;
-import tools.api.SkillFile;
+import de.unistuttgart.iste.ps.skillls.grammar.SKilLParser;
+import de.unistuttgart.iste.ps.skillls.grammar.SKilLParserBaseListener;
+import de.unistuttgart.iste.ps.skillls.tools.Field;
+import de.unistuttgart.iste.ps.skillls.tools.Hint;
+import de.unistuttgart.iste.ps.skillls.tools.Type;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 class SkillIndexListener extends SKilLParserBaseListener {
     private final SkillFile skillFile;
-    private tools.File file;
+    private de.unistuttgart.iste.ps.skillls.tools.File file;
 
     /**
      * Constructor.
@@ -50,7 +50,7 @@ class SkillIndexListener extends SKilLParserBaseListener {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        for (tools.File f : skillFile.Files()) {
+        for (de.unistuttgart.iste.ps.skillls.tools.File f : skillFile.Files()) {
             if (f.getPath().equals(file.getAbsolutePath())) {
                 if (f.getMd5().equals(bytes) && f.getTimestamp().equals(String.valueOf(file.lastModified()))) {
                     this.file = null;

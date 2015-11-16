@@ -1,9 +1,9 @@
-package test;
-
-import main.MainClass;
+package de.unistuttgart.iste.ps.skillls.test;
 
 import org.junit.*;
 import org.junit.runners.MethodSorters;
+
+import de.unistuttgart.iste.ps.skillls.main.MainClass;
 
 import java.io.*;
 import java.math.BigInteger;

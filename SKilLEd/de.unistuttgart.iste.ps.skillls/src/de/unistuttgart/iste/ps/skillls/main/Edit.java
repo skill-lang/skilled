@@ -1,9 +1,9 @@
-package main;
+package de.unistuttgart.iste.ps.skillls.main;
 
-import tools.Field;
-import tools.Hint;
-import tools.Tool;
-import tools.Type;
+import de.unistuttgart.iste.ps.skillls.tools.Field;
+import de.unistuttgart.iste.ps.skillls.tools.Hint;
+import de.unistuttgart.iste.ps.skillls.tools.Tool;
+import de.unistuttgart.iste.ps.skillls.tools.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  */
 public class Edit {
     private final String COMMAND_STRING;
-    private tools.api.SkillFile skillFile;
+    private de.unistuttgart.iste.ps.skillls.tools.api.SkillFile skillFile;
 
     /**
      * @param commandString
@@ -32,7 +32,7 @@ public class Edit {
      * @param skillFile
      *            The skillfile containing the configuration of the project.
      */
-    public void setSkillFile(tools.api.SkillFile skillFile) {
+    public void setSkillFile(de.unistuttgart.iste.ps.skillls.tools.api.SkillFile skillFile) {
         this.skillFile = skillFile;
     }
 
@@ -460,8 +460,8 @@ public class Edit {
         if (type == null) {
             return;
         }
-        tools.File file = null;
-        for (tools.File f : tool.getFiles()) {
+        de.unistuttgart.iste.ps.skillls.tools.File file = null;
+        for (de.unistuttgart.iste.ps.skillls.tools.File f : tool.getFiles()) {
             if (f.equals(type.getFile())) {
                 file = f;
                 tool.getFiles().remove(f);
@@ -513,10 +513,10 @@ public class Edit {
                     addGroundType(type, tool);
                 }
                 addExtensions(tool, t);
-                for (tools.File f : skillFile.Files()) {
+                for (de.unistuttgart.iste.ps.skillls.tools.File f : skillFile.Files()) {
                     if (f.getPath().equals(t.getFile().getPath())) {
                         boolean found = false;
-                        for (tools.File fi : tool.getFiles()) {
+                        for (de.unistuttgart.iste.ps.skillls.tools.File fi : tool.getFiles()) {
                             if (fi.getPath().equals(f.getPath())) {
                                 found = true;
                             }

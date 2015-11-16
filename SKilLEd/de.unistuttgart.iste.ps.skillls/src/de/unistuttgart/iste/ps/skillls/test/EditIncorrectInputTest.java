@@ -1,11 +1,11 @@
-package test;
-
-import main.Edit;
-import main.MainClass;
+package de.unistuttgart.iste.ps.skillls.test;
 
 import org.junit.*;
 import org.junit.runners.MethodSorters;
-import tools.api.SkillFile;
+
+import de.unistuttgart.iste.ps.skillls.main.Edit;
+import de.unistuttgart.iste.ps.skillls.main.MainClass;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 
 import java.io.File;
 import java.io.IOException;
