@@ -18,7 +18,7 @@ class FileLoader {
 			if (line == null) {
 				eof = true;
 			} else {
-				 fileContent = fileContent + line;
+				 fileContent = fileContent + String.format("%n") + line;
 			}
 		}
 		return fileContent;
