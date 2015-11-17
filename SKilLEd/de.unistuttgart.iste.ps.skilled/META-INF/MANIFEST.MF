@@ -11,6 +11,8 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.emf.common,
  org.antlr.runtime,
  org.eclipse.xtext.ui
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.unistuttgart.iste.ps.skilled;uses:="com.google.inject,org.eclipse.xtext.service,org.eclipse.xtext",
  de.unistuttgart.iste.ps.skilled.converter;
