@@ -115,7 +115,7 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle keywordTextStyle() {
         TextStyle textStyle = defaultTextStyle().copy();
-        textStyle.setColor(new RGB(127, 0, 85));
+        textStyle.setColor(new RGB(149, 0, 85));
         textStyle.setStyle(SWT.BOLD);
         return textStyle;
     }
@@ -137,8 +137,6 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle usertypeTextStyle() {
         TextStyle textStyle = new TextStyle();
-        textStyle.setStyle(SWT.ITALIC);
-        textStyle.setColor(new RGB(0, 0, 0));
         return textStyle;
     }
 
@@ -149,8 +147,6 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle interfaceTextStyle() {
         TextStyle textStyle = new TextStyle();
-        textStyle.setStyle(SWT.ITALIC);
-        textStyle.setColor(new RGB(50, 63, 112));
         return textStyle;
     }
 
@@ -161,8 +157,6 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle enumTextStyle() {
         TextStyle textStyle = new TextStyle();
-        textStyle.setStyle(SWT.ITALIC);
-        textStyle.setColor(new RGB(100, 70, 50));
         return textStyle;
     }
 
@@ -173,8 +167,6 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle typedefTextStyle() {
         TextStyle textStyle = new TextStyle();
-        textStyle.setStyle(SWT.ITALIC);
-        textStyle.setColor(new RGB(0, 0, 0));
         return textStyle;
     }
 
@@ -185,8 +177,7 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle headcommentTextStyle() {
         TextStyle textStyle = new TextStyle();
-        textStyle.setStyle(SWT.ITALIC);
-        textStyle.setColor(new RGB(241, 51, 127));
+        textStyle.setColor(new RGB(63, 95, 191));
         return textStyle;
     }
 
@@ -197,8 +188,8 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle buildintypeTextStyle() {
         TextStyle textStyle = new TextStyle();
-        textStyle.setStyle(SWT.ITALIC);
-        textStyle.setColor(new RGB(127, 0, 85));
+        textStyle.setStyle(SWT.BOLD);
+        textStyle.setColor(new RGB(149, 0, 85));
         return textStyle;
     }
 
@@ -209,8 +200,7 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle dataFieldTextStyle() {
         TextStyle textStyle = new TextStyle();
-        textStyle.setStyle(SWT.ITALIC);
-        textStyle.setColor(new RGB(127, 0, 85));
+        textStyle.setColor(new RGB(106, 62, 62));
         return textStyle;
     }
 
@@ -221,8 +211,8 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle constantFieldTextStyle() {
         TextStyle textStyle = new TextStyle();
-        textStyle.setStyle(SWT.ITALIC);
-        textStyle.setColor(new RGB(127, 0, 85));
+        textStyle.setStyle(SWT.ITALIC | SWT.BOLD);
+        textStyle.setColor(new RGB(0, 0, 192));
         return textStyle;
     }
 
@@ -233,8 +223,7 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle viewFieldTextStyle() {
         TextStyle textStyle = new TextStyle();
-        textStyle.setStyle(SWT.ITALIC);
-        textStyle.setColor(new RGB(127, 0, 85));
+        textStyle.setColor(new RGB(106, 62, 62));
         return textStyle;
     }
 
@@ -245,8 +234,7 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle compoundFieldTextStyle() {
         TextStyle textStyle = new TextStyle();
-        textStyle.setStyle(SWT.ITALIC);
-        textStyle.setColor(new RGB(127, 0, 85));
+        textStyle.setColor(new RGB(106, 62, 62));
         return textStyle;
     }
 
@@ -257,8 +245,7 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle hintTextStyle() {
         TextStyle textStyle = new TextStyle();
-        textStyle.setStyle(SWT.ITALIC);
-        textStyle.setColor(new RGB(207, 207, 207));
+        textStyle.setColor(new RGB(127, 159, 191));
         return textStyle;
     }
 
@@ -269,8 +256,7 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      */
     public static TextStyle restrictionTextStyle() {
         TextStyle textStyle = new TextStyle();
-        textStyle.setStyle(SWT.ITALIC);
-        textStyle.setColor(new RGB(207, 207, 207));
+        textStyle.setColor(new RGB(100, 100, 100));
         return textStyle;
     }
 }
