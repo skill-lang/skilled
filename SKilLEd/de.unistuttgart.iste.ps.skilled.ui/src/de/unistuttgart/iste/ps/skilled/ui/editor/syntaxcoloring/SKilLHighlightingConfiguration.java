@@ -30,6 +30,7 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
     public static final String BUILDINTYPE_ID = "buildintype";
     public static final String DATA_ID = "data";
     public static final String CONSTANT_ID = "constant";
+    public static final String VIEW_ID = "view";
     public static final String HINT_ID = "hint";
     public static final String RESTRICTION_ID = "restriction";
     public static final String COMPOUND_ID = "compound";
@@ -58,6 +59,7 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
         acceptor.acceptDefaultHighlighting(BUILDINTYPE_ID, "Build In Type", buildintypeTextStyle());
         acceptor.acceptDefaultHighlighting(DATA_ID, "Data Field", dataFieldTextStyle());
         acceptor.acceptDefaultHighlighting(CONSTANT_ID, "Constant Field", constantFieldTextStyle());
+        acceptor.acceptDefaultHighlighting(VIEW_ID, "View Field", viewFieldTextStyle());
         acceptor.acceptDefaultHighlighting(HINT_ID, "Hint", hintTextStyle());
         acceptor.acceptDefaultHighlighting(RESTRICTION_ID, "Restriction", restrictionTextStyle());
         acceptor.acceptDefaultHighlighting(COMPOUND_ID, "Compound Type", compoundFieldTextStyle());
@@ -218,6 +220,18 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      * @return
      */
     public static TextStyle constantFieldTextStyle() {
+        TextStyle textStyle = new TextStyle();
+        textStyle.setStyle(SWT.ITALIC);
+        textStyle.setColor(new RGB(127, 0, 85));
+        return textStyle;
+    }
+
+    /**
+     * Default syntax coloring setting for view fields.
+     * 
+     * @return
+     */
+    public static TextStyle viewFieldTextStyle() {
         TextStyle textStyle = new TextStyle();
         textStyle.setStyle(SWT.ITALIC);
         textStyle.setColor(new RGB(127, 0, 85));

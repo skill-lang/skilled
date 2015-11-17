@@ -1,6 +1,5 @@
 /** 
  * Xtext grammar for SKilL
- * TODO: Views
  * 
  * @author Marco Link and Nikolay Fateev
  */
@@ -56,10 +55,17 @@ Field:
 	fieldcontent=Fieldcontent ';';
 
 Fieldcontent:
-	Constant | Data;
+	View | Constant | Data;
+
+	// Again needed for syntax coloring and it uses qualified names because of the views notation.
+FieldcontentReference:
+	fieldcontent=[Fieldcontent|QualifiedName];
+
+View:
+	'view' fieldcontent=FieldcontentReference 'as' fieldtype=Fieldtype name=XID;
 
 Constant:
-	constantName='const' fieldtype=Fieldtype name=XID '=' value=(LongArgument | HEXINT);
+	constantName='const' fieldtype=Fieldtype name=XID '=' value=(LongLiteral | HEXINT);
 
 Data:
 	(isAuto?='auto')? fieldtype=Fieldtype name=XID;
@@ -77,7 +83,7 @@ Listtype:
 	'list' '<' basetype=Basetype '>';
 
 Arraytype:
-	basetype=Basetype ('[' (length=(LongArgument | HEXINT))? ']');
+	basetype=Basetype ('[' (length=(LongLiteral | HEXINT))? ']');
 
 Basetype:
 	DeclarationReference | BuiltInType;
@@ -107,54 +113,64 @@ Booleantype:
 	type='bool';
 
 Restriction:
-	'@' restrictionName=ID
-	('(' (restrictionArguments+=RestrictionArgument (',' restrictionArguments+=RestrictionArgument)*)? ')')?;
+	'@' restrictionName=ID ('(' (restrictionArguments+=RestrictionArgument (','
+	restrictionArguments+=RestrictionArgument)*)? ')')?;
 
 RestrictionArgument:
-	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING |
+	(valueDouble=DoubleLiteral | valueLong=(LongLiteral | HEXINT) | valueString=STRING | valueBoolean=Boolean |
 	valueType=DeclarationReference (('.' | '::') enumInstance=XID)?);
 
 Hint:
-	'!' hintName=ID
-	('(' (hintArguments+=HintArgument (',' hintArguments+=HintArgument)*)? ')')?;
+	'!' hintName=ID ('(' (hintArguments+=HintArgument (',' hintArguments+=HintArgument)*)? ')')?;
 
 HintArgument:
-	(valueDouble=DoubleArgument | valueLong=(LongArgument | HEXINT) | valueString=STRING | valueIdentifier=ID);
+	(valueDouble=DoubleLiteral | valueLong=(LongLiteral | HEXINT) | valueString=STRING | valueIdentifier=ID);
 
-LongArgument returns ecore::ELongObject:
+LongLiteral returns ecore::ELongObject:
 	LONG;
 
-DoubleArgument returns ecore::EDoubleObject:
+DoubleLiteral returns ecore::EDoubleObject:
 	DOUBLE;
+
+terminal fragment DIGIT:
+	'0'..'9';
+
+terminal fragment HEX_DIGIT:
+	(DIGIT | 'a'..'f' | 'A'..'F');
+
+terminal fragment ALPHANUM:
+	('a'..'z' | 'A'..'Z' | '_' | DIGIT);
+
+terminal STRING:
+	'"'->'"';
 
 terminal HEADCOMMENT:
 	'#' !('\r' | '\n')* '\r'? '\n';
 
 terminal ID:
-	('a'..'z' | 'A'..'Z' | '_' | '\u007f'..'\uffff') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\u007f'..'\uffff')*;
+	('a'..'z' | 'A'..'Z' | '_' | '\u007f'..'\uffff') (ALPHANUM | '\u007f'..'\uffff')*;
+
+enum Boolean:
+	TRUE='true' | FALSE='false';
 
 XID:
-	ID | 'auto'
-	| 'include' | 'with' | 'typedef' | 'enum' | 'interface' | 'extends' | 'const' | 'map' | 'set' | 'list' |
-	'string' | 'bool' | 'annotation';
+	ID | 'auto' | 'include' | 'with' | 'typedef' | 'enum' | 'interface' | 'extends' | 'const' | 'map' | 'set' | 'list' |
+	'string' | 'bool' | 'annotation' | 'true' | 'false';
+
+QualifiedName:
+	(XID ('.' XID)?);
 
 terminal HEXINT returns ecore::ELongObject:
-	'-'? '0x' (DIGIT | ('a'..'f') | ('A'..'F'))*;
+	'-'? '0x' (HEX_DIGIT)+;
 
 terminal LONG returns ecore::ELong:
 	'-'? DIGIT+;
 
 terminal DOUBLE returns ecore::EDouble:
-	((LONG EXPONENT) | (LONG? '.' DIGIT* EXPONENT?)) ('f' | 'F' | 'd' | 'D')?;
+	((LONG EXPONENT) | (LONG? '.' DIGIT+ EXPONENT?)) ('f' | 'F' | 'd' | 'D')?;
 
-terminal fragment DIGIT:
-	'0'..'9';
-
-terminal fragment EXPONENT:
+terminal EXPONENT:
 	('e' | 'E') ('+' | '-')? DIGIT+;
-
-terminal STRING:
-	'"'->'"';
 
 terminal ML_COMMENT:
 	'/*'->'*/';

@@ -16,12 +16,14 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Constant;
 import de.unistuttgart.iste.ps.skilled.sKilL.Data;
 import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference;
 import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype;
+import de.unistuttgart.iste.ps.skilled.sKilL.FieldcontentReference;
 import de.unistuttgart.iste.ps.skilled.sKilL.Hint;
 import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype;
 import de.unistuttgart.iste.ps.skilled.sKilL.Restriction;
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference;
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef;
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype;
+import de.unistuttgart.iste.ps.skilled.sKilL.View;
 
 
 /**
@@ -57,7 +59,7 @@ public class SKilLSemanticHighlightingCalculator implements ISemanticHighlightin
 
                 // Checks for base type cross references and for restriction arguments cross references.
                 if (semanticElement instanceof DeclarationReference) {
-                    DeclarationReference dr = (DeclarationReference) node.getSemanticElement();
+                    DeclarationReference dr = (DeclarationReference) semanticElement;
 
                     // Highlighting for usertype cross references
                     if (dr.getType() instanceof Usertype) {
@@ -79,6 +81,7 @@ public class SKilLSemanticHighlightingCalculator implements ISemanticHighlightin
                     else if (dr.getType() instanceof Enumtype) {
                         acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.ENUM_ID);
                     }
+
                 }
 
                 // Checks for supertype cross references.
@@ -96,12 +99,30 @@ public class SKilLSemanticHighlightingCalculator implements ISemanticHighlightin
                                 SKilLHighlightingConfiguration.INTERFACE_ID);
                     }
                 }
+
+                // Checks for fieldcontent cross references in views.
+                else if (semanticElement instanceof FieldcontentReference) {
+                    FieldcontentReference fr = (FieldcontentReference) semanticElement;
+
+                    if (fr.getFieldcontent() instanceof Data) {
+                        acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.DATA_ID);
+                    } else if (fr.getFieldcontent() instanceof View) {
+                        acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.VIEW_ID);
+                    } else if (fr.getFieldcontent() instanceof Constant) {
+                        acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.CONSTANT_ID);
+                    }
+
+                }
+
             }
+
             // Highlighting for the build in types.
             else if (semanticElement instanceof BuiltInType) {
                 acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.BUILDINTYPE_ID);
             }
-            // Checks for restrictions only the keyword and the name should be colored as restriction, but not its arguments.
+
+            // Checks for restrictions. Only the keyword and the name should be colored as restriction, but not its
+            // arguments.
             else if (semanticElement instanceof Restriction) {
                 for (INode resNode : node.getAsTreeIterable()) {
                     // Highlighting for the keyword '@'
@@ -122,14 +143,17 @@ public class SKilLSemanticHighlightingCalculator implements ISemanticHighlightin
                     }
                 }
             }
-            // Checks for hints only the keyword and the name should be colored as hint, but not its arguments.
+
+            // Checks for hints. Only the keyword and the name should be colored as hint, but not its arguments.
             else if (semanticElement instanceof Hint) {
                 for (INode resNode : node.getAsTreeIterable()) {
+
                     // Highlighting for the keyword '!'
                     if (resNode.getText().equals("!")) {
                         acceptor.addPosition(resNode.getOffset(), resNode.getLength(),
                                 SKilLHighlightingConfiguration.HINT_ID);
                     }
+
                     // Highlighting for the hint name
                     else if (resNode.getGrammarElement() instanceof RuleCall) {
                         RuleCall rc = (RuleCall) resNode.getGrammarElement();
@@ -151,57 +175,71 @@ public class SKilLSemanticHighlightingCalculator implements ISemanticHighlightin
                 EObject c = grammarElement.eContainer();
 
                 // Checks whether the given element is a name.
-                if ((r.getName().equals("ID")) && (c instanceof Assignment)
-                        && ((Assignment) c).getFeature().equals("name")) {
+                if ((c instanceof Assignment) && ((Assignment) c).getFeature().equals("name")) {
 
-                    // Coloring for usertypes.
-                    if (node.getSemanticElement() instanceof Usertype) {
-                        acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.USERTYPE_ID);
+                    if (r.getName().equals("ID")) {
 
-                    }
-
-                    // Coloring for interfaces.
-                    else if (node.getSemanticElement() instanceof Interfacetype) {
-                        acceptor.addPosition(node.getOffset(), node.getLength(),
-                                SKilLHighlightingConfiguration.INTERFACE_ID);
-
-                    }
-
-                    // Coloring for enums.
-                    else if (node.getSemanticElement() instanceof Enumtype) {
-                        acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.ENUM_ID);
-                    }
-
-                    // Coloring for typedefs.
-                    else if (node.getSemanticElement() instanceof Typedef) {
-                        acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.TYPEDEF_ID);
-                    }
-
-                    // Coloring for data fields.
-                    else if (node.getSemanticElement() instanceof Data) {
-                        Data d = (Data) node.getSemanticElement();
-
-                        // Coloring for basetypes.
-                        if (d.getFieldtype() instanceof Basetype) {
-                            acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.DATA_ID);
-                        }
-
-                        // Coloring for compound types.
-                        else {
+                        // Coloring for usertypes.
+                        if (node.getSemanticElement() instanceof Usertype) {
                             acceptor.addPosition(node.getOffset(), node.getLength(),
-                                    SKilLHighlightingConfiguration.COMPOUND_ID);
+                                    SKilLHighlightingConfiguration.USERTYPE_ID);
+
+                        }
+
+                        // Coloring for interfaces.
+                        else if (node.getSemanticElement() instanceof Interfacetype) {
+                            acceptor.addPosition(node.getOffset(), node.getLength(),
+                                    SKilLHighlightingConfiguration.INTERFACE_ID);
+
+                        }
+
+                        // Coloring for enums.
+                        else if (node.getSemanticElement() instanceof Enumtype) {
+                            acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.ENUM_ID);
+                        }
+
+                        // Coloring for typedefs.
+                        else if (node.getSemanticElement() instanceof Typedef) {
+                            acceptor.addPosition(node.getOffset(), node.getLength(),
+                                    SKilLHighlightingConfiguration.TYPEDEF_ID);
                         }
                     }
 
-                    // Coloring for constant fields.
-                    else if (node.getSemanticElement() instanceof Constant) {
-                        acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.CONSTANT_ID);
+                    if ((r.getName().equals("XID"))) {
+
+                        // Coloring for data fields.
+                        if (node.getSemanticElement() instanceof Data) {
+                            Data d = (Data) node.getSemanticElement();
+
+                            // Coloring for basetypes.
+                            if (d.getFieldtype() instanceof Basetype) {
+                                acceptor.addPosition(node.getOffset(), node.getLength(),
+                                        SKilLHighlightingConfiguration.DATA_ID);
+                            }
+
+                            // Coloring for compound types.
+                            else {
+                                acceptor.addPosition(node.getOffset(), node.getLength(),
+                                        SKilLHighlightingConfiguration.COMPOUND_ID);
+                            }
+                        }
+
+                        // Coloring for constant fields.
+                        else if (node.getSemanticElement() instanceof Constant) {
+                            acceptor.addPosition(node.getOffset(), node.getLength(),
+                                    SKilLHighlightingConfiguration.CONSTANT_ID);
+                        }
+
+                        // Coloring for view fields.
+                        else if (node.getSemanticElement() instanceof View) {
+                            acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.VIEW_ID);
+                        }
                     }
                 }
 
                 // Coloring for the instances of an Enum, not the enum name.
                 // enum Tag { --> Montag, Dienstag; <-- }
-                else if ((r.getName().equals("ID")) && (c instanceof Assignment)
+                else if ((r.getName().equals("XID")) && (c instanceof Assignment)
                         && ((Assignment) c).getFeature().equals("instances")) {
                     acceptor.addPosition(node.getOffset(), node.getLength(), SKilLHighlightingConfiguration.ENUM_ID);
                 }
