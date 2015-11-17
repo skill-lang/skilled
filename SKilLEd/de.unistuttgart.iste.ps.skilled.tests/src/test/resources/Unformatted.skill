@@ -1,0 +1,6 @@
+
+   #HEADCOMMENT
+       #MORE HEADCOMMENT
+                                     
+   
+     with "number.skill" include "user.skill" /**@author Tobias Heck @version 1.0 @note idk if comments are supposed to be formatted too*/ @unique !readOnly Type :Mothertype{                                                               Type selfReference                                  ;const i32 constant= -3456098765 ;  /**/ @range(   -3.894  ,   9999.459332,"inclusive, exclusive" ) !readOnly  auto f32 number; string name ;} interface Mothertype : MotherMothertype { } MotherMothertype{} typedef                      Hallo                MotherMothertype; enum Enumerator  {   One   ,  Two      ; map<      MotherMothertype  ,   Type > MAPPE ;  }
