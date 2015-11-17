@@ -9,12 +9,20 @@ import java.nio.file.Paths;
 import de.unistuttgart.iste.ps.skilled.tools.api.SkillFile;
 import de.ust.skill.common.java.api.SkillException;
 
-
+/**
+ * Opens the .skills file in the given path.
+ * @author Armin Hüneburg
+ *
+ */
 public class SkillFileOpener {
     private static String path = null;
     private static SkillFile file = null;
     private static boolean pathChanged = false;
     
+    /**
+     * Sets the path and tries to open the .sf-file at that location.
+     * @param path Path to the sf-file
+     */
     public static void setPath(String path) {
         if (path == null) {
             return;
@@ -25,6 +33,10 @@ public class SkillFileOpener {
         }
     }
 
+    /**
+     * Returns the sf-file at the provided path.
+     * @return null if no path is given or there was an error opening the file, else the file.
+     */
     public static SkillFile getFile() {
         if (pathChanged) {
             try {

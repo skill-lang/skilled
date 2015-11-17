@@ -18,6 +18,10 @@ class UnusedDeclarationValidator extends AbstractSKilLValidator {
 		
 	}	
 
+	/**
+	 * Tests if a type is being used in a tool and gives a warning if not.
+	 * @param declaration: The type declaration that should be tested if it is used in a tool.
+	 */
 	@Check
 	def checkType(Declaration declaration) {
 		val platformString = declaration.eResource.URI.toPlatformString(true);
@@ -45,6 +49,10 @@ class UnusedDeclarationValidator extends AbstractSKilLValidator {
 		}
 	}
 	
+	/**
+	 * Tests if a field is being used in a tool and gives a warning if not.
+	 * @param field: The declared field that should be tested if it is used in a tool.
+	 */
 	@Check
 	def checkField(Field field) {
 		val platformString = field.eResource.URI.toPlatformString(true);
