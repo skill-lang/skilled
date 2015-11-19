@@ -27,13 +27,13 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.unistuttgart.iste.ps.skilled.ui.wizards.SKilLToolWizard;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.WizardOption;
+import de.unistuttgart.iste.ps.skillls.tools.Field;
+import de.unistuttgart.iste.ps.skillls.tools.Hint;
+import de.unistuttgart.iste.ps.skillls.tools.Tool;
+import de.unistuttgart.iste.ps.skillls.tools.Type;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 import de.ust.skill.common.java.api.SkillException;
 import de.ust.skill.common.java.api.SkillFile.Mode;
-import tools.Field;
-import tools.Hint;
-import tools.Tool;
-import tools.Type;
-import tools.api.SkillFile;
 
 
 /**
