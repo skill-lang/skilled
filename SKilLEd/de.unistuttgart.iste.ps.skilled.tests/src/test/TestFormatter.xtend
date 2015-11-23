@@ -31,7 +31,6 @@ class TestFormatter {
 	}
 	
 	def void assertFormattedAs(CharSequence input, CharSequence expected) {
-		println(input.parse)
 		expected.toString.assertEquals(
 		(input.parse.eResource as XtextResource).parseResult.rootNode.
 		format(0, input.length).formattedText)
