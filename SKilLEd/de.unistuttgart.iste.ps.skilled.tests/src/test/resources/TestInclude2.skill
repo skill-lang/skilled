@@ -1,5 +1,0 @@
-include "testInclude.skill"
-
-Type2 {
-  Type field2;
-}

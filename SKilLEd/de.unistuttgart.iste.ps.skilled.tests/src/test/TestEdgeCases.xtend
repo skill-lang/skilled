@@ -27,7 +27,6 @@ class TestEdgeCases {
 	@Inject extension ParseHelper<File> parser;
 	@Inject extension ValidationTestHelper;
 	
-	var static String testBracketsNotNecessary = "";
 	var static String testInheritageOfASingleTypeViaSeveralInterfaces = "";
 	var static String testInheritageOfASingleTypeViaInterfaceAndType = "";
 	var static String testInheritageOfASingleTypeTwiceViaOneInterface = "";
@@ -39,31 +38,19 @@ class TestEdgeCases {
 	
 	@BeforeClass
 	def static void setup() {
-		testBracketsNotNecessary = FileLoader.loadFile("TestBracketsNotNecessary");
 		testInheritageOfASingleTypeViaSeveralInterfaces = FileLoader.loadFile(
 			"TestInheritageOfASingleTypeViaSeveralInterfaces");
 		testInheritageOfASingleTypeViaInterfaceAndType = FileLoader.loadFile(
-			"testInheritageOfASingleTypeViaInterfaceAndType");
+			"TestInheritageOfASingleTypeViaInterfaceAndType");
 		testInheritageOfASingleTypeTwiceViaOneInterface = FileLoader.loadFile(
-			"testInheritageOfASingleTypeTwiceViaOneInterface");
+			"TestInheritageOfASingleTypeTwiceViaOneInterface");
 		testDeclarationOfInheritedField = FileLoader.loadFile(
-			"testDeclarationOfInheritedField");
-		testDuplicateFieldNames = FileLoader.loadFile("testDuplicateFieldNames");
-		test = FileLoader.loadFile("test");
+			"TestDeclarationOfInheritedField");
+		testDuplicateFieldNames = FileLoader.loadFile("TestDuplicateFieldNames");
+		test = FileLoader.loadFile("Test");
 		testRestrictionCaseInsensitivity = FileLoader.loadFile(
-			"testRestrictionCaseInsensitivity");
-		testDefault = FileLoader.loadFile("testDefault");
-	}
-	
-	@Test
-	def void testBracketsNotNecessary() {
-		val specification = testBracketsNotNecessary.parse
-		
-		val issueCount = specification.validate.size;
-		Assert::assertTrue(issueCount == 0);
-		val b = specification.declarations.get(1) as UsertypeImpl;
-		val a = b.supertypes.get(0).type;
-		Assert::assertEquals(specification.declarations.get(0), a);
+			"TestRestrictionCaseInsensitivity");
+		testDefault = FileLoader.loadFile("TestDefault");
 	}
 	
 	@Test
@@ -115,7 +102,7 @@ class TestEdgeCases {
 		Assert::assertEquals(c, d.supertypes.get(0).type);
 		Assert::assertEquals("field", c.fields.get(0).fieldcontent.name);
 		Assert::assertEquals(b, (c.fields.get(0).fieldcontent.fieldtype as DeclarationReference).type);
-		Assert::assertEquals("field", d.fields.get(0));
+		Assert::assertEquals("field", d.fields.get(0).fieldcontent.name);
 		Assert::assertEquals(b, (d.fields.get(0).fieldcontent.fieldtype as DeclarationReference).type);
 	}
 	
@@ -127,7 +114,6 @@ class TestEdgeCases {
 		Assert::assertTrue(issueCount > 0);
 	}
 	
-	//TODO what is the expected behavior in the following situation?
 	@Test
 	def void test() {
 		val specification = test.parse

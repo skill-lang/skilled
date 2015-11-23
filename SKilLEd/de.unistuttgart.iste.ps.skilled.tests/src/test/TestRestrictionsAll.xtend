@@ -18,21 +18,21 @@ import org.junit.runner.RunWith
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
 class TestRestrictionsAll {
-	
+
 	@Inject extension ParseHelper<File> parser;
 	@Inject extension ValidationTestHelper;
-	
+
 	var static String specification = "";
-	
+
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("restrictionsAll");	
+		specification = FileLoader.loadFile("restrictionsAll");
 	}
-	
+
 	@Test
 	def void test() {
 		val issueCount = specification.parse.validate.size;
-		
+
 		Assert::assertTrue(issueCount == 0);
 	}
 }

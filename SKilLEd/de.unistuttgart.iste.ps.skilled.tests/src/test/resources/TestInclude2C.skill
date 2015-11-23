@@ -1,4 +1,0 @@
-/*imported type*/
-Type1 {
-  string field;
-}

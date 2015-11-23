@@ -49,10 +49,10 @@ class TestInterfacesEnumsTypedefs {
 	def void testInterfaces1() {
   		val specification = testInterfaces.parse
   		
-  		val int1 = specification.declarations.get(0) as InterfacetypeImpl;
-  		Assert::assertEquals("/*interface comment*/", int1.comment);
-  		Assert::assertEquals("Int1", int1.name);
-  		val fields1 = int1.fields;
+  		val I = specification.declarations.get(0) as InterfacetypeImpl;
+  		Assert::assertEquals("/*interface comment*/", I.comment);
+  		Assert::assertEquals("I", I.name);
+  		val fields1 = I.fields;
   		Assert::assertEquals("field1", fields1.get(0).fieldcontent.name);
   		Assert::assertEquals("field2", fields1.get(1).fieldcontent.name);
   		Assert::assertEquals("field3", fields1.get(2).fieldcontent.name);

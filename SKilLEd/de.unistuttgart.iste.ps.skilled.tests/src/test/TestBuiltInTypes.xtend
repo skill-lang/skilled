@@ -43,7 +43,7 @@ class TestBuiltInTypes {
 	
 	@BeforeClass
 	def static void setup() {
-		testBasicFieldTypes = ("TestBasicFieldTypes");
+		testBasicFieldTypes = FileLoader.loadFile("TestBasicFieldTypes");
 		testConstants = FileLoader.loadFile("TestConstants");
 		testAuto = FileLoader.loadFile("TestAuto");
 		testCompoundTypes = FileLoader.loadFile("TestCompoundTypes");

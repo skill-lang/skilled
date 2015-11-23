@@ -43,5 +43,4 @@ Type4 {
   f32 field11;
 }
 			
-@oneOf(Type1, Type2)
-typedef annotation Type5;
+typedef Type5 @oneOf(Type1, Type2) annotation;

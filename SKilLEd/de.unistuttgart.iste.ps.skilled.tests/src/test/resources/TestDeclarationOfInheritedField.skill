@@ -1,5 +1,5 @@
 A {}
-interface B : A
+interface B : A {}
 interface C : A {
   B field;
 }

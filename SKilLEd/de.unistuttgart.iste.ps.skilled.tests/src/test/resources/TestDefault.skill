@@ -1,6 +1,6 @@
 T {
-  @default(foo)
-  string x;	
+  @default(E.foo)
+  E x;
 }
 
 enum E {

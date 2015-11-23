@@ -1,5 +1,5 @@
 /*interface comment*/
-interface Int1 {
+interface I {
   annotation field1;
   string field2;
   const i32 field3 = 1234;
