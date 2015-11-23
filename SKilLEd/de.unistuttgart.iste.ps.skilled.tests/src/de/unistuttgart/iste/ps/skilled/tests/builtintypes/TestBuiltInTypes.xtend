@@ -160,6 +160,6 @@ class TestBuiltInTypes {
   		Assert::assertEquals(Integer.V64, ((d.fieldcontent.fieldtype as SettypeImpl).basetype as Integertype).type);
   		val e = type.fields.get(4);
   		Assert::assertEquals(type, ((e.fieldcontent.fieldtype as ArraytypeImpl).basetype as DeclarationReferenceImpl).type);
-  		//the boundary (80 in this case) seems to be not testable (yet?)
+  		Assert::assertEquals(80, (e.fieldcontent.fieldtype as ArraytypeImpl).length);
   	}
 }
