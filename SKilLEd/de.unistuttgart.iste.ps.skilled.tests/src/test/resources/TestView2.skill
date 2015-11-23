@@ -1,0 +1,19 @@
+A : B {
+  view field as
+  D field;
+}
+
+B : C {
+  view field as
+  E field;
+}
+
+C {
+  F field;
+}
+
+D {}
+
+E {}
+
+F {}

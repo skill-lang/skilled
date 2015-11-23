@@ -1,0 +1,8 @@
+A : B {
+  view B.field as 
+  A field;
+}
+
+B {
+  annotation field;
+}

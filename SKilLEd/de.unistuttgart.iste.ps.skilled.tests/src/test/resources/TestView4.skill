@@ -1,0 +1,8 @@
+A {
+  map<A, A> field;
+
+  view A.field as
+  B field;
+}
+
+B {}

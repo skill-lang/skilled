@@ -1,0 +1,9 @@
+A : B {
+  annotation field;
+  view C.field as
+  A field;
+}
+
+B : C {}
+
+C {}
