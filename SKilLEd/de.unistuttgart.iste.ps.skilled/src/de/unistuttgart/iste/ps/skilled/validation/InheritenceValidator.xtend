@@ -31,8 +31,7 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	public var boolean cyclic;
 	public var Set<String> declarationsVisited
 
-	override register(EValidatorRegistrar registar) {
-	}
+	override register(EValidatorRegistrar registar) {}
 
 	@Check
 	def searchCyclicType(TypeDeclaration dec) {

@@ -18,56 +18,54 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
  * 
  */
 class DuplicatedTypenameValidation extends AbstractDeclarativeValidator {
-	private var List<String > fieldNames //List with all FieldNames in validate
-	private var List<TypeDeclaration> declarations //declarations of Types where fieldNames were already looked at
-	private TypeDeclaration validate //The declaration that is checked
+	private var List<String> fieldNames // List with all FieldNames in validate
+	private var List<TypeDeclaration> declarations // declarations of Types where fieldNames were already looked at
+	private TypeDeclaration validate // The declaration that is checked
 	public static var FIELDNAME_ALREADY_EXISTS = "alreadyExists"
-	
-	override register(EValidatorRegistrar registar) {
-	}	
+
+	override register(EValidatorRegistrar registar) {}
 
 	@Check
 	def searchDuplicatedDeclaration(TypeDeclaration dec) {
 		validate = dec
 		fieldNames = new ArrayList<String>
 		declarations = new ArrayList<TypeDeclaration>
-		for(Field f: dec.fields){
+		for (Field f : dec.fields) {
 			fieldNames.add(f.fieldcontent.name)
 		}
 		searchSupertypes(dec)
-		
+
 	}
-	
+
 	/**
 	 * Search dec and gives an error if there is a fieldname in a that is also fieldname in validate, 
 	 * calls searchSupertypes for all supertypes of dec that are not in declarations
 	 * @param dec The TypeDeclaration
 	 */
-	def void searchSupertypes(TypeDeclaration dec){
-		if(!declarations.contains(dec)){
+	def void searchSupertypes(TypeDeclaration dec) {
+		if (!declarations.contains(dec)) {
 			declarations.add(dec)
-			for(Field f: dec.fields){
-				if(fieldNames.contains(f.fieldcontent.name)){
-					error(f.fieldcontent.name)		
+			for (Field f : dec.fields) {
+				if (fieldNames.contains(f.fieldcontent.name)) {
+					error(f.fieldcontent.name)
 				}
 			}
-			for(TypeDeclarationReference d: dec.supertypes){
+			for (TypeDeclarationReference d : dec.supertypes) {
 				searchSupertypes(d.type)
 			}
 		}
 	}
-	
+
 	/**
 	 * Gives an Error for the duplicated field
 	 * @param name The name of the field
 	 */
-	def void error(String name){
-		for(Field f: validate.fields){
-			if(f.fieldcontent.name.equals(name)){
-				//Fieldname already exists in a supertype!
+	def void error(String name) {
+		for (Field f : validate.fields) {
+			if (f.fieldcontent.name.equals(name)) {
 				error("Error: Fieldname already exists in a supertype!", f.fieldcontent,
-				SKilLPackage.Literals.FIELDCONTENT__NAME, FIELDNAME_ALREADY_EXISTS, f.fieldcontent.name)			
+					SKilLPackage.Literals.FIELDCONTENT__NAME, FIELDNAME_ALREADY_EXISTS, f.fieldcontent.name)
 			}
-		}			
+		}
 	}
 }
