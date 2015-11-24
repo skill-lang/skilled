@@ -24,12 +24,12 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	public static val CYCLIC_TYPES = 'cyclicTypes'
 	public static val TYPE_IS_HIS_OWN_PARENT = 'cycleError'
 	public static val MULTIPLE_INHERITENCE = 'inheritenceError'
-	public static var index = 0
-	public static var Set<CyclicTypesNode> edges
-	public static var Stack<CyclicTypesNode> nodes_stack = new Stack()
-	public static var CyclicTypesNode firstnode;
+	public var index = 0
+	public var Set<CyclicTypesNode> edges
+	public var Stack<CyclicTypesNode> nodes_stack = new Stack()
+	public var CyclicTypesNode firstnode;
 	public var boolean cyclic;
-	public static var Set<String> declarationsVisited
+	public var Set<String> declarationsVisited
 
 	override register(EValidatorRegistrar registar) {
 	}
