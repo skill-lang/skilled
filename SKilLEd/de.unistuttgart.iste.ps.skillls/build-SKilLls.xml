@@ -106,7 +106,7 @@
 
     <target depends="setup" name="build-skillls">
         <mkdir dir="out/production/SKilLls"/>
-        <javac srcdir="src" fork="true" debug="true" debuglevel="${debuglevel}" destdir="out/production/SKilLls" includeantruntime="false" source="${source}" target="${target}">
+        <javac srcdir="src" fork="true" debug="true" debuglevel="${debuglevel}" destdir="out/production/SKilLls" includeantruntime="false" source="${source}" target="${target}" encoding="UTF8">
             <classpath refid="SKilLls.classpath"/>
         </javac>
     </target>
