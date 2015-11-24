@@ -31,7 +31,7 @@ class TestTypenameEquivalence {
 	var static String Equivalent4 = "";
 
 	@BeforeClass
-	def void setup() {
+	def static void setup() {
 		nonEquivalent = FileLoader.loadFile("NonEquivalent");
 		Equivalent1 = FileLoader.loadFile("Equivalent1");
 		Equivalent2 = FileLoader.loadFile("Equivalent2");

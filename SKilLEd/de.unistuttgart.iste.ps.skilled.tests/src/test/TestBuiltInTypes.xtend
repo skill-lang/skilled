@@ -54,7 +54,7 @@ class TestBuiltInTypes {
 		val specification = testBasicFieldTypes.parse
 
 		val usertype = specification.declarations.get(0) as TypeDeclarationImpl;
-		Assert::assertEquals("UserType", usertype.name);
+		Assert::assertEquals("usertype", usertype.name);
 		val fields = usertype.fields;
 		val field1 = fields.get(0);
 		Assert::assertEquals("int1", field1.fieldcontent.name);
@@ -146,7 +146,7 @@ class TestBuiltInTypes {
   		Assert::assertEquals(type, ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(1) as DeclarationReferenceImpl).type);
   		Assert::assertEquals("string", ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(2) as Stringtype).type);
   		Assert::assertEquals("bool", ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(3) as Booleantype).type);
-  		Assert::assertEquals("readOnly", c.hints.get(0).hintName);
+  		Assert::assertEquals("readonly", c.hints.get(0).hintName);
   	}
   	
   	@Test

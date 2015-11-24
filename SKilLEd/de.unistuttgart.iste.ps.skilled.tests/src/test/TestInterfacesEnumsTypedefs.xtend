@@ -51,7 +51,7 @@ class TestInterfacesEnumsTypedefs {
   		
   		val I = specification.declarations.get(0) as InterfacetypeImpl;
   		Assert::assertEquals("/*interface comment*/", I.comment);
-  		Assert::assertEquals("I", I.name);
+  		Assert::assertEquals("i", I.name);
   		val fields1 = I.fields;
   		Assert::assertEquals("field1", fields1.get(0).fieldcontent.name);
   		Assert::assertEquals("field2", fields1.get(1).fieldcontent.name);
@@ -104,9 +104,9 @@ class TestInterfacesEnumsTypedefs {
   		
   		val enum = specification.declarations.get(0) as EnumtypeImpl;
   		Assert::assertEquals("/*enum description*/", enum.comment);
-  		Assert::assertEquals("Day", enum.name);
-  		Assert::assertEquals("Monday", enum.instances.get(0));
-  		Assert::assertEquals("Sunday", enum.instances.get(6));
+  		Assert::assertEquals("day", enum.name);
+  		Assert::assertEquals("monday", enum.instances.get(0));
+  		Assert::assertEquals("sunday", enum.instances.get(6));
   		Assert::assertEquals("day", enum.fields.get(0).fieldcontent.name);
   		Assert::assertEquals(Integer.I8, (enum.fields.get(0).fieldcontent.fieldtype as Integertype).type);
   		val day = (specification.declarations.get(1) as UsertypeImpl).fields.get(2);
@@ -119,10 +119,10 @@ class TestInterfacesEnumsTypedefs {
   		
   		val asdf = specification.declarations.get(0) as TypedefImpl;
   		Assert::assertEquals("/*typedef description*/", asdf.comment);
-  		Assert::assertEquals("Asdf", asdf.name);
+  		Assert::assertEquals("asdf", asdf.name);
   		Assert::assertEquals("unique", asdf.restrictions.get(0).restrictionName);
   		Assert::assertEquals("monotone", asdf.restrictions.get(1).restrictionName);
-  		Assert::assertEquals("removeUnknownRestrictions", asdf.hints.get(0).hintName);
+  		Assert::assertEquals("removeunknownrestrictions", asdf.hints.get(0).hintName);
   		Assert::assertEquals("unknown", asdf.hints.get(0).hintArguments.get(0).valueString);
   	}
   	
@@ -137,14 +137,14 @@ class TestInterfacesEnumsTypedefs {
 		val aORb = specification.declarations.get(4) as TypedefImpl;
 		Assert::assertEquals(a, (asdf.fieldtype as DeclarationReferenceImpl).type);
 		
-		Assert::assertEquals("Natural", natural.name);
+		Assert::assertEquals("natural", natural.name);
 		Assert::assertEquals("min", natural.restrictions.get(0).restrictionName);
 		Assert::assertEquals(0, natural.restrictions.get(0).restrictionArguments.get(0).valueLong);
 		Assert::assertEquals(Integer.I64, (natural.fieldtype as Integertype).type);
 		
-		Assert::assertEquals("oneOf", aORb.restrictions.get(0).restrictionName);
+		Assert::assertEquals("oneof", aORb.restrictions.get(0).restrictionName);
 		Assert::assertEquals(b, aORb.restrictions.get(0).restrictionArguments.get(1).valueType.type);
-		Assert::assertEquals("AorB", aORb.name);
+		Assert::assertEquals("aorb", aORb.name);
 		Assert::assertEquals("annotation", (aORb.fieldtype as Annotationtype).type);
   	}
 }

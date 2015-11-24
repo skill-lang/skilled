@@ -49,7 +49,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 					SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 			} else {
 				switch (restriction.restrictionName) {
-					case 'nonNull': {
+					case 'nonnull': {
 						var errorFound = false;
 						if (fieldType instanceof Settype || fieldType instanceof Listtype ||
 							fieldType instanceof Arraytype) {
@@ -372,7 +372,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 								SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 						}
 					}
-					case 'constantLenghtPointer': {
+					case 'constantlenghtpointer': {
 						var errorFound = false;
 						if (fieldType instanceof Settype || fieldType instanceof Listtype ||
 							fieldType instanceof Arraytype) {
@@ -404,7 +404,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 						}
 						constantLenghtPointerUsed = true;
 					}
-					case 'oneOf': {
+					case 'oneof': {
 						if (fieldType instanceof Settype || fieldType instanceof Listtype ||
 							fieldType instanceof Arraytype) {
 							error("The One Of restriction can only be used on annotations and user-types.", restriction,

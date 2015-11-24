@@ -68,14 +68,14 @@ class TestCommentsHintsRestrictions {
 		val specification = testHints.parse
 
 		val usertype = specification.declarations.get(0) as UsertypeImpl;
-		Assert::assertEquals("removeUnknownRestrictions", usertype.hints.get(0).hintName);
+		Assert::assertEquals("removeunknownrestrictions", usertype.hints.get(0).hintName);
 		Assert::assertEquals("unique",((usertype.hints.get(0) as HintImpl).hintArguments.get(0).valueString));
 		Assert::assertEquals("monotone",((usertype.hints.get(0) as HintImpl).hintArguments.get(1).valueString));
 		Assert::assertEquals("mixin", usertype.hints.get(1).hintName);
 		Assert::assertEquals("unique", usertype.hints.get(2).hintName);
 		Assert::assertEquals("pure", usertype.hints.get(3).hintName);
 		Assert::assertEquals("monotone", usertype.hints.get(4).hintName);
-		Assert::assertEquals("readOnly", usertype.hints.get(5).hintName);
+		Assert::assertEquals("readonly", usertype.hints.get(5).hintName);
 	}
 
 	@Test
@@ -85,12 +85,12 @@ class TestCommentsHintsRestrictions {
 		val usertype = specification.declarations.get(0) as UsertypeImpl;
 		val fields = usertype.fields;
 		val field1 = fields.get(0);
-		Assert::assertEquals("constantMutator", field1.hints.get(0).hintName);
+		Assert::assertEquals("constantmutator", field1.hints.get(0).hintName);
 		Assert::assertEquals(-17, (field1.hints.get(0) as HintImpl).hintArguments.get(0).valueLong);
 		Assert::assertEquals(3000000000L, (field1.hints.get(0) as HintImpl).hintArguments.get(1).valueLong);
 		val field2 = fields.get(1);
 		Assert::assertEquals("distributed", field2.hints.get(0).hintName);
-		Assert::assertEquals("onDemand", field2.hints.get(1).hintName);
+		Assert::assertEquals("ondemand", field2.hints.get(1).hintName);
 		val field3 = fields.get(2);
 		Assert::assertEquals("ignore", field3.hints.get(0).hintName);
 		val field4 = fields.get(3);
@@ -174,10 +174,10 @@ class TestCommentsHintsRestrictions {
 		val usertype2 = specification.declarations.get(1) as UsertypeImpl;
 		val fields2 = usertype2.fields;
 		Assert::assertEquals("nonnull", fields2.get(0).restrictions.get(0).restrictionName);
-		Assert::assertEquals("constantLengthPointer", fields2.get(0).restrictions.get(1).restrictionName);
-		Assert::assertEquals("constantLengthPointer", fields2.get(1).restrictions.get(0).restrictionName);
-		Assert::assertEquals("constantLengthPointer", fields2.get(2).restrictions.get(0).restrictionName);
-		Assert::assertEquals("oneOf", fields2.get(2).restrictions.get(1).restrictionName);
+		Assert::assertEquals("constantlengthpointer", fields2.get(0).restrictions.get(1).restrictionName);
+		Assert::assertEquals("constantlengthpointer", fields2.get(1).restrictions.get(0).restrictionName);
+		Assert::assertEquals("constantlengthpointer", fields2.get(2).restrictions.get(0).restrictionName);
+		Assert::assertEquals("oneof", fields2.get(2).restrictions.get(1).restrictionName);
 	}
 
 	@Test
@@ -253,7 +253,7 @@ class TestCommentsHintsRestrictions {
 		val usertype1 = specification.declarations.get(0) as UsertypeImpl;
 		val usertype2 = specification.declarations.get(1) as UsertypeImpl;
 		val typedef = specification.declarations.get(4) as TypedefImpl;
-		Assert::assertEquals("oneOf", typedef.restrictions.get(0).restrictionName);
+		Assert::assertEquals("oneof", typedef.restrictions.get(0).restrictionName);
 		Assert::assertEquals(usertype1 as TypeDeclaration,
 			typedef.restrictions.get(0).restrictionArguments.get(0).valueType.type);
 		Assert::assertEquals(usertype2 as TypeDeclaration,
@@ -266,7 +266,7 @@ class TestCommentsHintsRestrictions {
 
 		val I = specification.declarations.get(0) as InterfacetypeImpl;
 		Assert::assertEquals("/*interface comment*/", I.comment);
-		Assert::assertEquals("I", I.name);
+		Assert::assertEquals("i", I.name);
 
 		val fields1 = I.fields;
 		val type1 = specification.declarations.get(1) as TypeDeclarationImpl;
