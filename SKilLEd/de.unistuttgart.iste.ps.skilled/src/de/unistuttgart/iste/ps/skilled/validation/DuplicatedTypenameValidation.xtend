@@ -33,8 +33,9 @@ class DuplicatedTypenameValidation extends AbstractDeclarativeValidator {
 		for (Field f : dec.fields) {
 			fieldNames.add(f.fieldcontent.name)
 		}
-		searchSupertypes(dec)
-
+		for(TypeDeclarationReference d : dec.supertypes){
+			searchSupertypes(d.type)
+		}
 	}
 
 	/**
