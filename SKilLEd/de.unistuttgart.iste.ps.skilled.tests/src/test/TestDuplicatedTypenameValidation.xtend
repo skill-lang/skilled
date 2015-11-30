@@ -51,19 +51,6 @@ class TestDuplicatedTypenameValidation {
 	}
 
 	@Test
-	def void testNoErrorView2() {
-		assertTrue('''
-			A{
-				A x;
-			}
-			B : A {
-				view A.x as
-				B x;
-			}
-		'''.parse.validate.isNullOrEmpty)
-	}
-
-	@Test
 	def void testErrorDuplicatedFieldname() {
 		assertTrue('''
 			TypeA {
