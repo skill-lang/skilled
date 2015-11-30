@@ -119,7 +119,7 @@ Workflow {
 			fragment = compare.CompareFragment auto-inject {}
 
 			// rename refactoring
-			fragment = refactoring.RefactorElementNameFragment {}
+			fragment = refactoring.RefactorElementNameFragment auto-inject {}
 		}
 	}
 }

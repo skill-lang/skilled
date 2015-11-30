@@ -24,10 +24,6 @@ import org.eclipse.core.runtime.Path
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
-import org.eclipse.swt.widgets.Display
-import org.eclipse.ui.IEditorReference
-import org.eclipse.ui.PlatformUI
-import org.eclipse.ui.texteditor.ITextEditor
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
@@ -69,19 +65,21 @@ class ScopingValidator extends AbstractSKilLValidator {
 		var List<URI> allFilesUri = new LinkedList<URI>();
 		for (File f : files) {
 			copyOfAllFiles.add(EcoreUtil2.copy(f));
-		}
-
-		for (File f : copyOfAllFiles) {
 			allFilesUri.add(f.eResource.URI);
 		}
 
 		files = null;
-
+		if (oldFiles == null) {
+			oldFiles = new HashMap<IProject, List<File>>();
+		}
+		if (oldFilesURI == null) {
+			oldFilesURI = new HashMap<IProject, List<URI>>();
+		}
 		if (oldFiles.get(fileProject) == null) {
 			dependencyGraphInUse.generate(copyOfAllFiles, allFilesUri);
 			oldFiles.put(fileProject, copyOfAllFiles);
 			oldFilesURI.put(fileProject, allFilesUri);
-			rerun(file);
+			rebuild(file);
 		} else {
 			var filesNew = copyOfAllFiles;
 			var filesNewURI = allFilesUri;
@@ -90,7 +88,7 @@ class ScopingValidator extends AbstractSKilLValidator {
 				dependencyGraphInUse.generate(copyOfAllFiles, allFilesUri);
 				oldFiles.put(fileProject, copyOfAllFiles);
 				oldFilesURI.put(fileProject, allFilesUri);
-				rerun(file);
+				rebuild(file);
 			}
 		}
 	}
@@ -134,17 +132,18 @@ class ScopingValidator extends AbstractSKilLValidator {
 					INDIRECT_OR_TRANSITIVE_INCLUDED_FILE);
 			}
 		} else {
-			error("Required file isn't included.", object, reference, NOT_INCLUDED_FILE);
+			if (reference != null) {
+				error("Required file isn't included.", object, reference, NOT_INCLUDED_FILE);
+			}
 		}
 	}
 
 	def boolean equals(List<File> files1, List<URI> files1URI, List<File> files2, List<URI> files2URI) {
-
 		for (var int j = 0; j < files1.size(); j++) {
 			var File file1 = files1.get(j);
 			var boolean equal = false;
 			for (var int i = 0; i < files2.size(); i++) {
-				if (files1URI.get(j).path.equals(files2.get(i).eResource.URI.path)) {
+				if (files1URI.get(j).path.equals(files2URI.get(i).path)) {
 					if (equalObjectImports(file1, files2.get(i), files1URI.get(j), files2URI.get(i))) {
 						equal = true;
 					} else {
@@ -185,39 +184,13 @@ class ScopingValidator extends AbstractSKilLValidator {
 		return true;
 	}
 
-	def rerun(File file) {
+	def rebuild(File file) {
 		var String platformString = file.eResource.getURI().toPlatformString(true);
 		var IFile ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
 		var IProject project = ifile.getProject();
 		if (project.getNature("org.eclipse.xtext.ui.shared.xtextNature") != null) {
-
 			project.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());
 			project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-			updateEditors();
-
 		}
-	}
-
-	/**
-	 * This method should upate all editors, but it seems not working at all.
-	 */
-	def updateEditors() {
-		var Display display = Display.getCurrent();
-		if (display == null) {
-			// Otherwise get the display associated with the UI thread
-			display = Display.getDefault();
-		}
-		display.syncExec(
-			new Runnable() {
-
-				// We can only get the editors, if we are in an UI thread.
-				override run() {
-					for (IEditorReference wind : PlatformUI.workbench.activeWorkbenchWindow.activePage.
-						editorReferences) {
-						(wind.getEditor(true) as ITextEditor).documentProvider.resetDocument(null);
-					}
-				}
-			}
-		);
 	}
 }
