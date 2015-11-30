@@ -1,0 +1,5 @@
+#HeadComment
+#HeadComment2
+with "address1.skill" "RemoveWithAndIncludeAddressesThatRequireThePreCombinedFilesA.skill"
+include "RemoveWithAndIncludeAddressesThatRequireThePreCombinedFilesA.skill" "address4.skill"
+B {}
