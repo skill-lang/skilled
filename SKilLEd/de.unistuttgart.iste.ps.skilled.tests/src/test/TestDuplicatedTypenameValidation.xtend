@@ -41,11 +41,11 @@ class TestDuplicatedTypenameValidation {
 	def void testNoErrorView() {
 		assertTrue('''
 			A{
-				annotation a;
+				A a;
 			}
 			B : A {
 				view A.a as
-				i8 a;
+				B a;
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
@@ -54,11 +54,11 @@ class TestDuplicatedTypenameValidation {
 	def void testNoErrorView2() {
 		assertTrue('''
 			A{
-				i8 b;
+				A x;
 			}
 			B : A {
-				view A.b as
-				i8 b;
+				view A.x as
+				B x;
 			}
 		'''.parse.validate.isNullOrEmpty)
 	}
