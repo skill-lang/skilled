@@ -11,6 +11,7 @@ import org.junit.Assert
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.xtext.validation.Issue
 
 /**
  * @author Tobias Heck
@@ -31,8 +32,14 @@ class TestEscaping {
 	
 	@Test
 	def void test() {
-		val issueCount = specification.parse.validate.size;
 		
-		Assert::assertTrue(issueCount == 0);
+		var boolean warningASCIIExists = false;
+		for (Issue i: specification.parse.validate) {
+			if (i.message.contains("Warning") && i.message.contains("non-ASCII-Chars")) {
+				warningASCIIExists = true;
+			}
+		}
+		
+		Assert::assertTrue(warningASCIIExists);
 	}
 }
