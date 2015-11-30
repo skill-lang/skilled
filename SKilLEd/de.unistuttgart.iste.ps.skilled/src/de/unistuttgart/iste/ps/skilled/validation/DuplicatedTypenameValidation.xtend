@@ -9,6 +9,7 @@ import java.util.ArrayList
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import org.eclipse.xtext.validation.EValidatorRegistrar
+import de.unistuttgart.iste.ps.skilled.sKilL.View
 
 /**
  * @author Jan Berberich
@@ -59,14 +60,16 @@ class DuplicatedTypenameValidation extends AbstractDeclarativeValidator {
 	}
 
 	/**
-	 * Gives an Error for the duplicated field
+	 * Gives an Error for the duplicated field if it is not a view
 	 * @param name The name of the field
 	 */
 	def void error(String name) {
 		for (Field f : validate.fields) {
 			if (f.fieldcontent.name.equals(name)) {
-				error("Error: Fieldname already exists in a supertype!", f.fieldcontent,
+				if(!(f.fieldcontent instanceof View)){
+					error("Error: Fieldname already exists in a supertype!", f.fieldcontent,
 					SKilLPackage.Literals.FIELDCONTENT__NAME, FIELDNAME_ALREADY_EXISTS, f.fieldcontent.name)
+				}
 			}
 		}
 	}
