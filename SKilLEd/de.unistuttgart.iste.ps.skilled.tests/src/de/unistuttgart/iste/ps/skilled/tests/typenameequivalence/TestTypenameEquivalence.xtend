@@ -32,11 +32,11 @@ class TestTypenameEquivalence {
 
 	@BeforeClass
 	def static void setup() {
-		nonEquivalent = FileLoader.loadFile("NonEquivalent");
-		Equivalent1 = FileLoader.loadFile("Equivalent1");
-		Equivalent2 = FileLoader.loadFile("Equivalent2");
-		Equivalent3 = FileLoader.loadFile("Equivalent3");
-		Equivalent4 = FileLoader.loadFile("Equivalent4");
+		nonEquivalent = FileLoader.loadFile("typenameequivalence/NonEquivalent");
+		Equivalent1 = FileLoader.loadFile("typenameequivalence/Equivalent1");
+		Equivalent2 = FileLoader.loadFile("typenameequivalence/Equivalent2");
+		Equivalent3 = FileLoader.loadFile("typenameequivalence/Equivalent3");
+		Equivalent4 = FileLoader.loadFile("typenameequivalence/Equivalent4");
 	}
 	
 	@Test

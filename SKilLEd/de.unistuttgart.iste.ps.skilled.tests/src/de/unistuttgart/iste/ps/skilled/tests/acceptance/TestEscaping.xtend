@@ -28,7 +28,7 @@ class TestEscaping {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("escaping");	
+		specification = FileLoader.loadFile("acceptance/escaping");	
 	}
 	
 	@Test

@@ -40,18 +40,18 @@ class TestEdgeCases {
 	@BeforeClass
 	def static void setup() {
 		testInheritageOfASingleTypeViaSeveralInterfaces = FileLoader.loadFile(
-			"TestInheritageOfASingleTypeViaSeveralInterfaces");
+			"edgecases/TestInheritageOfASingleTypeViaSeveralInterfaces");
 		testInheritageOfASingleTypeViaInterfaceAndType = FileLoader.loadFile(
-			"TestInheritageOfASingleTypeViaInterfaceAndType");
+			"edgecases/TestInheritageOfASingleTypeViaInterfaceAndType");
 		testInheritageOfASingleTypeTwiceViaOneInterface = FileLoader.loadFile(
-			"TestInheritageOfASingleTypeTwiceViaOneInterface");
+			"edgecases/TestInheritageOfASingleTypeTwiceViaOneInterface");
 		testDeclarationOfInheritedField = FileLoader.loadFile(
-			"TestDeclarationOfInheritedField");
-		testDuplicateFieldNames = FileLoader.loadFile("TestDuplicateFieldNames");
-		test = FileLoader.loadFile("Test");
+			"edgecases/TestDeclarationOfInheritedField");
+		testDuplicateFieldNames = FileLoader.loadFile("edgecases/TestDuplicateFieldNames");
+		test = FileLoader.loadFile("edgecases/Test");
 		testRestrictionCaseInsensitivity = FileLoader.loadFile(
-			"TestRestrictionCaseInsensitivity");
-		testDefault = FileLoader.loadFile("TestDefault");
+			"edgecases/TestRestrictionCaseInsensitivity");
+		testDefault = FileLoader.loadFile("edgecases/TestDefault");
 	}
 	
 	@Test

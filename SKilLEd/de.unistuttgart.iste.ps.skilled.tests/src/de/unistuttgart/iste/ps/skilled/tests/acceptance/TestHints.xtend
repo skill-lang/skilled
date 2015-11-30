@@ -27,7 +27,7 @@ class TestHints {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("hints");	
+		specification = FileLoader.loadFile("acceptance/hints");	
 	}
 	
 	@Test

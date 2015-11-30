@@ -27,7 +27,7 @@ class TestUnicode {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("unicode");
+		specification = FileLoader.loadFile("acceptance/unicode");
 	}
 	
 	@Test

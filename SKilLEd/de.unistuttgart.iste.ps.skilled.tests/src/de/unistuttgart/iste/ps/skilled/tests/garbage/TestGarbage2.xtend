@@ -31,11 +31,11 @@ class TestGarbage2 {
 	
 	@BeforeClass
 	def static void setup() {
-		garbage6 = FileLoader.loadFile("Garbage6");
-		garbage7 = FileLoader.loadFile("Garbage7");
-		garbage8 = FileLoader.loadFile("Garbage8");
-		garbage9 = FileLoader.loadFile("Garbage9");
-		garbage10 = FileLoader.loadFile("Garbage10");
+		garbage6 = FileLoader.loadFile("garbage/Garbage6");
+		garbage7 = FileLoader.loadFile("garbage/Garbage7");
+		garbage8 = FileLoader.loadFile("garbage/Garbage8");
+		garbage9 = FileLoader.loadFile("garbage/Garbage9");
+		garbage10 = FileLoader.loadFile("garbage/Garbage10");
 	}
 	
 	@Test

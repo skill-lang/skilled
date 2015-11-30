@@ -1,4 +1,5 @@
-package test
+package de.unistuttgart.iste.ps.skilled.tests.validation.asciichar;
+
 import static org.junit.Assert.*;
 
 import org.eclipse.xtext.junit4.InjectWith;

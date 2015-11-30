@@ -27,7 +27,7 @@ class TestNumber {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("number");
+		specification = FileLoader.loadFile("acceptance/number");
 	}
 	
 	@Test

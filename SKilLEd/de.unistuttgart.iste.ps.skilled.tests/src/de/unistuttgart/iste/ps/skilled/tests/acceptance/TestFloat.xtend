@@ -27,7 +27,7 @@ class TestFloat {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("float");	
+		specification = FileLoader.loadFile("acceptance/float");	
 	}
 	
 	@Test

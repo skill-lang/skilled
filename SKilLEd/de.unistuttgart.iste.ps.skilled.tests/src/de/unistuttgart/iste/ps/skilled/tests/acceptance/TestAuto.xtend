@@ -27,7 +27,7 @@ class TestAuto {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("auto");
+		specification = FileLoader.loadFile("acceptance/auto");
 	}
 	
 	@Test

@@ -50,12 +50,12 @@ class TestCommentsHintsRestrictions {
 
 	@BeforeClass
 	def static void setup() {
-		testHints = FileLoader.loadFile("TestHints");
-		testComments = FileLoader.loadFile("TestComments");
-		testHexint = FileLoader.loadFile("TestHexint");
-		testRestrictions = FileLoader.loadFile("TestRestrictions");
-		testInterfaces = FileLoader.loadFile("TestInterfaces");
-		testAuto = FileLoader.loadFile("TestAuto");
+		testHints = FileLoader.loadFile("hints/TestHints");
+		testComments = FileLoader.loadFile("comments/TestComments");
+		testHexint = FileLoader.loadFile("hexint/TestHexint");
+		testRestrictions = FileLoader.loadFile("validation/restrictions/TestRestrictions");
+		testInterfaces = FileLoader.loadFile("interfaces/TestInterfaces");
+		testAuto = FileLoader.loadFile("builtintypes/TestAuto");
 	}
 
 	@Test

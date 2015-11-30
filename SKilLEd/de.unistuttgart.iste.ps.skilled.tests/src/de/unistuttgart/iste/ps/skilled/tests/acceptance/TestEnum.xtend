@@ -27,7 +27,7 @@ class TestEnum {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("enum");
+		specification = FileLoader.loadFile("acceptance/enum");
 	}
 	
 	@Test

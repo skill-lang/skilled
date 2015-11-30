@@ -1,4 +1,4 @@
-package test
+package de.unistuttgart.iste.ps.skilled.tests.validation.duplicatetypenames;
 
 import static org.junit.Assert.*;
 

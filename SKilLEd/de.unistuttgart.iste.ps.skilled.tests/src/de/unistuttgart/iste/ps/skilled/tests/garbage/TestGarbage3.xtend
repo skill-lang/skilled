@@ -29,9 +29,9 @@ class TestGarbage3 {
 	
 	@BeforeClass
 	def static void setup() {
-		garbage11 = FileLoader.loadFile("Garbage11");
-		garbage12 = FileLoader.loadFile("Garbage12");
-		garbage13 = FileLoader.loadFile("Garbage13");
+		garbage11 = FileLoader.loadFile("garbage/Garbage11");
+		garbage12 = FileLoader.loadFile("garbage/Garbage12");
+		garbage13 = FileLoader.loadFile("garbage/Garbage13");
 	}
 	
 	@Test

@@ -27,7 +27,7 @@ class TestGraphInterface {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("graphInterface");
+		specification = FileLoader.loadFile("acceptance/graphInterface");
 	}
 	
 	@Test

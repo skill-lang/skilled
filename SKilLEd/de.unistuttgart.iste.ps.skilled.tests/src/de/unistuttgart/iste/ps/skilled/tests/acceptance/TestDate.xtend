@@ -27,7 +27,7 @@ class TestDate {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("date");
+		specification = FileLoader.loadFile("acceptance/date");
 	}
 	
 	@Test

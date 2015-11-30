@@ -27,7 +27,7 @@ class TestUser {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("user");
+		specification = FileLoader.loadFile("acceptance/user");
 	}
 	
 	@Test

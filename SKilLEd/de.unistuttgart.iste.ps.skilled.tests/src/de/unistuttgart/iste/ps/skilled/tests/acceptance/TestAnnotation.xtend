@@ -27,7 +27,7 @@ class TestAnnotation {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("annotation");	
+		specification = FileLoader.loadFile("acceptance/annotation");	
 	}
 	
 	@Test

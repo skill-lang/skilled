@@ -27,7 +27,7 @@ class TestRestrictionsAll {
 
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("restrictionsAll");
+		specification = FileLoader.loadFile("validation/restrictions/restrictionsAll");
 	}
 
 	@Test

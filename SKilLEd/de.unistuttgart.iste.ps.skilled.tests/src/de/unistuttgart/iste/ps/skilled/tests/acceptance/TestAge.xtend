@@ -27,7 +27,7 @@ class TestAge {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("age");
+		specification = FileLoader.loadFile("acceptance/age");
 	}
 	
 	@Test

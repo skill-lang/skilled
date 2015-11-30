@@ -41,9 +41,9 @@ class TestInterfacesEnumsTypedefs {
 	
 	@BeforeClass
 	def static void setup() {
-		testInterfaces = FileLoader.loadFile("TestInterfaces");
-		testEnum = FileLoader.loadFile("TestEnum");
-		testTypedef = FileLoader.loadFile("TestTypedef");
+		testInterfaces = FileLoader.loadFile("interfaces/TestInterfaces");
+		testEnum = FileLoader.loadFile("enum/TestEnum");
+		testTypedef = FileLoader.loadFile("typedef/TestTypedef");
 	}
 	
 	@Test

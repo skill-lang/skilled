@@ -27,7 +27,7 @@
         <delete dir="xtend-gen"/>
         <delete dir="src-gen"/>
         <delete dir="bin"/>
-        <delete dir="src/test"/>
+        <delete dir="resources"/>
         <delete dir="${tests-project-path}/ant" />
         <delete dir="${tests-project-path}/xtend-gen" />
         <delete dir="${tests-project-path}/src-gen" />
@@ -160,9 +160,9 @@
 
     <target name="do-tests">
         <mkdir dir="ant/junit"/>
-        <mkdir dir="src/test/resources"/>
-        <copy todir="src/test/resources">
-            <fileset dir="${tests-project-path}/src/test/resources"/>
+        <mkdir dir="resources"/>
+        <copy todir="resources">
+            <fileset dir="${tests-project-path}/resources"/>
         </copy>
         <jacoco:coverage destfile="ant/junit/jacoco_SKilLEd.exec">
             <junit fork="yes" printsummary="withOutAndErr" haltonerror="false" haltonfailure="false">
@@ -177,7 +177,7 @@
                 </batchtest>
             </junit>
         </jacoco:coverage>
-        <delete dir="src/test"/>
+        <delete dir="resources"/>
     </target>
     
     <target name="make-jar-skilled-tests" depends="compile-java-tests">

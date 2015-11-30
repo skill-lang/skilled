@@ -27,7 +27,7 @@ class TestEmpty {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("empty");
+		specification = FileLoader.loadFile("acceptance/empty");
 	}
 	
 	@Test

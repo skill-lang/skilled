@@ -27,7 +27,7 @@ class TestSubtypesExample {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("subtypesExample");
+		specification = FileLoader.loadFile("acceptance/subtypesExample");
 	}
 	
 	@Test

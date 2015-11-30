@@ -27,7 +27,7 @@ class TestConstant {
 	
 	@BeforeClass
 	def static void setup() {
-		specification = FileLoader.loadFile("constant");
+		specification = FileLoader.loadFile("acceptance/constant");
 	}
 	
 	@Test
