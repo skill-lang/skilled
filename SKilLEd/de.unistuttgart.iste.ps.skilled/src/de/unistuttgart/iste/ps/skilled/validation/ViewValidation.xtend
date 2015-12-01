@@ -15,8 +15,11 @@ class ViewValidation extends AbstractDeclarativeValidator{
 		for (Field f : td.fields) {
 			//Check if Field is a View
 			if((f.fieldcontent instanceof View)){
-				//Validate
-			}	
+				var View v = f.fieldcontent as View
+				print(f.fieldcontent.name)
+				print(v.fieldcontent.eContainer);
+				print(v.fieldcontent.fieldcontent.name);
+			}				
 		}
 	}
 	
