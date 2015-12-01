@@ -8,10 +8,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.utils.EditorUtils;
+
 public class SKilLRemoveHints {
 
 	public void run() {
-		// TODO
+		XtextEditor editor = EditorUtils.getActiveXtextEditor();
 		File f = new File("TODO");
 		try {
 			FileWriter fw = new FileWriter(f, true);
