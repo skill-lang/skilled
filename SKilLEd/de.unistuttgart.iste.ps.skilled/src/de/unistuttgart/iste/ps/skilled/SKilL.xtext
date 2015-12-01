@@ -38,7 +38,10 @@ Typedef:
 
 Enumtype:
 	comment=ML_COMMENT?
-	'enum' name=ID '{' instances+=XID (',' instances+=XID)* ';' (fields+=Field)* '}';
+	'enum' name=ID '{' instances+=Enuminstance (',' instances+=Enuminstance)* ';' (fields+=Field)* '}';
+
+Enuminstance:
+	name=XID;
 
 Interfacetype:
 	comment=ML_COMMENT?

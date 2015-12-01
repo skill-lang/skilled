@@ -4,7 +4,9 @@
 package de.unistuttgart.iste.ps.skilled;
 
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
 
+import de.unistuttgart.iste.ps.skilled.converter.SKilLQualifiedNameConverters;
 import de.unistuttgart.iste.ps.skilled.converter.SKilLTerminalConverters;
 
 /**
@@ -17,4 +19,9 @@ public class SKilLRuntimeModule extends
 	public Class<? extends IValueConverterService> bindIValueConverterService() {
 		return SKilLTerminalConverters.class;
 	}
+	
+	@Override
+    public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
+        return SKilLQualifiedNameConverters.class;
+    }
 }
