@@ -7,8 +7,14 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent;
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration;
 import de.unistuttgart.iste.ps.skilled.sKilL.Enuminstance;
 
+/**
+ * 
+ * @author Tobias Heck
+ *
+ */
 public class SKilLQualifiedNameConverters extends DefaultDeclarativeQualifiedNameProvider {
 	
+	//get normalized fieldcontent name
 	QualifiedName qualifiedName(Fieldcontent field) {
 		EObject e = field.eContainer();
 		Declaration d = null;
@@ -24,6 +30,7 @@ public class SKilLQualifiedNameConverters extends DefaultDeclarativeQualifiedNam
         return q;
     }
 	
+	//get normalized enuminstance name
 	QualifiedName qualifiedName(Enuminstance enuminstance) {
 		EObject e = enuminstance.eContainer();
 		Declaration d = null;
@@ -39,6 +46,7 @@ public class SKilLQualifiedNameConverters extends DefaultDeclarativeQualifiedNam
         return q;
     }
 	
+	//make names case-insensitive and ignore single underscores
 	private String makeEquivalent(String string) {
 		string = string.toLowerCase();
     	int index = 0;
