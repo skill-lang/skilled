@@ -141,14 +141,20 @@
             <zipfileset excludes="META-INF/*.SF" src="${libs.location}/junit-4.12.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="${libs.location}/hamcrest-core-1.3.jar"/>
         </jar>
-        <copy todir ="../de.unistuttgart.iste.ps.skilled.ui/lib">
-            <file name="out/SKilLls.jar"/>
+        <copy todir="../de.unistuttgart.iste.ps.skilled.ui/lib">
+            <fileset dir="out">
+                <include name="SKilLls.jar"/>
+            </fileset>
         </copy>
-        <copy todir ="../de.unistuttgart.iste.ps.skilled.tests/lib">
-            <file name="out/SKilLls.jar"/>
+        <copy todir="../de.unistuttgart.iste.ps.skilled.tests/lib">
+            <fileset dir="out">
+                <include name="SKilLls.jar"/>
+            </fileset>
         </copy>
-        <copy todir ="../de.unistuttgart.iste.ps.skilled/lib">
-            <file name="out/SKilLls.jar"/>
+        <copy todir="../de.unistuttgart.iste.ps.skilled/lib">
+            <fileset dir="out">
+                <include name="SKilLls.jar"/>
+            </fileset>
         </copy>
     </target>
 </project>
