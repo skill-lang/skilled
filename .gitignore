@@ -136,6 +136,26 @@ runtime-SKilLEd/
 buildroot/
 
 #generated through tests
-SKilLls/generated/
-SKilLls/resources/.skillt/
-SKilLls/resources/.skills
+de.unistuttgart.iste.ps.skillls/generated/
+de.unistuttgart.iste.ps.skillls/resources/.skillt/
+de.unistuttgart.iste.ps.skillls/resources/.skills
+
+#skilled ui
+de.unistuttgart.iste.ps.skilled.ui/lib/SKilLls.jar
+de.unistuttgart.iste.ps.skilled.ui/lib/skill.jvm.common.jar
+de.unistuttgart.iste.ps.skilled.ui/lib/skill.java.common.jar
+
+#skilled
+de.unistuttgart.iste.ps.skilled/lib/SKilLls.jar
+de.unistuttgart.iste.ps.skilled/lib/skill.jvm.common.jar
+de.unistuttgart.iste.ps.skilled/lib/skill.java.common.jar
+
+#skilled tests 
+de.unistuttgart.iste.ps.skilled.tests/lib/SKilLls.jar
+de.unistuttgart.iste.ps.skilled.tests/lib/skill.jvm.common.jar
+de.unistuttgart.iste.ps.skilled.tests/lib/skill.java.common.jar
+
+
+SKilLEd/de.unistuttgart.iste.ps.skilled/lib/SKilLls.jar
+SKilLEd/de.unistuttgart.iste.ps.skilled/lib/skill.java.common.jar
+SKilLEd/de.unistuttgart.iste.ps.skilled/lib/skill.jvm.common.jar

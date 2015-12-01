@@ -204,5 +204,26 @@
         </copy>
     </target>
 
-    <target name="all" depends="clean,generate-xtext-artifacts,compile-xtend,compile-java,make-jar-skilled-tests,do-tests,prepare-xtend-gen"/>
+    <target name="setup-UI-project-libs">
+        <copy todir="${ui-project-path}/lib">
+            <file name="lib/deps/skill.java.common.jar"/>
+            <file name="lib/deps/skill.jvm.common.jar"/>
+        </copy>
+    </target>
+
+    <target name="setup-tests-project-libs">
+        <copy todir="${tests-project-path}/lib">
+            <file name="lib/deps/skill.java.common.jar"/>
+            <file name="lib/deps/skill.jvm.common.jar"/>
+        </copy>
+    </target>
+
+    <target name="setup-project-libs">
+        <copy todir="lib">
+            <file name="lib/deps/skill.java.common.jar"/>
+            <file name="lib/deps/skill.jvm.common.jar"/>
+        </copy>
+    </target>
+
+    <target name="all" depends="clean,setup-UI-project-libs,setup-tests-project-libs,setup-project-libs,generate-xtext-artifacts,compile-xtend,compile-java,make-jar-skilled-tests,do-tests,prepare-xtend-gen"/>
 </project>
