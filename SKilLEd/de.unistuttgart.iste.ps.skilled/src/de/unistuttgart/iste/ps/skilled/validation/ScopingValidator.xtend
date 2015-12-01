@@ -26,9 +26,12 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
+import org.eclipse.xtext.validation.CheckType
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
 /**
+ * Validation for the correct usage of linked declaration. It checks whether the needed skill file is included.
+ * 
  * @author Marco Link
  */
 class ScopingValidator extends AbstractSKilLValidator {
@@ -36,7 +39,7 @@ class ScopingValidator extends AbstractSKilLValidator {
 	@Inject private SKilLServices services;
 	private DependencyGraph dependencyGraphInUse;
 
-	public static val NOT_INCLUDED_FILE = 'notIncludedFile';
+	public static val NOT_INCLUDED_FILE = "notIncludedFile";
 	public static val INDIRECT_OR_TRANSITIVE_INCLUDED_FILE = "indirectOrTransitiveIncludedFile";
 
 	private Map<IProject, DependencyGraph> dependencyGraphs;
@@ -44,14 +47,14 @@ class ScopingValidator extends AbstractSKilLValidator {
 	private Map<IProject, List<URI>> oldFilesURI;
 
 	override register(EValidatorRegistrar registar) {
+		dependencyGraphs = new HashMap<IProject, DependencyGraph>;
+		oldFiles = new HashMap<IProject, List<File>>();
+		oldFilesURI = new HashMap<IProject, List<URI>>();
 	}
 
-	@Check
-	def a(File file) {
+	@Check(CheckType.NORMAL)
+	def checkFileDependencies(File file) {
 		var IProject fileProject = services.getProject(file);
-		if (dependencyGraphs == null) {
-			dependencyGraphs = new HashMap<IProject, DependencyGraph>;
-		}
 
 		if (dependencyGraphs.get(fileProject) != null) {
 			dependencyGraphInUse = dependencyGraphs.get(services.getProject(file));
@@ -69,12 +72,7 @@ class ScopingValidator extends AbstractSKilLValidator {
 		}
 
 		files = null;
-		if (oldFiles == null) {
-			oldFiles = new HashMap<IProject, List<File>>();
-		}
-		if (oldFilesURI == null) {
-			oldFilesURI = new HashMap<IProject, List<URI>>();
-		}
+
 		if (oldFiles.get(fileProject) == null) {
 			dependencyGraphInUse.generate(copyOfAllFiles, allFilesUri);
 			oldFiles.put(fileProject, copyOfAllFiles);
@@ -84,7 +82,7 @@ class ScopingValidator extends AbstractSKilLValidator {
 			var filesNew = copyOfAllFiles;
 			var filesNewURI = allFilesUri;
 
-			if (!equals(oldFiles.get(fileProject), oldFilesURI.get(fileProject), filesNew, filesNewURI)) {
+			if (!equalsFileIncludes(oldFiles.get(fileProject), oldFilesURI.get(fileProject), filesNew, filesNewURI)) {
 				dependencyGraphInUse.generate(copyOfAllFiles, allFilesUri);
 				oldFiles.put(fileProject, copyOfAllFiles);
 				oldFilesURI.put(fileProject, allFilesUri);
@@ -138,13 +136,20 @@ class ScopingValidator extends AbstractSKilLValidator {
 		}
 	}
 
-	def boolean equals(List<File> files1, List<URI> files1URI, List<File> files2, List<URI> files2URI) {
+	/**
+	 * Checks whether the given list of files have equals includes. The order of the includes does matter.
+	 * @param files1 first list with files
+	 * @param files1URI list with the URIs from files1
+	 * @param files2 second list with files
+	 * @param files2URI list with the URIs from files2
+	 */
+	def boolean equalsFileIncludes(List<File> files1, List<URI> files1URI, List<File> files2, List<URI> files2URI) {
 		for (var int j = 0; j < files1.size(); j++) {
 			var File file1 = files1.get(j);
 			var boolean equal = false;
 			for (var int i = 0; i < files2.size(); i++) {
 				if (files1URI.get(j).path.equals(files2URI.get(i).path)) {
-					if (equalObjectImports(file1, files2.get(i), files1URI.get(j), files2URI.get(i))) {
+					if (equalIncludes(file1, files2.get(i), files1URI.get(j), files2URI.get(i))) {
 						equal = true;
 					} else {
 						return false
@@ -160,7 +165,10 @@ class ScopingValidator extends AbstractSKilLValidator {
 		return true;
 	}
 
-	def boolean equalObjectImports(File file1, File file2, URI file1URI, URI file2URI) {
+	/**
+	 * Checks whether the given file have equals includes. The order of the includes does matter.
+	 */
+	def boolean equalIncludes(File file1, File file2, URI file1URI, URI file2URI) {
 		var List<URI> importURI1 = new LinkedList<URI>();
 		var List<URI> importURI2 = new LinkedList<URI>();
 		for (Include i : file1.includes) {
@@ -184,13 +192,21 @@ class ScopingValidator extends AbstractSKilLValidator {
 		return true;
 	}
 
+	/**
+	 * Rebuilds the project of the given file.
+	 * @param file
+	 */
 	def rebuild(File file) {
 		var String platformString = file.eResource.getURI().toPlatformString(true);
 		var IFile ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
 		var IProject project = ifile.getProject();
 		if (project.getNature("org.eclipse.xtext.ui.shared.xtextNature") != null) {
-			project.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());
-			project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			try {
+				project.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());
+				project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			} catch (Exception e) {
+				e.printStackTrace
+			}
 		}
 	}
 }

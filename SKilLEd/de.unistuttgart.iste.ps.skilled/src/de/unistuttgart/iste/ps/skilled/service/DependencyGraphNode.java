@@ -11,6 +11,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile;
 
 
 /**
+ * Graphnode class for the dependency graph. It holds the information about the included files and their URIs.
  * 
  * @author Marco Link
  *

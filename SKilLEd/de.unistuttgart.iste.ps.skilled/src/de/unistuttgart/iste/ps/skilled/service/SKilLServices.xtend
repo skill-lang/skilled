@@ -18,6 +18,8 @@ import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.resource.XtextResourceSet
 
 /**
+ * This class contains usefull functions for the daily use. e.g get all skill files of a project.
+ * 
  * @author Marco Link
  */
 class SKilLServices {
@@ -82,7 +84,7 @@ class SKilLServices {
 	}
 
 	def dispatch IProject getProject(Resource resource) {
-		var String platformString = resource.getURI().toPlatformString(true);
+		var String platformString = resource.getURI().toPlatformString(false);
 		var IFile ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
 		return ifile.getProject();
 	}

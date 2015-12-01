@@ -13,6 +13,8 @@ import de.unistuttgart.iste.ps.skilled.sKilL.File;
 
 
 /**
+ * Class for creating dependency graph for skill files. Reflexive and transitive includes are supported. Not performant at
+ * all :(
  * 
  * @author Marco Link
  *
@@ -75,26 +77,26 @@ public class DependencyGraph {
         visited = new LinkedList<DependencyGraphNode>();
         visited2 = new LinkedList<DependencyGraphNode>();
 
-        Set<DependencyGraphNode> allIncludes = getEverything(dependencyNode);
+        Set<DependencyGraphNode> allIncludes = dependencyGraphNodes(dependencyNode);
         dependencyNode.setAllIncludes(allIncludes);
     }
 
-    public Set<DependencyGraphNode> getEverything(DependencyGraphNode dependencyNode) {
+    private Set<DependencyGraphNode> dependencyGraphNodes(DependencyGraphNode dependencyNode) {
         Set<DependencyGraphNode> allIncludes = new HashSet<DependencyGraphNode>();
         if (!visited.contains(dependencyNode)) {
             visited.add(dependencyNode);
             allIncludes.add(dependencyNode);
-            allIncludes.addAll(getEverythingelse(dependencyNode));
+            allIncludes.addAll(dependencyGraphNodesIncluded(dependencyNode));
         }
         return allIncludes;
     }
 
-    private Set<DependencyGraphNode> getEverythingelse(DependencyGraphNode dependencyNode) {
+    private Set<DependencyGraphNode> dependencyGraphNodesIncluded(DependencyGraphNode dependencyNode) {
         LinkedHashSet<DependencyGraphNode> dependencyNodes = new LinkedHashSet<DependencyGraphNode>();
         for (DependencyGraphNode importedDependencyNode : dependencyNode.getDirectAndIndirectIncludes()) {
             if (!visited2.contains(importedDependencyNode)) {
                 visited2.add(importedDependencyNode);
-                dependencyNodes.addAll(getEverything(importedDependencyNode));
+                dependencyNodes.addAll(dependencyGraphNodes(importedDependencyNode));
 
             }
         }
