@@ -1,11 +1,11 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.tools.Tool
-import de.unistuttgart.iste.ps.skilled.tools.Type
+import de.unistuttgart.iste.ps.skillls.tools.Tool
+import de.unistuttgart.iste.ps.skillls.tools.Type
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import de.unistuttgart.iste.ps.skilled.tools.api.SkillFile
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile
 import org.eclipse.core.resources.ResourcesPlugin
 import java.io.File
 import org.eclipse.core.runtime.Path
@@ -24,6 +24,7 @@ class UnusedDeclarationValidator extends AbstractSKilLValidator {
 	 */
 	@Check
 	def checkType(Declaration declaration) {
+		System.out.println("CheckType")
 		val platformString = declaration.eResource.URI.toPlatformString(true);
 		val myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString))
 		val project = myFile.project
@@ -34,7 +35,7 @@ class UnusedDeclarationValidator extends AbstractSKilLValidator {
 		} catch (Throwable e) {
 			e.printStackTrace
 		}
-		skillFile = SkillFileOpener.file
+		skillFile = SkillFileOpener.getFile()
 		var name = declaration.name
 		var found = false
 		for (Tool tool : skillFile.Tools) {
@@ -71,7 +72,7 @@ class UnusedDeclarationValidator extends AbstractSKilLValidator {
 		var found = false
 		for (Tool tool : skillFile.Tools) {
 			for (Type type : tool.types) {
-				for (de.unistuttgart.iste.ps.skilled.tools.Field f : type.fields) {
+				for (de.unistuttgart.iste.ps.skillls.tools.Field f : type.fields) {
 					if(f.name.toLowerCase.substring(f.name.lastIndexOf(' ')).equals(name)) {
 					    found = true
 				    }

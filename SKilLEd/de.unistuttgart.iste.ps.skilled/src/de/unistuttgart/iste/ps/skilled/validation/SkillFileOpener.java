@@ -40,7 +40,7 @@ public class SkillFileOpener {
     public static SkillFile getFile() {
         if (pathChanged) {
             try {
-                file = de.unistuttgart.iste.ps.skillls.tools.api.SkillFile.open(new File(path), SkillFile.Mode.Read);
+                file = SkillFile.open(new File(path), SkillFile.Mode.Read);
             } catch (SkillException | IOException e) {
                 e.printStackTrace();
                 return null;
