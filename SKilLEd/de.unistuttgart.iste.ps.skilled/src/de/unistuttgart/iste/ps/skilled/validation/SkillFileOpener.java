@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 
-import de.unistuttgart.iste.ps.skilled.tools.api.SkillFile;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 import de.ust.skill.common.java.api.SkillException;
 
 /**
@@ -40,7 +40,7 @@ public class SkillFileOpener {
     public static SkillFile getFile() {
         if (pathChanged) {
             try {
-                file = SkillFile.open(path, new SkillFile.Mode[] {SkillFile.Mode.Read});
+                file = de.unistuttgart.iste.ps.skillls.tools.api.SkillFile.open(new File(path), SkillFile.Mode.Read);
             } catch (SkillException | IOException e) {
                 e.printStackTrace();
                 return null;
