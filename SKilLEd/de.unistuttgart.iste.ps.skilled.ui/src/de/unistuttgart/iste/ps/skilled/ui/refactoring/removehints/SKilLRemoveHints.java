@@ -15,8 +15,8 @@ import org.eclipse.xtext.ui.editor.utils.EditorUtils;
 public class SKilLRemoveHints {
 
 	public void run() {
-		XtextEditor editor = EditorUtils.getActiveXtextEditor();
-		File f = new File("TODO");
+		String editor = EditorUtils.getActiveXtextEditor().toString();
+		File f = new File(editor);
 		try {
 			FileWriter fw = new FileWriter(f, true);
 			BufferedWriter bw = new BufferedWriter(fw);

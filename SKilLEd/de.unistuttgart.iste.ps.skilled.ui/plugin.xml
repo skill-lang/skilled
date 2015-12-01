@@ -607,6 +607,37 @@
 	  </stylesheet>	
    </extension>
     <extension
+          point="org.eclipse.ui.menus">
+       <menuContribution
+             allPopups="false"
+             locationURI="menu:org.eclipse.ui.main.menu">
+          <menu
+                id="skillMenu"
+                label="SKilL">
+             <command
+                   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinedfiles.command"
+                   label="Combine .skill-files"
+                   style="push"
+                   tooltip="Combine multiple .skill-files">
+             </command>
+          </menu>
+       </menuContribution>
+    </extension>
+    <extension
+          point="org.eclipse.ui.menus">
+       <menuContribution
+             allPopups="false"
+             locationURI="de.unistuttgart.iste.ps.skilled.ui.menuContribution1">
+          <menu
+                label="label">
+             <command
+                   commandId="de.unistuttgart.iste.ps.skilled.ui.command1"
+                   style="push">
+             </command>
+          </menu>
+       </menuContribution>
+    </extension>
+    <extension
           point="org.eclipse.ui.commands">
        <command
              defaultHandler="de.unistuttgart.iste.ps.skilled.ui.views.ToolViewHandler"
@@ -641,6 +672,13 @@
              defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.SortTypesHandler"
              id="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
              name="Sort Usertypes">
+       </command>
+    </extension>
+    <extension
+          point="org.eclipse.ui.commands">
+       <command
+             id="de.unistuttgart.iste.ps.skilled.ui.command1"
+             name="name">
        </command>
     </extension>
 
