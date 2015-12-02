@@ -148,7 +148,7 @@ terminal STRING:
 	'"'->'"';
 
 terminal HEADCOMMENT:
-	'#' !('\r' | '\n')* '\r'? '\n';
+	'#' !('\r' | '\n')* (('\r'? '\n') | EOF);
 
 terminal ID:
 	('a'..'z' | 'A'..'Z' | '_' | '\u007f'..'\uffff') (ALPHANUM | '\u007f'..'\uffff')*;
