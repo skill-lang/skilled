@@ -22,80 +22,93 @@ class ViewValidation extends AbstractDeclarativeValidator {
 
 	var ArrayList<TypeDeclaration> TypesSearched;
 	public static val IS_NO_SUPERTYPE = 'noSupertypeViewError'
+	public static val VIEW_ERROR = 'viewError'
 
 	override register(EValidatorRegistrar registar) {}
 
+	/**
+	 * This methods checks all views in td.
+	 * @param td The TypeDeclaration the checked views are in.
+	 * 
+	 */
 	@Check
 	def validateViews(TypeDeclaration td) {
 		for (Field f : td.fields) {
 			// Check if Field is a View
 			if ((f.fieldcontent instanceof View)) {
-				var boolean isUsertype = false;
+				var boolean isUsertype = false;	//becomes true if the as variable is a Usertype
 				var View v = f.fieldcontent as View
 				if (v.fieldtype instanceof DeclarationReference) {
 					var DeclarationReference tdr = v.fieldtype as DeclarationReference
 					if (tdr.type instanceof Usertype) {
 						var Usertype usertype = tdr.type as Usertype
 						isUsertype = true
-						println("....")
 						// view A.x as B c;:
-						var String v1 = (v.fieldtype as DeclarationReference).type.name // b
-						var String v2 = f.fieldcontent.name // c
-						var String supertype = (v.fieldcontent.fieldcontent.eContainer.eContainer as Declaration).name; // a
+						var String supertypeTypename = (v.fieldcontent.fieldcontent.eContainer.eContainer as Declaration).name; // a
 						var String supertypeVarname = v.fieldcontent.fieldcontent.name; // x
 						TypesSearched = new ArrayList<TypeDeclaration>;
-						var TypeDeclaration supertypeDec = searchSupertype(supertype, td)
+						var TypeDeclaration supertypeDec = searchSupertype(supertypeTypename, td)
 						if (supertypeDec == null) {
 							// Error: A not a supertype of td
-							error("Error: " + supertype + " is not a supertype of " + td.name + ".", v,
-								SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
+							if(supertypeTypename.equals(td.name)){
+								error("Error: you must reference a type with a different name than the type the view is in.", v,
+									SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
+							}else{
+								error("Error: " + supertypeTypename + " is not a supertype of " + td.name + ".", v,
+									SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
+							}
 
 						} else {
-							// print("TYPEFOUND: "+ supertypeDec.name)
 							var Field supertypeVar = searchVar(supertypeVarname, supertypeDec);
 							if (supertypeVar == null) {
 								// Error: x not a var in A
-								error("Error: " + supertypeVarname + " is not a Variable in " + supertype + ".", v,
-									SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
+								error("Error: " + supertypeVarname + " is not a Variable in " + supertypeTypename + ".", v,
+									SKilLPackage.Literals.VIEW.getEStructuralFeature(2), VIEW_ERROR)
 
 							} else {
 								var Usertype usertypeSupertypeVar = null;
 								var boolean supertypeVarIsUsertype = false;
 								if (supertypeVar.fieldcontent.fieldtype instanceof DeclarationReference) {
-									print("ISDeclarationRef")
-									var DeclarationReference usertypeDeclaration = f.fieldcontent.
-										fieldtype as DeclarationReference;
-									print(usertypeDeclaration.type.name)
-									if (usertypeDeclaration.type instanceof Usertype) {
-										print(usertypeDeclaration.type.name + " is a Usertype")
-										usertypeSupertypeVar = usertypeDeclaration.type as Usertype
+									var DeclarationReference usertypeDeclarationSupertype = supertypeVar.fieldcontent.fieldtype as DeclarationReference;
+									if (usertypeDeclarationSupertype.type instanceof Usertype) {
+										usertypeSupertypeVar = usertypeDeclarationSupertype.type as Usertype
 										supertypeVarIsUsertype = true;
 									}
 								}
+								//If SupertypeVar isn't a usertype => error else check if the type of supertypeVar is a supertype of the as var.
 								if (!supertypeVarIsUsertype) {
 									error("Error: " + supertypeVarname + " is not a Usertype variable.", v,
-										SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
-								} else {
-									if (usertype.name != usertypeSupertypeVar.name) {
+										SKilLPackage.Literals.VIEW.getEStructuralFeature(2), VIEW_ERROR)
+								} else 	if (usertype.name != usertypeSupertypeVar.name) {
 										if (searchSupertype(usertypeSupertypeVar.name, usertype) == null) {
-											error("Error: " + usertypeSupertypeVar.name + " is not a supertype of" + usertype.name +
-											".", v, SKilLPackage.Literals.VIEW.getEStructuralFeature(1),IS_NO_SUPERTYPE)
+											error("Error: " + usertypeSupertypeVar.name + " is not a supertype of " + usertype.name +
+											".", v, SKilLPackage.Literals.VIEW.getEStructuralFeature(1),VIEW_ERROR)
 
 										}
 									}
-								}
+								
+									
+								
 							}
 						}
 					}
 				}
 				if (!isUsertype) {
 					// Error: not a usertype!
+					error("Error: not a usertype variable.", v, SKilLPackage.Literals.VIEW.getEStructuralFeature(1),VIEW_ERROR)
 				}
 
 				}
 			}
 		}
 
+		/**
+		 * This method searches a Field in a TypeDeclaration
+		 * @param name The name of the field.
+		 * @param dec The TypeDeclaration where the field is searched.
+		 * @return If a Field with the name name is found, this Field will be returned; else null.
+		 * 
+		 */
 		def Field searchVar(String name, TypeDeclaration dec) {
 			for (Field f : dec.fields) {
 				if (f.fieldcontent.name.equals(name)) {
