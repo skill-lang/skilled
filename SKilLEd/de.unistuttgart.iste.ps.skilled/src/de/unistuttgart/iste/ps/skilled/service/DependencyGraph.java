@@ -1,147 +1,108 @@
 package de.unistuttgart.iste.ps.skilled.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 
 import de.unistuttgart.iste.ps.skilled.sKilL.File;
+import de.unistuttgart.iste.ps.skilled.service.Tarjan.StronglyConnectedComponent;
+import de.unistuttgart.iste.ps.skilled.service.Tarjan.TarjanAlgorithm;
+import de.unistuttgart.iste.ps.skilled.service.Tarjan.Vertex;
 
 
 /**
- * Class for creating dependency graph for skill files. Reflexive and transitive includes are supported. Not performant at
- * all :(
+ * Class for creating dependency graph for skill files. Reflexive transitive includes are supported. It will uses Tarjan's
+ * Algorithm for creating a DAG first.
  * 
  * @author Marco Link
  *
  */
 public class DependencyGraph {
 
-    private List<DependencyGraphNode> dependencyNodes;
+    private Map<String, DependencyGraphNode> dependencyGraphNodes;
+    private TarjanAlgorithm tarjan;
 
-    private List<DependencyGraphNode> visited;
-    private List<DependencyGraphNode> visited2;
+    /**
+     * Generates a dependency graph of the given files.
+     * 
+     * @param files
+     *            - for which the dependency graph should be generated.
+     * @return false if one or more files don't have an eResource.
+     */
+    public boolean generate(Set<File> files) {
+        dependencyGraphNodes = new HashMap<String, DependencyGraphNode>();
+        List<Vertex> dependencyNodes = new ArrayList<Vertex>();
 
-    public DependencyGraph() {
-    }
-
-    public boolean generate(List<File> files, List<URI> fileURIS) {
-        reset();
-        if (files.size() != fileURIS.size()) {
-            return false;
-        }
-        for (int i = 0; i < files.size(); i++) {
-            DependencyGraphNode dependencyNode = new DependencyGraphNode(files.get(i), fileURIS.get(i));
+        for (File file : files) {
+            if (file.eResource() == null) {
+                return false;
+            }
+            DependencyGraphNode dependencyNode = new DependencyGraphNode(file);
             dependencyNodes.add(dependencyNode);
+            dependencyGraphNodes.put(dependencyNode.getName(), dependencyNode);
         }
-        computeDependencies();
+
+        for (Vertex v : dependencyNodes) {
+            DependencyGraphNode g = (DependencyGraphNode) v;
+            for (URI uri : g.getIncludedURIs()) {
+                g.addEdge(dependencyGraphNodes.get(uri.path()));
+            }
+        }
+
+        tarjan = new TarjanAlgorithm(dependencyNodes);
+        tarjan.runAlgorithm();
+        computeTransitiveComponents();
         return true;
     }
 
-    public void reset() {
-        dependencyNodes = new LinkedList<DependencyGraphNode>();
-        visited = new LinkedList<DependencyGraphNode>();
-        visited2 = new LinkedList<DependencyGraphNode>();
-
-    }
-
-    private void computeDependencies() {
-        for (DependencyGraphNode dependencyNode : dependencyNodes) {
-            computeDirectDependencies(dependencyNode);
-        }
-
-        for (DependencyGraphNode dependencyNode : dependencyNodes) {
-            computeTransitiveIncludes(dependencyNode);
-        }
-    }
-
-    private void computeDirectDependencies(DependencyGraphNode dependencyNode) {
-        Set<URI> includeURIs = dependencyNode.getIncludedURIs();
-        for (URI includeURI : includeURIs) {
-            for (DependencyGraphNode potentialIncludedDependencyNode : dependencyNodes) {
-
-                if (potentialIncludedDependencyNode.getFileURI().equals(includeURI)) {
-                    dependencyNode.addToDirectIncludes(potentialIncludedDependencyNode);
-                    potentialIncludedDependencyNode.addToIndirectIncludes(dependencyNode);
-                    break;
-                }
+    public void computeTransitiveComponents() {
+        for (StronglyConnectedComponent s : tarjan.getConnectedComponentsList()) {
+            s.addReferencedComponent(s);
+            boolean change = s.addReferencedComponents(computeReferencedComponents(s));
+            while (change) {
+                change = s.addReferencedComponents(computeReferencedComponents(s));
             }
         }
     }
 
-    private void computeTransitiveIncludes(DependencyGraphNode dependencyNode) {
-        visited = new LinkedList<DependencyGraphNode>();
-        visited2 = new LinkedList<DependencyGraphNode>();
-
-        Set<DependencyGraphNode> allIncludes = dependencyGraphNodes(dependencyNode);
-        dependencyNode.setAllIncludes(allIncludes);
-    }
-
-    private Set<DependencyGraphNode> dependencyGraphNodes(DependencyGraphNode dependencyNode) {
-        Set<DependencyGraphNode> allIncludes = new HashSet<DependencyGraphNode>();
-        if (!visited.contains(dependencyNode)) {
-            visited.add(dependencyNode);
-            allIncludes.add(dependencyNode);
-            allIncludes.addAll(dependencyGraphNodesIncluded(dependencyNode));
-        }
-        return allIncludes;
-    }
-
-    private Set<DependencyGraphNode> dependencyGraphNodesIncluded(DependencyGraphNode dependencyNode) {
-        LinkedHashSet<DependencyGraphNode> dependencyNodes = new LinkedHashSet<DependencyGraphNode>();
-        for (DependencyGraphNode importedDependencyNode : dependencyNode.getDirectAndIndirectIncludes()) {
-            if (!visited2.contains(importedDependencyNode)) {
-                visited2.add(importedDependencyNode);
-                dependencyNodes.addAll(dependencyGraphNodes(importedDependencyNode));
-
+    public Set<StronglyConnectedComponent> computeReferencedComponents(StronglyConnectedComponent s) {
+        Set<StronglyConnectedComponent> referencedComponents = new HashSet<StronglyConnectedComponent>();
+        for (StronglyConnectedComponent referencedComponent : s.getReferencedComponents()) {
+            for (Vertex v : referencedComponent.getContainedVertices()) {
+                DependencyGraphNode g = (DependencyGraphNode) v;
+                referencedComponents.addAll(g.getReferencedComponent());
             }
         }
-        return dependencyNodes;
+        return referencedComponents;
     }
 
-    public Set<URI> getDirectIncludesURI(Resource resource) {
-        LinkedHashSet<URI> uris = new LinkedHashSet<URI>();
-        DependencyGraphNode node = getDependencyGraphNode(resource.getURI());
-        if (node != null) {
-            for (DependencyGraphNode includedNode : node.getDirectIncludes()) {
-                uris.add(includedNode.getFileURI());
+    /**
+     * Returns all the included URIs (direct and transitive) of the given resource.
+     * 
+     * @param resource
+     * @return a Set of URIs or null if the resource or its URI is null.
+     */
+    public Set<URI> getIncludedURIs(Resource resource) {
+        Set<URI> uris = new HashSet<URI>();
+        if (resource == null) {
+            return null;
+        }
+        DependencyGraphNode g = dependencyGraphNodes.get(resource.getURI().path());
+        if (g == null) {
+            return null;
+        }
+        for (StronglyConnectedComponent s : g.getRootContainer().getReferencedComponents()) {
+            for (Vertex v : s.getContainedVertices()) {
+                DependencyGraphNode g2 = (DependencyGraphNode) v;
+                uris.add(g2.getFileURI());
             }
         }
         return uris;
-    }
-
-    public Set<URI> getIndirectIncludesURI(Resource resource) {
-        LinkedHashSet<URI> uris = new LinkedHashSet<URI>();
-        DependencyGraphNode node = getDependencyGraphNode(resource.getURI());
-        if (node != null) {
-            for (DependencyGraphNode includedNode : node.getIndirectIncludes()) {
-                uris.add(includedNode.getFileURI());
-            }
-        }
-        return uris;
-    }
-
-    public Set<URI> getAllIncludesURI(Resource resource) {
-        LinkedHashSet<URI> uris = new LinkedHashSet<URI>();
-        DependencyGraphNode node = getDependencyGraphNode(resource.getURI());
-        if (node != null) {
-            for (DependencyGraphNode includedNode : node.getAllIncludes()) {
-                uris.add(includedNode.getFileURI());
-            }
-        }
-        return uris;
-    }
-
-    protected DependencyGraphNode getDependencyGraphNode(URI uri) {
-        for (DependencyGraphNode node : dependencyNodes) {
-            if (node.getFileURI().path().equals(uri.path())) {
-                return node;
-            }
-        }
-        return null;
     }
 }
