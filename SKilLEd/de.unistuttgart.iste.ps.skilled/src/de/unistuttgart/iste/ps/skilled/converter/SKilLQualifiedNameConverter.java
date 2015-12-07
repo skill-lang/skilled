@@ -3,9 +3,8 @@ package de.unistuttgart.iste.ps.skilled.converter;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.xtext.naming.IQualifiedNameConverter;
+import org.eclipse.xtext.naming.IQualifiedNameConverter.DefaultImpl;
 import org.eclipse.xtext.naming.QualifiedName;
-import org.eclipse.xtext.util.Strings;
 
 
 /**
@@ -13,35 +12,25 @@ import org.eclipse.xtext.util.Strings;
  * @author Marco Link
  *
  */
-public class SKilLQualifiedNameConverter implements IQualifiedNameConverter {
-
-    @Override
-    public String toString(QualifiedName qualifiedName) {
-        if (qualifiedName == null)
-            throw new IllegalArgumentException("Qualified name cannot be null");
-        return qualifiedName.toString(getDelimiter());
-    }
+public class SKilLQualifiedNameConverter extends DefaultImpl {
 
     @Override
     public QualifiedName toQualifiedName(String qualifiedNameAsString) {
 
-        if (qualifiedNameAsString == null)
-            throw new IllegalArgumentException("Qualified name cannot be null");
-        if (qualifiedNameAsString.equals(""))
-            throw new IllegalArgumentException("Qualified name cannot be empty");
-        if (Strings.isEmpty(getDelimiter()))
-            return QualifiedName.create(qualifiedNameAsString);
-        List<String> segs = getDelimiter().length() == 1 ? Strings.split(qualifiedNameAsString, getDelimiter().charAt(0))
-                : Strings.split(qualifiedNameAsString, getDelimiter());
+        QualifiedName qualifiedName = super.toQualifiedName(qualifiedNameAsString);
         List<String> segsConverted = new LinkedList<String>();
-        for (String s : segs) {
+
+        // If there is only one segment, it is an normal ID and therefore it will be converted with the typeValueConverter.
+        if (qualifiedName.getSegments().size() <= 1) {
+            return qualifiedName;
+        }
+
+        // If not get the segments and convert it.
+        for (String s : qualifiedName.getSegments()) {
             segsConverted.add((makeEquivalent(s)));
         }
-        return QualifiedName.create(segsConverted);
-    }
 
-    public String getDelimiter() {
-        return ".";
+        return QualifiedName.create(segsConverted);
     }
 
     // make names case-insensitive and ignore single underscores
