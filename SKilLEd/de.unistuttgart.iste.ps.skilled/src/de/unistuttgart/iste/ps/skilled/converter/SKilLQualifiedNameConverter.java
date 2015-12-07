@@ -9,7 +9,7 @@ import org.eclipse.xtext.naming.QualifiedName;
 
 /**
  * 
- * @author Marco Link
+ * @author Marco Link Tobias Heck
  *
  */
 public class SKilLQualifiedNameConverter extends DefaultImpl {
@@ -33,33 +33,35 @@ public class SKilLQualifiedNameConverter extends DefaultImpl {
         return QualifiedName.create(segsConverted);
     }
 
-    // make names case-insensitive and ignore single underscores
-    public String makeEquivalent(String string) {
-        string = string.toLowerCase();
+    /**
+     * Make names case-insensitive,ignore single underscores and all underscores at the end
+     */
+    public static String makeEquivalent(String string) {
+        String converted = string.toLowerCase();
         int index = 0;
-        while (string.charAt(index) == '_') {
+        while (converted.charAt(index) == '_') {
             index++;
-            if (index == string.length())
-                return string;
+            if (index == converted.length())
+                return converted;
         }
         boolean wasUnderscore = true;
-        while (index < string.length()) {
-            if (string.charAt(index) != '_') {
+        while (index < converted.length()) {
+            if (converted.charAt(index) != '_') {
                 index++;
                 wasUnderscore = false;
                 continue;
             }
             if (wasUnderscore == false) {
                 wasUnderscore = true;
-                string = string.substring(0, index) + string.substring(index + 1);
+                converted = converted.substring(0, index) + converted.substring(index + 1);
                 continue;
             }
             index++;
         }
-        if (!string.matches("_*")) {
-            while (string.charAt(string.length() - 1) == '_')
-                string = string.substring(0, string.length() - 1);
+        if (!converted.matches("_*")) {
+            while (converted.charAt(converted.length() - 1) == '_')
+                converted = converted.substring(0, converted.length() - 1);
         }
-        return string;
+        return converted;
     }
 }

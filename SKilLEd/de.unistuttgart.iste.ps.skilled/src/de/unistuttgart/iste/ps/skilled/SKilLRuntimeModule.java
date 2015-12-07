@@ -26,7 +26,7 @@ public class SKilLRuntimeModule extends de.unistuttgart.iste.ps.skilled.Abstract
         return SKilLQualifiedNameProvider.class;
     }
 
-    public Class<? extends IQualifiedNameConverter> bindIQualifiedNameConverter() {
+    public static Class<? extends IQualifiedNameConverter> bindIQualifiedNameConverter() {
         return SKilLQualifiedNameConverter.class;
     }
 }
