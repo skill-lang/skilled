@@ -638,19 +638,6 @@
              </command>
           </menu>
        </menuContribution>
-       <menuContribution
-             allPopups="false"
-             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
-          <menu
-                id="SKilLContextMenu"
-                label="SKilL">
-             <command
-                   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehintsfromcontextmenu"
-                   label="Remove Hints from Context Menu"
-                   style="push">
-             </command>
-          </menu>
-       </menuContribution>
     </extension>
     <extension
           point="org.eclipse.ui.commands">
@@ -702,11 +689,6 @@
              defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints.SKilLRemoveHintsHandler"
              id="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints"
              name="Remove Hints">
-       </command>
-       <command
-             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints.SKilLRemoveHintsFromContextMenuHandler"
-             id="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehintsfromcontextmenu"
-             name="Remove Hints from Context Menu">
        </command>
     </extension>
     <extension
