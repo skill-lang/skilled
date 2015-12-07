@@ -1,10 +1,10 @@
 A : B {
-  view C.field as
-  A field;
+  view B.field as
+  C neuerName;
 }
 
-B {}
-
-C {
+B {
   C field;
 }
+
+C {}

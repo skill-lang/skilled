@@ -5,7 +5,7 @@ A : B {
 
 B : C {
   view C.field
-  as E field;
+  as E field2;
 }
 
 C {

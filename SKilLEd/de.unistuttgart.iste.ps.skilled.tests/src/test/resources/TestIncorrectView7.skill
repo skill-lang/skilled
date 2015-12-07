@@ -4,7 +4,7 @@ interface A : B {
 }
 
 interface B {
-  C field;
+  A field;
 }
 
 C {}
