@@ -18,7 +18,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
  * 
  * @author Jan Berberich
  */
-class ViewValidation extends AbstractDeclarativeValidator {
+class ViewValidator extends AbstractDeclarativeValidator {
 
 	var ArrayList<TypeDeclaration> TypesSearched;
 	public static val IS_NO_SUPERTYPE = 'noSupertypeViewError'
@@ -80,6 +80,7 @@ class ViewValidation extends AbstractDeclarativeValidator {
 									error("Error: " + supertypeVarname + " is not a Usertype variable.", v,
 										SKilLPackage.Literals.VIEW.getEStructuralFeature(2), VIEW_ERROR)
 								} else 	if (usertype.name != usertypeSupertypeVar.name) {
+									TypesSearched = new ArrayList<TypeDeclaration>;
 										if (searchSupertype(usertypeSupertypeVar.name, usertype) == null) {
 											error("Error: " + usertypeSupertypeVar.name + " is not a supertype of " + usertype.name +
 											".", v, SKilLPackage.Literals.VIEW.getEStructuralFeature(1),VIEW_ERROR)
@@ -103,7 +104,7 @@ class ViewValidation extends AbstractDeclarativeValidator {
 		}
 
 		/**
-		 * This method searches a Field in a TypeDeclaration
+		 * This method searches a Field in a TypeDeclaration. 
 		 * @param name The name of the field.
 		 * @param dec The TypeDeclaration where the field is searched.
 		 * @return If a Field with the name name is found, this Field will be returned; else null.
@@ -120,11 +121,12 @@ class ViewValidation extends AbstractDeclarativeValidator {
 
 		/**
 		 * This method searches a TypeDeclaration with the name name in the 
-		 * supertypes of dec
+		 * supertypes of dec.
+		 * You should make sure that TypesSearched is initialized as an empty list before calling this method.
 		 * 
-		 * @param dec The declaration as start of the search
 		 * @param name The name of the searched type
-		 * @return TypeDeclaration with the name name
+		 * @param dec The declaration as start of the search
+		 * @return TypeDeclaration with the name name, if it wasn't found, null.
 		 */
 		def TypeDeclaration searchSupertype(String name, TypeDeclaration dec) {
 			TypesSearched.add(dec);

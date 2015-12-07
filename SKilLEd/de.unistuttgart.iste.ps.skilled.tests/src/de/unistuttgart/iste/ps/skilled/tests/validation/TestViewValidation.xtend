@@ -14,7 +14,7 @@ import static org.junit.Assert.*
 
 /**
  * 
- * This Class tests Multiple Inheritence Validation from the InheritenceValidator.
+ * This Class tests View Validation from the ViewValidator.
  * @author Jan Berberich 
  */
 @InjectWith(SKilLInjectorProvider)
@@ -34,6 +34,189 @@ class TestViewValidation {
 			}
 		'''.parse.validate.isNullOrEmpty)
 
+	}
+	
+	@Test
+	def void testNoError2() {
+		assertTrue('''
+			X{
+				
+			}
+			Y:X{
+				
+			}
+			A{
+				X x;
+			}
+			B:A{
+				view A.x as	Y y;
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+	
+	@Test
+	def void testNoError3() {
+		assertTrue('''
+			X{
+				
+			}
+			Y:X{
+				
+			}
+			Z:Y{
+				
+			}
+			A{
+				X x;
+			}
+			B:A{
+				view A.x as	Z z;
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+	
+		
+	@Test
+	def void testNoError4() {
+		assertTrue('''
+			X{
+				
+			}
+			Y:X{
+				
+			}
+			Z:Y{
+				
+			}
+			A{
+				X x;
+			}
+			B:A{
+				
+			}
+			C:B{
+				view A.x as	Z z;
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+	
+	@Test
+	def void testErrorTypeNotASupertype() {
+		assertFalse('''
+			X{
+				
+			}
+			Y:X{
+				
+			}
+			A{
+				X x;
+			}
+			B{
+				view A.x as	Y y;
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+	
+	@Test
+	def void testErrorFieldNotASupertype() {
+		assertFalse('''
+			X{
+				
+			}
+			Y{
+				
+			}
+			A{
+				X x;
+			}
+			B:A{
+				view A.x as	Y y;
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+	
+	@Test
+	def void testErrorVarInSupertypeNotExisting() {
+		assertFalse('''
+			X{
+				
+			}
+			Y:X{
+				
+			}
+			A{
+			}
+			B:A{
+				view A.x as	Y y;
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+	@Test
+	def void testErrorSupertypeNotExisting() {
+		assertFalse('''
+			X{
+				
+			}
+			Y:X{
+				
+			}
+			B{
+				view A.x as	Y y;
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+	
+	@Test
+	def void testErrorVarInSameType() {
+		assertFalse('''
+			X{
+				
+			}
+			Y:X{
+				
+			}
+			B{
+				X x;
+				view B.x as	Y y;
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+
+	@Test
+	def void testNoErrorNotAUsertype() {
+		assertFalse('''
+			X{
+				
+			}
+			Y:X{
+				
+			}
+			A{
+				X x;
+			}
+			B:A{
+				view A.x as	i8 y;
+			}
+		'''.parse.validate.isNullOrEmpty)
+	}
+	
+	@Test
+	def void testNoErrorNotAUsertype2() {
+		assertFalse('''
+			X{
+				
+			}
+			Y:X{
+				
+			}
+			A{
+				i8 x;
+			}
+			B:A{
+				view A.x as	Y y;
+			}
+		'''.parse.validate.isNullOrEmpty)
 	}
 
 }
