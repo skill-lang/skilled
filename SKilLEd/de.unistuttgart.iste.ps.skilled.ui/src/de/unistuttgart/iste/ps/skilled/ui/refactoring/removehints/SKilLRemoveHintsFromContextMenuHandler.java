@@ -11,12 +11,12 @@ import org.eclipse.core.commands.ExecutionException;
  * @author Leslie Tso
  *
  */
-public class SKilLRemoveHintsHandler extends AbstractHandler {
+public class SKilLRemoveHintsFromContextMenuHandler extends AbstractHandler {
     SKilLRemoveHints fDialog = new SKilLRemoveHints();
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        fDialog.runFromMenu();
+        fDialog.runFromContextMenu();
         return null;
     }
 

@@ -627,11 +627,26 @@
           point="org.eclipse.ui.menus">
        <menuContribution
              allPopups="false"
-             locationURI="de.unistuttgart.iste.ps.skilled.ui.menuContribution1">
+             locationURI="menu:org.eclipse.ui.main.menu">
           <menu
-                label="label">
+                id="SKilLMenu"
+                label="SKilL">
              <command
-                   commandId="de.unistuttgart.iste.ps.skilled.ui.command1"
+                   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints"
+                   label="Remove Hints"
+                   style="push">
+             </command>
+          </menu>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+          <menu
+                id="SKilLContextMenu"
+                label="SKilL">
+             <command
+                   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehintsfromcontextmenu"
+                   label="Remove Hints from Context Menu"
                    style="push">
              </command>
           </menu>
@@ -680,6 +695,27 @@
              id="de.unistuttgart.iste.ps.skilled.ui.command1"
              name="name">
        </command>
+    </extension>
+    <extension
+          point="org.eclipse.ui.commands">
+       <command
+             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints.SKilLRemoveHintsHandler"
+             id="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints"
+             name="Remove Hints">
+       </command>
+       <command
+             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints.SKilLRemoveHintsFromContextMenuHandler"
+             id="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehintsfromcontextmenu"
+             name="Remove Hints from Context Menu">
+       </command>
+    </extension>
+    <extension
+          point="org.eclipse.ui.bindings">
+       <key
+             commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+2">
+       </key>
     </extension>
 
   <extension
