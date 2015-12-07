@@ -1,6 +1,6 @@
 A : B {
   view B.field as
-  C neuerName;
+  C neuername;
 }
 
 B {

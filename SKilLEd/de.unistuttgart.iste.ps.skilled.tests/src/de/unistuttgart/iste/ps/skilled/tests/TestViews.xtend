@@ -12,6 +12,10 @@ import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.sKilL.View
+import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
 
 /**
  * @author Tobias Heck
@@ -48,7 +52,13 @@ class TestViews {
 		
 		Assert::assertTrue(specification.validate.size == 0);
 		
-		//TODO
+		val A = specification.declarations.get(0) as Usertype;
+		val B = specification.declarations.get(1) as Usertype;
+		val C = specification.declarations.get(2) as Usertype;
+		val view = A.fields.get(0).fieldcontent as View;
+		Assert::assertEquals("neuername", view.name);
+		Assert::assertEquals(C, (view.fieldtype as DeclarationReference).type);
+		Assert::assertEquals(B.fields.get(0).fieldcontent, view.fieldcontent.fieldcontent)
 	}
 
 	@Test
@@ -57,7 +67,13 @@ class TestViews {
 		
 		Assert::assertTrue(specification.validate.size == 0);
 		
-		//TODO
+		val A = specification.declarations.get(0) as Usertype;
+		val B = specification.declarations.get(1) as Usertype;
+		val D = specification.declarations.get(3) as Usertype;
+		val view = A.fields.get(0).fieldcontent as View;
+		Assert::assertEquals("field", view.name);
+		Assert::assertEquals(D, (view.fieldtype as DeclarationReference).type);
+		Assert::assertEquals(B.fields.get(0).fieldcontent, view.fieldcontent.fieldcontent)
 	}
 
 	@Test
@@ -66,7 +82,13 @@ class TestViews {
 		
 		Assert::assertTrue(specification.validate.size == 0);
 		
-		//TODO
+		val A = specification.declarations.get(0) as Usertype;
+		val C = specification.declarations.get(2) as TypeDeclaration;
+		val D = specification.declarations.get(3) as Usertype;
+		val view = A.fields.get(0).fieldcontent as View;
+		Assert::assertEquals("asdf", view.name);
+		Assert::assertEquals(D, (view.fieldtype as DeclarationReference).type);
+		Assert::assertEquals(C.fields.get(0).fieldcontent, view.fieldcontent.fieldcontent)
 	}
 
 	@Test
@@ -75,7 +97,12 @@ class TestViews {
 		
 		Assert::assertTrue(specification.validate.size == 0);
 		
-		//TODO
+		val A = specification.declarations.get(0) as Usertype;
+		val C = specification.declarations.get(2) as Usertype;
+		val view = A.fields.get(1).fieldcontent as View;
+		Assert::assertEquals("field2", view.name);
+		Assert::assertEquals(C, (view.fieldtype as DeclarationReference).type);
+		Assert::assertEquals(A.fields.get(0).fieldcontent, view.fieldcontent.fieldcontent)
 	}
 
 	@Test
@@ -84,7 +111,19 @@ class TestViews {
 		
 		Assert::assertTrue(specification.validate.size == 0);
 		
-		//TODO
+		val A = specification.declarations.get(0) as Usertype;
+		val B = specification.declarations.get(1) as Usertype;
+		val C = specification.declarations.get(2) as Usertype;
+		val E = specification.declarations.get(4) as Usertype;
+		val F = specification.declarations.get(5) as TypeDeclaration;
+		val view1 = A.fields.get(0).fieldcontent as View;
+		val view2 = B.fields.get(0).fieldcontent as View;
+		Assert::assertEquals("asdf", view1.name);
+		Assert::assertEquals("field", view2.name);
+		Assert::assertEquals(F, (view1.fieldtype as DeclarationReference).type);
+		Assert::assertEquals(E, (view2.fieldtype as DeclarationReference).type);
+		Assert::assertEquals(view2, view1.fieldcontent.fieldcontent);
+		Assert::assertEquals(C.fields.get(0).fieldcontent, view2.fieldcontent.fieldcontent);
 	}
 
 	@Test
@@ -93,7 +132,13 @@ class TestViews {
 		
 		Assert::assertTrue(specification.validate.size == 0);
 		
-		//TODO
+		val A = specification.declarations.get(0) as TypeDeclaration;
+		val B = specification.declarations.get(1) as TypeDeclaration;
+		val D = specification.declarations.get(3) as Usertype;
+		val view = A.fields.get(0).fieldcontent as View;
+		Assert::assertEquals("field", view.name);
+		Assert::assertEquals(D, (view.fieldtype as DeclarationReference).type);
+		Assert::assertEquals(B.fields.get(0).fieldcontent, view.fieldcontent.fieldcontent)
 	}
 
 	@Test
@@ -102,7 +147,13 @@ class TestViews {
 		
 		Assert::assertTrue(specification.validate.size == 0);
 		
-		//TODO
+		val A = specification.declarations.get(0) as TypeDeclaration;
+		val B = specification.declarations.get(1) as TypeDeclaration;
+		val C = specification.declarations.get(2) as Usertype;
+		val view = A.fields.get(0).fieldcontent as View;
+		Assert::assertEquals("field2", view.name);
+		Assert::assertEquals(C, (view.fieldtype as DeclarationReference).type);
+		Assert::assertEquals(B.fields.get(0).fieldcontent, view.fieldcontent.fieldcontent)
 	}
 	
 }

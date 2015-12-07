@@ -4,14 +4,16 @@ A : B {
 }
 
 B : C {
-  view C.field
-  as E field2;
+  view C.field as
+  E field2;
 }
 
 C {
   D field;
 }
 
-interface E : D {}
+interface D {}
+
+E : D {}
 
 interface F : E {}
