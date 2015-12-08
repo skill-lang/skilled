@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -42,8 +42,8 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
 /**
  * Class to create the SKilL-Tool-Overview.
  * 
- * @author Ken & Nico
- *
+ * @author Ken Singer
+ * @author Nico Russam
  */
 public class ToolView extends ViewPart {
 
@@ -69,15 +69,10 @@ public class ToolView extends ViewPart {
     public void createPartControl(Composite parent) {
         tabFolder = new CTabFolder(parent, SWT.BORDER);
         tabFolder.setVisible(true);
-        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new IPartListener2() {
+        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new IPartListener() {
 
             @Override
-            public void partVisible(IWorkbenchPartReference partRef) {
-                //
-            }
-
-            @Override
-            public void partOpened(IWorkbenchPartReference partRef) {
+            public void partOpened(IWorkbenchPart part) {
                 try {
                     clearLists();
                     if (typeTabItem != null)
@@ -87,34 +82,26 @@ public class ToolView extends ViewPart {
                     if (fieldTabItem != null)
                         fieldTabItem.dispose();
                     buildToolContextMenu(buildToollist(tabFolder));
-
+                    setFocus();
                 } catch (Exception e) {
                     //
                 }
             }
 
             @Override
-            public void partInputChanged(IWorkbenchPartReference partRef) {
-                //
+            public void partDeactivated(IWorkbenchPart part) {
+                // TODO Auto-generated method stub
+
             }
 
             @Override
-            public void partHidden(IWorkbenchPartReference partRef) {
-                //
+            public void partClosed(IWorkbenchPart part) {
+                // TODO Auto-generated method stub
+
             }
 
             @Override
-            public void partDeactivated(IWorkbenchPartReference partRef) {
-                //
-            }
-
-            @Override
-            public void partClosed(IWorkbenchPartReference partRef) {
-                //
-            }
-
-            @Override
-            public void partBroughtToTop(IWorkbenchPartReference partRef) {
+            public void partBroughtToTop(IWorkbenchPart part) {
                 try {
                     clearLists();
                     if (typeTabItem != null)
@@ -124,18 +111,20 @@ public class ToolView extends ViewPart {
                     if (fieldTabItem != null)
                         fieldTabItem.dispose();
                     buildToolContextMenu(buildToollist(tabFolder));
-
+                    setFocus();
                 } catch (Exception e) {
                     //
                 }
             }
 
             @Override
-            public void partActivated(IWorkbenchPartReference partRef) {
+            public void partActivated(IWorkbenchPart part) {
                 //
             }
         });
         shell = parent.getShell();
+        buildToolContextMenu(buildToollist(tabFolder));
+        setFocus();
     }
 
     @Override
@@ -177,8 +166,8 @@ public class ToolView extends ViewPart {
         try {
             skillFile.flush();
         } catch (SkillException e) {
-            System.err.println("Windows-Error occured!");
             e.printStackTrace();
+            System.err.println("Windowsfehler!");
             return false;
         }
         return true;
@@ -196,8 +185,12 @@ public class ToolView extends ViewPart {
         List toolViewList = new List(parent, SWT.SINGLE);
         if (toolTabItem == null || toolTabItem.isDisposed()) {
             toolTabItem = new CTabItem(tabFolder, 0, 0);
-            toolTabItem.setText("Tools - " + ((IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                    .getActivePage().getActiveEditor().getEditorInput()).getFile().getProject().getName());
+            try {
+                toolTabItem.setText("Tools - " + ((IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                        .getActivePage().getActiveEditor().getEditorInput()).getFile().getProject().getName());
+            } catch (NullPointerException e) {
+                toolTabItem.setText("Tools");
+            }
             toolTabItem.setControl(toolViewList);
         }
 
@@ -307,7 +300,11 @@ public class ToolView extends ViewPart {
                     // fieldtree.
                     @Override
                     public void widgetSelected(SelectionEvent arg0) {
-                        buildFieldTree((Type) ((TreeItem) arg0.item).getData(), ((TreeItem) arg0.item).getChecked());
+                        try {
+                            buildFieldTree((Type) ((TreeItem) arg0.item).getData(), ((TreeItem) arg0.item).getChecked());
+                        } catch (ClassCastException e) {
+                            // field was selected
+                        }
                     }
 
                     @Override
@@ -330,30 +327,53 @@ public class ToolView extends ViewPart {
             @Override
             public void handleEvent(Event event) {
                 if (event.detail == SWT.CHECK) {
-                    Type type = (Type) ((TreeItem) event.item).getData();
-                    // TODO: Remove Syso
-                    System.out.println(type.getName());
-                    if (null == typeListOfActualTool)
-                        typeListOfActualTool = new ArrayList<Type>();
+                    Type type = null;
+                    Hint hint = null;
 
-                    // Check or uncheck the specific item in the TreeView.
-                    if (((TreeItem) event.item).getChecked()) {
-                        // TODO: Remove Syso
-                        System.out.println("type added");
-                        typeListOfActualTool.add(type);
-                        type.getFields().forEach(f -> fieldListOfActualTool.add(f));
-                        type.getTypeHints().forEach(h -> typeHintListOfActualTool.add(h));
-                        buildFieldTree(type, true);
-                    } else {
-                        // TODO: Remove Syso
-                        System.out.println("type remove");
-                        typeListOfActualTool.remove(type);
-                        type.getFields().forEach(f -> fieldListOfActualTool.remove(f));
-                        type.getTypeHints().forEach(h -> typeHintListOfActualTool.remove(h));
-                        tabFolder.getItem(2).getControl().setEnabled(false);
+                    if (event.item.getData() instanceof Type)
+                        type = (Type) ((TreeItem) event.item).getData();
+                    else if (event.item.getData() instanceof Hint)
+                        hint = (Hint) ((TreeItem) event.item).getData();
+
+                    if (null != type) {
+                        System.out.println(type.getName());
+                        if (null == fieldListOfActualTool)
+                            fieldListOfActualTool = new ArrayList<Field>();
+
+                        if (((TreeItem) event.item).getChecked()) {
+                            System.out.println("type added");
+                            typeListOfActualTool.add(type);
+                            type.getTypeHints().forEach(h -> typeHintListOfActualTool.add(h));
+                            buildTypTree(activeTool);
+                            writeToolBinaryFile();
+                        } else {
+                            System.out.println("type remove");
+                            type.getFields().clear();
+                            type.getTypeHints().clear();
+                            typeListOfActualTool.remove(type);
+                            buildTypTree(activeTool);
+                            writeToolBinaryFile();
+                        }
                     }
-                    activeTool.setTypes(typeListOfActualTool);
-                    writeToolBinaryFile();
+
+                    if (hint != null) {
+                        System.out.println(hint.getName());
+                        if (null == typeHintListOfActualTool) {
+                            typeHintListOfActualTool = new ArrayList<Hint>();
+                        }
+
+                        if (((TreeItem) event.item).getChecked()) {
+                            System.out.println("hint added");
+                            fieldHintListOfActualTool.add(hint);
+                            buildTypTree(activeTool);
+                            writeToolBinaryFile();
+                        } else {
+                            System.out.println("hint removed");
+                            fieldHintListOfActualTool.remove(hint);
+                            buildTypTree(activeTool);
+                            writeToolBinaryFile();
+                        }
+                    }
                 }
             }
         });
@@ -368,14 +388,14 @@ public class ToolView extends ViewPart {
     @SuppressWarnings("unchecked")
     private void buildFieldTree(Type type, boolean typeIsChecked) {
         Tree fieldTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.FULL_SELECTION);
-        fieldListOfActualType = (ArrayList<Field>) type.getFields().clone();
+        fieldListOfActualType = type.getFields();
         Type tooltype = null;
 
         if (null != activeTool.getTypes())
             for (Type t : activeTool.getTypes()) {
                 if (type.getName().equals(t.getName())) {
                     tooltype = t;
-                    fieldListOfActualTool = (ArrayList<Field>) tooltype.getFields().clone();
+                    fieldListOfActualTool = tooltype.getFields();
                     break;
                 }
             }
@@ -391,6 +411,7 @@ public class ToolView extends ViewPart {
                 TreeItem fieldTreeItem = new TreeItem(fieldTree, 0);
                 fieldTreeItem.setData(field);
                 fieldTreeItem.setText(field.getName());
+                fieldTreeItem.setChecked(false);
                 Field toolField = null;
 
                 // check all the fields used by the actual tool
@@ -405,16 +426,16 @@ public class ToolView extends ViewPart {
                 }
 
                 // add all the fieldhints to the tree
-                ArrayList<Hint> allFieldHintList = (ArrayList<Hint>) field.getFieldHints().clone();
-                for (Hint hint : allFieldHintList) {
+                for (Hint hint : field.getFieldHints()) {
                     TreeItem fieldHintItem = new TreeItem(fieldTreeItem, 0);
                     fieldHintItem.setData(hint);
                     fieldHintItem.setText(hint.getName());
+                    fieldHintItem.setChecked(false);
+                    fieldTreeItem.setExpanded(false);
 
                     // check all the hints used by the tool
-                    if (null != toolField && null != fieldHintListOfActualTool) {
-                        fieldHintListOfActualTool = toolField.getFieldHints();
-                        for (Hint h : fieldHintListOfActualTool) {
+                    if (null != toolField) {
+                        for (Hint h : toolField.getFieldHints()) {
                             if (hint.getName().equals(h.getName())) {
                                 fieldHintItem.setChecked(true);
                                 fieldTreeItem.setExpanded(true);
@@ -438,9 +459,9 @@ public class ToolView extends ViewPart {
      * inits all the fieldlisteners
      * 
      * @param fieldTree
-     * @param type
+     * @param tooltype
      */
-    private void initFieldTreeListener(Tree fieldTree, Type type) {
+    private void initFieldTreeListener(Tree fieldTree, Type tooltype) {
 
         // listener for the checkboxes in the fieldtree
         fieldTree.addListener(SWT.Selection, new Listener() {
@@ -453,7 +474,7 @@ public class ToolView extends ViewPart {
 
                     if (event.item.getData() instanceof Field)
                         field = (Field) ((TreeItem) event.item).getData();
-                    else
+                    else if (event.item.getData() instanceof Hint)
                         hint = (Hint) ((TreeItem) event.item).getData();
 
                     if (null != field) {
@@ -465,19 +486,34 @@ public class ToolView extends ViewPart {
                             System.out.println("field added");
                             fieldListOfActualTool.add(field);
                             field.getFieldHints().forEach(h -> fieldHintListOfActualTool.add(h));
-                            buildFieldTree(type, true);
+                            buildFieldTree(tooltype, true);
                             writeToolBinaryFile();
                         } else {
                             System.out.println("field remove");
-                            field.getFieldHints().forEach(h -> fieldHintListOfActualTool.remove(h));
-                            fieldListOfActualTool.remove(field);
-                            buildFieldTree(type, true);
+                            field.getFieldHints().clear();
+                            tooltype.getFields().remove(field);
+                            buildFieldTree(tooltype, true);
                             writeToolBinaryFile();
                         }
                     }
 
                     if (hint != null) {
-                        // TODO
+                        System.out.println(hint.getName());
+                        if (null == fieldHintListOfActualTool) {
+                            fieldHintListOfActualTool = new ArrayList<Hint>();
+                        }
+
+                        if (((TreeItem) event.item).getChecked()) {
+                            System.out.println("hint added");
+                            fieldHintListOfActualTool.add(hint);
+                            buildFieldTree(tooltype, true);
+                            writeToolBinaryFile();
+                        } else {
+                            System.out.println("hint removed");
+                            ((Field) ((TreeItem) event.item).getParentItem().getData()).getFieldHints().remove(hint);
+                            buildFieldTree(tooltype, false);
+                            writeToolBinaryFile();
+                        }
                     }
                 }
             }
