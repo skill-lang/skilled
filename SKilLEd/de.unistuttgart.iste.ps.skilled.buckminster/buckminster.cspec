@@ -2,6 +2,6 @@
 <cs:cspec xmlns:cs="http://www.eclipse.org/buckminster/CSpec-1.0" name="de.unistuttgart.iste.ps.skilled.buckminster" componentType="buckminster" version="1.0.0">
     <cs:dependencies>
         <cs:dependency name="org.eclipse.platform" componentType="eclipse.feature"/>
-        <cs:dependency name="org.eclipse.xtext.sdk" componentType="eclipse.feature"/>
+        <cs:dependency name="org.eclipse.xtext.sdk" componentType="eclipse.feature" versionDesignator="[2.8.4,2.9.0)"/>
     </cs:dependencies>
 </cs:cspec>
