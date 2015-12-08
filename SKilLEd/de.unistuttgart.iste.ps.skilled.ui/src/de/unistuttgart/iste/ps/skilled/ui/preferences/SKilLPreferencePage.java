@@ -31,47 +31,33 @@ import de.unistuttgart.iste.ps.skilled.ui.internal.SKilLActivator;
 // Preference and Property page for SKilLls
 public class SKilLPreferencePage extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage, IWorkbenchPropertyPage {
-	// BooleanFieldEditor t;
+	DirectoryFieldEditor pp;
 	BooleanFieldEditor a;
-	BooleanFieldEditor g;
 	FileFieldEditor gp;
-	BooleanFieldEditor l;
 	ComboFieldEditor lp;
-	BooleanFieldEditor o;
 	DirectoryFieldEditor op;
-	BooleanFieldEditor x;
 	ComboFieldEditor xp;
 	BooleanFieldEditor ls;
-	BooleanFieldEditor m;
 	StringFieldEditor mp;
-	// String tool = "";
+	String projectpath = "";
 	String all = "";
-	String generator = "";
 	String generatorpath = "";
-	String language = "";
-	Object languagepath;
-	String output = "";
+	Object languagepath = "Ada";
 	String outputpath = "";
-	String execenv = "";
-	Object execenvpath;
+	Object execenvpath = "Scala";
 	String list = "";
-	String module = "";
 	String modulepath = "";
 
 	public SKilLPreferencePage() {
 		super(FieldEditorPreferencePage.GRID);
 		IPreferenceStore store = SKilLActivator.getInstance().getPreferenceStore();
+		store.setValue(SKilLConstants.PROJECT_PATH, "");
 		store.setValue(SKilLConstants.LIST_TOOLS, false);
-		store.setValue(SKilLConstants.GENERATOR, false);
 		store.setValue(SKilLConstants.GENERATOR_PATH, "");
-		store.setValue(SKilLConstants.LANGUAGE, false);
 		store.setValue(SKilLConstants.LANGUAGE_PATH, 1);
-		store.setValue(SKilLConstants.OUTPUT, false);
 		store.setValue(SKilLConstants.OUTPUT_PATH, "");
-		store.setValue(SKilLConstants.EXECUTION_ENVIRONMENT, false);
 		store.setValue(SKilLConstants.EXECUTION_ENVIRONMENT_PATH, 1);
 		store.setValue(SKilLConstants.LIST_OR_GENERATE, false);
-		store.setValue(SKilLConstants.MODULE, false);
 		store.setValue(SKilLConstants.MODULE_PATH, "");
 		setPreferenceStore(store);
 		setDescription("SKilLls");
@@ -80,6 +66,21 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 	@Override
 	protected void initialize() {
 		super.initialize();
+		getFieldEditorParent();
+		
+		pp.setPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				projectpath = pp.getStringValue();				
+			}		
+		});
+
+		gp.setPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				generatorpath = gp.getStringValue();				
+			}		
+		});
 		
 		// gets current value of SKilLConstants.LANGUAGE_PATH
 		lp.setPropertyChangeListener(new IPropertyChangeListener() {
@@ -89,6 +90,14 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 			}
 		});
 		
+		op.setPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				outputpath = op.getStringValue();				
+			}		
+		});
+		
+		
 		// gets current value of SKilLConstants.EXECUTION_ENVIRONMENT
 		xp.setPropertyChangeListener(new IPropertyChangeListener() {
 			@Override
@@ -96,12 +105,26 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 				execenvpath = event.getNewValue();
 			}
 		});
+		
+		mp.setPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				modulepath = mp.getStringValue();				
+			}		
+		});
 	}
 
 	// creates fields so that users can select the SKilLls commands they want.
 	@Override
 	protected void createFieldEditors() {
 		noDefaultAndApplyButton();
+		
+		pp = new DirectoryFieldEditor(SKilLConstants.PROJECT_PATH, "Project Location:", getFieldEditorParent());
+		addField(pp);
+		
+		// Seperator
+		Label e0 = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
+		e0.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 2));
 
 		a = new BooleanFieldEditor(SKilLConstants.LIST_TOOLS, "List/Generate all tools (-a/--all)",
 				getFieldEditorParent());
@@ -111,8 +134,12 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 		Label e1 = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
 		e1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 2));
 
+		String fClassPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+		String fSKilLlsPathFolder = fClassPath + "/../de.unistuttgart.iste.ps.skilled/lib/";
+		File f0 = new File(fSKilLlsPathFolder.substring(1));
 		gp = new FileFieldEditor(SKilLConstants.GENERATOR_PATH, "Generator Path:", true, 1, getFieldEditorParent());
-		// gp.isEmptyStringAllowed();
+		gp.setFileExtensions(new String[] {"*.jar"});
+		gp.setFilterPath(f0);
 		addField(gp);
 
 		// Seperator
@@ -136,7 +163,7 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 		e4.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 2));
 
 		xp = new ComboFieldEditor(SKilLConstants.EXECUTION_ENVIRONMENT_PATH, "Execution Environment:",
-				new String[][] {}, getFieldEditorParent());
+				new String[][] { { "Scala", "Scala" } }, getFieldEditorParent());
 		addField(xp);
 
 		// Seperator
@@ -162,23 +189,25 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 
 	@Override
 	public boolean performOk() {
-		generatorpath = gp.getStringValue();
-		outputpath = op.getStringValue();
-		modulepath = mp.getStringValue();
 		
+		File projectDirTest = new File(projectpath);
 		File generatorFileTest = new File(generatorpath);
-		File outputFileTest = new File(outputpath);
-		
+		File outputDirTest = new File(outputpath);
+
 		// Error pop-ups if necessary fields are unused.
+		if (!projectDirTest.isDirectory() | !projectDirTest.exists()) {
+			JOptionPane.showMessageDialog(new JFrame(), "Invalid project directory!", all, JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
 		if (!generatorFileTest.isFile() | !generatorFileTest.exists()) {
 			JOptionPane.showMessageDialog(new JFrame(), "Invalid generator path!", all, JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		if (!outputFileTest.isDirectory() | !outputFileTest.exists()) {
-			JOptionPane.showMessageDialog(new JFrame(), "Invalid output path!", all, JOptionPane.ERROR_MESSAGE);
+		if (!outputDirTest.isDirectory() | !outputDirTest.exists()) {
+			JOptionPane.showMessageDialog(new JFrame(), "Invalid output directory!", all, JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		if (modulepath == null| modulepath.equals("") | modulepath.isEmpty()) {
+		if (modulepath == null | modulepath.equals("") | modulepath.isEmpty()) {
 			JOptionPane.showMessageDialog(new JFrame(), "Name of module missing!", all, JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
@@ -197,6 +226,7 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 		try {
 			// Escape characters for spaces depending on OS.
 			if (System.getProperty("os.name").startsWith("Windows")) {
+				projectpath = projectpath.replaceAll("\\s+", "^ ");
 				generatorpath = generatorpath.replaceAll("\\s+", "^ ");
 				outputpath = outputpath.replaceAll("\\s+", "^ ");
 				modulepath = modulepath.replaceAll("\\s+", "^ ");
@@ -205,36 +235,43 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 				generatorpath = generatorpath.replaceAll("\\s+", "\\ ");
 				outputpath = outputpath.replaceAll("\\s+", "\\ ");
 				modulepath = modulepath.replaceAll("\\s+", "\\ ");
+				projectpath = projectpath.replaceAll("\\s+", "\\ ");
 			}
-			
+
 			// Finds path of SKilLls.jar
 			String fClassPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 			String fSKilLlsPath = fClassPath + "/../de.unistuttgart.iste.ps.skilled/lib/SKilLls.jar";
 			File f1 = new File(fSKilLlsPath.substring(1));
 			String fJavaPath = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe";
-			String fParameters = "-gloxm" + all + list + " " + generatorpath + " " + languagepath + " " + outputpath + " " + execenvpath + " "+ modulepath;
-			
+			String fParameters = "-pgloxm" + all + list;
+
 			// Runs SKilLls Generator with the commands selected in the
 			// preference page.
 			List<String> commands = new ArrayList<String>();
 			commands.add("java");
 			commands.add("-jar");
 			commands.add(f1.getCanonicalPath());
-			commands.add (fParameters);
-			
+			commands.add(fParameters);
+			commands.add(projectpath);
+			commands.add(generatorpath);
+			commands.add(languagepath.toString());
+			commands.add(outputpath);
+			commands.add(execenvpath.toString());
+			commands.add(modulepath);
+
 			System.out.println(commands);
 
 			ProcessBuilder processBuilder = new ProcessBuilder(commands);
 			processBuilder.redirectOutput(Redirect.INHERIT);
 			processBuilder.redirectError(Redirect.INHERIT);
 			Process process = processBuilder.start();
-			
-			java.io.InputStream err = process.getErrorStream();	
+
+			java.io.InputStream err = process.getErrorStream();
 			for (int i = 0; i < err.available(); i++) {
 				System.out.println(err.read() + "\n");
 			}
-			
-			java.io.InputStream in = process.getInputStream();	
+
+			java.io.InputStream in = process.getInputStream();
 			for (int i = 0; i < in.available(); i++) {
 				System.out.println(in.read() + "\n");
 			}

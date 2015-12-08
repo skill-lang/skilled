@@ -8,6 +8,11 @@ public class SKilLConstants {
 	
 	public static final String QUALIFIER = "de.unistuttgart.iste.ps.skilled.ui";
 	
+	public static final String PROJECT_PATH = "projectpath";
+	public static String getProjectPath(){
+		return getString(PROJECT_PATH);
+	}
+	
 	public static final String IS_TOOL = "istool";
 	public static String getIsTool(){
 		return getString(IS_TOOL);
