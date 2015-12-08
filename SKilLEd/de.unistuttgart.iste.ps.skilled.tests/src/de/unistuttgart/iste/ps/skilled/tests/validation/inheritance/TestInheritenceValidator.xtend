@@ -25,7 +25,8 @@ class TestInheritenceValidator {
 	@Inject extension ParseHelper<File> parser;
 	@Inject extension ValidationTestHelper
 	
-		@Test
+	//doesn't compile, but should be correct (?)
+	@Test
 	def void TransitiveInheritanceIsLegal() {
 		assertTrue("A:B:C{} B:C{} C{}".parse.validate.isNullOrEmpty)		
 	}
@@ -254,6 +255,27 @@ class TestInheritenceValidator {
 		));
 	}
 	
+	@Test
+	def void hallo() {
+		val issues = "A:B:C{} B:A:C{} C:A:B{}".parse.validate
+		
+		assertTrue(issues.size==3)
+		
+		assertTrue(ErrorMessageComparator.containsMessage(
+			issues, ErrorMessageComparator.ERROR_INHERITANCE_CYCLE
+		));
+	}
+	
+	@Test
+	def void asdf() {
+		val issues = "A:A:A{}".parse.validate
+		
+		assertTrue(issues.size==1)
+		
+		assertTrue(ErrorMessageComparator.containsMessage(
+			issues, ErrorMessageComparator.ERROR_INHERITANCE_PARENT_IS_SELF
+		));
+	}
 	
 	
 	
