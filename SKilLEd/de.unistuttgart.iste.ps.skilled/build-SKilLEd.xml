@@ -165,7 +165,7 @@
             <fileset dir="${tests-project-path}/resources"/>
         </copy>
         <jacoco:coverage destfile="ant/junit/jacoco_SKilLEd.exec">
-            <junit fork="yes" printsummary="withOutAndErr" haltonerror="false" haltonfailure="false">
+            <junit fork="yes" forkmode="once" printsummary="withOutAndErr" haltonerror="false" haltonfailure="false">
                 <classpath>
                     <path refid="classpath"/>
                 </classpath>

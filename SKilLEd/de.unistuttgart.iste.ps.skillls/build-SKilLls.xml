@@ -113,7 +113,7 @@
 
     <target depends="build-skillls-complete" name="test">
         <jacoco:coverage destfile="out/test/SKilLls/jacoco_SKilLls.exec">
-        <junit fork="yes" printsummary="withOutAndErr" haltonerror="false" haltonfailure="false">
+        <junit fork="yes" forkmode="once" printsummary="withOutAndErr" haltonerror="false" haltonfailure="false">
             <classpath>
                 <path refid="SKilLls.classpath"/>
             </classpath>
