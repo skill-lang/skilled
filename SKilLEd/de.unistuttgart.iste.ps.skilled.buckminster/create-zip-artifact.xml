@@ -3,7 +3,7 @@
     <property name="buildroot" value="../buildroot/buckminster.output/de.unistuttgart.iste.ps.skilled.site_1.0.0-eclipse.feature/site.p2" />
     
     <target name="clean">
-        <delete file="${buildroot.dir}/SKilLEd.zip"/>
+        <delete file="${buildroot}/SKilLEd.zip"/>
     </target>
 
     <target name="do-zip-skilled" depends="clean">

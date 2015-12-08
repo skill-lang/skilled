@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="de.unistuttgart.iste.ps.skilled" default="zip-source">
+
+    <target name="zip-source-files">
+        <delete dir="../../SKilLEd-source"/>
+        <delete file="../../SKilLEd.zip"/>
+        <mkdir dir="../../SKilLEd-source"/>
+        <copy todir="../../SKilLEd-source">
+            <fileset dir="../..">
+                <patternset>
+                    <exclude name="**/buildroot/**"/>
+                    <exclude name="**/src-gen/**"/>
+                    <exclude name="**/xtend-gen/**"/>
+                    <exclude name="**/model/**"/>
+                    <exclude name="**/bin/**"/>
+                    <exclude name="**/ant/**"/>
+                    <exclude name="**/lib2/*.jar"/>
+                    <exclude name="**/out/**"/>
+                    <exclude name="**/scala/**"/>
+                    <exclude name="**/SKilLEd-source/**"/>
+                    <exclude name="**/SKilLEd-source.zip"/>
+                </patternset>
+            </fileset>
+        </copy>
+        <zip destfile="../../SKilLEd-source.zip" basedir="../../SKilLEd-source"/>
+    </target>
+
+    <target name="teardown">
+        <delete dir="../../SKilLEd-source"/>
+    </target>
+
+    <target name="zip-source" depends="zip-source-files,teardown"/>
+
+</project>
