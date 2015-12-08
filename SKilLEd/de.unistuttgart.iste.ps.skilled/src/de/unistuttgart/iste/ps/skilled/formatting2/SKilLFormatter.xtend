@@ -26,11 +26,11 @@ import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.sKilL.View
 import de.unistuttgart.iste.ps.skilled.services.SKilLGrammarAccess
 import org.eclipse.xtext.formatting2.AbstractFormatter2
 import org.eclipse.xtext.formatting2.IFormattableDocument
 import org.eclipse.xtext.formatting2.regionaccess.ISemanticRegion
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
 
 /**
  * Formatting for SKilL 
@@ -66,7 +66,6 @@ class SKilLFormatter extends AbstractFormatter2 {
 		for (Declaration declarations : file.getDeclarations()) {
 			format(declarations, document);
 		}
-
 	}
 
 	def dispatch void format(Include include, extension IFormattableDocument document) {
@@ -108,7 +107,11 @@ class SKilLFormatter extends AbstractFormatter2 {
 
 		// Format the braces and increase the indentation between them.
 		if (typeDeclaration.fields.size > 0) {
-			typeDeclaration.regionForKeyword("{").prepend[oneSpace].append[setNewLines(1, 1, 2); increaseIndentation];
+			typeDeclaration.regionForKeyword("{").prepend[oneSpace].append [
+				priority = -1;
+				setNewLines(1, 1, 2);
+				increaseIndentation
+			];
 			typeDeclaration.regionForKeyword("}").prepend[priority = 1; newLines = 1; decreaseIndentation].append [
 				newLines = 2
 			];
@@ -187,7 +190,7 @@ class SKilLFormatter extends AbstractFormatter2 {
 
 	def dispatch void format(Field field, extension IFormattableDocument document) {
 		field.prepend[noSpace];
-		field.regionForRuleCallTo(ML_COMMENTRule).prepend[priority = 1; newLines = 2].append[newLine];
+		field.regionForRuleCallTo(ML_COMMENTRule).prepend[priority = 2; newLines = 2].append[newLine];
 
 		for (Restriction restrictions : field.getRestrictions()) {
 			format(restrictions, document);
@@ -228,15 +231,31 @@ class SKilLFormatter extends AbstractFormatter2 {
 			format(hintArguments, document);
 		}
 
+		if (hint.hintName.equals("pragma")) {
+			hint.hintArguments.get(0).surround[priority = 1; oneSpace]
+		}
+
 		hint.regionForKeyword("(").surround[noSpace];
 		hint.regionForKeyword(")").surround[noSpace];
 		hint.regionForKeyword(",").prepend[noSpace].append[oneSpace];
 		hint.append[newLine];
 	}
 
+	def dispatch void format(View view, extension IFormattableDocument document) {
+		view.surround[noSpace];
+		view.regionForKeyword("view").append[oneSpace];
+		view.regionForKeyword("as").surround[oneSpace];
+		format(view.fieldcontent, document);
+		format(view.fieldtype, document);
+		// The name of the view
+		view.regionForRuleCallTo(XIDRule).prepend[oneSpace].append[noSpace];
+	}
+
 	def dispatch void format(Constant constant, extension IFormattableDocument document) {
 		constant.surround[noSpace];
 		constant.regionForKeyword("const").append[oneSpace];
+		// The name of the constant
+		constant.regionForRuleCallTo(XIDRule).prepend[oneSpace];
 		constant.regionForKeyword("=").surround[oneSpace];
 		format(constant.getFieldtype(), document);
 	}
@@ -244,6 +263,8 @@ class SKilLFormatter extends AbstractFormatter2 {
 	def dispatch void format(Data data, extension IFormattableDocument document) {
 		data.surround[noSpace];
 		data.regionForKeyword("auto").append[oneSpace];
+		// The name of the data
+		data.regionForRuleCallTo(XIDRule).prepend[oneSpace].append[noSpace];
 		format(data.getFieldtype(), document);
 	}
 

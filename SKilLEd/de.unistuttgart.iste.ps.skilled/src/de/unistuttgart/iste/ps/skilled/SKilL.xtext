@@ -116,18 +116,25 @@ Booleantype:
 	type='bool';
 
 Restriction:
-	'@' restrictionName=ID ('(' (restrictionArguments+=RestrictionArgument (','
-	restrictionArguments+=RestrictionArgument)*)? ')')?;
+	'@' restrictionName=ID (isBraceOpen?='(' (restrictionArguments+=RestrictionArgument (','
+	restrictionArguments+=RestrictionArgument)*)? isBraceClose?=')')?;
 
 RestrictionArgument:
 	(valueDouble=DoubleLiteral | valueLong=(LongLiteral | HEXINT) | valueString=STRING | valueBoolean=Boolean |
 	valueType=DeclarationReference (('.' | '::') enumInstance=XID)?);
 
 Hint:
-	'!' hintName=ID ('(' (hintArguments+=HintArgument (',' hintArguments+=HintArgument)*)? ')')?;
+	PragmaHint | BasicHint;
+
+PragmaHint returns Hint :
+	'!' hintName='pragma' hintArguments+=HintArgument ('(' hintArguments+=HintArgument (',' hintArguments+=HintArgument)* ')')?;
+
+BasicHint returns Hint:
+	'!' hintName=ID (isBraceOpen?='(' (hintArguments+=HintArgument (',' hintArguments+=HintArgument)*)?
+	isBraceClose?=')')?;
 
 HintArgument:
-	(valueDouble=DoubleLiteral | valueLong=(LongLiteral | HEXINT) | valueString=STRING | valueIdentifier=ID);
+	(valueDouble=DoubleLiteral | valueLong=(LongLiteral | HEXINT) | valueString=STRING | valueType=DeclarationReference);
 
 LongLiteral returns ecore::ELongObject:
 	LONG;
@@ -158,7 +165,7 @@ enum Boolean:
 
 XID:
 	ID | 'auto' | 'include' | 'with' | 'typedef' | 'enum' | 'interface' | 'extends' | 'const' | 'map' | 'set' | 'list' |
-	'string' | 'bool' | 'annotation' | 'true' | 'false';
+	'string' | 'bool' | 'annotation' | 'true' | 'false' | 'pragma';
 
 QualifiedName:
 	(XID ('.' XID)?);

@@ -117,6 +117,9 @@ Workflow {
 
 			// provides a compare view
 			fragment = compare.CompareFragment auto-inject {}
+
+			// rename refactoring
+			fragment = refactoring.RefactorElementNameFragment {}
 		}
 	}
 }
