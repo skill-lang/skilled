@@ -2,6 +2,9 @@ package de.unistuttgart.iste.ps.skilled.ui.preferences;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ProcessBuilder.Redirect;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -78,33 +81,6 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 	protected void initialize() {
 		super.initialize();
 		
-		// SKilLConstants.*_PATH deactivated by default
-		gp.setEnabled(false, getFieldEditorParent());
-		lp.setEnabled(false, getFieldEditorParent());
-		op.setEnabled(false, getFieldEditorParent());
-		xp.setEnabled(false, getFieldEditorParent());
-		mp.setEnabled(false, getFieldEditorParent());
-		
-		// activates SKilLConstants.GENERATOR_PATH when SKilLConstants.GENERATOR
-		// is check-marked.
-		g.setPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				boolean hidePref = ((Boolean) event.getNewValue()).booleanValue();
-				gp.setEnabled(hidePref, getFieldEditorParent());
-				checkState();
-			}
-		});
-		// activates SKilLConstants.LANGUAGE_PATH when SKilLConstants.LANGUAGE
-		// is check-marked.
-		l.setPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				boolean hidePref = ((Boolean) event.getNewValue()).booleanValue();
-				lp.setEnabled(hidePref, getFieldEditorParent());
-				checkState();
-			}
-		});
 		// gets current value of SKilLConstants.LANGUAGE_PATH
 		lp.setPropertyChangeListener(new IPropertyChangeListener() {
 			@Override
@@ -112,41 +88,12 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 				languagepath = event.getNewValue();
 			}
 		});
-		// activates SKilLConstants.OUTPUT_PATH when SKilLConstants.OUTPUT is
-		// check-marked.
-		o.setPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				boolean hidePref = ((Boolean) event.getNewValue()).booleanValue();
-				op.setEnabled(hidePref, getFieldEditorParent());
-				checkState();
-			}
-		});
-		// activates SKilLConstants.EXECUTION_ENVIRONMENT_PATH when
-		// SKilLConstants.EXECUTION_ENVIRONMENT is check-marked.
-		x.setPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				boolean hidePref = ((Boolean) event.getNewValue()).booleanValue();
-				xp.setEnabled(hidePref, getFieldEditorParent());
-				checkState();
-			}
-		});
+		
 		// gets current value of SKilLConstants.EXECUTION_ENVIRONMENT
 		xp.setPropertyChangeListener(new IPropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				execenvpath = event.getNewValue();
-			}
-		});
-		// activates SKilLConstants.MODULE_PATH when SKilLConstants.MODULE is
-		// check-marked.
-		m.setPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				boolean hidePref = ((Boolean) event.getNewValue()).booleanValue();
-				mp.setEnabled(hidePref, getFieldEditorParent());
-				checkState();
 			}
 		});
 	}
@@ -164,9 +111,6 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 		Label e1 = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
 		e1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 2));
 
-		g = new BooleanFieldEditor(SKilLConstants.GENERATOR, "Generate Bindings(-g/--generator)",
-				getFieldEditorParent());
-		addField(g);
 		gp = new FileFieldEditor(SKilLConstants.GENERATOR_PATH, "Generator Path:", true, 1, getFieldEditorParent());
 		// gp.isEmptyStringAllowed();
 		addField(gp);
@@ -175,8 +119,6 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 		Label e2 = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
 		e2.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 2));
 
-		l = new BooleanFieldEditor(SKilLConstants.LANGUAGE, "Language (-l/--lang)", getFieldEditorParent());
-		addField(l);
 		lp = new ComboFieldEditor(SKilLConstants.LANGUAGE_PATH, "Select Language:",
 				new String[][] { { "Ada", "Ada" }, { "C", "C" }, { "Java", "Java" }, { "Scala", "Scala" } },
 				getFieldEditorParent());
@@ -186,8 +128,6 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 		Label e3 = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
 		e3.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 2));
 
-		o = new BooleanFieldEditor(SKilLConstants.OUTPUT, "Specify Output (-o/--output)", getFieldEditorParent());
-		addField(o);
 		op = new DirectoryFieldEditor(SKilLConstants.OUTPUT_PATH, "Output Location:", getFieldEditorParent());
 		addField(op);
 
@@ -195,9 +135,6 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 		Label e4 = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
 		e4.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 2));
 
-		x = new BooleanFieldEditor(SKilLConstants.EXECUTION_ENVIRONMENT, "Specify Execution Environment (-x/--exec)",
-				getFieldEditorParent());
-		addField(x);
 		xp = new ComboFieldEditor(SKilLConstants.EXECUTION_ENVIRONMENT_PATH, "Execution Environment:",
 				new String[][] {}, getFieldEditorParent());
 		addField(xp);
@@ -214,8 +151,6 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 		Label e6 = new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL);
 		e6.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 3, 2));
 
-		m = new BooleanFieldEditor(SKilLConstants.MODULE, "Specify Module (-m/--module)", getFieldEditorParent());
-		addField(m);
 		mp = new StringFieldEditor(SKilLConstants.MODULE_PATH, "Name of Module:", getFieldEditorParent());
 		addField(mp);
 	}
@@ -227,50 +162,38 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 
 	@Override
 	public boolean performOk() {
+		generatorpath = gp.getStringValue();
+		outputpath = op.getStringValue();
+		modulepath = mp.getStringValue();
+		
+		File generatorFileTest = new File(generatorpath);
+		File outputFileTest = new File(outputpath);
+		
+		// Error pop-ups if necessary fields are unused.
+		if (!generatorFileTest.isFile() | !generatorFileTest.exists()) {
+			JOptionPane.showMessageDialog(new JFrame(), "Invalid generator path!", all, JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (!outputFileTest.isDirectory() | !outputFileTest.exists()) {
+			JOptionPane.showMessageDialog(new JFrame(), "Invalid output path!", all, JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (modulepath == null| modulepath.equals("") | modulepath.isEmpty()) {
+			JOptionPane.showMessageDialog(new JFrame(), "Name of module missing!", all, JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
 
 		if (a.getBooleanValue() == true) {
 			all = "a";
 		} else {
 			all = "";
 		}
-		if (g.getBooleanValue() == true) {
-			generator = "g";
-			generatorpath = gp.getStringValue();
-		} else {
-			generator = "";
-			generatorpath = "";
-		}
-		if (l.getBooleanValue() == true) {
-			language = "l";
-		} else {
-			language = "";
-			languagepath = "";
-		}
-		if (o.getBooleanValue() == true) {
-			output = "o";
-			outputpath = op.getStringValue();
-		} else {
-			output = "";
-			outputpath = "";
-		}
-		if (x.getBooleanValue() == true) {
-			execenv = "x";
-		} else {
-			execenv = "";
-			execenvpath = "";
-		}
 		if (ls.getBooleanValue() == true) {
 			list = "ls";
 		} else {
 			list = "";
 		}
-		if (m.getBooleanValue() == true) {
-			module = "m";
-			modulepath = mp.getStringValue();
-		} else {
-			module = "";
-			modulepath = "";
-		}
+
 		try {
 			// Escape characters for spaces depending on OS.
 			if (System.getProperty("os.name").startsWith("Windows")) {
@@ -288,33 +211,38 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 			String fClassPath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 			String fSKilLlsPath = fClassPath + "/../de.unistuttgart.iste.ps.skilled/lib/SKilLls.jar";
 			File f1 = new File(fSKilLlsPath.substring(1));
-
+			String fJavaPath = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe";
+			String fParameters = "-gloxm" + all + list + " " + generatorpath + " " + languagepath + " " + outputpath + " " + execenvpath + " "+ modulepath;
+			
 			// Runs SKilLls Generator with the commands selected in the
 			// preference page.
-			@SuppressWarnings("unused")
-			Process process = new ProcessBuilder("java", "-jar", f1.getCanonicalPath(),
-					"-" + all + generator + language + output + execenv + list + module + " " + generatorpath + " "
-							+ languagepath + " " + outputpath + " " + modulepath).start();
+			List<String> commands = new ArrayList<String>();
+			commands.add("java");
+			commands.add("-jar");
+			commands.add(f1.getCanonicalPath());
+			commands.add (fParameters);
+			
+			System.out.println(commands);
+
+			ProcessBuilder processBuilder = new ProcessBuilder(commands);
+			processBuilder.redirectOutput(Redirect.INHERIT);
+			processBuilder.redirectError(Redirect.INHERIT);
+			Process process = processBuilder.start();
+			
+			java.io.InputStream err = process.getErrorStream();	
+			for (int i = 0; i < err.available(); i++) {
+				System.out.println(err.read() + "\n");
+			}
+			
+			java.io.InputStream in = process.getInputStream();	
+			for (int i = 0; i < in.available(); i++) {
+				System.out.println(in.read() + "\n");
+			}
 
 			return super.performOk();
 		}
 
-		// Error pop-ups if necessary fields are unused.
 		catch (IOException e) {
-			if (g.getBooleanValue() == true && gp.getStringValue() == "") {
-				JOptionPane.showMessageDialog(new JFrame(), "Generator path missing!", all, JOptionPane.ERROR_MESSAGE);
-			}
-			if (o.getBooleanValue() == true && op.getStringValue() == "") {
-				JOptionPane.showMessageDialog(new JFrame(), "Output path missing!", all, JOptionPane.ERROR_MESSAGE);
-			}
-			if (m.getBooleanValue() == true && mp.getStringValue() == "") {
-				JOptionPane.showMessageDialog(new JFrame(), "Module path missing!", all, JOptionPane.ERROR_MESSAGE);
-			}
-			if (a.getBooleanValue() == false && g.getBooleanValue() == false && l.getBooleanValue() == false
-					&& o.getBooleanValue() == false && x.getBooleanValue() == false && ls.getBooleanValue() == false
-					&& m.getBooleanValue() == false) {
-				JOptionPane.showMessageDialog(new JFrame(), "Nothing selected!", all, JOptionPane.ERROR_MESSAGE);
-			}
 			e.printStackTrace();
 			return false;
 		}
