@@ -4,9 +4,12 @@ import java.io.FileReader
 import java.io.File
 import java.io.BufferedReader
 
+/**
+ * @author Tobias Heck
+ */
 class FileLoader {
 	
-	def static String loadFile(String s) {
+	public def static String loadFile(String s) {
 		var String fileContent = "";
 		val reader = new FileReader("resources" + File.separator +
 			s + ".skill")

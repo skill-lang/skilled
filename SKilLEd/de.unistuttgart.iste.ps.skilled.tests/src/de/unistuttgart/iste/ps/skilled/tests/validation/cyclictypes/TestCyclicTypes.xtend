@@ -9,6 +9,7 @@ import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Test
 import org.junit.runner.RunWith
+import de.unistuttgart.iste.ps.skilled.tests.utils.ErrorMessageComparator
 
 import static org.junit.Assert.*
 
@@ -26,105 +27,56 @@ class TestCyclicTypes {
 	
 		
 	@Test
-	def void testNoErrorValid() {
-		assertTrue('''
-			TypeA {
-				const i8 a = 1;
-			}    	
-			TypeB :TypeA{
-				
-			}
-			TypeC{
-				
-			}
-		'''.parse.validate.isNullOrEmpty)
-		
+	def void testNoError1() {
+		assertTrue("A:B:C{} B:C{} C{}".parse.validate.isNullOrEmpty)		
 	}
 	
 	@Test
-	def void testNoErrorValid2() {
-		assertTrue('''
-			TypeA {
-				const i8 a = 1;
-			}    	
-			TypeB :TypeA{
-				
-			}
-			TypeC{
-				
-			}
-			TypeD:TypeA{
-				
-			}
-		'''.parse.validate.isNullOrEmpty)
-		
+	def void testNoError2() {
+		assertTrue("A:B{} B{} C:B{}".parse.validate.isNullOrEmpty)
 	}
-	
 	
 	@Test
 	def void errorCycle() {
-		assertFalse('''
-			TypeA :TypeC {
-				const i8 a = 1;
-			}   
-			TypeB :TypeA{
-				
-			}
-			TypeC :TypeB{
-				
-			} 	
-		'''.parse.validate.isNullOrEmpty)
+		val issues = "A:B{} B:A{}".parse.validate;
 	
-		assertTrue('''
-			TypeA :TypeC {
-				const i8 a = 1;
-			}   
-			TypeB :TypeA{
-				
-			}
-			TypeC :TypeB{
-				
-			} 	
-		'''.parse.validate.size==3)	
+		assertTrue(issues.size==2)
+		
+		assertTrue(ErrorMessageComparator.containsMessage(
+			issues, ErrorMessageComparator.ERROR_INHERITANCE_CYCLE
+		));
 	}
 
 	@Test
 	def void errorTypeIsHisOwnParent() {
-		assertFalse('''
-			TypeA :TypeA {
-				const i16 a = 1;
-			}   
-			TypeB :TypeA{
-				
-			}
-			TypeC :TypeB{
-				
-			} 	
-		'''.parse.validate.isNullOrEmpty )
+		val issues = "A:A{}".parse.validate;
 		
-		assertFalse('''
-			TypeA :TypeA {
-				const i16 a = 1;
-			}   
-			TypeB :TypeA{
-				
-			}
-			TypeC :TypeB{
-				
-			} 	
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue(issues.size==1)
 		
+		assertTrue(ErrorMessageComparator.containsMessage(
+			issues, ErrorMessageComparator.ERROR_INHERITANCE_PARENT_IS_SELF
+		));
 	}
 	
 	@Test
 	def void errorInterfaceCycle() {
-		assertFalse('''
-			Interface TypeA : TypeB {
-				const i8 a = 1;
-			}    	
-			Interface TypeB : TypA{
-				
-			}
-		'''.parse.validate.isNullOrEmpty )
+		val issues = "interface A:B{} interface B:A{}".parse.validate;
+		
+		assertTrue(issues.size==2)
+		
+		assertTrue(ErrorMessageComparator.containsMessage(
+			issues, ErrorMessageComparator.ERROR_INHERITANCE_CYCLE
+		));
+	}
+	
+	@Test
+	def void errorInterfaceIsHisOwnParent() {
+		val issues = "interface A:A{}".parse.validate;
+		
+		assertTrue(issues.size==1)
+		
+		assertTrue(ErrorMessageComparator.containsMessage(
+			issues, ErrorMessageComparator.ERROR_INHERITANCE_PARENT_IS_SELF
+		));
 	}
 }
