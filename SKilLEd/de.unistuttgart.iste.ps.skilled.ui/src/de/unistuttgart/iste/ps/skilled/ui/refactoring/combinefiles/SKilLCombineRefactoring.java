@@ -17,8 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.emf.common.util.URI;
 
 /**
  * This class merges the .skill files selected in the
@@ -40,7 +39,8 @@ public class SKilLCombineRefactoring {
 	String fBody = "";
 	String fPreCombinedLocation;
 	int aFileHasHeadCommentCheck = 0;
-	String checker = null;
+	String namechecker = null;
+	String pathchecker = null;
 	String[] fPreCombinedWithFolderPath;
 	String[] fPreCombinedWithoutProjectFolderPath;
 	String[] fPreCombinedWithoutProjectFolderPathAndForwardSlash;
@@ -107,9 +107,11 @@ public class SKilLCombineRefactoring {
 			// fPreCombinedWithoutProjectFolderPathAndForwardSlash[i] + "\"";
 			// }
 			if (i == 0) {
-				checker = files[i].getName();
+				namechecker = files[i].getName();
+				pathchecker = files[i].getPath();
 			} else {
-				checker = checker + "|" + files[i].getName();
+				namechecker = namechecker + "|" + files[i].getName();
+				pathchecker = pathchecker + "|" + files[i].getPath();
 			}
 
 		}
@@ -149,7 +151,14 @@ public class SKilLCombineRefactoring {
 					else if (line.startsWith("include") || line.startsWith("with")) {
 						// Deletes withs and includes that require the use of
 						// the pre-combined files
-						line = line.replaceAll("\"[^\"]*(" + checker + ")\"", "");
+						Pattern namePattern = Pattern.compile("\"[^\"]*(" + namechecker + ")\"");
+						Matcher nameMatcher = namePattern.matcher(line);
+						if (nameMatcher.find()){
+							while (nameMatcher.find()) {
+								
+							}
+						}
+						line = line.replaceAll("\"[^\"]*(" + namechecker + ")\"", "");
 						line = line.replaceAll("\\s+", " ");
 						// If with or includes contains no addresses,
 						// skip line
@@ -346,7 +355,7 @@ public class SKilLCombineRefactoring {
 				String fCurrentFilePathWithoutProject = fCurrentFilePathWithoutWorkspace
 						.substring(fCurrentFilePathWithoutWorkspace.indexOf(File.separator + 1));
 
-				Pattern pattern = Pattern.compile(checker);
+				Pattern pattern = Pattern.compile(namechecker);
 				Matcher matcher = pattern.matcher(fCurrentName);
 				if (!matcher.find() && !f.getName().equals(fSaveName)) {
 					boolean alreadyReplacedWith = false;
@@ -466,17 +475,17 @@ public class SKilLCombineRefactoring {
 								// Deletes withs and includes that require the
 								// use of the pre-combined files
 								if (line.startsWith("with") && alreadyReplacedWith == false) {
-									line = line.replaceFirst("\"[^\"]*(" + checker + ")\"", "\"" + fReplacement + "\"");
-									line = line.replaceAll(checker, "");
+									line = line.replaceFirst("\"[^\"]*(" + namechecker + ")\"", "\"" + fReplacement + "\"");
+									line = line.replaceAll(namechecker, "");
 									alreadyReplacedWith = true;
 								} else if (line.startsWith("with") && alreadyReplacedWith == true) {
-									line = line.replaceAll("\"[^\"]*(" + checker + ")\"", "");
+									line = line.replaceAll("\"[^\"]*(" + namechecker + ")\"", "");
 								} else if (line.startsWith("include") && alreadyReplacedInclude == false) {
-									line = line.replaceFirst(checker, "\"" + fReplacement + "\"");
-									line = line.replaceAll("\"[^\"]*(" + checker + ")\"", "");
+									line = line.replaceFirst(namechecker, "\"" + fReplacement + "\"");
+									line = line.replaceAll("\"[^\"]*(" + namechecker + ")\"", "");
 									alreadyReplacedInclude = true;
 								} else if (line.startsWith("include") && alreadyReplacedInclude == true) {
-									line = line.replaceAll("\"[^\"]*(" + checker + ")\"", "");
+									line = line.replaceAll("\"[^\"]*(" + namechecker + ")\"", "");
 								}
 								if (!line.matches("with\\s*") && !line.matches("include\\s*")) {
 									fLineChecker += line + "\n";
