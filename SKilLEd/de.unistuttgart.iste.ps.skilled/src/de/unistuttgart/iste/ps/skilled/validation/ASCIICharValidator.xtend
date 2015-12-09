@@ -4,12 +4,9 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.Check
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import java.nio.charset.CharsetDecoder
-import java.nio.ByteBuffer
-import java.nio.charset.Charset
-import java.nio.charset.CharacterCodingException
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import de.unistuttgart.iste.ps.skilled.sKilL.Field
+import de.unistuttgart.iste.ps.skilled.validation.checkASCII;
 
 /**
  * This class checks if a name has non-ASCII-Characters in it 
@@ -22,6 +19,8 @@ class ASCIICharValidator extends AbstractDeclarativeValidator {
 
 	var static String DECLARATION_HAS_NONASCII_CHARS = "declarationNonASCII"
 	var static String FIELD_HAS_NONASCII_CHARS = "fieldNonASCII"
+	
+	
 
 	@Check
 	/**
@@ -29,7 +28,7 @@ class ASCIICharValidator extends AbstractDeclarativeValidator {
 	 * @param dec The Declaration to be checked.
 	 */
 	def void declarationCheck(Declaration dec) {
-		if (!isPureAscii(dec.name)) {
+		if (!checkASCII.isPureAscii(dec.name)) {
 			warning("Warning: Declaration contains non-ASCII-Chars in the name.", dec,
 				SKilLPackage.Literals.DECLARATION.getEStructuralFeature(1), DECLARATION_HAS_NONASCII_CHARS, dec.name)
 		}
@@ -41,26 +40,9 @@ class ASCIICharValidator extends AbstractDeclarativeValidator {
 	 * @param f The Field to be checked
 	 */
 	def void fieldCheck(Field f) {
-		if (!isPureAscii(f.fieldcontent.name)) {
+		if (!checkASCII.isPureAscii(f.fieldcontent.name)) {
 			warning("Warning: Field contains non-ASCII-Chars in the name.", f.fieldcontent,
 				SKilLPackage.Literals.FIELDCONTENT__NAME, FIELD_HAS_NONASCII_CHARS, f.fieldcontent.name)
 		}
 	}
-
-	/**
-	 * This method checks a String for non-ASCII-chars
-	 * @param checkString The String to be checked
-	 * @return True if checkString has no non-ASCII-Chars; else false 
-	 */
-	def private boolean isPureAscii(String checkString) {
-		var byte[] bytearray = checkString.getBytes();
-		var CharsetDecoder decode = Charset.forName("US-ASCII").newDecoder();
-		try {
-			decode.decode(ByteBuffer.wrap(bytearray))
-		} catch (CharacterCodingException e) {
-			return false;
-		}
-		return true;
-	}
-
 }
