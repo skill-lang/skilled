@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.ps.skilled.validation;
+package de.unistuttgart.iste.ps.skilled.util;
 
 
 /**
@@ -6,7 +6,7 @@ package de.unistuttgart.iste.ps.skilled.validation;
  * 
  * @author Jan Berberich
  */
-public class checkASCII {
+public class CheckASCII {
 	/**
 	 * This method checks a String for non-ASCII-chars
 	 * @param checkString The String to be checked

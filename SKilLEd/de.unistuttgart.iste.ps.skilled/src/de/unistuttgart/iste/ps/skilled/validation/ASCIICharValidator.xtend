@@ -6,7 +6,7 @@ import org.eclipse.xtext.validation.Check
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import de.unistuttgart.iste.ps.skilled.sKilL.Field
-import de.unistuttgart.iste.ps.skilled.validation.checkASCII;
+import de.unistuttgart.iste.ps.skilled.util.CheckASCII;
 
 /**
  * This class checks if a name has non-ASCII-Characters in it 
@@ -17,8 +17,8 @@ import de.unistuttgart.iste.ps.skilled.validation.checkASCII;
 class ASCIICharValidator extends AbstractDeclarativeValidator {
 	override register(EValidatorRegistrar registar) {}
 
-	var static String DECLARATION_HAS_NONASCII_CHARS = "declarationNonASCII"
-	var static String FIELD_HAS_NONASCII_CHARS = "fieldNonASCII"
+	val static String DECLARATION_HAS_NONASCII_CHARS = "declarationNonASCII"
+	val static String FIELD_HAS_NONASCII_CHARS = "fieldNonASCII"
 	
 	
 
@@ -28,7 +28,7 @@ class ASCIICharValidator extends AbstractDeclarativeValidator {
 	 * @param dec The Declaration to be checked.
 	 */
 	def void declarationCheck(Declaration dec) {
-		if (!checkASCII.isPureAscii(dec.name)) {
+		if (!CheckASCII.isPureAscii(dec.name)) {
 			warning("Warning: Declaration contains non-ASCII-Chars in the name.", dec,
 				SKilLPackage.Literals.DECLARATION.getEStructuralFeature(1), DECLARATION_HAS_NONASCII_CHARS, dec.name)
 		}
@@ -40,7 +40,7 @@ class ASCIICharValidator extends AbstractDeclarativeValidator {
 	 * @param f The Field to be checked
 	 */
 	def void fieldCheck(Field f) {
-		if (!checkASCII.isPureAscii(f.fieldcontent.name)) {
+		if (!CheckASCII.isPureAscii(f.fieldcontent.name)) {
 			warning("Warning: Field contains non-ASCII-Chars in the name.", f.fieldcontent,
 				SKilLPackage.Literals.FIELDCONTENT__NAME, FIELD_HAS_NONASCII_CHARS, f.fieldcontent.name)
 		}
