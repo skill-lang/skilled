@@ -28,12 +28,12 @@ class ViewValidator extends AbstractDeclarativeValidator {
 
 	/**
 	 * This methods checks all views in td.
-	 * @param td The TypeDeclaration the checked views are in.
+	 * @param CheckedTypeDeclaration The TypeDeclaration the checked views are in.
 	 * 
 	 */
 	@Check
-	def validateViews(TypeDeclaration td) {
-		for (Field f : td.fields) {
+	def validateViews(TypeDeclaration CheckedTypeDeclaration) {
+		for (Field f : CheckedTypeDeclaration.fields) {
 			// Check if Field is a View
 			if ((f.fieldcontent instanceof View)) {
 				var boolean isUsertype = false;	//becomes true if the as variable is a Usertype
@@ -47,14 +47,14 @@ class ViewValidator extends AbstractDeclarativeValidator {
 						var String supertypeTypename = (v.fieldcontent.fieldcontent.eContainer.eContainer as Declaration).name; // a
 						var String supertypeVarname = v.fieldcontent.fieldcontent.name; // x
 						TypesSearched = new ArrayList<TypeDeclaration>;
-						var TypeDeclaration supertypeDec = searchSupertype(supertypeTypename, td)
+						var TypeDeclaration supertypeDec = searchSupertype(supertypeTypename, CheckedTypeDeclaration)
 						if (supertypeDec == null) {
 							// Error: A not a supertype of td
-							if(supertypeTypename.equals(td.name)){
+							if(supertypeTypename.equals(CheckedTypeDeclaration.name)){
 								error("Error: you must reference a type with a different name than the type the view is in.", v,
 									SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
 							}else{
-								error("Error: " + supertypeTypename + " is not a supertype of " + td.name + ".", v,
+								error("Error: " + supertypeTypename + " is not a supertype of " + CheckedTypeDeclaration.name + ".", v,
 									SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
 							}
 
