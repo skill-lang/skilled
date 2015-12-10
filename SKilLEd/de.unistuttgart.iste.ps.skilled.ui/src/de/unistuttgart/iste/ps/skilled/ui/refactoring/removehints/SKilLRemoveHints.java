@@ -31,16 +31,18 @@ import org.eclipse.ui.part.FileEditorInput;
  *
  */
 public class SKilLRemoveHints {
-
+	
 	/**
 	 * Remove hints from the file in the active editor window.
 	 */
 	public void runFromMenu() {
+		
 		String fCurrentContents = "";
 		IWorkbench wb = PlatformUI.getWorkbench();
 		IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 		IEditorPart editor = page.getActiveEditor();
+		// Checks if there is an editor open
 		if (editor != null) {
 			IEditorInput input = editor.getEditorInput();
 			// Finds path of the active file in the editor
@@ -49,13 +51,15 @@ public class SKilLRemoveHints {
 			// Saves any un-saved changes
 			editor.doSave(npm);
 			File f = path.toFile();
-			if (f.exists() && !npm.isCanceled()) {
+			// Double checks that the file has not been moved or deleted in the meantime.
+			if (f.exists()) {
 				try {
 
 					FileInputStream fis = new FileInputStream(f);
 					BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 					String line;
 					while ((line = br.readLine()) != null) {
+						// Skips all lines starting with "!"
 						if (!line.startsWith("!")) {
 							fCurrentContents += line + "\n";
 						}
@@ -117,7 +121,9 @@ public class SKilLRemoveHints {
 				};
 				JOptionPane.showMessageDialog(null, jsp, "Error", JOptionPane.ERROR_MESSAGE);
 			}
-		} else {
+		} 
+		// Error message if there no editor is open.
+		else {
 			JOptionPane.showMessageDialog(null, "No open file!", "Invald File!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
