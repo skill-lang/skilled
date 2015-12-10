@@ -27,7 +27,7 @@ class ViewValidator extends AbstractDeclarativeValidator {
 	override register(EValidatorRegistrar registar) {}
 
 	/**
-	 * This methods checks all views in td.
+	 * This methods checks all views in CheckedTypeDeclaration.
 	 * @param CheckedTypeDeclaration The TypeDeclaration the checked views are in.
 	 * 
 	 */
@@ -37,24 +37,24 @@ class ViewValidator extends AbstractDeclarativeValidator {
 			// Check if Field is a View
 			if ((f.fieldcontent instanceof View)) {
 				var boolean isUsertype = false;	//becomes true if the as variable is a Usertype
-				var View v = f.fieldcontent as View
-				if (v.fieldtype instanceof DeclarationReference) {
-					var DeclarationReference tdr = v.fieldtype as DeclarationReference
-					if (tdr.type instanceof Usertype) {
-						var Usertype usertype = tdr.type as Usertype
+				var View viewToCheck = f.fieldcontent as View
+				if (viewToCheck.fieldtype instanceof DeclarationReference) {
+					var DeclarationReference viewFieldtypeDeclarationReference = viewToCheck.fieldtype as DeclarationReference
+					if (viewFieldtypeDeclarationReference.type instanceof Usertype) {
+						var Usertype usertype = viewFieldtypeDeclarationReference.type as Usertype
 						isUsertype = true
 						// view A.x as B c;:
-						var String supertypeTypename = (v.fieldcontent.fieldcontent.eContainer.eContainer as Declaration).name; // a
-						var String supertypeVarname = v.fieldcontent.fieldcontent.name; // x
+						var String supertypeTypename = (viewToCheck.fieldcontent.fieldcontent.eContainer.eContainer as Declaration).name; // a
+						var String supertypeVarname = viewToCheck.fieldcontent.fieldcontent.name; // x
 						TypesSearched = new ArrayList<TypeDeclaration>;
 						var TypeDeclaration supertypeDec = searchSupertype(supertypeTypename, CheckedTypeDeclaration)
 						if (supertypeDec == null) {
 							// Error: A not a supertype of td
 							if(supertypeTypename.equals(CheckedTypeDeclaration.name)){
-								error("Error: you must reference a type with a different name than the type the view is in.", v,
+								error("Error: you must reference a type with a different name than the type the view is in.", viewToCheck,
 									SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
 							}else{
-								error("Error: " + supertypeTypename + " is not a supertype of " + CheckedTypeDeclaration.name + ".", v,
+								error("Error: " + supertypeTypename + " is not a supertype of " + CheckedTypeDeclaration.name + ".", viewToCheck,
 									SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
 							}
 
@@ -62,7 +62,7 @@ class ViewValidator extends AbstractDeclarativeValidator {
 							var Field supertypeVar = searchVar(supertypeVarname, supertypeDec);
 							if (supertypeVar == null) {
 								// Error: x not a var in A
-								error("Error: " + supertypeVarname + " is not a Variable in " + supertypeTypename + ".", v,
+								error("Error: " + supertypeVarname + " is not a Variable in " + supertypeTypename + ".", viewToCheck,
 									SKilLPackage.Literals.VIEW.getEStructuralFeature(2), VIEW_ERROR)
 
 							} else {
@@ -77,13 +77,13 @@ class ViewValidator extends AbstractDeclarativeValidator {
 								}
 								//If SupertypeVar isn't a usertype => error else check if the type of supertypeVar is a supertype of the as var.
 								if (!supertypeVarIsUsertype) {
-									error("Error: " + supertypeVarname + " is not a Usertype variable.", v,
+									error("Error: " + supertypeVarname + " is not a Usertype variable.", viewToCheck,
 										SKilLPackage.Literals.VIEW.getEStructuralFeature(2), VIEW_ERROR)
 								} else 	if (usertype.name != usertypeSupertypeVar.name) {
 									TypesSearched = new ArrayList<TypeDeclaration>;
 										if (searchSupertype(usertypeSupertypeVar.name, usertype) == null) {
 											error("Error: " + usertypeSupertypeVar.name + " is not a supertype of " + usertype.name +
-											".", v, SKilLPackage.Literals.VIEW.getEStructuralFeature(1),VIEW_ERROR)
+											".", viewToCheck, SKilLPackage.Literals.VIEW.getEStructuralFeature(1),VIEW_ERROR)
 
 										}
 									}
@@ -96,7 +96,7 @@ class ViewValidator extends AbstractDeclarativeValidator {
 				}
 				if (!isUsertype) {
 					// Error: not a usertype!
-					error("Error: not a usertype variable.", v, SKilLPackage.Literals.VIEW.getEStructuralFeature(1),VIEW_ERROR)
+					error("Error: not a usertype variable.", viewToCheck, SKilLPackage.Literals.VIEW.getEStructuralFeature(1),VIEW_ERROR)
 				}
 
 				}
