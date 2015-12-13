@@ -48,6 +48,8 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
  */
 public class ToolView extends ViewPart {
 
+	private FileChangeAction fileChangeAction = new FileChangeAction();
+	
 	private String path = "";
 	private CTabFolder tabFolder;
 
@@ -70,8 +72,12 @@ public class ToolView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		tabFolder = new CTabFolder(parent, SWT.BORDER);
 		tabFolder.setVisible(true);
+		fileChangeAction.save();
+		fileChangeAction.saveAll();
+		fileChangeAction.rename();
+		
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new IPartListener() {
-
+			
 			@Override
 			public void partOpened(IWorkbenchPart part) {
 				try {
