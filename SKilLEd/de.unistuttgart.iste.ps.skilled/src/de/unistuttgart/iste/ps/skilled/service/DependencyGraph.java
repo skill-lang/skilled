@@ -71,7 +71,7 @@ public class DependencyGraph {
         }
     }
 
-    public Set<StronglyConnectedComponent> computeReferencedComponents(StronglyConnectedComponent s) {
+    public static Set<StronglyConnectedComponent> computeReferencedComponents(StronglyConnectedComponent s) {
         Set<StronglyConnectedComponent> referencedComponents = new HashSet<StronglyConnectedComponent>();
         for (StronglyConnectedComponent referencedComponent : s.getReferencedComponents()) {
             for (Vertex v : referencedComponent.getContainedVertices()) {

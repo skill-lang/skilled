@@ -3,79 +3,122 @@
  */
 package de.unistuttgart.iste.ps.skilled.ui.quickfix
 
+import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
+import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.sKilL.File
+import de.unistuttgart.iste.ps.skilled.sKilL.Include
+import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
+import de.unistuttgart.iste.ps.skilled.sKilL.SKilLFactory
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
+import de.unistuttgart.iste.ps.skilled.validation.InheritenceValidator
+import de.unistuttgart.iste.ps.skilled.validation.ScopingValidator
+import java.util.ArrayList
+import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
+import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification
+import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider
 import org.eclipse.xtext.ui.editor.quickfix.Fix
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
 import org.eclipse.xtext.validation.Issue
-import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
-import java.util.ArrayList
-import de.unistuttgart.iste.ps.skilled.validation.InheritenceValidator
 
 /**
  * Custom quickfixes.
  * 
- * @author Jan Berberich
+ * @author Jan Berberich Marco Link
  * 
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#quick-fixes
  */
-public class SKilLQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider {
-	
-	//Quickfix to remove the Parent that is the Type
+public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
+
+	// Quickfix to remove the Parent that is the Type
 	@Fix(InheritenceValidator::TYPE_IS_HIS_OWN_PARENT)
 	def fixSupertype(Issue issue, IssueResolutionAcceptor acceptor) {
-		acceptor.accept(issue, "Remove Type", "Removes the supertype " + issue.data.get(0) + ".", "upcase.png", new ISemanticModification() {
-			override void apply(EObject element, IModificationContext context) {
-				var e =element as TypeDeclaration
-				var TypeDeclarationReference remove
-				var Supertypes = e.supertypes
-				//Remove Reference
-				for(TypeDeclarationReference tdr : Supertypes){
-					if(tdr.type.equals(e)) {
-						remove = tdr 
-					}					
+		acceptor.accept(issue, "Remove Type", "Removes the supertype " + issue.data.get(0) + ".", "upcase.png",
+			new ISemanticModification() {
+				override void apply(EObject element, IModificationContext context) {
+					var e = element as TypeDeclaration
+					var TypeDeclarationReference remove
+					var Supertypes = e.supertypes
+					// Remove Reference
+					for (TypeDeclarationReference tdr : Supertypes) {
+						if (tdr.type.equals(e)) {
+							remove = tdr
+						}
+					}
+					Supertypes.remove(remove)
 				}
-				Supertypes.remove(remove)
-			}
-		})
+			})
 	}
 
-
-	//Quickfix to remove Cyclic Types
- 	@Fix(InheritenceValidator::CYCLIC_TYPES)
+	// Quickfix to remove Cyclic Types
+	@Fix(InheritenceValidator::CYCLIC_TYPES)
 	def fixCyclicType(Issue issue, IssueResolutionAcceptor acceptor) {
-		acceptor.accept(issue, "Remove Type", "Removes the supertype " + issue.data.get(0) + ".", "upcase.png", new ISemanticModification() {
-			override void apply(EObject element, IModificationContext context) {
-				var e =element as TypeDeclaration
-				var ArrayList<TypeDeclarationReference> remove = new ArrayList<TypeDeclarationReference>
-				var Supertypes = e.supertypes 
-				var names = issue.data		//Array with the Names of all Types of the Cyclic Component
-				//Search all References that are in the Cyclic Component
-				for(TypeDeclarationReference tdr : Supertypes){
-					for(String name: names){
-						if(tdr.type.name.equals(name)) {
-							remove.add(tdr)
-						}					
+		acceptor.accept(issue, "Remove Type", "Removes the supertype " + issue.data.get(0) + ".", "upcase.png",
+			new ISemanticModification() {
+				override void apply(EObject element, IModificationContext context) {
+					var e = element as TypeDeclaration
+					var ArrayList<TypeDeclarationReference> remove = new ArrayList<TypeDeclarationReference>
+					var Supertypes = e.supertypes
+					var names = issue.data // Array with the Names of all Types of the Cyclic Component
+					// Search all References that are in the Cyclic Component
+					for (TypeDeclarationReference tdr : Supertypes) {
+						for (String name : names) {
+							if (tdr.type.name.equals(name)) {
+								remove.add(tdr)
+							}
+						}
+					}
+					// Remove the references that were found
+					for (TypeDeclarationReference tdr : remove) {
+						e.supertypes.remove(tdr)
 					}
 				}
-				//Remove the references that were found
-				for(TypeDeclarationReference tdr: remove){
-					e.supertypes.remove(tdr)
-				}
-			}
-		})
+			})
 	}
 
-//  Example Validator
-//	@Fix(MyDslValidator::INVALID_NAME)
-//	def capitalizeName(Issue issue, IssueResolutionAcceptor acceptor) {
-//		acceptor.accept(issue, 'Capitalize name', 'Capitalize the name.', 'upcase.png') [
-//			context |
-//			val xtextDocument = context.xtextDocument
-//			val firstLetter = xtextDocument.get(issue.offset, 1)
-//			xtextDocument.replace(issue.offset, 1, firstLetter.toUpperCase)
-//		]
-//	}
+	/**
+	 * Quickfix to add the missing included file.
+	 */
+	@Fix(ScopingValidator::NOT_INCLUDED_FILE)
+	def fixMissingFileInclude(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(
+			issue,
+			"Add missing File",
+			"Adds the missing file: " + issue.data.get(0),
+			"upcase.png",
+			new ISemanticModification() {
+				override void apply(EObject element, IModificationContext context) {
+					// The file in which the element is located.
+					var file = element.eContainer;
+					while (file.eContainer != null) {
+						file = file.eContainer;
+					}
+
+					var Declaration referencedType;
+
+					if (element instanceof TypeDeclarationReference) {
+						referencedType = element.type;
+					} else if (element instanceof DeclarationReference) {
+						referencedType = element.type;
+					}
+
+					// The URI which will be added.
+					var URI referencedURI = referencedType?.eResource?.URI.deresolve(file.eResource.URI);
+
+					if (referencedURI != null) {
+						// Create new include.
+						var Include include = SKilLFactory.eINSTANCE.createInclude;
+						var IncludeFile includeFile = SKilLFactory.eINSTANCE.createIncludeFile;
+						includeFile.importURI = referencedURI?.path;
+						include.includeFiles.add(includeFile);
+						if (file instanceof File) {
+							file.includes.add(include);
+						}
+					}
+				}
+			}
+		);
+	}
 }

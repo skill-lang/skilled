@@ -38,8 +38,12 @@ class ScopingValidator extends AbstractSKilLValidator {
 		dependencyGraphs = new HashMap<IProject, DependencyGraph>;
 	}
 
+	/**
+	 * Creates dependency graphs for the given file when the file will be validated.
+	 */
 	@Check
 	def checkFileDependencies(File file) {
+		// Get the project in which the file is located.
 		var IProject fileProject = services.getProject(file);
 
 		if (dependencyGraphs.get(fileProject) != null) {
@@ -64,6 +68,10 @@ class ScopingValidator extends AbstractSKilLValidator {
 		validReferences(declarationReference, declarationReference.type);
 	}
 
+	/**
+	 * Checks whether the file, in which the linkedObject is located, is visible. 
+	 * Else it will show a warning for the use.
+	 */
 	def validReferences(EObject object, EObject linkedObject) {
 		var fileObject = object.eContainer;
 		var fileLinkedObject = linkedObject.eContainer;
@@ -89,7 +97,8 @@ class ScopingValidator extends AbstractSKilLValidator {
 				// Everything is fine - Do nothing.
 			} else {
 				if (reference != null) {
-					warning("Required file isn't included.", object, reference, NOT_INCLUDED_FILE);
+					var String missingFile = fileLinkedObject?.eResource?.URI?.segments.last;
+					warning("Required file isn't included.", object, reference, NOT_INCLUDED_FILE, missingFile);
 				}
 			}
 		}
