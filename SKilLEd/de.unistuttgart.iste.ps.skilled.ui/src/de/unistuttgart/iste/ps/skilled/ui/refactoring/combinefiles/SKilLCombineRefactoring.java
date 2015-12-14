@@ -45,7 +45,7 @@ public class SKilLCombineRefactoring {
 	String[] fPreCombinedWithoutProjectFolderPath;
 	String[] fPreCombinedWithoutProjectFolderPathAndForwardSlash;
 	File workspaceDirectory;
-	
+
 	int fWorkspaceLength;
 
 	public SKilLCombineRefactoring() {
@@ -69,7 +69,7 @@ public class SKilLCombineRefactoring {
 	public void setCombinedSave(String text) {
 		fCombinedSave = text;
 	}
-	
+
 	public void setWorkSpaceDirectory(File file) {
 		workspaceDirectory = file;
 	}
@@ -153,13 +153,20 @@ public class SKilLCombineRefactoring {
 						// the pre-combined files
 						Pattern namePattern = Pattern.compile("\"[^\"]*(" + namechecker + ")\"");
 						Matcher nameMatcher = namePattern.matcher(line);
-						if (nameMatcher.find()){
-							while (nameMatcher.find()) {
-								
+						while (nameMatcher.find()) {
+							String writtenPath = nameMatcher.group();
+							String removeQuotes = writtenPath.substring(1, writtenPath.length() - 1);
+							String currentFolder = f.getAbsolutePath().substring(0,
+									f.getAbsolutePath().lastIndexOf(File.separator));
+							String canonPath = currentFolder + File.separator + removeQuotes;
+							String fixSeperator = canonPath.replace("\\", "/");
+							File testPath = new File(fixSeperator);
+							Pattern pathPattern = Pattern.compile("(" + pathchecker.replace("\\", "\\\\") + ")");
+							Matcher pathMatcher = pathPattern.matcher(testPath.getCanonicalPath());
+							while (pathMatcher.find()) {
+								line = line.replace(writtenPath, "");
 							}
 						}
-						line = line.replaceAll("\"[^\"]*(" + namechecker + ")\"", "");
-						line = line.replaceAll("\\s+", " ");
 						// If with or includes contains no addresses,
 						// skip line
 						if (!line.matches("with\\s*") && !line.matches("include\\s*")) {
@@ -189,6 +196,7 @@ public class SKilLCombineRefactoring {
 								fHead += line + "\n";
 							}
 						}
+
 					}
 					// All head comments save in fComment
 					else if (line.startsWith("#")) {
@@ -273,7 +281,7 @@ public class SKilLCombineRefactoring {
 
 			for (int x = 0; x < numberSelected; x++) {
 				fPreCombinedLocation = fCombines[x].substring(0, fCombines[x].lastIndexOf(File.separator));
-				// checkSiblings();
+				checkSiblings();
 			}
 
 			// Empty strings to remove append errors
@@ -313,10 +321,7 @@ public class SKilLCombineRefactoring {
 	 * combined file.
 	 *
 	 */
-	@SuppressWarnings("null")
 	public void checkSiblings() {
-		ArrayList<File> listofFiles = null;
-		String fLineChecker = "";
 		// Returns the name of the combined file (i.e. combined_file.skill)
 		String fSaveName = fCombinedSave.substring(fCombinedSave.lastIndexOf(File.separator) + 1);
 		// Returns path of the combined file without the name (i.e.
@@ -342,190 +347,24 @@ public class SKilLCombineRefactoring {
 		// Returns path of the project folder (i.e. C:\Workspace\Project)
 		String fFullProjectPath = fCombinedSave.substring(0, ProjectPathLength);
 		System.out.println(fFullProjectPath);
+		
+		ArrayList<File> listofFiles = new ArrayList<File>();
 		listFiles(fFullProjectPath, listofFiles);
-
 		for (File f : listofFiles) {
-			for (int z = 0; z < fCombines.length; z++) {
-				// Path which the code should replace with
-				String fReplacement = "";
-				String fCurrentName = "\"" + f.getName() + "\"";
-				String fCurrentFilePath = f.getAbsolutePath().substring(0,
-						f.getAbsolutePath().lastIndexOf(File.separator + 1));
-				String fCurrentFilePathWithoutWorkspace = fCurrentFilePath.substring(fWorkspaceLength + 1);
-				String fCurrentFilePathWithoutProject = fCurrentFilePathWithoutWorkspace
-						.substring(fCurrentFilePathWithoutWorkspace.indexOf(File.separator + 1));
-
-				Pattern pattern = Pattern.compile(namechecker);
-				Matcher matcher = pattern.matcher(fCurrentName);
-				if (!matcher.find() && !f.getName().equals(fSaveName)) {
-					boolean alreadyReplacedWith = false;
-					boolean alreadyReplacedInclude = false;
-					FileInputStream fis;
-					int fDifferentFolder = 0;
-
-					// Hierarchy level of the current file. Greater the number,
-					// lower it is on the hierachy.
-					int fCurrentFileHierarchyLevel = fCurrentFilePathWithoutProject.length()
-							- fCurrentFilePathWithoutProject.replace(File.separator, "").length();
-					// Hierarchy level of the combined file. Greater the number,
-					// lower it is in the hierarchy
-					int fSavedFileHierarchyLevel = fSaveNameWithFolderPathWithoutProjectFolder.length()
-							- fSaveNameWithFolderPathWithoutProjectFolder.replace(File.separator, "").length();
-					int fBigger;
-					if (fCurrentFileHierarchyLevel >= fSavedFileHierarchyLevel) {
-						fBigger = fCurrentFileHierarchyLevel;
-					} else {
-						fBigger = fSavedFileHierarchyLevel;
-					}
-
-					// If current file has the same parent as the combined file,
-					// return name of the combined file (i.e. Save.skill)
-					if (fCurrentFilePath.equals(fSavePath)) {
-						fReplacement = fSaveName;
-					}
-					// Check if first folder in path of the current file is the
-					// same as the first folder in path of the combined file
-					// (maybe this if is unneeded? else{} enough?)
-					else if (fCurrentFilePathWithoutProject
-							.substring(0, fCurrentFilePathWithoutProject.indexOf(File.separator + 1))
-							.equals(fSaveNameWithFolderPathWithoutProjectFolder.substring(0,
-									fSaveNameWithFolderPathWithoutProjectFolder.indexOf(File.separator + 1)))) {
-						for (int i = 0; i < fBigger; i++) {
-							// If yes, child folder is the new first folder in
-							// the path
-							if (fCurrentFilePathWithoutProject
-									.substring(0, fCurrentFilePathWithoutProject.indexOf(File.separator + 1))
-									.equals(fSaveNameWithFolderPathWithoutProjectFolder.substring(0,
-											fSaveNameWithFolderPathWithoutProjectFolder.indexOf(File.separator + 1)))) {
-								fCurrentFilePathWithoutProject = fCurrentFilePathWithoutProject
-										.substring(fCurrentFilePathWithoutProject.indexOf(File.separator) + 1);
-								fSaveNameWithFolderPathWithoutProjectFolder = fSaveNameWithFolderPathWithoutProjectFolder
-										.substring(fSaveNameWithFolderPathWithoutProjectFolder.indexOf(File.separator)
-												+ 1);
-							} else {
-								// if the current file is lower in the hierarchy
-								// as the combined file, return the path
-								// starting from the difference in paths
-								if (fBigger == fCurrentFileHierarchyLevel) {
-									fReplacement = fSaveNameWithFolderPathWithoutProjectFolder;
-									break;
-								}
-								// if the current file is higher in the
-								// hierarchy as the combined file, find out how
-								// many folders it has to backtrack in order to
-								// return to the folder where the two folders
-								// seperated
-								else {
-									fDifferentFolder = fDifferentFolder + 1;
-									fCurrentFilePathWithoutProject = fCurrentFilePathWithoutProject
-											.substring(fCurrentFilePathWithoutProject.indexOf(File.separator) + 1);
-									fSaveNameWithFolderPathWithoutProjectFolder = fSaveNameWithFolderPathWithoutProjectFolder
-											.substring(
-													fSaveNameWithFolderPathWithoutProjectFolder.indexOf(File.separator)
-															+ 1);
-								}
-								// For the number of backtracks write a "../"
-								// and add the path (starting from the
-								// difference) (i.e. if current file is in
-								// Folder\Folder2\Current.skill and the combined
-								// file is in Folder\Save.skill, fReplacement
-								// would return "../Save.skill"
-								for (int j = 0; j == fDifferentFolder; j++) {
-									if (j != fDifferentFolder) {
-										fReplacement += "../";
-									} else {
-										String fCurrentPathWithFowardSlash = fSaveNameWithFolderPathWithoutProjectFolder
-												.replace("\\", "/");
-										fReplacement += fCurrentPathWithFowardSlash;
-									}
-								}
-								fDifferentFolder = 0;
-
-							}
-						}
-
-					}
-					// If first folder of the current folder is not the same as
-					// the first folder of the combined file, return a "../" for
-					// every folder in the current file path and add the path to
-					// the save file to the end (i.e. current folder path
-					// Folder\Current.skill and combined folder path
-					// Folder2\Save.skill returns ../Folder2/Save.skill)
-					else if (!fCurrentFilePathWithoutProject
-							.substring(0, fCurrentFilePathWithoutProject.indexOf(File.separator + 1))
-							.equals(fSaveNameWithFolderPathWithoutProjectFolder.substring(0,
-									fSaveNameWithFolderPathWithoutProjectFolder.indexOf(File.separator + 1)))) {
-						fDifferentFolder = fCurrentFileHierarchyLevel;
-						for (int j = 0; j == fDifferentFolder; j++) {
-							if (j != fDifferentFolder) {
-								fReplacement += "../";
-							} else {
-								fReplacement += fSaveNameWithForwardSlash;
-							}
-						}
-						fDifferentFolder = 0;
-					}
-
-					try {
-						fis = new FileInputStream(f);
-						BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-						String line;
-						while ((line = br.readLine()) != null) {
-							if (line.startsWith("include") || line.startsWith("with")) {
-								// Deletes withs and includes that require the
-								// use of the pre-combined files
-								if (line.startsWith("with") && alreadyReplacedWith == false) {
-									line = line.replaceFirst("\"[^\"]*(" + namechecker + ")\"", "\"" + fReplacement + "\"");
-									line = line.replaceAll(namechecker, "");
-									alreadyReplacedWith = true;
-								} else if (line.startsWith("with") && alreadyReplacedWith == true) {
-									line = line.replaceAll("\"[^\"]*(" + namechecker + ")\"", "");
-								} else if (line.startsWith("include") && alreadyReplacedInclude == false) {
-									line = line.replaceFirst(namechecker, "\"" + fReplacement + "\"");
-									line = line.replaceAll("\"[^\"]*(" + namechecker + ")\"", "");
-									alreadyReplacedInclude = true;
-								} else if (line.startsWith("include") && alreadyReplacedInclude == true) {
-									line = line.replaceAll("\"[^\"]*(" + namechecker + ")\"", "");
-								}
-								if (!line.matches("with\\s*") && !line.matches("include\\s*")) {
-									fLineChecker += line + "\n";
-								}
-							} else {
-								fLineChecker += line + "\n";
-							}
-
-						}
-						FileWriter fw = new FileWriter(f, false);
-						if (fLineChecker != null) {
-							fw.write(fLineChecker);
-							alreadyReplacedWith = false;
-							alreadyReplacedInclude = false;
-							fLineChecker = "";
-						}
-						fw.close();
-						br.close();
-					} catch (IOException e) {
-						StringBuilder sb = new StringBuilder("Error: ");
-						sb.append(e.getMessage());
-						sb.append("\n");
-						for (StackTraceElement ste : e.getStackTrace()) {
-							sb.append(ste.toString());
-							sb.append("\n");
-						}
-						JTextArea jta = new JTextArea(sb.toString());
-						JScrollPane jsp = new JScrollPane(jta) {
-
-							private static final long serialVersionUID = -7067159314180395545L;
-
-							@Override
-							public Dimension getPreferredSize() {
-								return new Dimension(400, 300);
-							}
-						};
-						JOptionPane.showMessageDialog(null, jsp, "Error", JOptionPane.ERROR_MESSAGE);
+			FileInputStream fis;
+			try {
+				fis = new FileInputStream(f);
+				BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+				String line;
+				boolean alreadyReplacedWith = false;
+				boolean alreadyReplacedInclude = false;
+				while ((line = br.readLine()) != null) {
+					if (line.startsWith("include") || line.startsWith("with")) {
+						
 					}
 				}
-			}
+			} catch (IOException e) { e.printStackTrace();}
+			
 		}
 	}
 
@@ -541,7 +380,9 @@ public class SKilLCombineRefactoring {
 		for (File file : listofFiles) {
 			if (file.isFile() && file.getName().endsWith(".skill")) {
 				checkFiles.add(file);
+				System.out.println("File: " + file.getAbsolutePath());
 			} else if (file.isDirectory() && !file.getName().startsWith(".")) {
+				System.out.println("Directory: " + file.getAbsolutePath());
 				listFiles(file.getAbsolutePath(), checkFiles);
 			}
 		}
