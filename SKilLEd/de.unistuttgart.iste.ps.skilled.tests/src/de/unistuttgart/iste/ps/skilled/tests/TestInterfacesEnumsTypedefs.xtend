@@ -101,13 +101,13 @@ class TestInterfacesEnumsTypedefs {
   	
   	@Test
   	def void testEnum() {
-  		val specification = testEnum.parse
+		val specification = testEnum.parse
   		
   		val enum = specification.declarations.get(0) as EnumtypeImpl;
   		Assert::assertEquals("/*enum description*/", enum.comment);
   		Assert::assertEquals("day", enum.name);
-  		Assert::assertEquals("monday", enum.instances.get(0));
-  		Assert::assertEquals("sunday", enum.instances.get(6));
+  		Assert::assertEquals("Monday", enum.instances.get(0).name);
+  		Assert::assertEquals("Sunday", enum.instances.get(6).name);
   		Assert::assertEquals("day", enum.fields.get(0).fieldcontent.name);
   		Assert::assertEquals(Integer.I8, (enum.fields.get(0).fieldcontent.fieldtype as Integertype).type);
   		val day = (specification.declarations.get(1) as UsertypeImpl).fields.get(2);

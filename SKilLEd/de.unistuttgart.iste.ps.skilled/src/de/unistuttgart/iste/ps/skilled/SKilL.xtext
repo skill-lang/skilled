@@ -24,11 +24,11 @@ Declaration:
 DeclarationReference:
 	type=[Declaration];
 
-	// Restricts that only interfaces and usertypes can be supertypes.
+// Restricts that only interfaces and usertypes can be supertypes.
 TypeDeclaration:
 	Interfacetype | Usertype;
 
-	// This indirection is needed for semantic syntax coloring.
+// This indirection is needed for semantic syntax coloring.
 TypeDeclarationReference:
 	type=[TypeDeclaration];
 

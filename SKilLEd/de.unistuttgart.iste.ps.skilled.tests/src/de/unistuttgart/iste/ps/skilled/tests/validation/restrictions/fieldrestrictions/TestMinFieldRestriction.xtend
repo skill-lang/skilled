@@ -14,7 +14,6 @@ import static org.junit.Assert.*
 
 /**
  * @author Nikolay Fateev
- * @author Tobias Heck
  */
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
@@ -32,135 +31,265 @@ class TestMinFieldRestriction {
 	
 	@Test
 	def void testMinMapNoArgs() {
-		assertFalse("A {@min Map<string, string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min 
+				Map<string, string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinMapWithArgs() {
-		assertFalse("A {@min(1) Map<string, string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min(1)
+				Map<string, string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	//Compound types and user types except Map
 	
 	@Test
 	def void testMinSet() {
-		assertFalse("A {@min Set<string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min 
+				Set<string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinList() {
-		assertFalse("A {@min List<string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min 
+				List<string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinArray() {
-		assertFalse("A {@min string[] a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min 
+				string[] a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinArrayWithArgs() {
-		assertFalse("A {@min(1) string[] a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min(1)
+				string[] a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinUsertypeWithoutArgs() {
-		assertFalse("C {@min A a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeC {
+				@min
+				TypeA a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	//Built in types
 	
 	@Test
 	def void testMinStringWithArgs() {
-		assertFalse("A {@min(1, \"Inclusive\") string a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min(1, "inclusive") 
+				string a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}	
 	
 	@Test
 	def void testMinI8SingleIntegerArg() {
-		assertTrue("A {@min(1) i8 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@min(1) 
+				i8 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinI8IntegerAndStringArgs() {
-		assertTrue("A {@min(1, \"Inclusive\") i8 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@min(1, "inclusive") 
+				i8 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinI8With2IntegerAndStringArgs() {
-		assertFalse("A {@min(1, 2, \"Inclusive\") i8 a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min(1, 2, "inclusive") 
+				i8 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinI8With2IntegerArgs() {
-		assertFalse("A {@min(1, 2) i8 a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min(1, 2) 
+				i8 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinI8HexAndStringArgs() {
-		assertTrue("A {@min(0x123B, \"Inclusive\") i8 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@min(0x123B, "inclusive") 
+				i8 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinI8FloatAndStringArgs() {
-		assertFalse("A {@min(1.0, \"Inclusive\") i8 a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min(1.0, "inclusive") 
+				i8 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinI16() {
-		assertTrue("A {@min(1, \"Inclusive\") i16 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@min(1, "inclusive")  
+				i16 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinI32() {
-		assertTrue("A {@min(1, \"Inclusive\") i32 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@min(1, "inclusive")  
+				i32 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinI64() {
-		assertTrue("A {@min(1, \"Inclusive\") i64 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@min(1, "inclusive")   
+				i64 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinV64() {
-		assertTrue("A {@min(1, \"Inclusive\") v64 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@min(1, "inclusive")   
+				v64 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinF32SingleFloatArg() {
-		assertTrue("A {@min(1.0) f32 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@min(1.0)
+				f32 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinF32FloatAndStringArgs() {
-		assertTrue("A {@min(1.0, \"Inclusive\") f32 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@min(1.0, "inclusive")  
+				f32 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinF32With2FloatAndStringArgs() {
-		assertFalse("A {@min(1.0, 2.0, \"Inclusive\") f32 a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min(1.0, 2.0, "inclusive")  
+				f32 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinF32HexArgs() {
-		assertFalse("A {@min(0x123B, \"Inclusive\") f32 a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min(0x123B, "inclusive")  
+				f32 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinF32IntegerArgs() {
-		assertFalse("A {@min(1, \"Inclusive\") f32 a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min(1, "inclusive")  
+				f32 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinF64() {
-		assertTrue("A {@min(1.0) f64 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@min(1.0)
+				f64 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinBoolean() {
-		assertFalse("A {@min(1, \"Inclusive\") bool a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min(1, "inclusive") 
+				bool a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMinAnnotation() {
-		assertFalse("A {@min(1, \"Inclusive\") annotation a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@min(1, "inclusive") 
+				annotation a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 }

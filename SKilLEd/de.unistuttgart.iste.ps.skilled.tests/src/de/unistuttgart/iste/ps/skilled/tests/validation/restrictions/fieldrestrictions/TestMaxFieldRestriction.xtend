@@ -14,7 +14,6 @@ import static org.junit.Assert.*
 
 /**
  * @author Nikolay Fateev
- * @author Tobias Heck
  */
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
@@ -32,135 +31,265 @@ class TestMaxFieldRestriction {
 	
 	@Test
 	def void testMaxMapNoArgs() {
-		assertFalse("A {@max Map<string, string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max 
+				Map<string, string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxMapWithArgs() {
-		assertFalse("A {@max(1, 2) Map<string, string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max(1, 2)
+				Map<string, string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	//Compound types and user types except Map
 	
 	@Test
 	def void testMaxSet() {
-		assertFalse("A {@max Set<string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max 
+				Set<string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxList() {
-		assertFalse("A {@max List<string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max 
+				List<string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxArray() {
-		assertFalse("A {@max string[] a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max 
+				string[] a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxArrayWithArgs() {
-		assertFalse("A {@max(1) string[] a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max(1)
+				string[] a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxUsertypeWithoutArgs() {
-		assertFalse("C {@max A a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeC {
+				@max
+				TypeA a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	//Built in types
 	
 	@Test
 	def void testMaxStringWithArgs() {
-		assertFalse("A {@max(1, \"Inclusive\") string a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max(1, "inclusive") 
+				string a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}	
 	
 	@Test
 	def void testMaxI8SingleIntegerArg() {
-		assertTrue("A {@max(1) i8 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@max(1) 
+				i8 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxI8IntegerAndStringArgs() {
-		assertTrue("A {@max(1, \"Inclusive\") i8 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@max(1, "inclusive") 
+				i8 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxI8With2IntegerAndStringArgs() {
-		assertFalse("A {@max(1, 2, \"Inclusive\") i8 a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max(1, 2, "inclusive") 
+				i8 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxI8With2IntegerArgs() {
-		assertFalse("A {@max(1, 2) i8 a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max(1, 2) 
+				i8 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxI8HexAndStringArgs() {
-		assertTrue("A {@max(0x123B, \"Inclusive\") i8 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@max(0x123B, "inclusive") 
+				i8 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxI8FloatAndStringArgs() {
-		assertFalse("A {@max(1.0, \"Inclusive\") i8 a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max(1.0, "inclusive") 
+				i8 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxI16() {
-		assertTrue("A {@max(1, \"Inclusive\") i16 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@max(1, "inclusive")  
+				i16 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxI32() {
-		assertTrue("A {@max(1, \"Inclusive\") i32 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@max(1, "inclusive")  
+				i32 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxI64() {
-		assertTrue("A {@max(1, \"Inclusive\") i64 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@max(1, "inclusive")   
+				i64 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxV64() {
-		assertTrue("A {@max(1, \"Inclusive\") v64 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@max(1, "inclusive")   
+				v64 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxF32SingleFloatArg() {
-		assertTrue("A {@max(1.0) f32 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@max(1.0)
+				f32 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxF32FloatAndStringArgs() {
-		assertTrue("A {@max(1.0, \"Inclusive\") f32 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@max(1.0, "inclusive")  
+				f32 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxF32With2FloatAndStringArgs() {
-		assertFalse("A {@max(1.0, 2.0, \"Inclusive\") f32 a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max(1.0, 2.0, "inclusive")  
+				f32 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxF32HexArgs() {
-		assertFalse("A {@max(0x123B, \"Inclusive\") f32 a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max(0x123B, "inclusive")  
+				f32 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxF32IntegerArgs() {
-		assertFalse("A {@max(1, \"Inclusive\") f32 a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max(1, "inclusive")  
+				f32 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxF64() {
-		assertTrue("A {@max(1.0) f64 a;}".parse.validate.isNullOrEmpty)
+		assertTrue('''
+			TypeA {
+				@max(1.0)
+				f64 a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxBoolean() {
-		assertFalse("A {@max(1, \"Inclusive\") bool a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max(1, "inclusive") 
+				bool a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testMaxAnnotation() {
-		assertFalse("A {@max(1, \"Inclusive\") annotation a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@max(1, "inclusive") 
+				annotation a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 }

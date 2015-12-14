@@ -32,8 +32,13 @@ class TestRestrictionsAll {
 
 	@Test
 	def void test() {
-		val issueCount = specification.parse.validate.size;
-
+		var issueCount = 0
+		// Look only for Errors, not Warnings
+		for (issue : specification.parse.validate){
+			if ("ERROR".equals(issue.severity.toString())) {
+				issueCount++
+			}
+		}	
 		Assert::assertTrue(issueCount == 0);
 	}
 }

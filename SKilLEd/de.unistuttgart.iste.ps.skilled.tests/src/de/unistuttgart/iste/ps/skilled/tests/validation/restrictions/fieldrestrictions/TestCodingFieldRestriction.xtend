@@ -7,14 +7,14 @@ import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import org.junit.Test
-import org.junit.runner.RunWith
-
 import static org.junit.Assert.*
+import java.util.List
+import org.eclipse.xtext.validation.Issue
+import org.junit.runner.RunWith
+import org.junit.Test
 
 /**
  * @author Nikolay Fateev
- * @author Tobias Heck
  */
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
@@ -32,113 +32,241 @@ class TestCodingFieldRestriction {
 	
 	@Test
 	def void testCodingMapNoArgs() {
-		assertFalse("A {@coding Map<string, string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@coding 
+				Map<string, string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testCodingMapWithArgs() {
-		assertFalse("A {@coding(\"zip\") Map<string, string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@coding("zip")
+				Map<string, string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	//Other compound types and built in types and user types.
 	
 	@Test
 	def void testCodingSet() {
-		assertTrue("A {@coding(\"zip\") Set<string> a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip")
+				Set<string> a;
+			}   
+		'''.parse.validate))
 	}
 	
 	@Test
 	def void testCodingSetNoArgs() {
-		assertFalse("A {@coding Set<string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@coding
+				Set<string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testCodingSetIntegerArg() {
-		assertFalse("A {@coding(1) Set<string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@coding(1)
+				Set<string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testCodingSetHexArg() {
-		assertFalse("A {@coding(0x123B) Set<string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@coding(0x123B)
+				Set<string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testCodingSetUserTypeArg() {
-		assertFalse("A {} B {A a; @coding(b) Set<string> b;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+			}
+			TypeB {
+				TypeA a;
+				
+				@coding(b)
+				Set<string> b;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testCodingSetFloatArg() {
-		assertFalse("A {@coding(1.0) Set<string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@coding(1.0)
+				Set<string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testCodingSetWith2StringArgs() {
-		assertFalse("A {@coding(\"zip\", \"zip\") Set<string> a;}".parse.validate.isNullOrEmpty)
+		assertFalse('''
+			TypeA {
+				@coding("zip", "zip")
+				Set<string> a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testCodingList() {
-		assertTrue("A {@coding(\"zip\") List<string> a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip")
+				List<string> a;
+			}   
+		'''.parse.validate))
 	}
 	
 	@Test
 	def void testCodingArray() {
-		assertTrue("A {@coding(\"zip\") string[] a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip")
+				string[] a;
+			}   
+		'''.parse.validate))
 	}
 	
 	@Test
 	def void testCodingUsertype() {
-		assertTrue("A {@coding(\"zip\") A a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip")
+				TypeA a;
+			}   
+		'''.parse.validate))
 	}
 	
 	@Test
 	def void testCodingString() {
-		assertTrue("A {@coding(\"zip\") string a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip")
+				string a;
+			}   
+		'''.parse.validate))
 	}		
 	
 	@Test
 	def void testCodingI8() {
-		assertTrue("A {@coding(\"zip\") i8 a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip") 
+				i8 a;
+			}   
+		'''.parse.validate))
 	}
 	
 	@Test
 	def void testCodingI16() {
-		assertTrue("A {@coding(\"zip\") i16 a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip") 
+				i16 a;
+			}   
+		'''.parse.validate))
 	}
 	
 	@Test
 	def void testCodingI32() {
-		assertTrue("A {@coding(\"zip\") i32 a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip")  
+				i32 a;
+			}   
+		'''.parse.validate))
 	}
 	
 	@Test
 	def void testCodingI64() {
-		assertTrue("A {@coding(\"zip\") i64 a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip")  
+				i64 a;
+			}   
+		'''.parse.validate))
 	}
 	
 	@Test
 	def void testCodingV64() {
-		assertTrue("A {@coding(\"zip\") v64 a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip")  
+				v64 a;
+			}   
+		'''.parse.validate))
 	}
 	
 	@Test
 	def void testCodingF32() {
-		assertTrue("A {@coding(\"zip\") f32 a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip")  
+				f32 a;
+			}   
+		'''.parse.validate))
 	}
 	
 	@Test
 	def void testCodingF64() {
-		assertTrue("A {@coding(\"zip\") f64 a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip")
+				f64 a;
+			}   
+		'''.parse.validate))
 	}
 	
 	@Test
 	def void testCodingBoolean() {
-		assertTrue("A {@coding(\"zip\") bool a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip") 
+				bool a;
+			}   
+		'''.parse.validate))
 	}
 	
 	@Test
 	def void testCodingAnnotation() {
-		assertTrue("A {@coding(\"zip\") annotation a;}".parse.validate.isNullOrEmpty)
+		assertTrue(listHasNoErrors('''
+			TypeA {
+				@coding("zip") 
+				annotation a;
+			}   
+		'''.parse.validate))
+	}
+	
+	/**
+	 * The result of field restriction validation there can be Errors and Warnings.
+	 * This method checks if as a result of the validation there are any errors, while 
+	 * ignoring warnings.
+	 */
+	def boolean listHasNoErrors(List<Issue> issues){
+		for (issue : issues){
+			if ("ERROR".equals(issue.severity.toString())) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

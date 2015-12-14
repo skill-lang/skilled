@@ -96,7 +96,7 @@ class TestEdgeCases {
 		val specification = testDeclarationOfInheritedField.parse
 		
 		val issueCount = specification.validate.size;
-		Assert::assertTrue(issueCount == 0);
+		Assert::assertTrue(issueCount == 1);
 		val b = specification.declarations.get(1) as InterfacetypeImpl;
 		val c = specification.declarations.get(2) as InterfacetypeImpl;
 		val d = specification.declarations.get(3) as UsertypeImpl;
@@ -139,21 +139,8 @@ class TestEdgeCases {
 		Assert::assertTrue(issueCount == 0);
 		val t = specification.declarations.get(0) as UsertypeImpl;
 		val e = specification.declarations.get(1) as Enumtype;
-		Assert::assertEquals(e.instances.get(0), t.fields.get(0).restrictions.
+		Assert::assertEquals(e.instances.get(0).name, t.fields.get(0).restrictions.
 			get(0).restrictionArguments.get(0).enumInstance);
-	}
-	
-	@Test
-	def void testDefault2() {
-		val specification = testDefault.parse
-		
-		val issueCount = specification.validate.size;
-		Assert::assertTrue(issueCount == 0);
-		val t = specification.declarations.get(0) as UsertypeImpl;
-		val e = specification.declarations.get(1) as Enumtype;
-		Assert::assertEquals(e.instances.get(0), t.fields.get(0).restrictions.
-			get(0).restrictionArguments.get(0).enumInstance);
-	}
-	
+	}	
 	
 }
