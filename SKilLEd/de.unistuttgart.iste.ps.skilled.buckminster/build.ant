@@ -39,7 +39,7 @@
 			<sysproperty key="buckminster.output.root" value="${build.root}/buckminster.output" />
 			<sysproperty key="buckminster.temp.root" value="${build.root}/buckminster.temp" />
 			<sysproperty key="target.platform" value="${build.root}/${target.platform}" />
-			<jvmarg line=" -Xms256m -Xmx512m" />
+			<jvmarg line=" -Xms256m -Xmx512m -noverify" />
 		</java>
 		<echo message=" "/>
 		<echo message="Updatesite output in: ${build.root}/buckminster.output/de.unistuttgart.iste.ps.skilled.site_*-eclipse.feature/site.p2/"/>
