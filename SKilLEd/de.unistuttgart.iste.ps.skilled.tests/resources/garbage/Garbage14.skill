@@ -1,0 +1,82 @@
+﻿w ""
+wi ""
+wit ""
+i ""
+in ""
+inc ""
+incl ""
+inclu ""
+includ ""
+
+Type {
+  i8 field;
+  a;
+  au;
+  aut;
+  auto;
+  s;
+  st;
+  str;
+  stri;
+  string;
+  m;
+  ma;
+  map;
+  map<;
+  l;
+  li;
+  lis;
+  list;
+  list<;
+  i;
+  i8;
+  i1;
+  i16;
+  i3;
+  i32;
+  i6;
+  i64;
+  b;
+  bo;
+  boo;
+  bool;
+  f;
+  f3;
+  f32;
+  f6;
+  f64;
+  s;
+  se;
+  set;
+  set<;
+  v;
+  v6;
+  v64;
+  vi;
+  vie;
+  view;
+  view Type.field a;
+  view Type.field as;
+  a;
+  an;
+  ann;
+  anno;
+  annot;
+  annota;
+  annotat;
+  annotati;
+  annotatio;
+  annotation;
+}
+
+Type2 e {}
+Type3 ex {}
+Type4 ext {}
+Type5 exte {}
+Type6 exten {}
+Type7 extend {}
+Type8 extends {}
+Type9 w {}
+Type10 wi {}
+Type11 wit {}
+Type12 with {}

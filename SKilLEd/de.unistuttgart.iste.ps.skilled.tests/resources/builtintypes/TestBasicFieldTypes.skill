@@ -10,3 +10,22 @@ UserType {
   bool b;
   annotation a;
 }
+
+KeywordsAsIDs {
+  i8 auto;
+  i8 include;
+  i8 with;
+  i8 typedef;
+  i8 enum;
+  i8 interface;
+  i8 extends;
+  i8 const;
+  i8 map;
+  i8 set;
+  i8 list;
+  i8 view;
+  i8 bool;
+  i8 annotation;
+  i8 true;
+  i8 false;
+}

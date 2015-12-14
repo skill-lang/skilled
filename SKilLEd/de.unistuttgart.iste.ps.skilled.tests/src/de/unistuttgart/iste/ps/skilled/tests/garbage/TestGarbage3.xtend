@@ -26,12 +26,14 @@ class TestGarbage3 {
 	var static String garbage11 = "";
 	var static String garbage12 = "";
 	var static String garbage13 = "";
+	var static String garbage14 = "";
 	
 	@BeforeClass
 	def static void setup() {
 		garbage11 = FileLoader.loadFile("garbage/Garbage11");
 		garbage12 = FileLoader.loadFile("garbage/Garbage12");
 		garbage13 = FileLoader.loadFile("garbage/Garbage13");
+		garbage14 = FileLoader.loadFile("garbage/Garbage14");
 	}
 	
 	@Test
@@ -51,6 +53,13 @@ class TestGarbage3 {
 	@Test
 	def void testGarbage13() {
 		val issueCount = garbage13.parse.validate.size;
+		
+		Assert::assertTrue(issueCount > 0);
+	}
+	
+	@Test
+	def void testGarbage14() {
+		val issueCount = garbage14.parse.validate.size;
 		
 		Assert::assertTrue(issueCount > 0);
 	}

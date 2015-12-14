@@ -27,6 +27,7 @@ import org.junit.Assert
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 
 /**
  * @author Tobias Heck
@@ -36,11 +37,13 @@ import org.junit.runner.RunWith
 class TestBuiltInTypes {
 
 	@Inject extension ParseHelper<File> parser;
+	@Inject extension ValidationTestHelper;
 	
 	var static String testBasicFieldTypes = "";
 	var static String testConstants = "";
 	var static String testAuto = "";
 	var static String testCompoundTypes = "";
+	var static String testIllegalConstants = "";
 	
 	@BeforeClass
 	def static void setup() {
@@ -48,6 +51,7 @@ class TestBuiltInTypes {
 		testConstants = FileLoader.loadFile("builtintypes/TestConstants");
 		testAuto = FileLoader.loadFile("builtintypes/TestAuto");
 		testCompoundTypes = FileLoader.loadFile("builtintypes/TestCompoundTypes");
+		testIllegalConstants = FileLoader.loadFile("builtintypes/TestIllegalConstants");
 	}
 
 	@Test
@@ -71,7 +75,6 @@ class TestBuiltInTypes {
 		Assert::assertEquals("int4", field4.fieldcontent.name.toLowerCase);
 		Assert::assertEquals(Integer.I64, (field4.fieldcontent.fieldtype as Integertype).type)
 		val field5 = fields.get(4);
-		Assert::assertEquals("int5", field5.fieldcontent.name.toLowerCase);
 		Assert::assertEquals(Integer.V64, (field5.fieldcontent.fieldtype as Integertype).type)
 		val field6 = fields.get(5);
 		Assert::assertEquals("float1", field6.fieldcontent.name.toLowerCase);
@@ -161,5 +164,12 @@ class TestBuiltInTypes {
   		val e = type.fields.get(4);
   		Assert::assertEquals(type, ((e.fieldcontent.fieldtype as ArraytypeImpl).basetype as DeclarationReferenceImpl).type);
   		Assert::assertEquals(80, (e.fieldcontent.fieldtype as ArraytypeImpl).length);
+  	}
+  	
+  	@Test
+  	def void testIllegalConstants() {
+  		val issueCount = testIllegalConstants.parse.validate.size;
+  		
+  		Assert::assertTrue(issueCount == 3);
   	}
 }
