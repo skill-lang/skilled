@@ -14,16 +14,32 @@ import org.junit.runner.RunWith;
 
 import com.google.inject.Inject;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.junit.BeforeClass
+import de.unistuttgart.iste.ps.skilled.tests.utils.FileLoader
 
 /**
  * This Class tests the DuplicatedTypenameValidation class.
  * @author Jan Berberich
+ * @author Tobias Heck
  */
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
 class TestDuplicatedTypenameValidation {
 	@Inject extension ParseHelper<File> parser;
 	@Inject extension ValidationTestHelper
+	
+	var static String test1 = "";
+	var static String test2 = "";
+	var static String test3 = "";
+	var static String test4 = "";
+	
+	@BeforeClass
+	def static void setup() {
+		test1 = FileLoader.loadFile("validation/duplicatetypenames/DuplicateNames1");
+		test2 = FileLoader.loadFile("validation/duplicatetypenames/DuplicateNames2");
+		test3 = FileLoader.loadFile("validation/duplicatetypenames/DuplicateNames3");
+		test4 = FileLoader.loadFile("validation/duplicatetypenames/DuplicateNames4");
+	}
 
 	@Test
 	def void testNoErrorValid() {

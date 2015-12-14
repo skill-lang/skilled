@@ -14,6 +14,7 @@ import static org.junit.Assert.*
 
 /**
  * @author Nikolay Fateev
+ * @author Tobias Heck
  */
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
@@ -31,298 +32,145 @@ class TestDefaultFieldRestriction {
 	
 	@Test
 	def void testDefaultMapNoArgs() {
-		assertFalse('''
-			TypeA {
-				@default 
-				Map<string, string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default Map<string, string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultMapWithArgs() {
-		assertFalse('''
-			TypeA {
-				@default(1, 2)
-				Map<string, string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default(1, 2) Map<string, string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//Compound types and user types except Map
 	
 	@Test
 	def void testDefaultSet() {
-		assertFalse('''
-			TypeA {
-				@default 
-				Set<string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default Set<string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultList() {
-		assertFalse('''
-			TypeA {
-				@default 
-				List<string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default List<string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultArray() {
-		assertFalse('''
-			TypeA {
-				@default 
-				string[] a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default string[] a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultArrayWithArgs() {
-		assertFalse('''
-			TypeA {
-				@default("")
-				string[] a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("TypeA {@default(\"\") string[] a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultUsertypeWithoutArgs() {
-		assertTrue('''
-			TypeA {
-			}
-			@singleton
-			TypeB : TypeA {
-			}
-			TypeC {
-				@default(TypeB)
-				TypeA a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {} @singleton B : A {} C {@default(B) A a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//Built in types
 	
 	@Test
 	def void testDefaultString() {
-		assertTrue('''
-			TypeA {
-				@default("abc") 
-				string a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {@default(\"abc\") string a;}".parse.validate.isNullOrEmpty)
 	}	
 	
 	@Test
 	def void testDefaultStringWithoutArgs() {
-		assertFalse('''
-			TypeA {
-				@default
-				string a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default string a;}".parse.validate.isNullOrEmpty)
 	}	
 	
 	@Test
 	def void testDefaultStringIntegerArg() {
-		assertFalse('''
-			TypeA {
-				@default(1)
-				string a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default(1) string a;}".parse.validate.isNullOrEmpty)
 	}	
 	
 	@Test
 	def void testDefaultStringFloatArg() {
-		assertFalse('''
-			TypeA {
-				@default(1.0)
-				string a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default(1.0) string a;}".parse.validate.isNullOrEmpty)
 	}	
 	
 	@Test
 	def void testDefaultStringHexArg() {
-		assertFalse('''
-			TypeA {
-				@default(0x123B)
-				string a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default(0x123B) string a;}".parse.validate.isNullOrEmpty)
 	}	
 	
 	@Test
 	def void testDefaultStringUserTypeArg() {
-		assertFalse('''
-			TypeB {
-			}
-			TypeA {
-				TypeB a;
-				
-				@default(a)
-				string b;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("B {} A {B a; @default(a) string b;}".parse.validate.isNullOrEmpty)
 	}	
 	
 	@Test
 	def void testDefaultStringMultipleArgs() {
-		assertFalse('''
-			TypeA {
-				@default("abc", "def") 
-				string a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default(\"abc\", \"def\") string a;}".parse.validate.isNullOrEmpty)
 	}	
 	
 	@Test
 	def void testDefaultI8IntegerArg() {
-		assertTrue('''
-			TypeA {
-				@default(1) 
-				i8 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {@default(1) i8 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultI8HexArg() {
-		assertTrue('''
-			TypeA {
-				@default(0x123B) 
-				i8 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {@default(0x123B) i8 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultI8FloatArg() {
-		assertFalse('''
-			TypeA {
-				@default(1.0) 
-				i8 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default(1.0) i8 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultI8StringArg() {
-		assertFalse('''
-			TypeA {
-				@default("") 
-				i8 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default(\"\") i8 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultI16() {
-		assertTrue('''
-			TypeA {
-				@default(1) 
-				i16 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {@default(1) i16 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultI32() {
-		assertTrue('''
-			TypeA {
-				@default(1)  
-				i32 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {@default(1) i32 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultI64() {
-		assertTrue('''
-			TypeA {
-				@default(1)  
-				i64 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {@default(1) i64 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultV64() {
-		assertTrue('''
-			TypeA {
-				@default(1)  
-				v64 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {@default(1) v64 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultF32FloatArg() {
-		assertTrue('''
-			TypeA {
-				@default(1.0)  
-				f32 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {@default(1.0) f32 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultF32HexArg() {
-		assertFalse('''
-			TypeA {
-				@default(0x123B)  
-				f32 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default(0x123B) f32 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultF32IntegerArg() {
-		assertFalse('''
-			TypeA {
-				@default(1)  
-				f32 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default(1) f32 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultF64() {
-		assertTrue('''
-			TypeA {
-				@default(1.0)
-				f64 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {@default(1.0) f64 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultAnnotation() {
-		assertTrue('''
-			@singleton
-			TypeA {
-			}
-			 
-			TypeB {
-				@default(TypeA) 
-				annotation a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("@singleton A {} B {@default(A) annotation a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testDefaultBoolean() {
-		assertFalse('''
-			TypeA {
-				@default("") 
-				bool a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@default(\"\") bool a;}".parse.validate.isNullOrEmpty)
 	}
 }

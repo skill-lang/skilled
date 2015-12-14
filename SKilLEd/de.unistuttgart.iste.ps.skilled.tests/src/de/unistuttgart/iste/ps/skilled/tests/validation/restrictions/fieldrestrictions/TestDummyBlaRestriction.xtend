@@ -14,6 +14,7 @@ import static org.junit.Assert.*
 
 /**
  * @author Nikolay Fateev
+ * @author Tobias Heck
  */
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
@@ -35,43 +36,23 @@ class TestDummyBlaRestriction {
 	
 	@Test
 	def void testBlaMapNoArgs() {
-		assertFalse('''
-			TypeA {
-				@blabla
-				Map<string, string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@blabla Map<string, string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testBlaMapWithArgs() {
-		assertFalse('''
-			TypeA {
-				@bla("")
-				Map<string, string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@bla(\"\") Map<string, string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//Other compound types and built in types and user types.
 	
 	@Test
 	def void testBlaSetNoArgs() {
-		assertFalse('''
-			TypeA {
-				@bla
-				Set<string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@bla Set<string> a;}".parse.validate.isNullOrEmpty)
 	}	
 	
 	@Test
 	def void testBlaSetWithArgs() {
-		assertFalse('''
-			TypeA {
-				@bla("")
-				Set<string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@bla(\"\") Set<string> a;}".parse.validate.isNullOrEmpty)
 	}
 }

@@ -17,7 +17,8 @@ import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 
 /**
  * This Class tests ASCIICharValidator.xtend
- * @author Jan Berberich 
+ * @author Jan Berberich
+ * @author Tobias Heck
  */
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
@@ -27,55 +28,21 @@ class TestNonASCIIWarning {
 	
 	@Test
 	def void testErrorNonASCIITypename() {
-		assertFalse('''
-			TypeÄ{
-				
-			}  
-		'''.parse.validate.isNullOrEmpty)
-
+		assertFalse("TypeÄ{}".parse.validate.isNullOrEmpty)
 	}
 
 	@Test
 	def void testErrorNonASCIIFieldname() {
-		assertFalse('''
-			C{
-				i8 ü;
-			}
-		'''.parse.validate.isNullOrEmpty)
-
+		assertFalse("C{}".parse.validate.isNullOrEmpty)
 	}
 
 	@Test
 	def void testMultipleWrongTypenames() {
-		assertTrue('''
-			interface IÄ{
-				const i8 a = 1;
-			}    	
-			Ü{
-				
-			}
-			Ö{
-				
-			}
-		'''.parse.validate.size==3)
+		assertTrue("interface IÄ{} Ü{} Ö{}".parse.validate.size==3)
 	}
 	
 	@Test
 	def void testNoWarning() {
-		assertTrue('''
-			A{
-				
-			}
-			B{
-				i16 var;
-			}
-			C:B{
-				i8 i;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A{} B{} C:B{}".parse.validate.isNullOrEmpty)
 	}
-
-	
-	
-	
 }

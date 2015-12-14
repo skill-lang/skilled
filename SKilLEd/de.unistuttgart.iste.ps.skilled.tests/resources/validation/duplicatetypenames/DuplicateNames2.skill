@@ -1,0 +1,8 @@
+A {
+  A a;
+}
+
+B : A {
+  view A.a as
+  B a;
+}

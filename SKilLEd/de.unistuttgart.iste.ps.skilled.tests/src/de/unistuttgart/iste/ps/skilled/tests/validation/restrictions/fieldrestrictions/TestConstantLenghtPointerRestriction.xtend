@@ -14,6 +14,7 @@ import static org.junit.Assert.*
 
 /**
  * @author Nikolay Fateev
+ * @author Tobias Heck
  */
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
@@ -31,201 +32,102 @@ class TestConstantLenghtPointerRestriction {
 	
 	@Test
 	def void testConstantLenghtPointerMap() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer 
-				Map<string, string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer Map<string, string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerMapWithArgs() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer("") 
-				Map<string, string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer(\"\") Map<string, string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//Compound types except Map
 	
 	@Test
 	def void testConstantLenghtPointerSet() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer 
-				Set<string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer Set<string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerList() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer 
-				List<string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer List<string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerArray() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer 
-				string[] a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer string[] a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerArrayWithArgs() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer("")
-				string[] a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer(\"\") string[] a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//User types
 	
 	@Test
 	def void testConstantLenghtPointerUserType() {
-		assertTrue('''
-			TypeA {
-			}
-			TypeB {
-				@constantLenghtPointer
-				TypeA a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {} B {@constantLenghtPointer A a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerUserTypeArgs() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@constantLenghtPointer("")
-				TypeA a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@constantLenghtPointer(\"\") A a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//Built in types
 
 	@Test
 	def void testConstantLenghtPointerString() {
-		assertTrue('''
-			TypeA {
-				@constantLenghtPointer
-				string a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {@constantLenghtPointer string a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerWithArguments() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer("")
-				string a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer(\"\") string a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerI8() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer
-				i8 a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer i8 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerI16() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer
-				i16 a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointern i16 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerI32() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer
-				i32 a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer i32 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerI64() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer
-				i64 a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer i64 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerV64() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer
-				v64 a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer v64 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerF32() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer
-				f32 a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer f32 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerF64() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer
-				f64 a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer f64 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerBoolean() {
-		assertFalse('''
-			TypeA {
-				@constantLenghtPointer
-				bool a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@constantLenghtPointer bool a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testConstantLenghtPointerAnnotation() {
-		assertTrue('''
-			TypeA {
-				@constantLenghtPointer
-				annotation a;
-			}
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {@constantLenghtPointer annotation a;}".parse.validate.isNullOrEmpty)
 	}	
 }

@@ -14,6 +14,7 @@ import static org.junit.Assert.*
 
 /**
  * @author Nikolay Fateev
+ * @author Tobias Heck
  */
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
@@ -31,72 +32,34 @@ class TestOneOfRestriction {
 	
 	@Test
 	def void testOneOfMap() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA)
-				Map<string, string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) Map<string, string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfMapNoArgs() {
-		assertFalse('''
-			TypeA {
-				@oneOf
-				Map<string, string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@oneOf Map<string, string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//Compound types except Map
 	
 	@Test
 	def void testOneOfSet() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA)
-				Set<string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) Set<string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfList() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA)
-				List<string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) List<string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfArray() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA) 
-				string[] a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) string[] a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfArrayNoArgs() {
-		assertFalse('''
-			TypeA {
-				@oneOf
-				string[] a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@oneOf string[] a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//User types
@@ -105,192 +68,81 @@ class TestOneOfRestriction {
 	
 	@Test
 	def void testOneOfUsertypeCorrectArgument() {
-		assertTrue('''
-			TypeA {
-			}
-			TypeB : TypeA {
-			}
-			TypeC {
-				@oneOf(TypeB) 
-				TypeA a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {} B : A {} C {@oneOf(B) A a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfUsertypeMultipleCorrectArguments() {
-		assertTrue('''
-			TypeA {
-			}
-			TypeB : TypeA {
-			}
-			TypeD : TypeA {
-			}
-			TypeC {
-				@oneOf(TypeB, TypeD) 
-				TypeA a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {} B : A {} D : A {} C {@oneOf(B, D) A a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfUsertypeCorrectAndIncorrectArguments() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB : TypeA {
-			}
-			TypeD : TypeA {
-			}
-			TypeC {
-				@oneOf(TypeB, 1) 
-				TypeA a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B : A {} D : A {} C {@oneOf(B, 1) A a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfUsertypeIncorrectArgument() {
-		assertFalse('''
-			TypeC {
-				@oneOf(1) 
-				TypeA a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("C {@oneOf(1) A a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfNoArgument() {
-		assertFalse('''
-			TypeC {
-				@oneOf 
-				TypeA a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("C {@oneOf A a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//Built in types
 
 	@Test
 	def void testOneOfI8() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA) 
-				i8 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) i8 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfI16() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA)  
-				i16 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) i16 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfI32() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA) 
-				i32 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) i32 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfI64() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA) 
-				i64 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) i64 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfV64() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA)  
-				v64 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) v64 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfF32() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA)  
-				f32 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) f32 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfF64() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA)  
-				f64 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) f64 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfString() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA) 
-				string a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) string a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testOneOfBoolean() {
-		assertFalse('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA)  
-				bool a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {} B {@oneOf(A) bool a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//TODO
 	
 	@Test
 	def void testOneOfAnnotation() {
-		assertTrue('''
-			TypeA {
-			}
-			TypeB {
-				@oneOf(TypeA) 
-				annotation a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {} B {@oneOf(A) annotation a;}".parse.validate.isNullOrEmpty)
 	}
 	
 }

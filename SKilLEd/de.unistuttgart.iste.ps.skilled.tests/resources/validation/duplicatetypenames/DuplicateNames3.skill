@@ -1,0 +1,6 @@
+TypeA {
+  const i8 a = 1;
+}    	
+TypeB : TypeA {
+  const i8 a = 2;
+}

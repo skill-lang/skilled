@@ -14,6 +14,7 @@ import static org.junit.Assert.*
 
 /**
  * @author Nikolay Fateev
+ * @author Tobias Heck
  */
 @InjectWith(SKilLInjectorProvider)
 @RunWith(XtextRunner)
@@ -43,201 +44,102 @@ class TestNonNullRestriction {
 	 
 	@Test
 	def void testNonNullMapNoArgs() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				Map<string, string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull Map<string, string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullMapWithArgs() {
-		assertFalse('''
-			TypeA {
-				@nonNull("") 
-				Map<string, string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("TypeA {@nonNull(\"\") Map<string, string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//Compound types except Map
 	
 	@Test
 	def void testNonNullSet() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				Set<string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull Set<string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullList() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				List<string> a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull List<string> a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullArray() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				string[] a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull string[] a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullArrayWithArgs() {
-		assertFalse('''
-			TypeA {
-				@nonNull("")
-				string[] a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull(\"\") string[] a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//User types
 	
 	@Test
 	def void testNonNullUsertypeWithoutArgs() {
-		assertTrue('''
-			TypeB {
-			}
-			TypeA {
-				@nonNull 
-				TypeB a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("B {} A {@nonNull B a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullUsertypeWithArgs() {
-		assertFalse('''
-			TypeB {
-			}
-			TypeA {
-				@nonNull("")
-				TypeB a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("B {} A {@nonNull(\"\") B a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	//Built in types
 	
 	@Test
 	def void testNonNullString() {
-		assertTrue('''
-			TypeA {
-				@nonNull 
-				string a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertTrue("A {@nonNull string a;}".parse.validate.isNullOrEmpty)
 	}	
 	
 	@Test
 	def void testNonNullStringWithArguments() {
-		assertFalse('''
-			TypeA {
-				@nonNull("") 
-				string a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull(\"\") string a;}".parse.validate.isNullOrEmpty)
 	}	
 	
 	@Test
 	def void testNonNullI8() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				i8 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull i8 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullI16() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				i16 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull i16 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullI32() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				i32 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull i32 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullI64() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				i64 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull i64 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullV64() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				v64 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull v64 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullF32() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				f32 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull f32 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullF64() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				f64 a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull f64 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullBoolean() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				bool a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull bool a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test
 	def void testNonNullAnnotation() {
-		assertFalse('''
-			TypeA {
-				@nonNull 
-				annotation a;
-			}   
-		'''.parse.validate.isNullOrEmpty)
+		assertFalse("A {@nonNull annotation a;}".parse.validate.isNullOrEmpty)
 	}	
 }

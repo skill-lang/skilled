@@ -1,0 +1,11 @@
+TypeA {
+  i16 a;
+}
+
+TypeB : TypeA {
+  const i8 b = 2;
+}
+
+TypeC : TypeB {
+  i8 a;
+}
