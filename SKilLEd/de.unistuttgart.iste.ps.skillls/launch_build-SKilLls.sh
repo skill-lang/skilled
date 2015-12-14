@@ -1,5 +1,6 @@
 #!/bin/bash
 cd ../../scala/bin
+chmod +x *
 new=$(pwd)
 case ":${PATH:=$new}:" in
     *:$new:*)  ;;

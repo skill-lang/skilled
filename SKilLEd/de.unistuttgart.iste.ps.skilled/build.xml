@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="de.unistuttgart.iste.ps.skilled" default="complete-build">
+    
+    <condition property="scala.exists">
+      <available file="../../scala" type="dir"/>
+    </condition>
+
+    <target name="unpack-scala" unless="scala.exists">
+        <unzip src="lib/scala.zip" dest="../.."/>
+    </target>
+
+    <target name="build-SKilLls" depends="unpack-scala">
+        <exec executable="bash" dir="../de.unistuttgart.iste.ps.skillls">
+            <arg value="launch_build-SKilLls.sh"/>
+        </exec>
+    </target>
+
+    <target name="build-SKilLEd" depends="build-SKilLls">
+        <ant antfile="build-SKilLEd.xml"/>
+    </target>
+
+    <target name="complete-build" depends="build-SKilLEd"/>
+
+</project>
