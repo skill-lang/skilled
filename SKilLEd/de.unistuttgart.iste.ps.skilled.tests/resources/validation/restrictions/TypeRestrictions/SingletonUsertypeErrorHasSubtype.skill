@@ -1,0 +1,6 @@
+			@singleton
+			TypeA {
+			}
+			
+			TypeB : TypeA {
+			}

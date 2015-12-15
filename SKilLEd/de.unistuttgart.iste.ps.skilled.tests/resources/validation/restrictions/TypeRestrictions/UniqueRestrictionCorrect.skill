@@ -1,0 +1,7 @@
+			@unique
+			TypeA {
+			}
+			
+			TypeB {
+			}
+			typedef Alias @unique TypeB;

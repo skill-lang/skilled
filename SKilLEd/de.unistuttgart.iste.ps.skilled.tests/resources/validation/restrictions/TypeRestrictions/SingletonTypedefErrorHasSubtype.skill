@@ -1,0 +1,7 @@
+			TypeA {
+			}
+			
+			TypeB : TypeA {
+			}
+			
+			typedef Alias @singleton TypeA;

@@ -26,10 +26,10 @@ import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference;
 public class SubtypesFinder {
 
     @Inject
-    private static ResourceDescriptionsProvider resourceDescriptionsProvider;
+    ResourceDescriptionsProvider resourceDescriptionsProvider;
 
     @Inject
-    private static IContainer.Manager containerManager;
+    IContainer.Manager containerManager;
 
     /**
      * This Method computes the subtypes from the given TypeDeclaration (Usertype or Interfacetype) and returns a set with
@@ -38,7 +38,7 @@ public class SubtypesFinder {
      * @param typeDeclaration
      * @return a set with TypeDeclaration or an empty set, when there are no subtypes.
      */
-    public static Set<TypeDeclaration> getSubtypes(TypeDeclaration typeDeclaration) {
+    public Set<TypeDeclaration> getSubtypes(TypeDeclaration typeDeclaration) {
         Set<TypeDeclaration> subtypes = new HashSet<TypeDeclaration>();
 
         // Get all visible resources.

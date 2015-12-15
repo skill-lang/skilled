@@ -1,0 +1,13 @@
+			@singleton
+			TypeA {
+			}
+			
+			TypeB {
+			}
+			@singleton
+			TypeC : TypeB {
+			}
+			
+			TypeD {
+			}
+			typedef Alias @singleton TypeD;
