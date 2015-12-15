@@ -3,7 +3,7 @@ package de.unistuttgart.iste.ps.skilled.util;
 import java.util.ArrayList;
 
 
-public class keywordCheckEscaping {
+public class KeywordCheckEscaping {
     public static String[] languages = { "C", "Scala", "Ada", "Java" }; // The Languages that will be checked
 
     /**
