@@ -1,0 +1,10 @@
+X {}
+Y : X {}
+Z : Y {}
+A {
+  X x;
+}
+B : A {}
+C : B {
+  view A.x as Z z;
+}

@@ -1,0 +1,3 @@
+TypeA {}
+Typedef abc list<TypeA>;
+Typedef abcd list<abc>;

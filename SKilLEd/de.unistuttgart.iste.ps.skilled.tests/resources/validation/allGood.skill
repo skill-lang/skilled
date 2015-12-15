@@ -1,0 +1,12 @@
+TypeA {
+  list<a> aa;
+  b[] bb;
+  c[2] cc;
+  set<d> dd;
+  map<i8, e> ee;
+}
+Typedef a i8;
+Typedef b i16;
+Typedef c i32;
+Typedef d i64;
+Typedef e v64;

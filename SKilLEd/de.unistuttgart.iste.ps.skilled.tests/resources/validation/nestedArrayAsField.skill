@@ -1,0 +1,4 @@
+TypeA {
+  abc[] abcd;
+}
+Typedef abc i8[];

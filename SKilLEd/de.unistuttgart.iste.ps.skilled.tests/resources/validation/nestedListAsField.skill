@@ -1,0 +1,4 @@
+TypeA {
+  list<abc> abcd;
+}
+Typedef abc list<i8>;

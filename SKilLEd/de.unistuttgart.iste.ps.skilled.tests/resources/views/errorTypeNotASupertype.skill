@@ -1,0 +1,8 @@
+X {}
+Y : X {}
+A {
+  X x;
+}
+B {
+  view A.x as Y y;
+}

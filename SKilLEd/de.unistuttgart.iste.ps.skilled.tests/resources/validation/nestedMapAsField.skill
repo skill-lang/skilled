@@ -1,0 +1,4 @@
+TypeA {
+  map<i8, abc> abcd;
+}
+Typedef abc i8[];

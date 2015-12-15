@@ -96,13 +96,6 @@ class TestViews {
 		val specification = view4.parse
 		
 		Assert::assertTrue(specification.validate.size == 0);
-		
-		val A = specification.declarations.get(0) as Usertype;
-		val C = specification.declarations.get(2) as Usertype;
-		val view = A.fields.get(1).fieldcontent as View;
-		Assert::assertEquals("field2", view.name);
-		Assert::assertEquals(C, (view.fieldtype as DeclarationReference).type);
-		Assert::assertEquals(A.fields.get(0).fieldcontent, view.fieldcontent.fieldcontent)
 	}
 
 	@Test

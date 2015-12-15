@@ -1,0 +1,3 @@
+TypeA {}
+Typedef abc TypeA[];
+Typedef abcd abc[];

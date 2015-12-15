@@ -24,11 +24,10 @@ import de.unistuttgart.iste.ps.skilled.tests.utils.ErrorMessageComparator
 class TestInheritenceValidator {
 	@Inject extension ParseHelper<File> parser;
 	@Inject extension ValidationTestHelper
-	
-	//doesn't compile, but should be correct (?)
+
 	@Test
-	def void TransitiveInheritanceIsLegal() {
-		assertTrue("A:B:C{} B:C{} C{}".parse.validate.isNullOrEmpty)		
+	def void MultipleInheritanceIsNotLegal() {
+		assertFalse("A:B:C{} B:C{} C{}".parse.validate.isNullOrEmpty)		
 	}
 	
 	@Test

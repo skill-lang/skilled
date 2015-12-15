@@ -1,0 +1,7 @@
+TypeA {
+  const i8 a = 1;
+  const i16 b = 2;
+  const i32 c = 3;
+  const i64 d = 4;
+  const v64 e = 5;
+}
