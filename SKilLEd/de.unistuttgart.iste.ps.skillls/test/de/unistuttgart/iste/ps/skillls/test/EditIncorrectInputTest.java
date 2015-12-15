@@ -142,7 +142,6 @@ public class EditIncorrectInputTest {
         }
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            // check if Color is in Tool
             assertTrue("Color in Tool",
                     sk.Tools().stream().allMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 0));
         } catch (IOException e) {
@@ -168,7 +167,6 @@ public class EditIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            // check if testTool has a type
             assertTrue("Color in Tool",
                     sk.Tools().stream().allMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 0));
         } catch (IOException e) {
@@ -193,7 +191,6 @@ public class EditIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            // check if some kind of error occurred
             assertTrue("Color in Tool",
                     sk.Tools().stream().allMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 0));
         } catch (IOException e) {
@@ -218,7 +215,6 @@ public class EditIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            // check if color is in testTool
             assertTrue("Color not in Tool",
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 1));
         } catch (IOException e) {
@@ -243,7 +239,6 @@ public class EditIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            // check if no type has a field in testTool
             assertTrue("red not in Color in testTool", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool")
                     && t.getTypes().stream().allMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 0)));
         } catch (IOException e) {
@@ -268,7 +263,6 @@ public class EditIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            // check if color has a wrong hint
             assertTrue("red has a wrong hint",
                     sk.Tools().stream()
                             .anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
@@ -296,7 +290,6 @@ public class EditIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            // check if some error occurred
             assertTrue("red is nonNull in Color in testTool. Failing ok, not yet implemented in SKilL.",
                     sk.Tools().stream()
                             .anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
@@ -328,7 +321,6 @@ public class EditIncorrectInputTest {
         }
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            // check if color is not !notSingleton
             assertTrue("Color is not singleton in testTool", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool")
                     && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color") && ty.getTypeHints().size() == 0)));
         } catch (IOException e) {
@@ -353,7 +345,6 @@ public class EditIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            // check if some error occurred
             assertTrue("Color is not singleton in testTool", sk.Tools().stream()
                     .anyMatch(t -> t.getName().equals("testTool")
                             && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color")
@@ -380,7 +371,6 @@ public class EditIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            // check if some error occurred.
             assertTrue("red still in Color in testTool. Failing ok, because not yet implemented in SKilL.",
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
                             .allMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 0)));
