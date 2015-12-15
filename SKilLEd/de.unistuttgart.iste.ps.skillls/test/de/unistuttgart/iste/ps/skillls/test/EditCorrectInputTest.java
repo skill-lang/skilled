@@ -130,6 +130,7 @@ public class EditCorrectInputTest {
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write);
+            // find tool "testTool"
             assertTrue("testTool not found.", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool")));
         } catch (IOException e) {
             fail();
@@ -154,6 +155,7 @@ public class EditCorrectInputTest {
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
             assertTrue("Color not in Tool",
+                    // find "testTool" with one type
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 1));
         } catch (IOException e) {
             fail();
@@ -178,6 +180,7 @@ public class EditCorrectInputTest {
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
             assertTrue("Color in Tool",
+                    // there is no tool named "testTool" with one type.
                     sk.Tools().stream().noneMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 1));
         } catch (IOException e) {
             fail();
@@ -203,6 +206,7 @@ public class EditCorrectInputTest {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write);
             assertTrue("testTool still exists or blargh does not",
+                    // "testTool" is deleted and the other tools are called "blargh" and "TypeTool"
                     sk.Tools().stream().allMatch(t -> !t.getName().equals("testTool") && t.getName().equals("blargh")
                             || t.getName().endsWith("TypeTool")));
             sk.close();
@@ -254,6 +258,7 @@ public class EditCorrectInputTest {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
             assertTrue("no defaults set.",
                     sk.Tools().stream()
+                            // find "testTool" and check the settings.
                             .anyMatch(t -> t.getName().equals("testTool") && t.getGenerator().getExecEnv().equals("scala")
                                     && t.getGenerator().getPath()
                                             .equals("/home/armin/uni/SKilLEd/SKilL/target/scala-2.11/skill_2.11-0.3.jar")
@@ -282,6 +287,7 @@ public class EditCorrectInputTest {
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
             assertTrue("Color or TransparentColor not in Tool",
+                    // find "testTool" and check amount of types.
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 2));
         } catch (IOException e) {
             fail();
@@ -305,6 +311,7 @@ public class EditCorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            // find "testTool" and check if "color" is in it.
             assertTrue("red not in Color in testTool", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool")
                     && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 1)));
         } catch (IOException e) {
@@ -329,6 +336,7 @@ public class EditCorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            // find "testTool" and check if "Color" is in it and check if it contains "red" and check if it is "!nonNull"
             assertTrue("red not nonNull in Color in testTool",
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
                             .anyMatch(ty -> ty.getName().equals("Color")
@@ -356,6 +364,7 @@ public class EditCorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            // find "testTool" and find "color" and check if it is still "!nonNull"
             assertTrue("red is nonNull in Color in testTool. Failing ok, not yet implemented in SKilL.",
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
                             .anyMatch(ty -> ty.getName().endsWith("Color")
@@ -383,6 +392,7 @@ public class EditCorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            // check if "Color" is in "testTool"
             assertTrue("Color is not unique in testTool",
                     sk.Tools().stream()
                             .anyMatch(t -> t.getName().equals("testTool")
@@ -410,6 +420,7 @@ public class EditCorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            // check if "Color" in "testTool" is still "!singleton"
             assertTrue("Color is not singleton in testTool", sk.Tools().stream()
                     .anyMatch(t -> t.getName().equals("testTool")
                             && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color")
@@ -436,6 +447,7 @@ public class EditCorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            // Check if "Picture" contains all enum values
             assertTrue("does not contain all enum values", sk.Tools().stream()
                     .anyMatch(t -> t.getName().equals("testTool")
                             && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("enum Picture")
@@ -462,6 +474,7 @@ public class EditCorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            // check if "Color" in "testTool" still contains any fields.
             assertTrue("red still in Color in testTool. Failing ok, because not yet implemented in SKilL.",
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
                             .anyMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 0)));
@@ -484,8 +497,10 @@ public class EditCorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            // check if MainRefridgerator is indexed.
             assertTrue("MainFridge not indexed",
                     sk.Types().stream().anyMatch(type -> type.getName().contains("MainRefridgerator")));
+            // check if "testTool" contains Fridge and MainRefridgerator
             assertTrue("does not contain MainFridge or Fridge",
                     sk.Tools().stream().anyMatch(tool -> tool.getName().equals("testTool")
                             && tool.getTypes().stream().anyMatch(type -> type.getName().contains("MainRefridgerator"))));
@@ -508,6 +523,7 @@ public class EditCorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            // check if i1 is in "testTool"
             assertTrue("does not contain I1", sk.Tools().stream().anyMatch(tool -> tool.getName().equals("testTool")
                     && tool.getTypes().stream().anyMatch(type -> type.getName().toLowerCase().startsWith("interface i1"))));
         } catch (IOException e) {
@@ -537,6 +553,7 @@ public class EditCorrectInputTest {
         String[] args = new String[] { "-agloxmp", builder.toString(), "Java", "generated", "scala", "onetypetool",
                 "resources", "testTool" };
         MainClass.main(args);
+        // check if generated files exist
         assertTrue("not generated", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "src"
                 + File.separator + "main" + File.separator + "java" + File.separator + "onetypetool")));
         assertTrue("skill.java.common.jar missing", Files.exists(Paths.get(
@@ -567,6 +584,7 @@ public class EditCorrectInputTest {
         String[] args = new String[] { "--no-cleanup", "-agloxmp", builder.toString(), "Java", "generated", "scala",
                 "onetypetool", "resources", "testTool" };
         MainClass.main(args);
+        // check if generated files exist
         assertTrue("not generated", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "src"
                 + File.separator + "main" + File.separator + "java" + File.separator + "onetypetool")));
         assertTrue("skill.java.common.jar missing", Files.exists(Paths.get(
@@ -591,6 +609,7 @@ public class EditCorrectInputTest {
         SkillFile sk = null;
         try {
             sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            // check if PowerStrip is in oneTypeTool and if it is !readOnly
             assertTrue("PowerStrip does not have hint", sk.Tools().stream().anyMatch(tool -> tool.getName().equals("oneTypeTool") &&
                     tool.getTypes().stream().anyMatch(type -> type.getName().equals("PowerStrip") &&
                             type.getTypeHints().stream().anyMatch(hint -> hint.getName().equals("!readOnly")))));
@@ -679,6 +698,7 @@ public class EditCorrectInputTest {
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write);
+            // check if testTool is deleted
             assertTrue("testTool not deleted. Failing ok, because not yet implemented in SKilL.",
                     sk.Tools().stream().noneMatch(t -> t.getName().equals("testTool")));
         } catch (IOException e) {
