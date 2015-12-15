@@ -55,35 +55,41 @@
         <delete file="${libs.location}/skill.jvm.common.jar"/>
     </target>
 
-    <target depends="setup" name="gensrc-skill-antlr">
+    <target depends="setup" name="gensrc-skill-antlr-lexer">
         <mkdir dir="${grammar.location}"/>
-        <copy todir="${grammar.location}">
-            <fileset dir="SKilLANTLR" includes="SKilLLexer.tokens"/>
-        </copy>
         <java jar="${libs.location}/antlr-4.5.1-complete.jar" fork="true">
             <arg line="SKilLANTLR/SKilLLexer.g4"/>
-            <arg line="-lib SKilLANTLR/SKilLLexer.tokens"/>
-            <arg line="-o ${grammar.location}"/>
-            <arg line="-package de.unistuttgart.iste.ps.skillls.grammar"/>
-            <arg line="-encoding UTF-8"/>
-        </java>
-        <java jar="${libs.location}/antlr-4.5.1-complete.jar" fork="true">
-            <arg line="SKilLANTLR/SKilLParser.g4"/>
-            <arg line="-lib SKilLANTLR/SKilLLexer.tokens"/>
             <arg line="-o ${grammar.location}"/>
             <arg line="-package de.unistuttgart.iste.ps.skillls.grammar"/>
             <arg line="-encoding UTF-8"/>
         </java>
     </target>
 
-    <target name="gensrc-skill-antlr-post" if="isUnix">
+    <target depends="gensrc-skill-antlr-lexer" name="gensrc-skill-antlr-lexer-post" if="isUnix">
         <copy todir="${grammar.location}">
             <fileset dir="${grammar.location}/SKilLANTLR"/>
         </copy>
         <delete dir="${grammar.location}/SKilLANTLR" />
     </target>
 
-    <target depends="gensrc-skill-antlr,gensrc-skill-antlr-post" name="build-skill-antlr"/>
+    <target depends="gensrc-skill-antlr-lexer-post" name="gensrc-skill-antlr-parser">
+        <java jar="${libs.location}/antlr-4.5.1-complete.jar" fork="true">
+            <arg line="SKilLANTLR/SKilLParser.g4"/>
+            <arg line="-lib ${grammar.location}/SKilLLexer.tokens"/>
+            <arg line="-o ${grammar.location}"/>
+            <arg line="-package de.unistuttgart.iste.ps.skillls.grammar"/>
+            <arg line="-encoding UTF-8"/>
+        </java>
+    </target>
+
+    <target depends="gensrc-skill-antlr-parser" name="gensrc-skill-antlr-parser-post" if="isUnix">
+        <copy todir="${grammar.location}">
+            <fileset dir="${grammar.location}/SKilLANTLR"/>
+        </copy>
+        <delete dir="${grammar.location}/SKilLANTLR" />
+    </target>
+
+    <target depends="gensrc-skill-antlr-parser-post" name="build-skill-antlr"/>
     <target depends="build-skill-binding,build-skillls" name="build-skillls-complete"/>
     <target depends="build-skill-antlr,build-skillls-complete,test,create_run_jar,teardown" name="build-all"/>
 
@@ -111,7 +117,13 @@
         </javac>
     </target>
 
-    <target depends="build-skillls-complete" name="test">
+    <target depends="build-skillls-complete" name="compile-tests">
+        <javac srcdir="test" fork="true" debug="true" debuglevel="${debuglevel}" destdir="out/production/SKilLls" includeantruntime="false" source="${source}" target="${target}" encoding="UTF8">
+            <classpath refid="SKilLls.classpath"/>
+        </javac>
+    </target>
+
+    <target depends="compile-tests" name="test">
         <jacoco:coverage destfile="out/test/SKilLls/jacoco_SKilLls.exec">
         <junit fork="yes" forkmode="once" printsummary="on" haltonerror="false" haltonfailure="false">
             <classpath>
@@ -119,7 +131,7 @@
             </classpath>
             <formatter type="xml"/>
             <batchtest todir="out/test/SKilLls">
-                <fileset dir="src">
+                <fileset dir="test">
                     <include name="de/unistuttgart/iste/ps/skillls/test/**/*.java"/>
                 </fileset>
             </batchtest>
