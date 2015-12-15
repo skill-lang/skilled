@@ -125,8 +125,8 @@ ant/
 #generated
 model/
 grammar/
-tools/
 SKilLls/lib/skill.j*
+SKilLEd/de.unistuttgart.iste.ps.skillls/src/de/unistuttgart/iste/ps/skillls/tools/
 
 #javadoc
 SKilLEd/javadoc
