@@ -183,10 +183,12 @@ class SkillIndexListener extends SKilLParserBaseListener {
                 .map(h -> skillFile.Hints().make(h.getText(), null)).collect(Collectors.toCollection(ArrayList::new));
 
         String name;
-        if (fieldContext.data() == null) {
+        if (fieldContext.data() != null) {
+            name = fieldContext.data().type().getText() + " " + fieldContext.data().extendedIdentifer().getText();
+        } else if (fieldContext.constant() != null){
             name = fieldContext.constant().getText();
         } else {
-            name = fieldContext.data().type().getText() + " " + fieldContext.data().Identifier().getText();
+            name = fieldContext.view().data().extendedIdentifer().getText();
         }
 
         ArrayList<String> restrictions = new ArrayList<>();
