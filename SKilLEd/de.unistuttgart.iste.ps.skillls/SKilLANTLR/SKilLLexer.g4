@@ -19,6 +19,8 @@ MAP: 'map';
 SET: 'set';
 LIST: 'list';
 ANNOTATION: 'annotation';
+POINT: '.';
+DOUBLEDOUBLEPOINT: '::';
 COMMA: ',';
 SEMICOLON : ';';
 PARENTHESEO: '(';
@@ -30,14 +32,16 @@ BRACKETC:']';
 EXCLAMATIONMARK:'!';
 AT: '@';
 EQUAL: '=';
+VIEW: 'view';
+AS: 'as';
 
 COMMENT:'/*' .*? '*/';
 
 Identifier
-    :   IdentifierNondigit
+    :(IdentifierNondigit
         (   IdentifierNondigit
         |   Digit
-        )*
+        )*)
     ;
 
 fragment
