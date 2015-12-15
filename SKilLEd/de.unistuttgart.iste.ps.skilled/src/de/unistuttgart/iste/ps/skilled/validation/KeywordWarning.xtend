@@ -6,7 +6,7 @@ import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import org.eclipse.xtext.validation.EValidatorRegistrar
 import java.util.ArrayList
-import de.unistuttgart.iste.ps.skilled.util.keywordCheckEscaping;
+import de.unistuttgart.iste.ps.skilled.util.KeywordCheckEscaping
 
 /**
  * This Class checks if a Keyword requires escaping in the target 
@@ -24,7 +24,7 @@ class KeywordWarning extends AbstractDeclarativeValidator{
 	 */
 	@Check
 	def KeywordWarning(TypeDeclaration dec){ 
-		var ArrayList<String> requiresEscaping = keywordCheckEscaping.requiresEscaping(dec.name);
+		var ArrayList<String> requiresEscaping = KeywordCheckEscaping.requiresEscaping(dec.name);
 		// requiresEscaping(dec.name)
 		if(!requiresEscaping.isNullOrEmpty){
 			var String warning = "Name requires escaping in "
