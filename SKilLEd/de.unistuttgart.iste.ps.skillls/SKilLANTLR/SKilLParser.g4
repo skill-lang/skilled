@@ -6,7 +6,7 @@ file: header declaration*;
 
 header: HEAD_COMMENT* include*;
 
-includeWord: (INCLUDE | WITH);
+includeWord: ('include' | 'with');
 
 include: includeWord StringLiteral+;
 
@@ -14,25 +14,23 @@ declaration: (usertype | enumtype | interfacetype | typedef);
 
 usertype: description name=Identifier extension* '{' field* '}';
 
-enumtype: COMMENT? ENUM name=Identifier '{' enumvalues ';' field* '}';
+enumtype: COMMENT? 'enum' name=Identifier '{' enumvalues ';' field* '}';
 
-interfacetype: COMMENT? INTERFACE name=Identifier extension* '{' field* '}';
+interfacetype: COMMENT? 'interface' name=Identifier extension* '{' field* '}';
 
-extendWord: (':' | WITH | EXTENDS);
+extendWord: (':' | 'with' | 'extends');
 
 extension: extendWord Identifier;
 
-typedef: COMMENT? TYPEDEF name=Identifier restrictionHint* type ';';
+typedef: COMMENT? 'typedef' name=Identifier restrictionHint* type ';';
 
-field: description (view | constant | data) ';' ;
+field: description (constant | data) ';' ;
 
-view: VIEW (extendedIdentifer '.')? extendedIdentifer AS data;
+constant: 'const' type Identifier '=' IntegerConstant;
 
-constant: CONST type extendedIdentifer '=' IntegerConstant;
+data: 'auto'? type Identifier;
 
-data: AUTO? type extendedIdentifer;
-
-type: (MAP typemulti | SET typesingle | LIST typesingle | arraytype);
+type: ('map' typemulti | 'set' typesingle | 'list' typesingle | arraytype);
 
 typemulti: '<' groundtype (',' groundtype)+ '>';
 
@@ -40,20 +38,16 @@ typesingle: '<' groundtype '>';
 
 arraytype: groundtype ('[' IntegerConstant? ']')?;
 
-groundtype: (ANNOTATION | Identifier);
+groundtype: ('annotation' | Identifier);
 
 description: COMMENT? restrictionHint*;
 
 restriction: '@' Identifier ('(' (rarg (',' rarg)*)?')')?;
 
-rarg: (FloatingConstant | IntegerConstant | StringLiteral | (extendedIdentifer ('.' | '::')?)+);
+rarg: (FloatingConstant | IntegerConstant | StringLiteral | (Identifier (',' Identifier)*));
 
-hint: '!' Identifier rarg? ('(' (rarg (',' rarg)*)?')')?;
+hint: '!' Identifier ('(' (rarg (',' rarg)*)?')')?;
 
 enumvalues: Identifier (',' Identifier)*;
 
 restrictionHint: (restriction | hint);
-
-extendedIdentifer: Identifier
-| (INCLUDE | WITH | EXTENDS | ENUM | INTERFACE | TYPEDEF | CONST | AUTO | MAP | SET | LIST | ANNOTATION | VIEW | AS)
-;
