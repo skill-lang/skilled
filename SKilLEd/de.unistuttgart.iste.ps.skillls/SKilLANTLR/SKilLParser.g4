@@ -22,7 +22,7 @@ extendWord: (':' | 'with' | 'extends');
 
 extension: extendWord Identifier;
 
-typedef: COMMENT? 'typedef' name=Identifier (restriction | hint)* type ';';
+typedef: COMMENT? 'typedef' name=Identifier restrictionHint* type ';';
 
 field: description (constant | data) ';' ;
 
@@ -40,7 +40,7 @@ arraytype: groundtype ('[' IntegerConstant? ']')?;
 
 groundtype: ('annotation' | Identifier);
 
-description: COMMENT? (restriction | hint)*;
+description: COMMENT? restrictionHint*;
 
 restriction: '@' Identifier ('(' (rarg (',' rarg)*)?')')?;
 
@@ -49,3 +49,5 @@ rarg: (FloatingConstant | IntegerConstant | StringLiteral | (Identifier (',' Ide
 hint: '!' Identifier ('(' (rarg (',' rarg)*)?')')?;
 
 enumvalues: Identifier (',' Identifier)*;
+
+restrictionHint: (restriction | hint);

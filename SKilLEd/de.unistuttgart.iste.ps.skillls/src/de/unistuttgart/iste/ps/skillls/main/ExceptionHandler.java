@@ -1,6 +1,8 @@
 package de.unistuttgart.iste.ps.skillls.main;
 
 /**
+ * Class for handling exceptions.
+ *
  * @author Armin Hüneburg
  * @since 25.08.15.
  */

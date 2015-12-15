@@ -20,7 +20,10 @@ import java.util.stream.Collectors;
 
 
 /**
- * @author Armin Hüneburg Created on 15.09.15.
+ * Class for indexing all types, fields, hints and restrictions of a skill specification file
+ *
+ * @author Armin Hüneburg
+ * @since 15.09.15
  */
 class SkillIndexListener extends SKilLParserBaseListener {
     private final SkillFile skillFile;
@@ -124,15 +127,20 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
         ArrayList<String> restrictions = new ArrayList<>();
 
-        for (SKilLParser.RestrictionContext restrictionContext : typedef.restriction()) {
+        // Iterate over all restrictions of typedef
+        for (SKilLParser.RestrictionContext restrictionContext : typedef.restrictionHint().stream().filter(rh -> rh.restriction() != null)
+                .map(SKilLParser.RestrictionHintContext::restriction).collect(Collectors.toList())) {
             skillFile.Strings().add(restrictionContext.getText());
             restrictions.add(restrictionContext.getText());
         }
 
         ArrayList<Hint> hints = new ArrayList<>();
 
-        for (SKilLParser.HintContext hintContext : typedef.hint()) {
+        // Iterate over all hints of typedef
+        for (SKilLParser.HintContext hintContext : typedef.restrictionHint().stream().filter(rh -> rh.hint() != null)
+                .map(SKilLParser.RestrictionHintContext::hint).collect(Collectors.toList())) {
             Hint hint = skillFile.Hints().make(hintContext.getText(), null);
+            skillFile.Strings().add(hintContext.getText());
             hints.add(hint);
         }
 
@@ -169,11 +177,10 @@ class SkillIndexListener extends SKilLParserBaseListener {
      * @return the found field.
      */
     private Field processField(SKilLParser.FieldContext fieldContext) {
-        ArrayList<Hint> hints = new ArrayList<>();
-
-        for (SKilLParser.HintContext h : fieldContext.description().hint()) {
-            hints.add(skillFile.Hints().make(h.getText(), null));
-        }
+        // Iterate over all hints
+        ArrayList<Hint> hints = fieldContext.description().restrictionHint().stream().filter(rh -> rh.hint() != null)
+                .map(SKilLParser.RestrictionHintContext::hint).collect(Collectors.toList()).stream()
+                .map(h -> skillFile.Hints().make(h.getText(), null)).collect(Collectors.toCollection(ArrayList::new));
 
         String name;
         if (fieldContext.data() == null) {
@@ -184,7 +191,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
         ArrayList<String> restrictions = new ArrayList<>();
 
-        for (SKilLParser.RestrictionContext r : fieldContext.description().restriction()) {
+        // Iterate over all restrictions
+        for (SKilLParser.RestrictionContext r : fieldContext.description().restrictionHint().stream().filter(rh -> rh.restriction() != null)
+                .map(SKilLParser.RestrictionHintContext::restriction).collect(Collectors.toList())) {
             skillFile.Strings().add(r.getText());
             restrictions.add(r.getText());
         }
@@ -205,7 +214,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
     private void processUsertype(SKilLParser.UsertypeContext usertype) {
         ArrayList<Hint> hints = new ArrayList<>();
 
-        for (SKilLParser.HintContext h : usertype.description().hint()) {
+        // Iterate over all hints
+        for (SKilLParser.HintContext h : usertype.description().restrictionHint().stream().filter(rh -> rh.hint() != null)
+                .map(SKilLParser.RestrictionHintContext::hint).collect(Collectors.toList())) {
             hints.add(skillFile.Hints().make(h.getText(), null));
         }
 
@@ -220,7 +231,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
         ArrayList<String> restrictions = new ArrayList<>();
 
-        for (SKilLParser.RestrictionContext r : usertype.description().restriction()) {
+        // Iterate over all restrictions
+        for (SKilLParser.RestrictionContext r : usertype.description().restrictionHint().stream().filter(rh -> rh.restriction() != null)
+                .map(SKilLParser.RestrictionHintContext::restriction).collect(Collectors.toList())) {
             skillFile.Strings().add(r.getText());
             restrictions.add(r.getText());
         }

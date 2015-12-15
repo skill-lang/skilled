@@ -15,9 +15,10 @@ import java.nio.file.Paths;
 
 
 /**
- * Created on 13.10.15.
+ * Class for extracting a skill specification of a tool from a general skill specification.
  *
  * @author Armin Hüneburg
+ * @since 13.10.15
  */
 public class SkillExtractListener extends SKilLParserBaseListener {
     private FileOutputStream outFile;
@@ -54,6 +55,7 @@ public class SkillExtractListener extends SKilLParserBaseListener {
             for (TerminalNode commentLine : fileContext.header().HEAD_COMMENT()) {
                 outFile.write(commentLine.getSymbol().getText().getBytes());
             }
+            // add dependencies of file to file
             for (SKilLParser.IncludeContext include : fileContext.header().include()) {
                 StringBuilder line = new StringBuilder();
                 line.append("\n");
@@ -70,6 +72,7 @@ public class SkillExtractListener extends SKilLParserBaseListener {
                         }
                     }
                 }
+                // remove last include
                 if (line.toString().trim().endsWith(include.includeWord().getText())) {
                     line.setLength(line.length() - include.includeWord().getText().length() - 1);
                 }

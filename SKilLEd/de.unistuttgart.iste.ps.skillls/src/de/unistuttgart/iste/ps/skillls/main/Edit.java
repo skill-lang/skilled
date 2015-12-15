@@ -11,10 +11,11 @@ import java.util.stream.Collectors;
 
 
 /**
+ * This class performs editing tasks on tools.
+ *
  * @author Armin Hüneburg
  * @since 25.08.15.
  *
- *        This class performs editing tasks on tools.
  */
 public class Edit {
     private final String COMMAND_STRING;
@@ -205,7 +206,7 @@ public class Edit {
             }
         }
         for (Type t : skillFile.Types()) {
-            if (t.getName().equals(typeName)) {
+            if (t.getName().equals(typeName) && skillFile.Tools().stream().noneMatch(tool1 -> tool1.getTypes().contains(t))) {
                 skType = t;
                 break;
             }
@@ -221,17 +222,10 @@ public class Edit {
                 break;
             }
         }
+        //exit if arguemnt error: hint not found
         assert hint != null : "Hint not found";
-        for (Hint h : skillFile.Hints()) {
-            if (h.getName().equals(hintName) && h.getParent() instanceof Type) {
-                Type parent = (Type) h.getParent();
-                if (parent.getName().equals(skType.getName())) {
-                    if (toolType != null && toolType.getTypeHints() != null) {
-                        toolType.getTypeHints().add(skillFile.Hints().make(hintName, skType));
-                    }
-                    return;
-                }
-            }
+        if (toolType.getTypeHints().stream().noneMatch(h -> h.getName().equals(hintName))) {
+            toolType.getTypeHints().add(skillFile.Hints().make(hint.getName(), toolType));
         }
 
     }
@@ -284,10 +278,11 @@ public class Edit {
                 break;
             }
         }
-        if (hint != null) {
-            field.getFieldHints().remove(hint);
-            skillFile.delete(hint);
-        }
+        //exit if arguemnt error: hint not found
+        assert hint != null : "hint not found";
+        field.getFieldHints().remove(hint);
+        skillFile.delete(hint);
+
     }
 
     /**
@@ -493,22 +488,26 @@ public class Edit {
     private void addType(Tool tool, String[] subCommands, int index) {
         String typeName = subCommands[index];
         for (Type t : skillFile.Types()) {
+            // check if type or enum or interface or typed with the name exists
             if (typeName.equals(t.getName()) || t.getName().toLowerCase().equals("enum " + typeName.toLowerCase())
                     || t.getName().toLowerCase().equals("interface " + typeName.toLowerCase())
                     || t.getName().toLowerCase().startsWith("typedef " + typeName.toLowerCase())) {
                 Type type = null;
+                // type is not in tool
                 if (tool.getTypes().stream().noneMatch(ty -> ty.getName().equals(typeName))) {
                     type = skillFile.Types().make(t.getComment(), new ArrayList<>(), new ArrayList<>(), t.getFile(),
                             t.getName(), new ArrayList<>(), new ArrayList<>());
                 }
+                // type is enum
                 if (t.getFields().stream().anyMatch(f -> f.getName().matches("\\S+")) && type != null) {
                     Field field = t.getFields().stream().filter(f -> f.getName().matches("\\S+")).findFirst().get();
                     type.getFields().add(skillFile.Fields().make(field.getComment(), new ArrayList<>(), field.getName(),
                             new ArrayList<>(), type));
                 }
-                tool.getTypes().add(type);
-                if (type == null)
+                if (type == null) {
                     return;
+                }
+                tool.getTypes().add(type);
                 if (type.getName().toLowerCase().startsWith("typedef ")) {
                     addGroundType(type, tool);
                 }

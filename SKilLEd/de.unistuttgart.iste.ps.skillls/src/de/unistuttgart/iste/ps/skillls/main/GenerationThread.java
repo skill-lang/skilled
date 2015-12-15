@@ -34,6 +34,7 @@ class GenerationThread implements Runnable {
     @Override
     public void run() {
         try {
+            /** run command with {@link PARENT} as working directory */
             Process p = Runtime.getRuntime().exec(COMMAND, null, PARENT);
             p.waitFor();
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -41,6 +42,7 @@ class GenerationThread implements Runnable {
             String line;
             boolean knownError = false;
             while ((line = errorReader.readLine()) != null) {
+                // skip output of not being able to copy deps
                 if (line.contains("java.nio.file.NoSuchFileException: deps/skill.jvm.common.jar") || knownError) {
                     knownError = true;
                 } else {

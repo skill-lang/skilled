@@ -19,10 +19,7 @@ import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,35 +31,6 @@ import java.util.stream.Stream;
  * @since 18.08.15.
  */
 public class MainClass {
-    /**
-     * Text for the help message. Called with "skillls --help".
-     */
-    private static final String HELPTEXT = "SYNOPSIS\n" + "       skillls\n" + "       [-a]  [--all]\n"
-            + "       [-g  GENERATOR]  [--generator  GENERATOR]\n" + "       [-l  LANGUAGE] [--lang LANGUAGE]\n"
-            + "       [-ls] [--list]\n" + "       [-o OUTPUT] [--output OUTPUT]\n" + "       [-x EXEC] [--exec EXEC]\n"
-            + "       [-m MODULE] [--module MODULE]\n" + "       [-p PATH] [--path PATH]\n" + "       [TOOLS...]\n\n"
-            + "DESCRIPTION\n" + "       SKilLls generates or lists tools with the given generator.\n"
-            + "       It can also list all tools.\n\n" + "OPTIONS\n" + "       -a, --all\n"
-            + "              When used with -ls/--list, lists all tools not regarding\n"
-            + "              changes.  When used without -ls/--list, generates all\n"
-            + "              tools not regarding changes.\n\n" + "       -g, --generator GENERATOR\n"
-            + "              Needed for generating bindings. Path to the generator\n"
-            + "              that is being used. Ignored with -ls/--list\n\n" + "       -l, --lang LANGUAGE\n"
-            + "              Language the binding should be generated for.\n" + "              Ignored with -ls/--list.\n\n"
-            + "       -o, --output OUTPUT\n" + "              The output directory for the binding.\n"
-            + "              Ignored with -ls/--list.\n\n" + "       -x, --exec EXEC\n"
-            + "              The execution environment for the generator,\n"
-            + "              e.g. scala. Ignored with -ls/--list.\n\n" + "       -ls, --list\n"
-            + "              Does not generate bindings but lists the tools.\n\n" + "       -m, --module MODULE\n"
-            + "              The module the binding should be added to.\n" + "              Ignored with -ls/--list.\n\n"
-            + "       -p, --path PATH\n" + "              The path the project is located at.\n\n" + "       TOOLS...\n"
-            + "              The tools the options should be applied to.\n"
-            + "              If no tools are given the options are applied to all\n" + "              available tools.\n\n\n"
-            + "SIDE NOTE\n" + "       Single letter arguments can be combined. You can call SKilLls\n"
-            + "       with following command:\n" + "       skillls -agl /path/to/generator Java /path/to/project\n"
-            + "       This command generates all bindings for the tools of the project\n"
-            + "       in Java. If l comes before g the language has to be given first.\n"
-            + "       If no options are given the settings, stored in\n" + "       /path/to/project/.skills, are used.\n";
     private static Generator generator;
     private static String language;
     private static FileFlag fileFlag = FileFlag.Changed;
@@ -78,7 +46,7 @@ public class MainClass {
      */
     public static void main(String[] args) {
         if (args[0].equals("-e") || args[0].equals("--edit")) {
-            Edit e = new Edit(args[2]);
+            Edit editor = new Edit(args[2]);
             File file = new File(args[1]);
             File sfFile = new File(file.getAbsolutePath() + File.separator + ".skills");
             if (!sfFile.exists()) {
@@ -90,6 +58,14 @@ public class MainClass {
                 }
             }
             SkillFile skillFile;
+            if (System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH).contains("win") && !sfFile.exists()) {
+                try {
+                    sfFile.createNewFile();
+                } catch (IOException e) {
+                    ExceptionHandler.handle(e);
+                    return;
+                }
+            }
             try {
                 skillFile = SkillFile.open(sfFile.getAbsolutePath(), de.ust.skill.common.java.api.SkillFile.Mode.Read,
                         de.ust.skill.common.java.api.SkillFile.Mode.Write);
@@ -98,11 +74,12 @@ public class MainClass {
                 return;
             }
             indexFiles(file, skillFile);
-            e.setSkillFile(skillFile);
-            e.start();
+            editor.setSkillFile(skillFile);
+            editor.start();
         } else {
             HashMap<String, ArgumentEvaluation> evaluations = new HashMap<>();
             for (int i = 0; i < args.length; i++) {
+                // decide what type of argument was passed. Long form (led by --) or short form (led by -) or help.
                 if (args[i].equals("--help") || args[i].equals("-h")) {
                     printHelp();
                     return;
@@ -147,6 +124,7 @@ public class MainClass {
             evaluations.remove("path");
             indexFiles(new File(path), sf);
             Set<String> set = evaluations.keySet();
+            // set the environment of the generation.
             if (set.contains("generator")) {
                 generator = sf.Generators().make(evaluations.get("exec").getArgument(),
                         evaluations.get("generator").getArgument());
@@ -213,16 +191,22 @@ public class MainClass {
             for (de.unistuttgart.iste.ps.skillls.tools.File file : tool.getFiles()) {
                 File f = new File(file.getPath());
                 String hash = hash(f);
+                // test if file has changed
                 if (fileFlag == FileFlag.All || !file.getMd5().equals(hash)
                         || ("" + f.lastModified()).equals(file.getTimestamp())) {
+                    // print file name
                     System.out.println(file.getPath());
                     tool.getTypes().stream().filter(t -> t.getFile().getPath().equals(file.getPath())).forEach(type -> {
+                        // print hints
                         for (Hint hint : type.getTypeHints()) {
                             System.out.println(hint.getName());
                         }
+                        // print type
                         System.out.println("  " + type.getName());
+                        // print fields
                         for (Field field : type.getFields()) {
                             for (Hint hint : field.getFieldHints()) {
+                                // print field hints
                                 System.out.println("    " + hint.getName());
                             }
                             System.out.println("    " + field.getName());
@@ -264,6 +248,7 @@ public class MainClass {
         for (char c : args[index].substring(1).toCharArray()) {
             switch (c) {
                 case 'g':
+                    // test if l was typed
                     if (last == 'l') {
                         index++;
                         list.add(new ArgumentEvaluation(index, args[index], "lang"));
@@ -273,6 +258,7 @@ public class MainClass {
                     break;
 
                 case 'a':
+                    // test if l was typed
                     if (last == 'l') {
                         index++;
                         list.add(new ArgumentEvaluation(index, args[index], "lang"));
@@ -285,6 +271,7 @@ public class MainClass {
                     break;
 
                 case 'x':
+                    // test if l was typed
                     if (last == 'l') {
                         index++;
                         list.add(new ArgumentEvaluation(index, args[index], "lang"));
@@ -294,6 +281,7 @@ public class MainClass {
                     break;
 
                 case 'p':
+                    // test if l was typed
                     if (last == 'l') {
                         index++;
                         list.add(new ArgumentEvaluation(index, args[index], "lang"));
@@ -303,6 +291,7 @@ public class MainClass {
                     break;
 
                 case 'o':
+                    // test if l was typed
                     if (last == 'l') {
                         index++;
                         list.add(new ArgumentEvaluation(index, args[index], "lang"));
@@ -312,6 +301,7 @@ public class MainClass {
                     break;
 
                 case 'm':
+                    // test if l was typed
                     if (last == 'l') {
                         index++;
                         list.add(new ArgumentEvaluation(index, args[index], "lang"));
@@ -321,6 +311,7 @@ public class MainClass {
                     break;
 
                 case 's':
+                    // test if l was typed, if yes it is list else invalid
                     if (last == 'l') {
                         list.add(new ArgumentEvaluation(index, args[index], "list"));
                         break;
@@ -390,10 +381,10 @@ public class MainClass {
     }
 
     /**
-     * Prints the message saved in {@link #HELPTEXT} to the command line.
+     * Prints the message saved in {@link Constants#HELPTEXT} to the command line.
      */
     private static void printHelp() {
-        System.out.println(HELPTEXT);
+        System.out.println(Constants.HELPTEXT);
     }
 
     /**
@@ -409,17 +400,16 @@ public class MainClass {
      *             Thrown if there is a problem with the creation of temporary files.
      */
     private static void generate(File project, ArrayList<String> tools, SkillFile skillFile) throws IOException {
-        HashSet<de.unistuttgart.iste.ps.skillls.tools.Tool> toolsToBuild = new HashSet<>();
         HashMap<Tool, ArrayList<File>> toolToFile = new HashMap<>();
 
         for (String t : tools) {
             for (Tool tool : skillFile.Tools()) {
                 if (t.equals(tool.getName())) {
-                    toolsToBuild.add(tool);
                     ArrayList<File> files = new ArrayList<>();
                     for (de.unistuttgart.iste.ps.skillls.tools.File f : tool.getFiles()) {
                         File file = new File(f.getPath());
                         String hash = hash(new File(file.getAbsolutePath()));
+                        // check if modified or all files are considered
                         if (!f.getMd5().equals(hash) || file.lastModified() != Long.parseLong(f.getTimestamp())
                                 || fileFlag == FileFlag.All) {
                             f.setMd5(hash);
@@ -442,24 +432,21 @@ public class MainClass {
                 }
             }
         }
-
-        runGeneration(toolsToBuild, toolToFile, new File(project.getAbsolutePath() + File.separator + ".skillt"));
+        runGeneration(toolToFile, new File(project.getAbsolutePath() + File.separator + ".skillt"));
     }
 
     /**
      * Method for accumulating Thread for Binding generation per tool. Also runs them.
      *
-     * @param toolsToBuild
-     *            Tools that need to be built.
      * @param toolToFile
      *            Map for mapping tools to their corresponding temporary files.
      * @param tempDir
      *            Directory which contains the tool specific files.
      */
-    private static void runGeneration(HashSet<de.unistuttgart.iste.ps.skillls.tools.Tool> toolsToBuild, HashMap<Tool, ArrayList<File>> toolToFile,
+    private static void runGeneration(HashMap<Tool, ArrayList<File>> toolToFile,
             File tempDir) {
         ArrayList<Thread> commands = new ArrayList<>();
-        for (de.unistuttgart.iste.ps.skillls.tools.Tool t : toolsToBuild) {
+        for (de.unistuttgart.iste.ps.skillls.tools.Tool t : toolToFile.keySet()) {
             StringBuilder builder = new StringBuilder();
             builder.append(generator == null ? t.getGenerator().getExecEnv() : generator.getExecEnv());
             builder.append(' ');
@@ -608,12 +595,12 @@ public class MainClass {
                         f = skillFile.Files().make(new ArrayList<>(), "", hash, child.getAbsolutePath(),
                                 child.lastModified() + "");
                         indexTypes(child, skillFile);
-                    } else if (Paths.get(child.getAbsolutePath()).relativize(Paths.get(f.getPath())).toString().equals("")) {
+                    } else if (Paths.get(child.getAbsolutePath()).relativize(Paths.get(f.getPath())).toString().equals("")
+                            && (!f.getMd5().equals(hash) || !f.getTimestamp().equals("" + child.lastModified()))) {
                         indexTypes(child, skillFile);
                         f.setTimestamp("" + child.lastModified());
                         f.setMd5(hash);
-                    } else if (Paths.get(child.getAbsolutePath()).relativize(Paths.get(f.getPath())).toString().equals("")
-                            && (!f.getMd5().equals(hash) || !f.getTimestamp().equals("" + child.lastModified()))) {
+                    } else if (Paths.get(child.getAbsolutePath()).relativize(Paths.get(f.getPath())).toString().equals("")) {
                         indexTypes(child, skillFile);
                         f.setTimestamp("" + child.lastModified());
                         f.setMd5(hash);
