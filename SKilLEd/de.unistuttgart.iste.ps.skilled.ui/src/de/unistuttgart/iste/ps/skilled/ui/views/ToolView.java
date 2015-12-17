@@ -33,6 +33,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
+import de.unistuttgart.iste.ps.skilled.ui.tools.export.ExportToolsDialog;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.SKilLToolWizard;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
 import de.unistuttgart.iste.ps.skillls.tools.Field;
@@ -71,6 +72,8 @@ public class ToolView extends ViewPart {
 	private Tool activeTool = null;
 	private IProject activeProject = null;
 	private Shell shell;
+	
+	ExportToolsDialog fExport = new ExportToolsDialog();
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -254,7 +257,7 @@ public class ToolView extends ViewPart {
 				// no default
 			}
 		});
-
+		fExport.setListofTools(toolViewList);
 		return toolViewList;
 	}
 

@@ -12,13 +12,25 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class ExportToolsDialog {
 	Display d;
 	String fName = "";
+	String[] cSelectToolItems;
+	int fNumberofTools;
 
+	public void setNumberofTools(int number) {
+		fNumberofTools = number;
+	}
+
+	public void setListofTools(List toolViewList) {
+		// TODO
+		toolViewList.add("", 0);
+		cSelectToolItems = toolViewList.getItems();
+	}
 
 	/**
 	 * Creates dialog window
@@ -49,35 +61,36 @@ public class ExportToolsDialog {
 		gridData.horizontalAlignment = SWT.CENTER;
 		gridData.horizontalSpan = 4;
 		title.setLayoutData(gridData);
-		
+
 		Label lSelectTool = new Label(shell, SWT.NONE);
 		lSelectTool.setText("Select Tool:");
 		GridData gridDataLabel = new GridData();
 		gridDataLabel.horizontalAlignment = SWT.CENTER;
 		gridDataLabel.horizontalSpan = 2;
 		lSelectTool.setLayoutData(gridDataLabel);
-		
+
 		Combo cSelectTool = new Combo(shell, SWT.READ_ONLY);
 		GridData gridDataWidgets = new GridData();
 		gridDataWidgets.horizontalAlignment = SWT.FILL;
 		gridDataWidgets.grabExcessHorizontalSpace = true;
 		gridDataWidgets.horizontalSpan = 2;
 		cSelectTool.setLayoutData(gridDataWidgets);
-		String cSelectToolItems[] = {};
 		cSelectTool.setItems(cSelectToolItems);
+		// Default combofield value (blank)
+		cSelectTool.select(0);
 		cSelectTool.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				//TODO
+				// TODO
 				fName = cSelectTool.getText();
 			}
 		});
-		
+
 		Label lNameOfToolFile = new Label(shell, SWT.NONE);
 		lNameOfToolFile.setText("Name of tool file:");
 		lNameOfToolFile.setLayoutData(gridDataLabel);
-		
+
 		Text tNameOfToolFile = new Text(shell, SWT.BORDER | SWT.SINGLE);
-		tNameOfToolFile.setText(fName);		
+		tNameOfToolFile.setText(fName);
 		tNameOfToolFile.setLayoutData(gridDataWidgets);
 		tNameOfToolFile.addModifyListener(new ModifyListener() {
 
@@ -86,9 +99,9 @@ public class ExportToolsDialog {
 				Text textWidget = (Text) e.getSource();
 				fName = textWidget.getText();
 			}
-		});	
-		
-		//Fills grid cell with empty block
+		});
+
+		// Fills grid cell with empty block
 		Label lEmptyBlock = new Label(shell, SWT.NONE);
 		lEmptyBlock.setLayoutData(new GridData());
 
@@ -102,8 +115,11 @@ public class ExportToolsDialog {
 		OK.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
-				//TODO
-				}				
+				// TODO
+				if (cSelectTool.getText().equals("")) {
+					// Error message
+				}
+			}
 		});
 
 		// Cancel button. Closes dialog window.
