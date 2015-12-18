@@ -1,0 +1,11 @@
+			@default(Enum)
+			TypeA {
+			}
+			
+			@default(Enum.One)
+			TypeB {
+			}
+			
+			enum Enum {
+				One, Two
+			}

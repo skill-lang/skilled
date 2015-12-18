@@ -1,0 +1,9 @@
+			TypeA {
+			}
+			typedef Alias @default(Enum) TypeA;
+			
+			typedef Alias @default(Enum.One) TypeA;
+			
+			enum Enum {
+				One, Two
+			}

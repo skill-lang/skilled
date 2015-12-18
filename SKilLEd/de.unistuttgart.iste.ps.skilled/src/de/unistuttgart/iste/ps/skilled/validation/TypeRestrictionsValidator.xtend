@@ -9,6 +9,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.util.SubtypesFinder
 import javax.inject.Inject
 import org.eclipse.xtext.validation.Check
+import de.unistuttgart.iste.ps.skilled.sKilL.Maptype
 
 /**  
  * Validates type restrictions and their arguments. <br>
@@ -26,12 +27,13 @@ import org.eclipse.xtext.validation.Check
  * @author Nikolay Fateev
  */
 class TypeRestrictionsValidator extends AbstractSKilLValidator {
-	
-	@Inject 
-	SubtypesFinder subtypesFinder
-	
+
+	@Inject
+	private SubtypesFinder subtypesFinder
+
 	// All restriction warning and error messages
 	private final static String Unknown_Restriction = "Unknown Restriction"
+	private final static String Restriction_On_Map = "Map-typed fields can't have restrictions."
 	// Unique restriction error messages
 	private final static String Unique_Has_Args = "The Unique restriction can't have arguments."
 	private final static String Unique_Usage = "The Unique restriction can only be used on types that do not have sub- or super-types."
@@ -56,7 +58,6 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 	private final static String Default_Not_One_Arg = "The Default restriction must have one argument."
 	// Default restriction warning messages
 	private final static String Default_Already_Used = "The Default restriction is already used on this field."
-	
 
 	@Check
 	def validateTypeRestrions(Declaration declaration) {
@@ -66,7 +67,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 			validateTypedef(declaration)
 		}
 	}
-	
+
 	def validateUsertype(Usertype usertype) {
 		var wasUniqueUsed = false
 		var wasSingletonUsed = false
@@ -130,21 +131,16 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 					if (!wasDefaultUsed) {
 						if (restriction.restrictionArguments.size() == 1) {
 							val restrictionArgument = restriction.restrictionArguments.get(0)
-							if (restrictionArgument.valueType == null) { // The argument is not a Usertype or Typedef or Enum
+							if (restrictionArgument.valueType == null) { // The argument is not a Usertype/Typedef/Enum/Interface
 								showError(Default_Arg_Not_Singleton, restriction)
 							} else {
 								val restrictionArgumentType = (restrictionArgument.valueType).type
 								if (restrictionArgumentType instanceof Usertype) {
-									val restrictionArgumentSupertypes = restrictionArgumentType.supertypes
-									var isRestrictionArgumentSubTypeOfThisType = false
-									for (supertype : restrictionArgumentSupertypes) {
-										if (usertype.name.equals(supertype.type.name)) {
-											isRestrictionArgumentSubTypeOfThisType = true
-										}
+									if (!isUsertypeValidDefaultArgument(restrictionArgumentType, usertype)) {
+										showError(Default_Arg_Not_Singleton, restriction)
 									}
-									val isRestrictionArgumentTypeSingletonRestricted = isUserTypeSingletonRestricted(restrictionArgumentType)
-									if (!isRestrictionArgumentSubTypeOfThisType ||
-										!isRestrictionArgumentTypeSingletonRestricted) {
+								} else if (restrictionArgumentType instanceof Typedef) {							
+									if (!isTypedefValidDefaultArgument(restrictionArgumentType, usertype)) {
 										showError(Default_Arg_Not_Singleton, restriction)
 									}
 								} else {
@@ -164,10 +160,10 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 				}
 			}
 		}
-	}
+	}	
 
 	def validateTypedef(Typedef typedef) {
-		val underlyingUsertype = returnTypedefDeclaration(typedef)		
+		val underlyingUsertype = returnTypedefDeclaration(typedef)
 		var wasUniqueUsed = false
 		var wasSingletonUsed = false
 		var wasMonotoneUsed = false
@@ -182,7 +178,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 		}
 		for (restriction : typedef.restrictions) {
 			switch (restriction.restrictionName) {
-				case 'unique': {			
+				case 'unique': {
 					if (restriction.restrictionArguments.size == 0) {
 						var errorFound = false
 						if (underlyingUsertype != null) {
@@ -205,7 +201,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 						showError(Unique_Has_Args, restriction)
 					}
 				}
-				case 'singleton': {				
+				case 'singleton': {
 					if (restriction.restrictionArguments.size == 0) {
 						var errorFound = false
 						if (underlyingUsertype != null) {
@@ -225,7 +221,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 						showError(Singleton_Has_Args, restriction)
 					}
 				}
-				case 'monotone': {				
+				case 'monotone': {
 					if (restriction.restrictionArguments.size == 0) {
 						var errorFound = false
 						if (underlyingUsertype != null) {
@@ -246,12 +242,16 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 					}
 				}
 				case 'abstract': {
-					if (restriction.restrictionArguments.size != 0) {
-						showError(Abstract_Has_Args, restriction)
-					} else if (wasAbstractUsed) {
-						showWarning(Abstract_Already_Used, restriction)
-					}
-					wasAbstractUsed = true
+					if (!(typedef.fieldtype instanceof Maptype)) {
+						if (restriction.restrictionArguments.size != 0) {
+							showError(Abstract_Has_Args, restriction)
+						} else if (wasAbstractUsed) {
+							showWarning(Abstract_Already_Used, restriction)
+						}
+						wasAbstractUsed = true
+					} else {
+						showError(Restriction_On_Map, restriction)
+					}	
 				}
 				case 'default': {
 					if (!wasDefaultUsed) {
@@ -263,16 +263,13 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 								} else {
 									val restrictionArgumentType = (restrictionArgument.valueType).type
 									if (restrictionArgumentType instanceof Usertype) {
-										val restrictionArgumentSupertypes = restrictionArgumentType.supertypes
-										var isRestrictionArgumentSubTypeOfThisType = false
-										for (supertype : restrictionArgumentSupertypes) {
-											if (underlyingUsertype.name.equals(supertype.type.name)) {
-												isRestrictionArgumentSubTypeOfThisType = true
-											}
+										if (!isUsertypeValidDefaultArgument(restrictionArgumentType,
+											underlyingUsertype)) {
+											showError(Default_Arg_Not_Singleton, restriction)
 										}
-										val isRestrictionArgumentTypeSingletonRestricted = isUserTypeSingletonRestricted(restrictionArgumentType)
-										if (!isRestrictionArgumentSubTypeOfThisType ||
-											!isRestrictionArgumentTypeSingletonRestricted) {
+									} else if (restrictionArgumentType instanceof Typedef) {
+										if (!isTypedefValidDefaultArgument(restrictionArgumentType,
+											underlyingUsertype)) {
 											showError(Default_Arg_Not_Singleton, restriction)
 										}
 									} else {
@@ -296,7 +293,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 			}
 		}
 	}
-	
+
 	def Usertype returnTypedefDeclaration(Typedef typedef) {
 		if (typedef.fieldtype instanceof DeclarationReference) {
 			val typedefType = (typedef.fieldtype as DeclarationReference).type
@@ -305,52 +302,96 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 			} else {
 				return null
 			}
-		} else return null
+		} else
+			return null
 	}
 	
+	def boolean isSubtype(Usertype basetype, Usertype subtype) {
+		for (supertype : subtype.supertypes) {
+			if (basetype.name.equals(supertype.type.name)) {
+				return true
+			}
+		}
+		return false
+	}
+
 	def boolean isUserTypeUniqueRestricted(Usertype usertype) {
 		for (restriction : usertype.restrictions) {
 			if ("unique".equals(restriction.restrictionName)) {
 				return true
 			}
-		}	
+		}
 		return false
 	}
 	
+	def boolean isTypedefSingletonRestricted(Typedef typedef) {
+		for (restriction : typedef.restrictions) {
+			if ("singleton".equals(restriction.restrictionName)) {
+				return true
+			}
+		}
+		return false
+	}
+
 	def boolean isUserTypeSingletonRestricted(Usertype usertype) {
 		for (restriction : usertype.restrictions) {
 			if ("singleton".equals(restriction.restrictionName)) {
 				return true
 			}
-		}	
+		}
 		return false
 	}
-	
+
 	def boolean isUserTypeMonotoneRestricted(Usertype usertype) {
 		for (restriction : usertype.restrictions) {
 			if ("monotone".equals(restriction.restrictionName)) {
 				return true
 			}
-		}	
+		}
 		return false
 	}
-	
+
 	def boolean isUserTypeAbstractRestricted(Usertype usertype) {
 		for (restriction : usertype.restrictions) {
 			if ("abstract".equals(restriction.restrictionName)) {
 				return true
 			}
-		}	
+		}
 		return false
 	}
-	
+
 	def boolean isUserTypeDefaultRestricted(Usertype usertype) {
 		for (restriction : usertype.restrictions) {
 			if ("default".equals(restriction.restrictionName)) {
 				return true
 			}
-		}	
+		}
 		return false
+	}
+	
+	def boolean isUsertypeValidDefaultArgument(Usertype argumentUsertype, Usertype usertype) {
+		val isUsertypeSubtypeOfThisType = isSubtype(usertype, argumentUsertype)
+		val isUsertypeSingletonRestricted = isUserTypeSingletonRestricted(argumentUsertype)
+		if (!isUsertypeSubtypeOfThisType || !isUsertypeSingletonRestricted) {
+			return false
+		}
+		return true
+	}
+	
+	def boolean isTypedefValidDefaultArgument(Typedef typedef, Usertype usertype) {
+		val underlyingUsertype = returnTypedefDeclaration(typedef)
+		var isTypedefTypeSubtypeOfThisType = false
+		var isTypedefTypeSingletonRestricted = false;
+		var isTypedefSingletonRestricted = false;
+		if (underlyingUsertype != null) {
+			isTypedefTypeSubtypeOfThisType = isSubtype(usertype, underlyingUsertype)
+			isTypedefTypeSingletonRestricted = isUserTypeSingletonRestricted(underlyingUsertype)
+			isTypedefSingletonRestricted = isTypedefSingletonRestricted(typedef)
+		}
+		if (!isTypedefTypeSubtypeOfThisType || (!isTypedefTypeSingletonRestricted && !isTypedefSingletonRestricted)) {
+			return false
+		}
+		return true
 	}
 
 	def showError(String message, Restriction restriction) {

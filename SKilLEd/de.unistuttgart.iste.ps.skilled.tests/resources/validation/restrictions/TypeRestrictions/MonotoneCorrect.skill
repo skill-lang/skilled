@@ -1,0 +1,21 @@
+			@monotone
+			TypeA {
+			}
+			
+			@monotone
+			TypeB {
+			}
+			
+			TypeC : TypeB {
+			}
+			
+			TypeD {
+			}
+			typedef Alias @monotone TypeD;
+			
+			TypeF {
+			}
+			typedef Alias2 @monotone TypeF;
+			
+			TypeG : TypeF {
+			}

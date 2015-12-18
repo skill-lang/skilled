@@ -1,0 +1,6 @@
+			TypeA {
+			}
+			
+			@monotone
+			TypeB : TypeA {
+			}

@@ -1,0 +1,24 @@
+			@abstract
+			TypeA {
+			}
+			
+			@abstract
+			TypeB : TypeA {
+			}
+			
+			TypeC {
+			}
+			typedef Alias @abstract TypeC;
+			
+			typedef Alias2 @abstract i8;
+			typedef Alias3 @abstract i16;
+			typedef Alias4 @abstract i32;
+			typedef Alias5 @abstract i64;
+			typedef Alias6 @abstract v64;
+			typedef Alias7 @abstract f32;
+			typedef Alias8 @abstract f64;
+			typedef Alias9 @abstract string;
+			typedef Alias10 @abstract annotation;
+			typedef Alias11 @abstract bool;
+			typedef Alias12 @abstract List<string>;
+			typedef Alias13 @abstract string[];

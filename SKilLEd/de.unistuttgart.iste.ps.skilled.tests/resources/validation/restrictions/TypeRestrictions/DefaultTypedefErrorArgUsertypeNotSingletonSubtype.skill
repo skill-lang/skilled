@@ -1,0 +1,6 @@
+			TypeA {
+			}
+			typedef Alias @default(TypeB) TypeA;
+			
+			TypeB : TypeA{
+			}

@@ -1,0 +1,6 @@
+			@default(Interface)
+			TypeA {
+			}
+			
+			interface Interface {
+			}

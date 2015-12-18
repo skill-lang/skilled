@@ -1,0 +1,7 @@
+			@default(TypeB) @default(TypeB)
+			TypeA {
+			}
+			
+			@singleton
+			TypeB : TypeA {
+			}

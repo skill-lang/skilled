@@ -1,0 +1,5 @@
+			@abstract
+			TypeA {
+			}
+			
+			typedef Alias @abstract TypeA;

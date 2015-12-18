@@ -76,7 +76,7 @@ class TestSingletonRestriction {
 		assertTrue(issueCount > 0)
 	}
 	
-		@Test
+	@Test
 	def void testSingletonTypedefErrorHasSubtype() {
 		var issueCount = SingletonTypedefErrorHasSubtype.parse.validate.size
 		assertTrue(issueCount > 0)

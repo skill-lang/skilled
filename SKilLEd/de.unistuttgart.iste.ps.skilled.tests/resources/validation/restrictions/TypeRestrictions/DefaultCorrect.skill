@@ -1,0 +1,40 @@
+			@default(TypeB)
+			TypeA {
+			}
+			
+			@singleton
+			TypeB : TypeA {
+			}
+			
+			@Default(Alias)
+			TypeC {
+			}
+			
+			@singleton
+			TypeD : TypeC {
+			}
+			typedef Alias TypeD;
+			
+			@default(Alias2)
+			TypeE {
+			}
+			
+			TypeF : TypeE {
+			}
+			typedef Alias2 @singleton TypeF; 
+			
+			TypeG {
+			}
+			typedef Alias3 @default(TypeH) TypeG;
+			
+			@singleton
+			TypeH : TypeG {
+			}
+			
+			TypeI {
+			}
+			typedef Alias4 @default(Alias5) TypeI;
+			
+			TypeJ : TypeI {
+			}
+			typedef Alias5 @singleton TypeJ;

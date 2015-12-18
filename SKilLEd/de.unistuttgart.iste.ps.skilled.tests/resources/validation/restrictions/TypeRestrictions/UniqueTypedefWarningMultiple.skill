@@ -1,0 +1,5 @@
+			@unique
+			TypeA {
+			}
+			
+			typedef Alias @unique TypeA;

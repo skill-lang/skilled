@@ -1,0 +1,6 @@
+			@unique
+			TypeA {
+			}
+			
+			TypeB : TypeA {
+			}

@@ -1,0 +1,5 @@
+			@monotone
+			TypeA {
+			}
+			
+			typedef Alias @monotone TypeA;

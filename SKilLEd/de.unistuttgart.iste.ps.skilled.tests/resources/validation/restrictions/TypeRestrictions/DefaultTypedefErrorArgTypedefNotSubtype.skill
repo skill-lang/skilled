@@ -1,0 +1,8 @@
+			TypeA {
+			}
+			typedef Alias @default(Alias2) TypeA;
+			
+			@singleton
+			TypeB {
+			}
+			typedef Alias2 TypeB;

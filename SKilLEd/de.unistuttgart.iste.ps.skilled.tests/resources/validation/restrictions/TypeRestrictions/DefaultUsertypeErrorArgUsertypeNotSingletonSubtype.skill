@@ -1,0 +1,6 @@
+			@default(TypeB)
+			TypeA {
+			}
+			
+			TypeB : TypeA {
+			}

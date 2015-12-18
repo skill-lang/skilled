@@ -1,0 +1,6 @@
+			TypeA {
+			}
+			typedef Alias @default(Interface) TypeA;
+			
+			interface Interface {
+			}
