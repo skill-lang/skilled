@@ -92,7 +92,7 @@ public class SKilLNewProjectWizard extends Wizard implements INewWizard {
             project.open(null);
 
             // Create new .skills file for the tool support.
-            String toolsFileName = project.getFullPath().toString() + "/.skillls";
+            String toolsFileName = project.getFullPath().toString() + "/.skills";
             IFile toolsFile = root.getFile(new Path(toolsFileName));
             if (!toolsFile.exists()) {
                 toolsFile.create(new ByteArrayInputStream(new byte[0]), false, null);
