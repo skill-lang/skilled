@@ -38,35 +38,32 @@ public class TarjanAlgorithm {
         vertex.setVisited(true);
         stack.push(vertex);
         vertex.setOnStack(true);
+        boolean isComponentRoot = true;
 
         for (Vertex v : vertex.getEdges()) {
 
             if (!v.isVisited()) {
                 strongconnect(v);
-                if (vertex.getLowlink() > v.getLowlink()) {
-                    vertex.setLowlink(v.getLowlink());
-                }
-            } else if (v.isOnStack()) {
-                if (vertex.getLowlink() > v.getLowlink()) {
-                    vertex.setLowlink(v.getLowlink());
-                }
             }
-
+            if (vertex.getLowlink() > v.getLowlink()) {
+                vertex.setLowlink(v.getLowlink());
+                isComponentRoot = false;
+            }
         }
-        if (vertex.getLowlink() == vertex.getIndex()) {
+
+        if (isComponentRoot) {
             StronglyConnectedComponent component = new StronglyConnectedComponent();
             component.setRootVertex(vertex);
 
-            Vertex actualVertex;
-
-            do {
-                actualVertex = stack.pop();
+            while (true) {
+                Vertex actualVertex = stack.pop();
                 actualVertex.setOnStack(false);
                 actualVertex.setRootContainer(component);
                 component.addVertices(actualVertex);
-
-            } while (!actualVertex.getName().equals(vertex.getName()));
-
+                if (actualVertex.getName().equals(vertex.getName())) {
+                    break;
+                }
+            }
             connectedComponentsList.add(component);
         }
 

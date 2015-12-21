@@ -15,6 +15,7 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.validation.Check
+import org.eclipse.xtext.validation.CheckType
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
 /**
@@ -41,7 +42,7 @@ class ScopingValidator extends AbstractSKilLValidator {
 	/**
 	 * Creates dependency graphs for the given file when the file will be validated.
 	 */
-	@Check
+	@Check(CheckType.NORMAL)
 	def checkFileDependencies(File file) {
 		// Get the project in which the file is located.
 		var IProject fileProject = services.getProject(file);
@@ -58,12 +59,12 @@ class ScopingValidator extends AbstractSKilLValidator {
 		dependencyGraphInUse.generate(files);
 	}
 
-	@Check
+	@Check(CheckType.NORMAL)
 	def validTypeDeclarationReference(TypeDeclarationReference typeDeclarationReference) {
 		validReferences(typeDeclarationReference, typeDeclarationReference.type);
 	}
 
-	@Check
+	@Check(CheckType.NORMAL)
 	def valideDeclarationReferences(DeclarationReference declarationReference) {
 		validReferences(declarationReference, declarationReference.type);
 	}
@@ -101,6 +102,6 @@ class ScopingValidator extends AbstractSKilLValidator {
 					warning("Required file isn't included.", object, reference, NOT_INCLUDED_FILE, missingFile);
 				}
 			}
-		}
+		} 
 	}
 }
