@@ -97,6 +97,9 @@ public class DependencyGraph {
         if (g == null) {
             return null;
         }
+        if (g.getRootContainer() == null) {
+            return null;
+        }
         for (StronglyConnectedComponent s : g.getRootContainer().getReferencedComponents()) {
             for (Vertex v : s.getContainedVertices()) {
                 DependencyGraphNode g2 = (DependencyGraphNode) v;

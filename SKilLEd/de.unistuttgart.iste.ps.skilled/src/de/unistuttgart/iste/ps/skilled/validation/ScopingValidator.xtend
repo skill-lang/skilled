@@ -102,6 +102,6 @@ class ScopingValidator extends AbstractSKilLValidator {
 					warning("Required file isn't included.", object, reference, NOT_INCLUDED_FILE, missingFile);
 				}
 			}
-		} 
+		}
 	}
 }
