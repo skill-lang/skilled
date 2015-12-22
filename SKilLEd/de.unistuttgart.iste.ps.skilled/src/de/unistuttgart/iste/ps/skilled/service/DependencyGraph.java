@@ -51,7 +51,10 @@ public class DependencyGraph {
         for (Vertex v : dependencyNodes) {
             DependencyGraphNode g = (DependencyGraphNode) v;
             for (URI uri : g.getIncludedURIs()) {
-                g.addEdge(dependencyGraphNodes.get(uri.path()));
+                DependencyGraphNode inc = dependencyGraphNodes.get(uri.path());
+                if (inc != null) {
+                    g.addEdge(inc);
+                }
             }
         }
 
