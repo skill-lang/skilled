@@ -3,8 +3,6 @@ package de.unistuttgart.iste.ps.skilled.ui.views;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.text.DefaultEditorKit.CopyAction;
-
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -49,7 +47,7 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
 public class ToolView extends ViewPart {
 
 	private FileChangeAction fileChangeAction = new FileChangeAction();
-	
+
 	private String path = "";
 	private CTabFolder tabFolder;
 
@@ -75,9 +73,9 @@ public class ToolView extends ViewPart {
 		fileChangeAction.save();
 		fileChangeAction.saveAll();
 		fileChangeAction.rename();
-		
+
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(new IPartListener() {
-			
+
 			@Override
 			public void partOpened(IWorkbenchPart part) {
 				try {
@@ -160,8 +158,13 @@ public class ToolView extends ViewPart {
 		} catch (Exception e) {
 			return;
 		}
-		skillFile.Tools().forEach(t -> allToolList.add(t));
-		skillFile.Types().forEach(t -> allTypeList.add(t));
+
+		try {
+			skillFile.Tools().forEach(t -> allToolList.add(t));
+			skillFile.Types().forEach(t -> allTypeList.add(t));
+		} catch (NullPointerException e) {
+			// empty lists
+		}
 	}
 
 	/**
@@ -171,9 +174,14 @@ public class ToolView extends ViewPart {
 	 */
 	private boolean writeToolBinaryFile() {
 		try {
+			skillFile.Tools().clear();
+			skillFile.Tools().addAll(allToolList);
+
+			skillFile.Types().clear();
+			skillFile.Types().addAll(allTypeList);
+
 			skillFile.flush();
 		} catch (SkillException e) {
-			e.printStackTrace();
 			System.err.println("Windowsfehler!");
 			return false;
 		}
@@ -211,7 +219,7 @@ public class ToolView extends ViewPart {
 			public void widgetSelected(SelectionEvent arg0) {
 				if (toolViewList.getSelectionCount() != 0) {
 					activeTool = allToolList.get(toolViewList.getSelectionIndex());
-					buildTypTree(activeTool);
+					buildTypeTree(activeTool);
 					if (null != fieldTabItem)
 						fieldTabItem.dispose();
 				}
@@ -233,17 +241,18 @@ public class ToolView extends ViewPart {
 	 *            - {@link Tool}
 	 */
 	@SuppressWarnings("unchecked")
-	private void buildTypTree(Tool tool) {
+	private void buildTypeTree(Tool tool) {
 		Tree typeTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.FULL_SELECTION);
 		typeListOfActualTool = (ArrayList<Type>) tool.getTypes();
 		TreeItem typeHintItem;
+		System.out.println(skillFile.Types().size());
 
 		if (null == typeTabItem || typeTabItem.isDisposed())
 			typeTabItem = new CTabItem(tabFolder, 0, 1);
 
 		typeTabItem.setText("Types - " + tool.getName());
 
-		if (null != skillFile) {// TODO != allTypeFile?
+		if (null != skillFile) {
 
 			// add all types to the tree
 			for (Type type : allTypeList) {
@@ -259,26 +268,28 @@ public class ToolView extends ViewPart {
 							typeTreeItem.setChecked(true);
 							tooltype = t;
 							typeTreeItem.setData(tooltype);
-							break;
 						}
 					}
 				}
-				// Auslagern?
+
 				// add all typeHints to the Tree
 				for (Hint hint : type.getTypeHints()) {
 					typeHintItem = new TreeItem(typeTreeItem, 0);
 					typeHintItem.setText(hint.getName());
+					typeHintItem.setChecked(false);
 					typeHintItem.setData(hint);
 
 					// set all toolspecific typeHints as checked
-					if (null != tooltype && null != typeHintListOfActualTool) {
+					if (null != tooltype) {
 						typeHintListOfActualTool = tooltype.getTypeHints();
-						for (Hint toolhint : typeHintListOfActualTool) {
-							if (hint.getName().equals(toolhint.getName())) {
-								typeHintItem.setChecked(true);
-								typeHintItem.setExpanded(true);
-								typeHintItem.setData(toolhint);
-								break;
+						if (typeHintListOfActualTool != null) {
+							for (Hint toolhint : typeHintListOfActualTool) {
+								if (hint.getName().equals(toolhint.getName())) {
+									typeHintItem.setChecked(true);
+									typeHintItem.setExpanded(true);
+									typeHintItem.setData(toolhint);
+									break;
+								}
 							}
 						}
 					}
@@ -358,18 +369,17 @@ public class ToolView extends ViewPart {
 									(ArrayList<Hint>) type.getTypeHints());
 							((TreeItem) event.item).setData(tooltype);
 							typeListOfActualTool.add(tooltype);
-							buildTypTree(activeTool);
+							buildTypeTree(activeTool);
 							writeToolBinaryFile();
 						} else {
 							System.out.println("type remove");
-							for (Type t : typeListOfActualTool) {
+							for (Type t : allTypeList) {
 								if (t.getName().equals(type.getName())) {
-									typeListOfActualTool.remove(t);
-									break;
+									((TreeItem) event.item).setData(t);
 								}
 							}
-							((TreeItem) event.item).setData(type);
-							buildTypTree(activeTool);
+							typeListOfActualTool.remove(type);
+							buildTypeTree(activeTool);
 							writeToolBinaryFile();
 						}
 					}
@@ -385,18 +395,18 @@ public class ToolView extends ViewPart {
 							Hint toolhint = new Hint(hint.getSkillID(), hint.getName(), hint.getParent());
 							((TreeItem) event.item).setData(toolhint);
 							typeHintListOfActualTool.add(toolhint);
-							buildTypTree(activeTool);
+							((Type) toolhint.getParent()).getTypeHints().add(toolhint);
+							buildTypeTree(activeTool);
 							writeToolBinaryFile();
 						} else {
 							System.out.println("hint removed");
-							for (Hint h : typeHintListOfActualTool) {
+							for (Hint h : ((Type) hint.getParent()).getTypeHints()) {
 								if (h.getName().equals(hint.getName())) {
-									typeListOfActualTool.remove(h);
-									break;
+									((TreeItem) event.item).setData(h);
 								}
 							}
-							((TreeItem) event.item).setData(hint);
-							buildTypTree(activeTool);
+							((Type) hint.getParent()).getTypeHints().remove(hint);
+							buildTypeTree(activeTool);
 							writeToolBinaryFile();
 						}
 					}
@@ -676,5 +686,39 @@ public class ToolView extends ViewPart {
 				});
 			}
 		});
+	}
+
+	/**
+	 * Method to print the values of all lists at the Console.
+	 */
+	private void printAllLists() {
+		System.out.println("AllToolsList---------------");
+		for (Tool tool : allToolList) {
+			System.out.println(tool.getName());
+		}
+		System.out.println("AllTypeList----------------");
+		for (Type tool : allTypeList) {
+			System.out.println(tool.getName());
+		}
+		System.out.println("FieldListOfActualType------");
+		for (Field tool : fieldListOfActualType) {
+			System.out.println(tool.getName());
+		}
+		System.out.println("TypeListOfActualTool-------");
+		for (Type tool : typeListOfActualTool) {
+			System.out.println(tool.getName());
+		}
+		System.out.println("FieldListOfActualTool------");
+		for (Field tool : fieldListOfActualTool) {
+			System.out.println(tool.getName());
+		}
+		System.out.println("TypeHintListOfAcutalTool---");
+		for (Hint tool : typeHintListOfActualTool) {
+			System.out.println(tool.getName());
+		}
+		System.out.println("fieldHintListOfActualTool--");
+		for (Hint tool : fieldHintListOfActualTool) {
+			System.out.println(tool.getName());
+		}
 	}
 }
