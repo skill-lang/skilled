@@ -165,9 +165,10 @@
             <fileset dir="${tests-project-path}/resources"/>
         </copy>
         <jacoco:coverage destfile="ant/junit/jacoco_SKilLEd.exec">
-            <junit fork="yes" forkmode="once" printsummary="withOutAndErr" haltonerror="false" haltonfailure="false">
+            <junit fork="yes" forkmode="once" printsummary="on" haltonerror="false" haltonfailure="false">
                 <classpath>
-                    <path refid="classpath"/>
+		    <path refid="classpath"/>
+		    <pathelement location="../../scala/lib/scala-library.jar"/>
                 </classpath>
                 <formatter type="xml"/>
                 <batchtest todir="ant/junit">
