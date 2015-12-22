@@ -33,7 +33,7 @@ class TestNonASCIIWarning {
 
 	@Test
 	def void testErrorNonASCIIFieldname() {
-		assertFalse("C{}".parse.validate.isNullOrEmpty)
+		assertFalse("C{i8 ☢}".parse.validate.isNullOrEmpty)
 	}
 
 	@Test
