@@ -5,8 +5,8 @@ import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
 import de.unistuttgart.iste.ps.skilled.sKilL.File
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
-import de.unistuttgart.iste.ps.skilled.service.DependencyGraph
-import de.unistuttgart.iste.ps.skilled.service.SKilLServices
+import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph
+import de.unistuttgart.iste.ps.skilled.util.SKilLServices
 import java.util.HashMap
 import java.util.Map
 import java.util.Set
@@ -45,18 +45,22 @@ class ScopingValidator extends AbstractSKilLValidator {
 	@Check(CheckType.NORMAL)
 	def checkFileDependencies(File file) {
 		// Get the project in which the file is located.
-		var IProject fileProject = services.getProject(file);
+		try {
+			var IProject fileProject = services.getProject(file);
 
-		if (dependencyGraphs.get(fileProject) != null) {
-			dependencyGraphInUse = dependencyGraphs.get(fileProject);
-		} else {
-			dependencyGraphInUse = new DependencyGraph();
-			dependencyGraphs.put(fileProject, dependencyGraphInUse);
+			if (dependencyGraphs.get(fileProject) != null) {
+				dependencyGraphInUse = dependencyGraphs.get(fileProject);
+			} else {
+				dependencyGraphInUse = new DependencyGraph();
+				dependencyGraphs.put(fileProject, dependencyGraphInUse);
+			}
+
+			var Set<File> files = services.getAll(file);
+
+			dependencyGraphInUse.generate(files);
+		} catch (IllegalStateException e) {
+				//
 		}
-
-		var Set<File> files = services.getAll(file);
-
-		dependencyGraphInUse.generate(files);
 	}
 
 	@Check(CheckType.NORMAL)

@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.ps.skilled.service.Tarjan;
+package de.unistuttgart.iste.ps.skilled.util.Tarjan;
 
 import java.util.HashSet;
 import java.util.Set;

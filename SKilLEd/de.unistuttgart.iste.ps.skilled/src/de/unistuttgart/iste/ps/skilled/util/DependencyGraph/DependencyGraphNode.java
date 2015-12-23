@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.ps.skilled.service;
+package de.unistuttgart.iste.ps.skilled.util.DependencyGraph;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,8 +8,8 @@ import org.eclipse.emf.common.util.URI;
 import de.unistuttgart.iste.ps.skilled.sKilL.File;
 import de.unistuttgart.iste.ps.skilled.sKilL.Include;
 import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile;
-import de.unistuttgart.iste.ps.skilled.service.Tarjan.StronglyConnectedComponent;
-import de.unistuttgart.iste.ps.skilled.service.Tarjan.Vertex;
+import de.unistuttgart.iste.ps.skilled.util.Tarjan.StronglyConnectedComponent;
+import de.unistuttgart.iste.ps.skilled.util.Tarjan.Vertex;
 
 
 /**

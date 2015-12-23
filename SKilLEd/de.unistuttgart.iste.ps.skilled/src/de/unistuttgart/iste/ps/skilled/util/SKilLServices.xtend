@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.ps.skilled.service
+package de.unistuttgart.iste.ps.skilled.util
 
 import de.unistuttgart.iste.ps.skilled.sKilL.File
 import java.util.HashSet
