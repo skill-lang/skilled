@@ -65,6 +65,8 @@ public class ToolView extends ViewPart {
 	private ArrayList<Hint> typeHintListOfActualTool = new ArrayList<Hint>();
 	private ArrayList<Hint> fieldHintListOfActualTool = new ArrayList<Hint>();
 
+	private ArrayList<String> pathList = new ArrayList<String>();
+
 	private CTabItem toolTabItem = null;
 	private CTabItem typeTabItem = null;
 	private CTabItem fieldTabItem = null;
@@ -72,7 +74,7 @@ public class ToolView extends ViewPart {
 	private Tool activeTool = null;
 	private IProject activeProject = null;
 	private Shell shell;
-	
+
 	ExportToolsDialog fExport = new ExportToolsDialog();
 
 	@Override
@@ -199,12 +201,18 @@ public class ToolView extends ViewPart {
 			return;
 		}
 
-		if (skillFile.Tools() != null)
+		if (skillFile.Tools() != null) {
 			skillFile.Tools().forEach(t -> allToolList.add(t));
-		if (skillFile.Types() != null)
-			skillFile.Types().stream()
-					.filter(ty -> skillFile.Tools().stream().noneMatch(to -> to.getTypes().contains(ty)))
-					.forEach(t -> allTypeList.add(t));
+
+			skillFile.Tools().forEach(t -> pathList.add(path));
+			fExport.setPaths(pathList);
+		}
+
+		if (skillFile.Types() != null) {
+			skillFile.Types().forEach(t -> allTypeList.add(t));
+
+		}
+
 	}
 
 	/**
@@ -257,7 +265,7 @@ public class ToolView extends ViewPart {
 				// no default
 			}
 		});
-		fExport.setListofTools(toolViewList);
+		fExport.setListofAllTools(allToolList);
 		return toolViewList;
 	}
 
