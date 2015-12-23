@@ -83,12 +83,23 @@ class SKilLServices {
 		return getResourceSet(file.eResource);
 	}
 
+	/**
+	 * Returns the project of the resource or null if something went wrong.
+	 */
 	def dispatch IProject getProject(Resource resource) {
-		var String platformString = resource.getURI().toPlatformString(false);
-		var IFile ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
-		return ifile.getProject();
+		try {
+			var String platformString = resource.getURI().toPlatformString(false);
+			var IFile ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
+			return ifile.getProject();
+		} catch (IllegalStateException e) {
+			// Case something went wrong return null.
+			return null;
+		}
 	}
 
+	/**
+	 * Returns the project of the resource or null if something went wrong.
+	 */
 	def dispatch IProject getProject(File file) {
 		return getProject(file.eResource);
 	}

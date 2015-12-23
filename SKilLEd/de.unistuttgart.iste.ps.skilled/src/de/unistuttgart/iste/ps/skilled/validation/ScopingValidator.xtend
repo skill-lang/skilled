@@ -45,9 +45,9 @@ class ScopingValidator extends AbstractSKilLValidator {
 	@Check(CheckType.NORMAL)
 	def checkFileDependencies(File file) {
 		// Get the project in which the file is located.
-		try {
-			var IProject fileProject = services.getProject(file);
+		var IProject fileProject = services.getProject(file);
 
+		if (fileProject != null) {
 			if (dependencyGraphs.get(fileProject) != null) {
 				dependencyGraphInUse = dependencyGraphs.get(fileProject);
 			} else {
@@ -58,8 +58,6 @@ class ScopingValidator extends AbstractSKilLValidator {
 			var Set<File> files = services.getAll(file);
 
 			dependencyGraphInUse.generate(files);
-		} catch (IllegalStateException e) {
-				//
 		}
 	}
 

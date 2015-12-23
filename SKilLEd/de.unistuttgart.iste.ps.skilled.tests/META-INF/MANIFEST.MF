@@ -13,7 +13,7 @@ Require-Bundle: de.unistuttgart.iste.ps.skilled,
  org.eclipse.ui.workbench;resolution:=optional,
  org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
  org.eclipse.xtext.ui,
- org.eclipse.core.resources.source
+ org.eclipse.core.resources
 Import-Package: org.apache.log4j,
  org.junit;version="4.5.0",
  org.junit.runner;version="4.5.0",
