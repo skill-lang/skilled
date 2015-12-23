@@ -29,11 +29,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.unistuttgart.iste.ps.skillls.tools.Generator;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
-import de.unistuttgart.iste.ps.skillls.tools.Type;
 
-public class ExportToolsDialog {
+/**
+ * This class provides the dialog window for "Export Tools" which allows the
+ * user to export a certain tool to a location of his or her choice
+ * 
+ * @author Leslie
+ *
+ */
+public class ExportTools {
 	Display d;
 	String fName = "";
 	String fSaveLocation = "";
@@ -46,10 +51,12 @@ public class ExportToolsDialog {
 
 	ArrayList<File> fListofFiles = null;
 
+	// Location of the workspace the user is using
 	IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	File workspaceDirectory = workspace.getRoot().getLocation().toFile();
 
-	@SuppressWarnings("unchecked")
+	// Gets the names of the tools from
+	// de.unistuttgart.iste.ps.skilled.ui.views.Toolview.java
 	public void setListofAllTools(ArrayList<Tool> allToolList) {
 		// TODO
 		for (int i = 0; i < allToolList.size(); i++) {
@@ -71,6 +78,8 @@ public class ExportToolsDialog {
 		}
 	}
 
+	// Gets the file paths of the tools from
+	// de.unistuttgart.iste.ps.skilled.ui.views.Toolview.java
 	public void setPaths(ArrayList<String> pathList) {
 		for (int i = 0; i < pathList.size(); i++) {
 			fToolPath[i] = pathList.get(i);
@@ -114,6 +123,7 @@ public class ExportToolsDialog {
 		gridDataLabel.horizontalSpan = 2;
 		lSelectTool.setLayoutData(gridDataLabel);
 
+		// Dropdown menu with a list of all tools
 		Combo cSelectTool = new Combo(shell, SWT.READ_ONLY);
 		GridData gridDataWidgets = new GridData();
 		gridDataWidgets.horizontalAlignment = SWT.FILL;
@@ -207,6 +217,7 @@ public class ExportToolsDialog {
 							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 					if (overwrite == JOptionPane.YES_OPTION) {
 						fCheckSave.delete();
+						combineFiles();
 						// Reset save location
 						fSaveLocation = "";
 						shell.dispose();
@@ -214,8 +225,8 @@ public class ExportToolsDialog {
 				}
 				// Create tool file
 				else {
-					// TODO
 					combineFiles();
+					shell.dispose();
 
 				}
 
@@ -248,12 +259,16 @@ public class ExportToolsDialog {
 		for (File file : listofFiles) {
 			if (file.isFile() && file.getName().endsWith(".skill")) {
 				checkFiles.add(file);
-			} else if (file.isDirectory() && !file.getName().startsWith(".")) {
+			} else if (file.isDirectory()) {
 				listFiles(file.getAbsolutePath(), checkFiles);
 			}
 		}
 	}
 
+	/**
+	 * Combines all files found by method listFiles
+	 * 
+	 */
 	public void combineFiles() {
 
 		int fWorkspaceLength = workspaceDirectory.getAbsolutePath().length();
@@ -261,6 +276,7 @@ public class ExportToolsDialog {
 		System.out.println("fName is: " + fName);
 		int index = Arrays.asList(fToolName).indexOf(fName);
 
+		// File path of tool selected from the dropdown menu
 		String fToolFilePath = fToolPath[index];
 		System.out.println("fToolFilePath is: " + fToolFilePath);
 
@@ -282,6 +298,7 @@ public class ExportToolsDialog {
 
 		// File fToolDirectory = new File(fToolFolder);
 		// File[] fListofFiles = fToolDirectory.listFiles();
+
 		listFiles(fToolFolder, fListofFiles);
 
 		for (File f : fListofFiles) {
@@ -291,8 +308,11 @@ public class ExportToolsDialog {
 				fis = new FileInputStream(f);
 				BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 				String line;
+				// Head comment that says which tool the merged files are
+				fw.write("# Tool " + fName);
 				while ((line = br.readLine()) != null) {
-					if (!line.startsWith("#") && !line.startsWith("include")) {
+					// Ignore all other head comments
+					if (!line.startsWith("#")) {
 						fw.write(line);
 					}
 				}
