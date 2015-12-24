@@ -47,5 +47,6 @@ Export-Package: de.unistuttgart.iste.ps.skilled;uses:="com.google.inject,org.ecl
    org.eclipse.xtext",
  de.unistuttgart.iste.ps.skilled.services;uses:="org.eclipse.xtext.service,org.eclipse.xtext",
  de.unistuttgart.iste.ps.skilled.util,
+ de.unistuttgart.iste.ps.skilled.util.DependencyGraph,
  de.unistuttgart.iste.ps.skilled.validation;uses:="de.unistuttgart.iste.ps.skilled.sKilL"
 Import-Package: org.apache.log4j
