@@ -21,8 +21,6 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage, IWorkbenchPropertyPage {
 	
 	private DirectoryFieldEditor projectPathField;
-	private BooleanFieldEditor generateAllToolsCheckobox;
-	private BooleanFieldEditor generateLazyCheckbox;
 	private RadioGroupFieldEditor generateOption;
 	private FileFieldEditor generatorPathField;
 	private ComboFieldEditor languageSelectionComboField;
@@ -54,11 +52,8 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 		
 		putSeperator();
 
-		generateAllToolsCheckobox = new BooleanFieldEditor(SKilLConstants.GENERATE_ALL, "Generate all tools (-ag)", getFieldEditorParent());
-		addField(generateAllToolsCheckobox);
-
-		generateLazyCheckbox = new BooleanFieldEditor(SKilLConstants.GENERATE_LAZY, "Generate lazy (-g)", getFieldEditorParent());
-		addField(generateLazyCheckbox);
+		generateOption = new RadioGroupFieldEditor(SKilLConstants.GENERATE_OPTION, "Generation Mode", 2, new String[][] {{"Generate all tools (-ag)", "Generate all tools (-ag)"}, {"Generate lazy (-g)", "Generate lazy (-g)"}}, getFieldEditorParent());
+		addField(generateOption);
 		
 		putSeperator();
 		
@@ -84,8 +79,7 @@ public class SKilLPreferencePage extends FieldEditorPreferencePage
 	@Override
 	public boolean performOk() {
 		projectPathField.store();
-		generateAllToolsCheckobox.store();
-		generateLazyCheckbox.store();
+		generateOption.store();
 		generatorPathField.store();
 		languageSelectionComboField.store();
 		executionEnvironmentComboField.store();
