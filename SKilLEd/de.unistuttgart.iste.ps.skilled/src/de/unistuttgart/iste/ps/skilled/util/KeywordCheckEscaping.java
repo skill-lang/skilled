@@ -2,7 +2,7 @@ package de.unistuttgart.iste.ps.skilled.util;
 
 import java.util.ArrayList;
 
-import de.ust.skill.main.CommandLine$;
+import de.ust.skill.main.CommandLine;
 
 
 public class KeywordCheckEscaping {
@@ -19,8 +19,8 @@ public class KeywordCheckEscaping {
         for (String language : languages) {
             String[] parameters = { args };
             // CommandLine$ line = new CommandLine$();
-            CommandLine$ line = CommandLine$.MODULE$;
-            String s = line.checkEscaping(language, parameters);
+
+            String s = CommandLine.checkEscaping(language, parameters);
             if (s.equals("true")) {
                 returnList.add(language);
             } else {

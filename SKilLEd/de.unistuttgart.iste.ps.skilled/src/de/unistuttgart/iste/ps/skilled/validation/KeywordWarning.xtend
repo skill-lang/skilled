@@ -1,5 +1,4 @@
 package de.unistuttgart.iste.ps.skilled.validation
-import de.ust.skill.main.CommandLine
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
