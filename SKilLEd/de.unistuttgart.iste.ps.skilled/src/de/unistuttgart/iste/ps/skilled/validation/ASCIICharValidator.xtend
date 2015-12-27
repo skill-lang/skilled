@@ -17,8 +17,8 @@ import de.unistuttgart.iste.ps.skilled.util.CheckASCII;
 class ASCIICharValidator extends AbstractDeclarativeValidator {
 	override register(EValidatorRegistrar registar) {}
 
-	public val static String DECLARATION_HAS_NONASCII_CHARS = "declarationNonASCII"
-	public val static String FIELD_HAS_NONASCII_CHARS = "fieldNonASCII"
+	public static val DECLARATION_HAS_NONASCII_CHARS = "declarationNonASCII"
+	public static val FIELD_HAS_NONASCII_CHARS = "fieldNonASCII"
 	
 	
 
