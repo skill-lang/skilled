@@ -3,11 +3,37 @@
  */
 package de.unistuttgart.iste.ps.skilled.ui.outline
 
+import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
+import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
+import de.unistuttgart.iste.ps.skilled.sKilL.File
+import org.eclipse.xtext.ui.editor.outline.IOutlineNode
+import de.unistuttgart.iste.ps.skilled.sKilL.Field
+
+
 /**
- * Customization of the default outline structure.
- *
- * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#outline
+ * This class defines the Outline of the Skill-Files
+ * @author Ken Singer
  */
 class SKilLOutlineTreeProvider extends org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider {
+
+	def protected _createChildren(DocumentRootNode parentNode, File modelElement) {
+		for (Declaration dec : modelElement.declarations) {
+			if (dec instanceof Typedef)
+				createNode(parentNode, dec)
+			if (dec instanceof TypeDeclaration)
+				createNode(parentNode, dec)
+		}
+	}
+	
+	def protected _createChildren(IOutlineNode parentNode, TypeDeclaration modelElement) {
+		for(Field field: modelElement.fields) {
+			if (field instanceof Field) {
+				for (Hin)	
+				createNode(parentNode, field.fieldcontent)				
+			}
+		}
+	}
 	
 }
