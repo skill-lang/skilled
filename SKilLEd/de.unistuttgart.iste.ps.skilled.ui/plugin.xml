@@ -100,10 +100,12 @@
             <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
         </page>
         <page
-              category="de.unistuttgart.iste.ps.skilled.SKilL"
+             category="de.unistuttgart.iste.ps.skilled.SKilL"
               class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.preferences.SKilLPreferencePage"
               id="de.unistuttgart.iste.ps.skilled.SKilLls"
               name="SKilLls">
+                          <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
+              
         </page>
     </extension>
     <extension
@@ -117,6 +119,16 @@
 	            <adapt type="org.eclipse.core.resources.IProject"/>
 			</enabledWhen>
 	        <filter name="projectNature" value="org.eclipse.xtext.ui.shared.xtextNature"/>
+        </page>
+        <page
+             category="de.unistuttgart.iste.ps.skilled.SKilL"
+              class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.preferences.SKilLPreferencePage"
+              id="de.unistuttgart.iste.ps.skilled.SKilLls"
+              name="SKilLls">
+              <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
+              <enabledWhen>
+	            <adapt type="org.eclipse.core.resources.IProject"/>
+			</enabledWhen>
         </page>
     </extension>
     <extension
