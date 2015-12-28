@@ -10,7 +10,11 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
 import de.unistuttgart.iste.ps.skilled.sKilL.File
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode
 import de.unistuttgart.iste.ps.skilled.sKilL.Field
-
+import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
+import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
+import org.eclipse.emf.ecore.EObject
+import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
 
 /**
  * This class defines the Outline of the Skill-Files
@@ -20,20 +24,38 @@ class SKilLOutlineTreeProvider extends org.eclipse.xtext.ui.editor.outline.impl.
 
 	def protected _createChildren(DocumentRootNode parentNode, File modelElement) {
 		for (Declaration dec : modelElement.declarations) {
-			if (dec instanceof Typedef)
-				createNode(parentNode, dec)
-			if (dec instanceof TypeDeclaration)
-				createNode(parentNode, dec)
+			createNode(parentNode, dec)
 		}
 	}
-	
-	def protected _createChildren(IOutlineNode parentNode, TypeDeclaration modelElement) {
-		for(Field field: modelElement.fields) {
-			if (field instanceof Field) {
-				for (Hin)	
-				createNode(parentNode, field.fieldcontent)				
+
+	def protected _createChildren(IOutlineNode parentNode, Declaration modelElement) {
+		if (modelElement instanceof TypeDeclaration)
+			for (Field field : modelElement.fields) {
+				createNode(parentNode, field.fieldcontent)
 			}
+
+		if (modelElement instanceof Typedef)
+			_createChildren(parentNode, modelElement.fieldtype)
+
+		if (modelElement instanceof Enumtype)
+			for (Field f : modelElement.fields) {
+				createNode(parentNode, f.fieldcontent)
+			}
+	}
+
+	def protected _createChildren(IOutlineNode parentNode, Fieldtype modelElement) {
+		if (modelElement instanceof DeclarationReference) {
+			createNode(parentNode, modelElement.type)		
 		}
 	}
-	
+
+	override protected _isLeaf(EObject modelElement) {
+		if (modelElement instanceof Fieldcontent || modelElement instanceof DeclarationReference) {
+			return true;
+		} else if (modelElement instanceof TypeDeclaration) {
+			return modelElement.fields.empty
+		} else {
+			return false;
+		}
+	}
 }
