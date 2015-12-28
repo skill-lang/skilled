@@ -3,7 +3,6 @@
 # The test is in fact a mere compilability test.
 
 /** A user has a name and an age. */
-!owner(HintOwner)
 !monotone
 User {
 
@@ -28,10 +27,8 @@ User {
 }
 
 /** Just for fun */
-!Owner(DebugHintOwner)
 Abuser {
   /** provided by debug, case insensitity check */
-  !provider(debughintOwner)
   string abuseDescription;
 }
 

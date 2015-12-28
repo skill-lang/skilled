@@ -27,7 +27,7 @@ class TestInheritenceValidator {
 
 	@Test
 	def void MultipleInheritanceIsNotLegal() {
-		assertFalse("A:B:C{} B:C{} C{}".parse.validate.isNullOrEmpty)		
+		assertFalse("A:B:C{} B:C{} C{}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test

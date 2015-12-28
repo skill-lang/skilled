@@ -27,10 +27,6 @@ public class SKilLPreferencePage extends AbstractPreferencePage {
     private ComboFieldEditor executionEnvironmentComboField;
     private StringFieldEditor moduleNameField;
 
-    public SKilLPreferencePage() {
-        super();
-    }
-
     @Override
     protected void initialize() {
         super.initialize();
