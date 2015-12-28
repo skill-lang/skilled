@@ -81,7 +81,8 @@ public class SKilLObjectDocumentationProvider implements IEObjectDocumentationPr
      *            The comment
      * @return The text of the comment
      */
-    private String removeCommentMarkers(String s) {
+    private static String removeCommentMarkers(String commentToRemoveCommentsFrom) {
+        String s = commentToRemoveCommentsFrom;
         s = s.substring(2);
         s = s.substring(0, s.length() - 2);
         for (int i = 0; i < s.length(); i++) {

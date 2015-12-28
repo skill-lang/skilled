@@ -14,6 +14,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import org.eclipse.xtext.validation.Check
+import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype
 
 /** 
  * Validates field restrictions and their arguments. <br>
@@ -32,7 +33,7 @@ import org.eclipse.xtext.validation.Check
  * @author Nikolay Fateev
  */
 class FieldRestrictionsValidator extends AbstractSKilLValidator {
-	
+
 	// All restriction warning and error messages
 	private final static String Unknown_Restriction = "Unknown Restriction"
 	private final static String Restriction_On_Map = "Map-typed fields can't have restrictions."
@@ -118,7 +119,6 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 	}
 
 	def validateUserTypeField(Field field) {
-		val fieldType = field.fieldcontent.fieldtype
 		val fieldTypeName = (field.fieldcontent.fieldtype as DeclarationReference).type.name
 		var wasNonNullUsed = false
 		var wasDefaultUsed = false
@@ -138,47 +138,36 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 					if (!wasDefaultUsed) {
 						if (restriction.restrictionArguments.size() == 1) {
 							val restrictionArgument = restriction.restrictionArguments.get(0)
-							if (1 == 2) { //restrictionArgument.valueType == null
+							if (restrictionArgument.valueType == null) {
 								showError(Default_Arg_Not_Singleton, restriction)
 							} else {
 								val restrictionArgumentType = (restrictionArgument.valueType).type
-//								if (fieldType instanceof Enumtype) {
-//									showError("valueEnum: "+restrictionArgument.valueEnum.type.name+" valueType: "+restrictionArgument.valueType.type.name, restriction)
-//									if (restrictionArgument.valueEnum == null) {
-//										
-//									}
-//								}
-//								if (restrictionArgumentType instanceof Usertype) {
-//									val restrictionArgumentSupertypes = restrictionArgumentType.supertypes
-//									var isRestrictionArgumentSubTypeOfField = false
-//									for (supertype : restrictionArgumentSupertypes) {
-//										if (fieldTypeName.equals(supertype.type.name)) {
-//											isRestrictionArgumentSubTypeOfField = true
-//										}
-//									}
-//									var isRestrictionArgumentTypeSingletonRestricted = false
-//									if (isRestrictionArgumentSubTypeOfField) {
-//										val restrictionArgumentRestrictions = restrictionArgumentType.restrictions
-//										for (restrictionArgumentRestriction : restrictionArgumentRestrictions) {
-//											if ("singleton".equals(restrictionArgumentRestriction.restrictionName)) {
-//												isRestrictionArgumentTypeSingletonRestricted = true
-//											}
-//										}
-//									}
-//									if (!isRestrictionArgumentSubTypeOfField ||
-//										!isRestrictionArgumentTypeSingletonRestricted) {
-//										showError(Default_Arg_Not_Singleton, restriction)
-//									}
-//								} else if (restrictionArgumentType instanceof Typedef) {
-//
-////									restrictionArgumentType.
-////									if (!(restrictionArgumentType.fieldtype instanceof Usertype)) {
-////										showError(Default_Arg_Not_Singleton, restriction)
-////									}
-//								} else if (!(restrictionArgumentType instanceof Enumtype)) {
-//									showError(Default_Arg_Not_Singleton, restriction)
-//								}
-							}							
+								if (restrictionArgumentType instanceof Usertype) {
+									val restrictionArgumentSupertypes = restrictionArgumentType.supertypes
+									var isRestrictionArgumentSubTypeOfField = false
+									for (supertype : restrictionArgumentSupertypes) {
+										if (fieldTypeName.equals(supertype.type.name)) {
+											isRestrictionArgumentSubTypeOfField = true
+										}
+									}
+									var isRestrictionArgumentTypeSingletonRestricted = false
+									if (isRestrictionArgumentSubTypeOfField) {
+										val restrictionArgumentRestrictions = restrictionArgumentType.restrictions
+										for (restrictionArgumentRestriction : restrictionArgumentRestrictions) {
+											if ("singleton".equals(restrictionArgumentRestriction.restrictionName)) {
+												isRestrictionArgumentTypeSingletonRestricted = true
+											}
+										}
+									}
+									if (!isRestrictionArgumentSubTypeOfField ||
+										!isRestrictionArgumentTypeSingletonRestricted) {
+										showError(Default_Arg_Not_Singleton, restriction)
+									}
+								} else if (restrictionArgumentType instanceof Enumtype) {
+								} else {
+									showError(Default_Arg_Not_Singleton, restriction)
+								}
+							}
 						} else {
 							showError(Default_Not_One_Arg, restriction)
 						}
@@ -476,7 +465,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 								errorFound = true
 							}
 						}
-					} else if (restrictionArguments.size() == 2) {			
+					} else if (restrictionArguments.size() == 2) {
 						val argument1 = restrictionArguments.get(0)
 						val argument2 = restrictionArguments.get(1)
 						if (fieldType instanceof Integertype) {
@@ -731,7 +720,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 	def showWarning(String message, Restriction restriction) {
 		warning(message, restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 	}
-	
+
 	def boolean isStringNullOrLowercase(String string) {
 		if (string == null || !string.equals(string.toLowerCase())) {
 			return false;
