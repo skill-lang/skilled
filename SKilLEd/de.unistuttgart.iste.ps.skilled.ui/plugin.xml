@@ -101,7 +101,7 @@
         </page>
         <page
               category="de.unistuttgart.iste.ps.skilled.SKilL"
-              class="de.unistuttgart.iste.ps.skilled.ui.preferences.SKilLPreferencePage"
+              class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.preferences.SKilLPreferencePage"
               id="de.unistuttgart.iste.ps.skilled.SKilLls"
               name="SKilLls">
         </page>

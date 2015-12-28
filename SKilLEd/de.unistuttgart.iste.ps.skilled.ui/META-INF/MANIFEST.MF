@@ -19,15 +19,33 @@ Require-Bundle: de.unistuttgart.iste.ps.skilled;visibility:=reexport,
  org.antlr.runtime
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: de.unistuttgart.iste.ps.skilled.ui; uses:="org.osgi.framework,  com.google.inject,  org.eclipse.xtext.ui,  org.eclipse.core.resources,  org.eclipse.xtext.ui.guice,  org.eclipse.ui.plugin",
+Export-Package: de.unistuttgart.iste.ps.skilled.ui;
+  uses:="org.osgi.framework,
+   com.google.inject,
+   org.eclipse.xtext.ui,
+   org.eclipse.core.resources,
+   org.eclipse.xtext.ui.guice,
+   org.eclipse.ui.plugin",
  de.unistuttgart.iste.ps.skilled.ui.contentassist,
- de.unistuttgart.iste.ps.skilled.ui.contentassist.antlr; uses:="de.unistuttgart.iste.ps.skilled.ui.contentassist.antlr.internal,  org.eclipse.xtext.ui.codetemplates.ui.partialEditing,  org.eclipse.xtext.ui.editor.contentassist.antlr.internal,  de.unistuttgart.iste.ps.skilled.services,  org.eclipse.xtext,  org.eclipse.xtext.ui.editor.contentassist.antlr",
+ de.unistuttgart.iste.ps.skilled.ui.contentassist.antlr;
+  uses:="de.unistuttgart.iste.ps.skilled.ui.contentassist.antlr.internal,
+   org.eclipse.xtext.ui.codetemplates.ui.partialEditing,
+   org.eclipse.xtext.ui.editor.contentassist.antlr.internal,
+   de.unistuttgart.iste.ps.skilled.services,
+   org.eclipse.xtext,
+   org.eclipse.xtext.ui.editor.contentassist.antlr",
  de.unistuttgart.iste.ps.skilled.ui.contentassist.antlr.internal;x-internal:=true,
  de.unistuttgart.iste.ps.skilled.ui.contentassist.antlr.lexer;uses:="org.eclipse.xtext.ui.editor.contentassist.antlr.internal,org.antlr.runtime",
  de.unistuttgart.iste.ps.skilled.ui.editor.syntaxcoloring;uses:="org.eclipse.xtext.resource,org.eclipse.xtext.ui.editor.utils,org.eclipse.xtext.ui.editor.syntaxcoloring",
  de.unistuttgart.iste.ps.skilled.ui.internal;x-internal:=true,
  de.unistuttgart.iste.ps.skilled.ui.labeling;uses:="org.eclipse.xtext.ui.label,org.eclipse.emf.edit.ui.provider",
+ de.unistuttgart.iste.ps.skilled.ui.mouseoverdoc,
  de.unistuttgart.iste.ps.skilled.ui.outline;uses:="org.eclipse.xtext.ui.editor.outline.impl",
+ de.unistuttgart.iste.ps.skilled.ui.preferences,
  de.unistuttgart.iste.ps.skilled.ui.quickfix;uses:="org.eclipse.xtext.ui.editor.quickfix",
- de.unistuttgart.iste.ps.skilled.ui.wizards; uses:="org.eclipse.ui,  org.eclipse.swt.widgets,  org.eclipse.jface.wizard,  org.eclipse.jface.viewers"
+ de.unistuttgart.iste.ps.skilled.ui.wizards;
+  uses:="org.eclipse.ui,
+   org.eclipse.swt.widgets,
+   org.eclipse.jface.wizard,
+   org.eclipse.jface.viewers"
 Bundle-Activator: de.unistuttgart.iste.ps.skilled.ui.internal.SKilLActivator
