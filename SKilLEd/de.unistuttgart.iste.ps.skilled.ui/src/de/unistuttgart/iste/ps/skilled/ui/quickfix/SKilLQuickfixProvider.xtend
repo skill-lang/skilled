@@ -26,11 +26,20 @@ import org.eclipse.xtext.validation.Issue
 /**
  * Custom quickfixes.
  * 
- * @author Jan Berberich Marco Link
+ * @author Jan Berberich
+ * @author Marco Link
+ * @author Tobias Heck
  * 
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#quick-fixes
  */
 public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
+	
+	@Fix("org.eclipse.xtext.diagnostics.Diagnostic.Linking")
+	def fixMisspelledType(Issue issue, IssueResolutionAcceptor acceptor) {
+		val name = issue.message.split("'").get(1);
+		
+		acceptor.accept(issue, "")
+	}
 
 	// Quickfix to remove the Parent that is the Type
 	@Fix(InheritenceValidator::TYPE_IS_HIS_OWN_PARENT)
