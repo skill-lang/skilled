@@ -21,13 +21,19 @@ import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
  * @author Ken Singer
  */
 class SKilLOutlineTreeProvider extends org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider {
-
+	
+	/**
+	 * creates the Nodes for the usertypes, interfaces and typedefs
+	 */
 	def protected _createChildren(DocumentRootNode parentNode, File modelElement) {
 		for (Declaration dec : modelElement.declarations) {
 			createNode(parentNode, dec)
 		}
 	}
 
+	/**
+	 * creates the nodes for the fields of the the declarations
+	 */
 	def protected _createChildren(IOutlineNode parentNode, Declaration modelElement) {
 		if (modelElement instanceof TypeDeclaration)
 			for (Field field : modelElement.fields) {
@@ -41,19 +47,32 @@ class SKilLOutlineTreeProvider extends org.eclipse.xtext.ui.editor.outline.impl.
 			for (Field f : modelElement.fields) {
 				createNode(parentNode, f.fieldcontent)
 			}
+		
 	}
 
+	/**
+	 * creates the nodes for fields if fieldtype is a declaration
+	 */
 	def protected _createChildren(IOutlineNode parentNode, Fieldtype modelElement) {
 		if (modelElement instanceof DeclarationReference) {
-			createNode(parentNode, modelElement.type)		
+			createNode(parentNode, modelElement.type)
 		}
 	}
 
+	/**
+	 * defines which tree-element is a leaf-element, to disable expansion of that tree-element
+	 */
 	override protected _isLeaf(EObject modelElement) {
 		if (modelElement instanceof Fieldcontent || modelElement instanceof DeclarationReference) {
 			return true;
 		} else if (modelElement instanceof TypeDeclaration) {
 			return modelElement.fields.empty
+		} else if (modelElement instanceof Typedef) {
+			if (!(modelElement.fieldtype instanceof DeclarationReference)) {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
