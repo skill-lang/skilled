@@ -21,10 +21,9 @@ import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration;
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef;
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype;
 
-
 /**
- * This Class defines the HoverProvider for mouseover documentation in SKilL and creates the title string for the
- * documentation
+ * This Class defines the HoverProvider for mouseover documentation in SKilL and
+ * creates the title string for the documentation
  * 
  * @author Jan Berberich
  * @author Tobias Heck

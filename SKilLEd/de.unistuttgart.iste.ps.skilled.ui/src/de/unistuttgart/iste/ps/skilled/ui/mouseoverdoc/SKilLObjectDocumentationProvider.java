@@ -6,91 +6,108 @@ import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype;
 import de.unistuttgart.iste.ps.skilled.sKilL.Restriction;
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration;
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference;
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef;
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype;
 
-
 /**
- * This Class defines the Object Documentation Provider for mouseover documentation in SKilL and creates the object
- * documentation string for the documentation
+ * This Class defines the Object Documentation Provider for mouseover
+ * documentation in SKilL and creates the object documentation string for the
+ * documentation
  * 
  * @author Jan Berberich
+ * @author Ken Singer
  */
 public class SKilLObjectDocumentationProvider implements IEObjectDocumentationProvider {
 
-    @Override
-    public String getDocumentation(EObject o) {
-        String returnString = "";
-        if (o instanceof TypeDeclaration) {
-            TypeDeclaration td = (TypeDeclaration) o;
-            if (td.getComment() != null) {
-                returnString = removeCommentMarkers(td.getComment());
-            }
-            if (td instanceof Usertype) {
-                Usertype ut = (Usertype) td;
-                if (ut.getRestrictions() != null) {
-                    returnString = returnString + "\n" + "<b>Restrictions: </b>";
-                }
-                boolean firstRestriction = true;
-                for (Restriction r : ut.getRestrictions()) {
-                    if (!firstRestriction) {
-                        returnString = returnString + " ";
-                    } else {
-                        firstRestriction = false;
-                    }
-                    returnString = returnString + r.getRestrictionName();
-                }
+	@Override
+	public String getDocumentation(EObject object) {
+		String returnString = "";
+		if (object instanceof TypeDeclaration) {
+			TypeDeclaration typeDeclaration = (TypeDeclaration) object;
+			if (typeDeclaration.getComment() != null) {
+				returnString = removeCommentMarkers(typeDeclaration.getComment());
+			}
+			if (typeDeclaration instanceof Usertype) {
+				Usertype usertype = (Usertype) typeDeclaration;
+				if (usertype.getRestrictions().size() > 0) {
+					returnString = returnString + "</br>" + "<b>Restrictions: </b>";
+				}
+				boolean firstRestriction = true;
+				for (Restriction restriction : usertype.getRestrictions()) {
+					if (!firstRestriction) {
+						returnString = returnString + ", ";
+					} else {
+						firstRestriction = false;
+					}
+					returnString = returnString + restriction.getRestrictionName();
+				}
 
-            }
-            return returnString;
-        } else if (o instanceof Typedef) {
-            Typedef td = (Typedef) o;
-            if (td.getComment() != null) {
-                returnString = removeCommentMarkers(td.getComment());
-            }
-            if (td instanceof Usertype) {
-                Usertype ut = (Usertype) td;
-                if (ut.getRestrictions() != null) {
-                    returnString = returnString + "\n" + "<b>Restrictions: </b>";
-                }
-                boolean firstRestriction = true;
-                for (Restriction r : ut.getRestrictions()) {
-                    if (!firstRestriction) {
-                        returnString = returnString + " ";
-                    } else {
-                        firstRestriction = false;
-                    }
-                    returnString = returnString + r.getRestrictionName();
-                }
+				if (usertype.getSupertypes().size() > 0) {
+					returnString = returnString + "</br>" + "<b>Supertypes: </b>";
+				}
+				boolean firstSupertype = true;
+				for (TypeDeclarationReference typeDeclarationReference : usertype.getSupertypes()) {
+					if (!firstSupertype) {
+						returnString = returnString + ", ";
+					} else {
+						firstSupertype = false;
+					}
+					returnString = returnString + typeDeclarationReference.getType().getName();
+				}
 
-            }
-            return returnString;
-        } else if (o instanceof Enumtype) {
-            Enumtype en = (Enumtype) o;
-            if (en.getComment() != null) {
-                returnString = removeCommentMarkers(en.getComment());
-            }
-        }
-        return returnString;
-    }
+			}
+			return returnString;
 
-    /**
-     * Removes the comment markers from a comment
-     * 
-     * @param s
-     *            The comment
-     * @return The text of the comment
-     */
-    private static String removeCommentMarkers(String commentToRemoveCommentsFrom) {
-        String s = commentToRemoveCommentsFrom;
-        s = s.substring(2);
-        s = s.substring(0, s.length() - 2);
-        for (int i = 0; i < s.length(); i++) {
-            // Replace "*" with "\n"
-            if (s.substring(i, i + 1).equals("*")) {
-                s = s.substring(0, i) + "" + s.substring(i + 1, s.length());
-            }
-        }
-        return s;
-    }
+		} else if (object instanceof Typedef) {
+			Typedef typedef = (Typedef) object;
+			if (typedef.getComment() != null) {
+				returnString = removeCommentMarkers(typedef.getComment());
+			}
+			if (typedef instanceof Usertype) {
+				Usertype usertype = (Usertype) typedef;
+				if (usertype.getRestrictions() != null) {
+					returnString = returnString + "</br>" + "<b>Restrictions: </b>";
+				}
+				boolean firstRestriction = true;
+				for (Restriction restriction : usertype.getRestrictions()) {
+					if (!firstRestriction) {
+						returnString = returnString + " ";
+					} else {
+						firstRestriction = false;
+					}
+					returnString = returnString + restriction.getRestrictionName();
+				}
+
+			}
+			return returnString;
+
+		} else if (object instanceof Enumtype) {
+			Enumtype enumtype = (Enumtype) object;
+			if (enumtype.getComment() != null) {
+				returnString = removeCommentMarkers(enumtype.getComment());
+			}
+		}
+		return returnString;
+	}
+
+	/**
+	 * Removes the comment markers from a comment
+	 * 
+	 * @param s
+	 *            The comment
+	 * @return The text of the comment
+	 */
+	private static String removeCommentMarkers(String commentToRemoveCommentsFrom) {
+		String string = commentToRemoveCommentsFrom;
+		string = string.substring(2);
+		string = string.substring(0, string.length() - 2);
+		for (int i = 0; i < string.length(); i++) {
+			// Replace "*" with "\n"
+			if (string.charAt(i) == '*') {
+				string = string.substring(0, i - 1) + "</br>" + string.substring(i + 1, string.length());
+			}
+		}
+		return string + "</br>";
+	}
 }
