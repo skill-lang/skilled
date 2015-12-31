@@ -48,6 +48,7 @@ import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.util.Strings
 import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork
 import org.eclipse.xtext.validation.Issue
+import java.util.List
 
 import static de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider.*
 import org.eclipse.core.resources.ResourcesPlugin
@@ -259,15 +260,15 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 			new ISemanticModification() {
 				override void apply(EObject element, IModificationContext context) {
 					var e = element as TypeDeclaration
-					var TypeDeclarationReference remove
+					var List<TypeDeclarationReference> remove = new ArrayList<TypeDeclarationReference>
 					var Supertypes = e.supertypes
 					// Remove Reference
 					for (TypeDeclarationReference tdr : Supertypes) {
 						if (tdr.type.equals(e)) {
-							remove = tdr
+							remove.add(tdr)
 						}
 					}
-					Supertypes.remove(remove)
+					Supertypes.removeAll(remove)
 				}
 			})
 	}
