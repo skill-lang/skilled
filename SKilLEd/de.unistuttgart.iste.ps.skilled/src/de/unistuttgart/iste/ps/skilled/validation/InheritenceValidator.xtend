@@ -24,6 +24,7 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	public static val CYCLIC_TYPES = 'cyclicTypes'
 	public static val TYPE_IS_HIS_OWN_PARENT = 'cycleError'
 	public static val MULTIPLE_INHERITENCE = 'inheritenceError'
+	public static val MULTIPLE_INHERITENCE_ERROR = "multipleInheritence2"
 	public var index = 0
 	public var Set<CyclicTypesNode> edges
 	public var Stack<CyclicTypesNode> nodes_stack = new Stack()
@@ -71,6 +72,8 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	 * 
 	 */
 	def void multipleInheritence(TypeDeclaration dec) {
+		var boolean error = false //Becomes true if an multipleInheritence Error is found for dec
+		
 		if (dec.supertypes.size > 1) {
 			var Set<TypeDeclaration> inheritedNoninterfaceSupertypes = new HashSet<TypeDeclaration>
 			for (TypeDeclarationReference r : dec.supertypes) {
@@ -92,11 +95,48 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 					// No minimum found -> Error
 					error("Error: Multiple Inheritence is not allowed.", firstnode.typeDeclaration,
 						SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
+						error = true;
 				}
 			}
 
 		}
+		
+		//temporary validation if there are 2 or more non-interface Supertypes if no error was found
+		if(!error){
+			checkMultipleInheritence(dec)
+		}
 	}
+	
+	
+	
+	def checkMultipleInheritence(TypeDeclaration dec) {
+		if(checkSupertypes(dec).size>1){
+			//More than one non-interface Supertype
+			error("Error: Inheritence error.", dec,
+						SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE_ERROR, dec.name)
+		}
+	}
+	
+	/**
+	 * 
+	 * @param dec The Declaration to check.
+	 * @return Set with the Name of all non-Interface supertypes from dec.
+	 * 
+	 */
+	def Set<String> checkSupertypes(TypeDeclaration dec){
+		var Set<String> supertypes = new HashSet<String>;
+		for (TypeDeclarationReference tdr: dec.supertypes){
+			if(tdr.type instanceof Interfacetype){
+				supertypes.addAll(checkSupertypes(tdr.type))
+			}else{
+				supertypes.add(tdr.type.name);
+			}
+		}
+		return supertypes;
+	}
+	
+	
+	
 
 	/**
 	 * Checks if dec is a Minimum for the Nodes in declarations

@@ -100,8 +100,8 @@ class TestInheritenceValidator {
 	}
 
 	@Test
-	def void testInheritanceViaInterfaceAndTypeAndInterfaceNoError() {
-		assertTrue("interface A:D{} interface B:E{} C:A:B{} D:E{} E{}".parse.validate.isNullOrEmpty)
+	def void testInheritanceViaInterfaceAndTypeAndInterfaceError() {
+		assertFalse("interface A:D{} interface B:E{} C:A:B{} D:E{} E{}".parse.validate.isNullOrEmpty)
 	}
 
 	@Test
@@ -136,7 +136,7 @@ class TestInheritenceValidator {
 
 	@Test
 	def void testNoError17() {
-		assertTrue("E:A{} interface A:B:C:D{} interface B:F{} interface C:F{} interface D:G{} F:G{} G{}".parse.validate.isNullOrEmpty)
+		assertFalse("E:A{} interface A:B:C:D{} interface B:F{} interface C:F{} interface D:G{} F:G{} G{}".parse.validate.isNullOrEmpty)
 	}
 
 	@Test
