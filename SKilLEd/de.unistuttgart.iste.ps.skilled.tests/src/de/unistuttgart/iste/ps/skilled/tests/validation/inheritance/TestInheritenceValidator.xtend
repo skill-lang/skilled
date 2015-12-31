@@ -255,7 +255,7 @@ class TestInheritenceValidator {
 	}
 	
 	@Test
-	def void hallo() {
+	def void CycleError() {
 		val issues = "A:B:C{} B:A:C{} C:A:B{}".parse.validate
 		
 		assertTrue(issues.size==3)
@@ -266,7 +266,7 @@ class TestInheritenceValidator {
 	}
 	
 	@Test
-	def void asdf() {
+	def void errorMoreThanOneParentSameAsType() {
 		val issues = "A:A:A{}".parse.validate
 		
 		assertTrue(issues.size==1)
