@@ -27,7 +27,7 @@ import org.eclipse.xtext.validation.ComposedChecks
  * 
  */
 @ComposedChecks(validators =#[InheritenceValidator, FieldRestrictionsValidator, DuplicatedTypenameValidation, 
-KeywordWarning, ASCIICharValidator, ViewValidator, ScopingValidator, TypeRestrictionsValidator])
+KeywordWarning, ASCIICharValidator, ViewValidator, ScopingValidator, TypeRestrictionsValidator, ImportValidator])
 class SKilLValidator extends AbstractSKilLValidator {
 
 	public static val INVALID_CONSTANT_TYPE = 'invalidConstantType'

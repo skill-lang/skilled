@@ -61,6 +61,31 @@ import static de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider.
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#quick-fixes
  */
 public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
+	
+	@Fix("Imported resource could not be found.")
+	def fixImport(Issue issue, IssueResolutionAcceptor acceptor) {
+		val String folder = new java.io.File(issue.data.get(0)).absoluteFile.getParent()
+		val java.io.File[] files = new java.io.File(folder).listFiles();
+		val LinkedList<String> fileNames = new LinkedList()
+		for (java.io.File file : files) {
+			if (3 > getLevenshteinDistance(file.absolutePath, issue.data.get(0))) {
+				fileNames.add(file.name)
+			}
+		}
+		for (String name : fileNames) {
+			
+			acceptor.accept(
+			issue,
+			"Change include path",
+			"Change to " + name,
+			"upcase.png",
+			new ISemanticModification() {
+				override apply(EObject element, IModificationContext context) {
+					
+				}
+			})
+		}
+	}
 
 	@Inject
 	private ICaseInsensitivityHelper caseInsensitivityHelper;
