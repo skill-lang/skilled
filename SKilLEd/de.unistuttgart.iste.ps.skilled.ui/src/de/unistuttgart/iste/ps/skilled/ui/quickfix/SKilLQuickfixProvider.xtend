@@ -50,6 +50,10 @@ import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork
 import org.eclipse.xtext.validation.Issue
 
 import static de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider.*
+import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.core.resources.IWorkspaceRoot
+import org.eclipse.core.runtime.IPath
+import org.eclipse.core.runtime.Path
 
 /**
  * Custom quickfixes.
@@ -64,11 +68,16 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 	
 	@Fix("Imported resource could not be found.")
 	def fixImport(Issue issue, IssueResolutionAcceptor acceptor) {
-		val String folder = new java.io.File(issue.data.get(0)).absoluteFile.getParent()
-		val java.io.File[] files = new java.io.File(folder).listFiles();
+		val URI uri = URI.createURI(issue.data.get(0))
+		val IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		var URI path = URI.createURI(root.locationURI.rawPath).appendSegments(uri.segmentsList)
+		val java.io.File asdf = (new Path(path.toString)).toFile.absoluteFile.parentFile
+		val boolean qwer = asdf.directory
+		qwer.hashCode
+		val java.io.File[] files = asdf.listFiles();
 		val LinkedList<String> fileNames = new LinkedList()
 		for (java.io.File file : files) {
-			if (3 > getLevenshteinDistance(file.absolutePath, issue.data.get(0))) {
+			if (3 > getLevenshteinDistance(file.absolutePath, path.toString.substring(1).replaceAll("/", "\\\\"))) {
 				fileNames.add(file.name)
 			}
 		}

@@ -17,8 +17,12 @@ class ImportValidator extends ImportUriValidator {
 			if (uri.isHierarchical() && !uri.isRelative() && (uri.isRelative() && !uri.isEmpty())) {
 				uri = uri.resolve(uri);
 			}
+			var path = uri.path
+			while (path.substring(0, 1).equals("/") || path.substring(0, 1).equals("\\")) path = path.substring(1)
+			while (!path.substring(0, 1).equals("/") && !path.substring(0, 1).equals("\\")) path = path.substring(1)
+			while (path.substring(0, 1).equals("/") || path.substring(0, 1).equals("\\")) path = path.substring(1)
 			error("Imported resource could not be found.", getResolver().getAttribute(object),
-				"Imported resource could not be found.", uri.path);
+				"Imported resource could not be found.", path);
 		}
 	}
 
