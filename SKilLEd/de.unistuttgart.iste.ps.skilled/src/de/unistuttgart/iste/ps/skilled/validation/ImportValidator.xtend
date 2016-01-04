@@ -6,6 +6,7 @@ import org.eclipse.xtext.validation.CheckType
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.emf.common.util.URI
+import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
 
 class ImportValidator extends ImportUriValidator {
 
@@ -17,10 +18,11 @@ class ImportValidator extends ImportUriValidator {
 			if (uri.isHierarchical() && !uri.isRelative() && (uri.isRelative() && !uri.isEmpty())) {
 				uri = uri.resolve(uri);
 			}
-			var path = uri.path
-			while (path.substring(0, 1).equals("/") || path.substring(0, 1).equals("\\")) path = path.substring(1)
-			while (!path.substring(0, 1).equals("/") && !path.substring(0, 1).equals("\\")) path = path.substring(1)
-			while (path.substring(0, 1).equals("/") || path.substring(0, 1).equals("\\")) path = path.substring(1)
+			var IncludeFile include = null
+			if (object instanceof IncludeFile) {
+				include = object
+			}
+			var path = URI.createURI(uri.segment(1)).appendSegments(include.importURI.replace("\\", "/").split("/")).toString
 			error("Imported resource could not be found.", getResolver().getAttribute(object),
 				"Imported resource could not be found.", path);
 		}

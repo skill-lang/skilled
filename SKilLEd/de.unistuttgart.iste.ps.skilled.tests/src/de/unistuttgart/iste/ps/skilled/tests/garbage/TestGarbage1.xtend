@@ -39,12 +39,6 @@ class TestGarbage {
 	}
 	
 	@Test
-	def void asdf() {
-		val issues = "A {B asdf;}".parse.validate;
-		println(issues.get(0).toString)
-	}
-	
-	@Test
 	def void testGarbage1() {
 		val issueCount = garbage1.parse.validate.size;
 		

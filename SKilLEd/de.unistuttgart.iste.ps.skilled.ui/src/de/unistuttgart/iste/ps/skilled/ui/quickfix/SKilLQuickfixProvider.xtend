@@ -52,7 +52,6 @@ import org.eclipse.xtext.validation.Issue
 import static de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider.*
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.resources.IWorkspaceRoot
-import org.eclipse.core.runtime.IPath
 import org.eclipse.core.runtime.Path
 
 /**
@@ -70,27 +69,30 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 	def fixImport(Issue issue, IssueResolutionAcceptor acceptor) {
 		val URI uri = URI.createURI(issue.data.get(0))
 		val IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		var URI path = URI.createURI(root.locationURI.rawPath).appendSegments(uri.segmentsList)
+		val URI path = URI.createURI(root.locationURI.rawPath).appendSegments(uri.segmentsList)
 		val java.io.File asdf = (new Path(path.toString)).toFile.absoluteFile.parentFile
-		val boolean qwer = asdf.directory
-		qwer.hashCode
 		val java.io.File[] files = asdf.listFiles();
+		if (files == null) return
 		val LinkedList<String> fileNames = new LinkedList()
 		for (java.io.File file : files) {
-			if (3 > getLevenshteinDistance(file.absolutePath, path.toString.substring(1).replaceAll("/", "\\\\"))) {
+			val distance = getLevenshteinDistance(file.absolutePath, path.toString.substring(1).replaceAll("/", "\\\\"))
+			if (3 > distance && 0 < distance) {
 				fileNames.add(file.name)
 			}
 		}
 		for (String name : fileNames) {
-			
 			acceptor.accept(
 			issue,
-			"Change include path",
+			"Change to " + name,
 			"Change to " + name,
 			"upcase.png",
 			new ISemanticModification() {
 				override apply(EObject element, IModificationContext context) {
-					
+					var IncludeFile include = null
+					if (element instanceof IncludeFile) {
+						include = element
+					}
+					include.importURI = include.importURI.replace(URI.createURI(include.importURI).lastSegment, name)
 				}
 			})
 		}
@@ -147,7 +149,7 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 
 		var EObject grammarElement = node.getGrammarElement();
 		if (grammarElement instanceof CrossReference) {
-			return grammarElement as CrossReference;
+			return grammarElement;
 		} else
 			return findCrossReference(context, node.getParent());
 	}
@@ -182,10 +184,10 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 					var String ruleName = null;
 					var Keyword keyword = null;
 					if (crossReferenceTerminal instanceof RuleCall) {
-						var RuleCall ruleCall = crossReferenceTerminal as RuleCall;
+						var RuleCall ruleCall = crossReferenceTerminal;
 						ruleName = ruleCall.getRule().getName();
 					} else if (crossReferenceTerminal instanceof Keyword) {
-						keyword = crossReferenceTerminal as Keyword;
+						keyword = crossReferenceTerminal;
 					}
 					var String issueString = xtextDocument.get(issue.getOffset(), issue.getLength());
 					var IScope scope = scopeProvider.getScope(target, reference);
