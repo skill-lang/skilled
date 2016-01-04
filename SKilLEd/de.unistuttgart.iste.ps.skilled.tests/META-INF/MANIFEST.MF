@@ -24,3 +24,6 @@ Import-Package: org.apache.log4j,
  org.hamcrest.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.unistuttgart.iste.ps.skilled
+Bundle-ClassPath: lib/scala-library.jar,
+ lib/skill_2.11-0.3.jar,
+ .

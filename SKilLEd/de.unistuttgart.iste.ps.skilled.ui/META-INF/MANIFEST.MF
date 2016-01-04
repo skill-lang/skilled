@@ -49,3 +49,6 @@ Export-Package: de.unistuttgart.iste.ps.skilled.ui;
    org.eclipse.jface.wizard,
    org.eclipse.jface.viewers"
 Bundle-Activator: de.unistuttgart.iste.ps.skilled.ui.internal.SKilLActivator
+Bundle-ClassPath: lib/scala-library.jar,
+ lib/skill_2.11-0.3.jar,
+ .

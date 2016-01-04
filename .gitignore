@@ -147,6 +147,7 @@ de.unistuttgart.iste.ps.skilled.ui/lib/skill.java.common.jar
 
 #skilled
 de.unistuttgart.iste.ps.skilled/lib/SKilLls.jar
+de.unistuttgart.iste.ps.skilled/lib/scala-library.jar
 de.unistuttgart.iste.ps.skilled/lib/skill.jvm.common.jar
 de.unistuttgart.iste.ps.skilled/lib/skill.java.common.jar
 
