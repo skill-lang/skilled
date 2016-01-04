@@ -23,8 +23,6 @@ public class KeywordCheckEscaping {
             String s = CommandLine.checkEscaping(language, parameters);
             if (s.equals("true")) {
                 returnList.add(language);
-            } else {
-                System.out.println(args + " : false");
             }
         }
         return returnList;
