@@ -23,6 +23,16 @@ class ExceptionHandler {
      * Logs the exception.
      *
      * @param e
+     *            Error to log.
+     */
+    public static void handle(Error e) {
+        System.out.println("Following error occurred: " + e.getMessage());
+    }
+
+    /**
+     * Logs the exception.
+     *
+     * @param e
      *            Exception to log.
      * @param message
      *            Message to log.

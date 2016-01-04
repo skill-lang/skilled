@@ -70,50 +70,54 @@ public class Edit {
             Command cmd = getCommand(subCommands[index]);
             index++;
 
-            switch (cmd) {
-                case delete:
-                    delete(tool);
-                    break;
+            try {
+                switch (cmd) {
+                    case delete:
+                        delete(tool);
+                        break;
 
-                case rename:
-                    rename(tool, subCommands, index);
-                    break;
+                    case rename:
+                        rename(tool, subCommands, index);
+                        break;
 
-                case addType:
-                    addType(tool, subCommands, index);
-                    break;
+                    case addType:
+                        addType(tool, subCommands, index);
+                        break;
 
-                case removeType:
-                    removeType(tool, subCommands, index);
-                    break;
+                    case removeType:
+                        removeType(tool, subCommands, index);
+                        break;
 
-                case addField:
-                    addField(tool, subCommands, index);
-                    break;
+                    case addField:
+                        addField(tool, subCommands, index);
+                        break;
 
-                case removeField:
-                    removeField(tool, subCommands, index);
-                    break;
+                    case removeField:
+                        removeField(tool, subCommands, index);
+                        break;
 
-                case addFieldHint:
-                    addFieldHint(tool, subCommands, index);
-                    break;
+                    case addFieldHint:
+                        addFieldHint(tool, subCommands, index);
+                        break;
 
-                case removeFieldHint:
-                    removeFieldHint(tool, subCommands, index);
-                    break;
+                    case removeFieldHint:
+                        removeFieldHint(tool, subCommands, index);
+                        break;
 
-                case addTypeHint:
-                    addTypeHint(tool, subCommands, index);
-                    break;
+                    case addTypeHint:
+                        addTypeHint(tool, subCommands, index);
+                        break;
 
-                case removeTypeHint:
-                    removeTypeHint(tool, subCommands, index);
-                    break;
+                    case removeTypeHint:
+                        removeTypeHint(tool, subCommands, index);
+                        break;
 
-                case setDefaults:
-                    setDefaults(tool, subCommands, index);
-                    break;
+                    case setDefaults:
+                        setDefaults(tool, subCommands, index);
+                        break;
+                }
+            } catch (Error e) {
+                ExceptionHandler.handle(e);
             }
         }
     }
@@ -222,8 +226,11 @@ public class Edit {
                 break;
             }
         }
-        //exit if arguemnt error: hint not found
-        assert hint != null : "Hint not found";
+
+        if (hint == null) {
+            throw new Error("Hint not found");
+        }
+
         if (toolType.getTypeHints().stream().noneMatch(h -> h.getName().equals(hintName))) {
             toolType.getTypeHints().add(skillFile.Hints().make(hint.getName(), toolType));
         }
@@ -279,7 +286,9 @@ public class Edit {
             }
         }
         //exit if arguemnt error: hint not found
-        assert hint != null : "hint not found";
+        if (hint == null) {
+            throw new Error("Hint not found");
+        }
         field.getFieldHints().remove(hint);
         skillFile.delete(hint);
 
@@ -287,7 +296,7 @@ public class Edit {
 
     /**
      * Adds a hint to a field.
-     * 
+     *
      * @param tool
      *            The tool the settings belong to.
      * @param subCommands
@@ -345,7 +354,7 @@ public class Edit {
 
     /**
      * Removes a field from a tool.
-     * 
+     *
      * @param tool
      *            The tool the settings belong to.
      * @param subCommands
@@ -387,7 +396,7 @@ public class Edit {
 
     /**
      * Adds a field to a type.
-     * 
+     *
      * @param tool
      *            The tool the settings belong to.
      * @param subCommands
@@ -432,7 +441,7 @@ public class Edit {
 
     /**
      * Removes a type from a tool.
-     * 
+     *
      * @param tool
      *            The tool the settings belong to.
      * @param subCommands
@@ -477,7 +486,7 @@ public class Edit {
 
     /**
      * Adds a type to a tool.
-     * 
+     *
      * @param tool
      *            The tool the settings belong to.
      * @param subCommands
@@ -504,7 +513,8 @@ public class Edit {
                     type.getFields().add(skillFile.Fields().make(field.getComment(), new ArrayList<>(), field.getName(),
                             new ArrayList<>(), type));
                 }
-                if (type == null) {
+                if (type == null || t.getFile() == null) {
+                    System.out.println("null");
                     return;
                 }
                 tool.getTypes().add(type);
@@ -529,6 +539,7 @@ public class Edit {
                 }
             }
         }
+        throw new Error("Type not found");
     }
 
     /**
@@ -556,7 +567,7 @@ public class Edit {
 
     /**
      * Adds the types a new user type extends.
-     * 
+     *
      * @param tool
      *            The tool the new type is added to.
      * @param type
@@ -604,7 +615,7 @@ public class Edit {
 
     /**
      * Renames a tool.
-     * 
+     *
      * @param tool
      *            The tool the settings belong to.
      * @param subCommands
@@ -618,7 +629,7 @@ public class Edit {
 
     /**
      * Deletes a tool.
-     * 
+     *
      * @param tool
      *            The tool the settings belong to.
      */
@@ -638,7 +649,7 @@ public class Edit {
 
     /**
      * Creates a new tool.
-     * 
+     *
      * @param subCommand
      *            the name of the tool.
      * @return Returns the tool.
@@ -650,7 +661,7 @@ public class Edit {
 
     /**
      * Searches for a tool.
-     * 
+     *
      * @param subCommand
      *            the name of the tool or &n for creating a new tool.
      * @return returns the tool or null if the tool was not found or a new tool should be created.

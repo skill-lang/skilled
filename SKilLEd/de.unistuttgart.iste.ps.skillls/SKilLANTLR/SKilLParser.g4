@@ -46,9 +46,13 @@ description: COMMENT? restrictionHint*;
 
 restriction: '@' Identifier ('(' (rarg (',' rarg)*)?')')?;
 
-rarg: (FloatingConstant | IntegerConstant | StringLiteral | (extendedIdentifer ('.' | '::')?)+);
+rarg: (FloatingConstant | IntegerConstant | StringLiteral | (extendedIdentifer (('.' | '::') extendedIdentifer)?));
 
-hint: '!' Identifier rarg? ('(' (rarg (',' rarg)*)?')')?;
+hint: normalHint | pragmaHint;
+
+pragmaHint: '!' PRAGMA rarg ('(' (rarg (',' rarg)*)')')?;
+
+normalHint: '!' Identifier ('(' (rarg (',' rarg)*)?')')?;
 
 enumvalues: Identifier (',' Identifier)*;
 

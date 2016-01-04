@@ -16,6 +16,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 
@@ -54,8 +55,8 @@ class SkillIndexListener extends SKilLParserBaseListener {
             e.printStackTrace();
         }
         for (de.unistuttgart.iste.ps.skillls.tools.File f : skillFile.Files()) {
-            if (f.getPath().equals(file.getAbsolutePath())) {
-                if (f.getMd5().equals(bytes) && f.getTimestamp().equals(String.valueOf(file.lastModified()))) {
+            if (new File(f.getPath()).getAbsolutePath().equals(file.getAbsolutePath())) {
+                if (Arrays.equals(f.getMd5().getBytes(), bytes) && f.getTimestamp().equals(String.valueOf(file.lastModified()))) {
                     this.file = null;
                     break;
                 }
@@ -72,7 +73,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
      */
     @Override
     public void exitFile(SKilLParser.FileContext ctx) {
-        ctx.declaration().forEach(this::processDeclaration);
+        for (SKilLParser.DeclarationContext context : ctx.declaration()) {
+            processDeclaration(context);
+        }
         skillFile.flush();
     }
 

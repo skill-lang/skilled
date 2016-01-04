@@ -34,6 +34,7 @@ AT: '@';
 EQUAL: '=';
 VIEW: 'view';
 AS: 'as';
+PRAGMA: 'pragma';
 
 COMMENT:'/*' .*? '*/';
 

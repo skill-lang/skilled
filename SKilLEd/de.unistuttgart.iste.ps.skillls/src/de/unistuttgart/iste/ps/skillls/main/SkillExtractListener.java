@@ -47,7 +47,7 @@ public class SkillExtractListener extends SKilLParserBaseListener {
         try {
         	de.unistuttgart.iste.ps.skillls.tools.File file = null;
             for (de.unistuttgart.iste.ps.skillls.tools.File f : tool.getFiles()) {
-                if (Paths.get(f.getPath()).relativize(Paths.get(inFile.getAbsolutePath())).toString().isEmpty()) {
+                if (Paths.get(inFile.getPath()).relativize(Paths.get(f.getPath())).toString().isEmpty()) {
                     file = f;
                     break;
                 }

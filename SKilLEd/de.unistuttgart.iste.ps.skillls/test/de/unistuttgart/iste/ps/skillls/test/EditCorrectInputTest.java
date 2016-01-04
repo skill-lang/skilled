@@ -1,20 +1,16 @@
 package de.unistuttgart.iste.ps.skillls.test;
 
+import de.unistuttgart.iste.ps.skillls.main.Edit;
+import de.unistuttgart.iste.ps.skillls.main.MainClass;
 import de.unistuttgart.iste.ps.skillls.tools.Hint;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
 import de.unistuttgart.iste.ps.skillls.tools.Type;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
-
-import de.unistuttgart.iste.ps.skillls.main.Edit;
-import de.unistuttgart.iste.ps.skillls.main.MainClass;
 import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
+import org.junit.AfterClass;
+import org.junit.Test;
 
-import java.io.*;
-import java.nio.file.CopyOption;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 

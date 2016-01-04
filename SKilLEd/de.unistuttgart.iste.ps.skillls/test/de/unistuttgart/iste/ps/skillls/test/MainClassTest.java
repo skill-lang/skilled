@@ -282,7 +282,7 @@ public class MainClassTest {
         System.setOut(out);
         System.setErr(err);
 
-        String[] args = new String[] { "-lsp", "resources" };
+        String[] args = new String[] { "--list", "--path", "resources" };
         try {
             MainClass.main(args);
         } catch (Error e) {

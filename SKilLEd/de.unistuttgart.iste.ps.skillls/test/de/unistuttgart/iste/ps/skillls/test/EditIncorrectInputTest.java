@@ -1,10 +1,12 @@
 package de.unistuttgart.iste.ps.skillls.test;
 
-import org.junit.*;
-
 import de.unistuttgart.iste.ps.skillls.main.Edit;
 import de.unistuttgart.iste.ps.skillls.main.MainClass;
 import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -323,7 +325,7 @@ public class EditIncorrectInputTest {
         String[] args = new String[] { "-e", "resources", "testTool:8:Color:!notSingleton;" };
         try {
             MainClass.main(args);
-        } catch (AssertionError e) {
+        } catch (Error e) {
             assertTrue(true);
         }
         try {

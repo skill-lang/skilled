@@ -368,12 +368,11 @@ public class MainClass {
                 return new ArgumentEvaluation(index, args[index], "module");
 
             case "--list":
-                index++;
-                return new ArgumentEvaluation(index, args[index], "list");
+                return new ArgumentEvaluation(index, null, "list");
 
             case "--no-cleanup":
                 cleanUp = false;
-                return new ArgumentEvaluation(index, args[index], "cleanup");
+                return new ArgumentEvaluation(index, null, "cleanup");
 
             default:
                 throw new IllegalArgumentException();
@@ -592,15 +591,15 @@ public class MainClass {
                     String hash = hash(child);
                     if (f == null) {
                         // noinspection UnusedAssignment
-                        f = skillFile.Files().make(new ArrayList<>(), "", hash, child.getAbsolutePath(),
+                        f = skillFile.Files().make(new ArrayList<>(), "", hash, child.getPath(),
                                 child.lastModified() + "");
                         indexTypes(child, skillFile);
-                    } else if (Paths.get(child.getAbsolutePath()).relativize(Paths.get(f.getPath())).toString().equals("")
+                    } else if (Paths.get(child.getPath()).relativize(Paths.get(f.getPath())).toString().equals("")
                             && (!f.getMd5().equals(hash) || !f.getTimestamp().equals("" + child.lastModified()))) {
                         indexTypes(child, skillFile);
                         f.setTimestamp("" + child.lastModified());
                         f.setMd5(hash);
-                    } else if (Paths.get(child.getAbsolutePath()).relativize(Paths.get(f.getPath())).toString().equals("")) {
+                    } else if (Paths.get(child.getPath()).relativize(Paths.get(f.getPath())).toString().equals("")) {
                         indexTypes(child, skillFile);
                         f.setTimestamp("" + child.lastModified());
                         f.setMd5(hash);
