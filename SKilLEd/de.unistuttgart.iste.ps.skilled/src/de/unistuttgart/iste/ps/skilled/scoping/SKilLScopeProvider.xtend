@@ -10,6 +10,7 @@ import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider
 import org.eclipse.xtext.scoping.impl.FilteringScope
+import de.unistuttgart.iste.ps.skilled.validation.ImportURIValidator
 
 /**
  * This class contains custom scoping description.
@@ -21,8 +22,6 @@ import org.eclipse.xtext.scoping.impl.FilteringScope
  *  
  */
 class SKilLScopeProvider extends AbstractDeclarativeScopeProvider {
-
-	public static var TOOLSFOLDER = "tools";
 
 	/**
 	 * Custom scoping which takes the generated tool files into account.
@@ -41,13 +40,13 @@ class SKilLScopeProvider extends AbstractDeclarativeScopeProvider {
 				var boolean isInputInTools = false;
 
 				if (ctxSegments.size() > 2) {
-					if (ctxSegments.get(2).equals(TOOLSFOLDER)) {
+					if (ctxSegments.get(2).equals(ImportURIValidator::TOOLSFOLDER)) {
 						isCtxInTools = true;
 					}
 				}
 
 				if (inputSegments.size() > 2) {
-					if (inputSegments.get(2).equals(TOOLSFOLDER)) {
+					if (inputSegments.get(2).equals(ImportURIValidator::TOOLSFOLDER)) {
 						isInputInTools = true;
 					}
 				}

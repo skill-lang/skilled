@@ -2,7 +2,6 @@ package de.unistuttgart.iste.ps.skilled.validation
 
 import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.scoping.SKilLScopeProvider
 import org.eclipse.emf.common.util.URI
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.Check
@@ -14,6 +13,8 @@ import org.eclipse.xtext.validation.EValidatorRegistrar
  * @author Marco Link
  */
 class ImportURIValidator extends AbstractDeclarativeValidator {
+
+	public static val TOOLSFOLDER = '.skillt';
 
 	public static val INVALID_IMPORT_URI_PLATFORM = 'invalidImportURIPlatform';
 	public static val INVALID_IMPORT_URI_OUTSIDE_SCOPE = 'invalidImportURIOutsideScope';
@@ -53,13 +54,13 @@ class ImportURIValidator extends AbstractDeclarativeValidator {
 			var boolean isIncludeFileInTools = false;
 
 			if (fileURISegments.size() > 2) {
-				if (fileURISegments.get(2).equals(SKilLScopeProvider::TOOLSFOLDER)) {
+				if (fileURISegments.get(2).equals(TOOLSFOLDER)) {
 					isFileInTools = true;
 				}
 			}
 
 			if (includeURISegements.size() > 2) {
-				if (includeURISegements.get(2).equals(SKilLScopeProvider::TOOLSFOLDER)) {
+				if (includeURISegements.get(2).equals(TOOLSFOLDER)) {
 					isIncludeFileInTools = true;
 				}
 			}
