@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
  * @author Armin Hüneburg
  * @since 25.08.15.
  */
-class GenerationThread implements Runnable {
+class GenerationThread extends Thread {
     private final String COMMAND;
     private final File PARENT;
 
@@ -25,7 +25,7 @@ class GenerationThread implements Runnable {
     public GenerationThread(String command, File generator) {
         this.COMMAND = command;
         generator.getName();
-        this.PARENT = generator.getParentFile().getAbsoluteFile();
+        this.PARENT = generator.getAbsoluteFile().getParentFile().getAbsoluteFile();
     }
 
     /**

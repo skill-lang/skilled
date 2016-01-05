@@ -58,7 +58,7 @@ public class MainClass {
                 }
             }
             SkillFile skillFile;
-            if (System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH).contains("win") && !sfFile.exists()) {
+            if (!sfFile.exists()) {
                 try {
                     sfFile.createNewFile();
                 } catch (IOException e) {
@@ -188,6 +188,7 @@ public class MainClass {
             tools.addAll(sf.Tools());
         }
         for (Tool tool : tools) {
+            System.out.println(tool.getName());
             for (de.unistuttgart.iste.ps.skillls.tools.File file : tool.getFiles()) {
                 File f = new File(file.getPath());
                 String hash = hash(f);
@@ -195,21 +196,21 @@ public class MainClass {
                 if (fileFlag == FileFlag.All || !file.getMd5().equals(hash)
                         || ("" + f.lastModified()).equals(file.getTimestamp())) {
                     // print file name
-                    System.out.println(file.getPath());
+                    System.out.println("  " + file.getPath());
                     tool.getTypes().stream().filter(t -> t.getFile().getPath().equals(file.getPath())).forEach(type -> {
                         // print hints
                         for (Hint hint : type.getTypeHints()) {
-                            System.out.println(hint.getName());
+                            System.out.println("    " + hint.getName());
                         }
                         // print type
-                        System.out.println("  " + type.getName());
+                        System.out.println("    " + type.getName());
                         // print fields
                         for (Field field : type.getFields()) {
                             for (Hint hint : field.getFieldHints()) {
                                 // print field hints
-                                System.out.println("    " + hint.getName());
+                                System.out.println("      " + hint.getName());
                             }
-                            System.out.println("    " + field.getName());
+                            System.out.println("      " + field.getName());
                         }
                         System.out.println();
                     });
@@ -460,10 +461,10 @@ public class MainClass {
             // noinspection SuspiciousMethodCalls
             builder.append(" %s ");
             builder.append(output.getAbsolutePath());
-            commands.addAll(toolToFile.get(t).stream()
-                    .map(f -> new Thread(new GenerationThread(String.format(builder.toString(), f.getAbsolutePath()),
-                            new File(generator == null ? t.getGenerator().getPath() : generator.getPath()))))
-                    .collect(Collectors.toList()));
+            for (File f : toolToFile.get(t)) {
+                commands.add(new GenerationThread(String.format(builder.toString(), f.getAbsolutePath()),
+                        new File(generator == null ? t.getGenerator().getPath() : generator.getPath())));
+            }
         }
         commands.forEach(java.lang.Thread::start);
         commands.forEach((thread) -> {
@@ -474,6 +475,7 @@ public class MainClass {
             }
         });
         if (cleanUp) {
+            System.out.println("cleanup");
             cleanUp(tempDir);
         }
     }
@@ -495,12 +497,14 @@ public class MainClass {
         if (!tempDir.exists()) {
             tempDir.mkdirs();
         }
-        Path relativizedPath = Paths.get(project.getAbsolutePath()).relativize(Paths.get(file.getAbsolutePath()));
+        Path relativizedPath = Paths.get(project.getAbsolutePath()).relativize(Paths.get(file.getAbsolutePath())).normalize();
 
         File newFile = new File(tempDir, relativizedPath.toString());
 
+        System.out.println(newFile.getAbsolutePath());
+
         if (!newFile.getParentFile().exists()) {
-            newFile.getParentFile().mkdirs();
+            createDirectory(newFile.getParentFile());
         }
         newFile.createNewFile();
         try (FileOutputStream fs = new FileOutputStream(newFile.getAbsolutePath())) {
@@ -519,6 +523,13 @@ public class MainClass {
             ParseTree tree = parser.file();
         }
         return newFile;
+    }
+
+    private static void createDirectory(File file) {
+        if (!file.getParentFile().exists()) {
+            createDirectory(file.getParentFile());
+        }
+        file.mkdir();
     }
 
     /**

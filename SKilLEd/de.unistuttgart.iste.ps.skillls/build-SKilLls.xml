@@ -91,7 +91,7 @@
 
     <target depends="gensrc-skill-antlr-parser-post" name="build-skill-antlr"/>
     <target depends="build-skill-binding,build-skillls" name="build-skillls-complete"/>
-    <target depends="build-skill-antlr,build-skillls-complete,test,create_run_jar,teardown" name="build-all"/>
+    <target depends="build-skill-antlr,build-skillls-complete,test,create_run_jar" name="build-all"/>
 
     <target depends="setup" name="build-skill-binding">
         <mkdir dir="${tools.location}"/>

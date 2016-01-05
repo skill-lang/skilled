@@ -61,3 +61,5 @@ Magazine {
   set<string> pageContents;
   map<i16, Picture> pictures;
 }
+
+Bathtub {}
