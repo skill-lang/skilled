@@ -30,7 +30,6 @@ class ReservedSKilLKeywordValidator extends AbstractSKilLValidator {
 	@Check
 	def checkFieldNameReservedSkillKeyword(Field field) {
 		var name = field.fieldcontent.name.toLowerCase
-		System.out.println(name)
 		if (name.equals("skillid") || name.equals("api") || name.equals("internal")) {
 			warning("Usage of skillid, api or internal is discouraged", field.fieldcontent,
 				SKilLPackage.Literals.FIELDCONTENT__NAME)

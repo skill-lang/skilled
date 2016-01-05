@@ -1,0 +1,49 @@
+Typ1 {
+  i8 f1;
+  i16 f2;
+  Typ2 f3;
+  Typ3 f4;
+}
+
+Typ2 {
+  i8 f1;
+  i16 f2;
+  Typ2 f3;
+  Typ3 f4;
+}
+
+Typ3 {
+  i8 f1;
+  i16 f2;
+  Typ2 f3;
+  Typ3 f4;
+  i8 skillid;
+}
+
+Typ4 {
+  i8 f1;
+  i16 f2;
+  Typ2 f3;
+  Typ3 f4;
+}
+
+Typ5 {
+  i8 f1;
+  i16 f2;
+  Typ2 f3;
+  Typ3 f4;
+}
+
+Typ6 {
+  i8 f1;
+  i16 f2;
+  Typ2 f3;
+  Typ3 f4;
+}
+
+Typ7 {
+  i8 f1;
+  i16 f2;
+  Typ2 f3;
+  Typ3 f4;
+}
