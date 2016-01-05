@@ -12,6 +12,8 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
 import java.util.ArrayList
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.InterfacetypeImpl
 
 /**
  * This class validates views.
@@ -40,8 +42,8 @@ class ViewValidator extends AbstractDeclarativeValidator {
 				var View viewToCheck = f.fieldcontent as View
 				if (viewToCheck.fieldtype instanceof DeclarationReference) {
 					var DeclarationReference viewFieldtypeDeclarationReference = viewToCheck.fieldtype as DeclarationReference
-					if (viewFieldtypeDeclarationReference.type instanceof Usertype) {
-						var Usertype usertype = viewFieldtypeDeclarationReference.type as Usertype
+					if ((viewFieldtypeDeclarationReference.type instanceof Usertype)||(viewFieldtypeDeclarationReference.type instanceof Interfacetype)) {
+						var TypeDeclaration usertype = viewFieldtypeDeclarationReference.type as TypeDeclaration
 						isUsertype = true
 						// view A.x as B c;:
 						var String supertypeTypename = (viewToCheck.fieldcontent.fieldcontent.eContainer.eContainer as Declaration).name; // a
@@ -70,15 +72,14 @@ class ViewValidator extends AbstractDeclarativeValidator {
 								var boolean supertypeVarIsUsertype = false;
 								if (supertypeVar.fieldcontent.fieldtype instanceof DeclarationReference) {
 									var DeclarationReference usertypeDeclarationSupertype = supertypeVar.fieldcontent.fieldtype as DeclarationReference;
-									if (usertypeDeclarationSupertype.type instanceof Usertype) {
-										usertypeSupertypeVar = usertypeDeclarationSupertype.type as Usertype
+									if ((usertypeDeclarationSupertype.type instanceof Usertype)||(usertypeDeclarationSupertype.type instanceof InterfacetypeImpl)) {
 										supertypeVarIsUsertype = true;
 									}
 								}
 								//If SupertypeVar isn't a usertype => error else check if the type of supertypeVar is a supertype of the as var.
 								if (!supertypeVarIsUsertype) {
-									error("Error: " + supertypeVarname + " is not a Usertype variable.", viewToCheck,
-										SKilLPackage.Literals.VIEW.getEStructuralFeature(2), VIEW_ERROR)
+									error("Error: " + supertypeVarname + " is not a Usertype or Interface variable.", viewToCheck,
+									SKilLPackage.Literals.VIEW.getEStructuralFeature(2), VIEW_ERROR)
 								} else 	if (usertype.name != usertypeSupertypeVar.name) {
 									TypesSearched = new ArrayList<TypeDeclaration>;
 										if (searchSupertype(usertypeSupertypeVar.name, usertype) == null) {
