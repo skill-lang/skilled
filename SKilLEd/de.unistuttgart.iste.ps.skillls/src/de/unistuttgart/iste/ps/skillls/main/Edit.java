@@ -209,6 +209,9 @@ public class Edit {
                 break;
             }
         }
+        if (toolType == null) {
+            throw new Error("Type not in Tool");
+        }
         for (Type t : skillFile.Types()) {
             if (t.getName().equals(typeName) && skillFile.Tools().stream().noneMatch(tool1 -> tool1.getTypes().contains(t))) {
                 skType = t;
