@@ -6,7 +6,7 @@ import de.ust.skill.main.CommandLine;
 
 
 public class KeywordCheckEscaping {
-    public static String[] languages = { "C", "Scala", "Ada", "Java" }; // The Languages that will be checked
+    public static String[] languages = CheckAvailableLanguages.getAvailableLanguages();
 
     /**
      * This Method checks if the entered keyword requires escaping.

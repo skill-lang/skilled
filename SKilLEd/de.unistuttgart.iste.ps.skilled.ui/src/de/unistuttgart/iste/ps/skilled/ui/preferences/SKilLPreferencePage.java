@@ -1,5 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.ui.preferences;
 
+import java.util.Arrays;
+
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FileFieldEditor;
@@ -9,6 +11,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.xtext.ui.editor.preferences.AbstractPreferencePage;
+
+import de.unistuttgart.iste.ps.skilled.util.CheckAvailableLanguages;
 
 
 /**
@@ -52,9 +56,12 @@ public class SKilLPreferencePage extends AbstractPreferencePage {
 
         putSeperator();
 
+        String[][] availableLanguages = Arrays.stream(CheckAvailableLanguages.getAvailableLanguages()).map(s -> {
+            return new String[] { s, s };
+        }).toArray(size -> new String[size][size]);
+
         languageSelectionComboField = new ComboFieldEditor(SKilLConstants.LANGUAGE_SELECTION, "Select language:",
-                new String[][] { { "Ada", "Ada" }, { "C", "C" }, { "Java", "Java" }, { "Scala", "Scala" } },
-                getFieldEditorParent());
+                availableLanguages, getFieldEditorParent());
         addField(languageSelectionComboField);
 
         putSeperator();
