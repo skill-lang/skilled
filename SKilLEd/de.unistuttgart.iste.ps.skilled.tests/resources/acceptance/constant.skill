@@ -5,7 +5,7 @@
  *
  * @author Dennis Przytarski
  */
-Constant {
+Constants {
 	const i8 a = 8;
 	const i16 b = 16;
 	const i32 c = 32;

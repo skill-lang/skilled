@@ -1,9 +1,5 @@
 package de.unistuttgart.iste.ps.skilled.tests.validation
 
-import org.eclipse.xtext.junit4.InjectWith
-import org.junit.runner.RunWith
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
-import org.eclipse.xtext.junit4.XtextRunner
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
 import de.unistuttgart.iste.ps.skilled.sKilL.File
@@ -15,7 +11,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import de.unistuttgart.iste.ps.skilled.tests.utils.ErrorMessageComparator
 
 /**
  * This class tests the KeywordWarning Validator.

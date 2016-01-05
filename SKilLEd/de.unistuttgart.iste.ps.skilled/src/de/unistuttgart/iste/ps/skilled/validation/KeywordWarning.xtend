@@ -25,7 +25,7 @@ class KeywordWarning extends AbstractDeclarativeValidator {
 	 */
 	@Check
 	def KeywordWarning(TypeDeclaration dec) {
-		var ArrayList<String> requiresEscaping = KeywordCheckEscaping.requiresEscaping(dec.name);
+		val ArrayList<String> requiresEscaping = KeywordCheckEscaping.requiresEscaping(dec.name);
 		if (!requiresEscaping.isNullOrEmpty) {
 			warning(errorMessage(requiresEscaping), dec, SKilLPackage.Literals.DECLARATION__NAME)
 		}
@@ -38,7 +38,7 @@ class KeywordWarning extends AbstractDeclarativeValidator {
 	 */
 	@Check
 	def void fieldCheck(Field f) {
-		var ArrayList<String> requiresEscaping = KeywordCheckEscaping.requiresEscaping(f.fieldcontent.name);
+		val ArrayList<String> requiresEscaping = KeywordCheckEscaping.requiresEscaping(f.fieldcontent.name);
 		if (!requiresEscaping.isNullOrEmpty) {
 			warning(errorMessage(requiresEscaping), f.fieldcontent, SKilLPackage.Literals.FIELDCONTENT__NAME)
 		}
