@@ -1,0 +1,4 @@
+Type3 {
+  !ignore
+  i8 f1;
+}
