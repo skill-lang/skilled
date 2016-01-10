@@ -5,7 +5,10 @@ package de.unistuttgart.iste.ps.skilled.ui;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.common.ui.contentassist.TerminalsProposalProvider;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
+import org.eclipse.xtext.ui.editor.contentassist.DefaultCompletionProposalPostProcessor;
+import org.eclipse.xtext.ui.editor.contentassist.IContentProposalProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.model.edit.ITextEditComposer;
 import org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage;
@@ -14,6 +17,8 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.ui.resource.SimpleResourceSetProvider;
 
+import de.unistuttgart.iste.ps.skilled.ui.contentassist.SKilLCompletionProposalPostProcessor;
+import de.unistuttgart.iste.ps.skilled.ui.contentassist.SKilLTerminalsProposalProvider;
 import de.unistuttgart.iste.ps.skilled.ui.editor.syntaxcoloring.SKilLAntlrTokenToAttributeIdMapper;
 import de.unistuttgart.iste.ps.skilled.ui.editor.syntaxcoloring.SKilLHighlightingConfiguration;
 import de.unistuttgart.iste.ps.skilled.ui.editor.syntaxcoloring.SKilLSemanticHighlightingCalculator;
@@ -26,6 +31,7 @@ import de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLTextEditComposer;
 
 /**
  * This class is used to register components to be used within the IDE.
+ * @author Tobias Heck
  */
 public class SKilLUiModule extends de.unistuttgart.iste.ps.skilled.ui.AbstractSKilLUiModule {
 
@@ -83,5 +89,13 @@ public class SKilLUiModule extends de.unistuttgart.iste.ps.skilled.ui.AbstractSK
 
     public Class<? extends ITextEditComposer> bindITextEditComposer() {
         return SKilLTextEditComposer.class;
+    }
+    
+    public Class<? extends TerminalsProposalProvider> bindTerminalsProposalProvider() {
+        return SKilLTerminalsProposalProvider.class;
+    }
+    
+    public Class<? extends DefaultCompletionProposalPostProcessor> bindCompletionProposalPostProcessor () {
+        return SKilLCompletionProposalPostProcessor.class;
     }
 }
