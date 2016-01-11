@@ -1,29 +1,24 @@
-package de.unistuttgart.iste.ps.skilled.ui.wizards;
+package de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard;
 
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class SKilLRenameToolWizardPage extends WizardPage {
+public class SKilLNewToolWizardPage extends WizardPage {
 
 	private Text tbName;
 	private Composite container;
 
-	private String name;
-
-	public SKilLRenameToolWizardPage(String name) {
-		super("Rename Tool");
-		setTitle("Rename Tool");
-		setDescription("On this page you can rename the tool.");
-		setControl(tbName);
-		this.name = name;
+	public SKilLNewToolWizardPage() {
+		super("Create a new tool");
+		setTitle("Create a new tool");
+		setDescription("In this page you can insert a name for the new tool.");
 	}
 
 	@Override
@@ -33,24 +28,21 @@ public class SKilLRenameToolWizardPage extends WizardPage {
 		container.setLayout(layout);
 		layout.numColumns = 2;
 		Label label1 = new Label(container, SWT.NONE);
-		label1.setText("New name");
+		label1.setText("Put a value here.");
 
-		tbName = new Text(container, SWT.BORDER | SWT.SINGLE);
-		tbName.setText(this.name);
-		tbName.addKeyListener(new KeyListener() {
-
+		this.tbName = new Text(container, SWT.BORDER | SWT.SINGLE);
+		this.tbName.setText("");
+		this.tbName.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
+				// nothing
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if (!tbName.getText().isEmpty()) {
+				if (!tbName.getText().isEmpty())
 					setPageComplete(true);
-				}
 			}
-
 		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		tbName.setLayoutData(gd);
@@ -60,6 +52,6 @@ public class SKilLRenameToolWizardPage extends WizardPage {
 	}
 
 	public String getTbNameText() {
-		return tbName.getText();
+		return this.tbName.getText();
 	}
 }
