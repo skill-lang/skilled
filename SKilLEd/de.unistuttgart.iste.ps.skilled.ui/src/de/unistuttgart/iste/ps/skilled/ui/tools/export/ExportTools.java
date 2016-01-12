@@ -120,7 +120,7 @@ public class ExportTools {
 		lSelectTool.setText("Select tool to export:");
 		GridData gridDataLabel = new GridData();
 		gridDataLabel.horizontalAlignment = SWT.CENTER;
-		gridDataLabel.horizontalSpan = 2;
+		gridDataLabel.horizontalSpan = 1;
 		lSelectTool.setLayoutData(gridDataLabel);
 
 		// Dropdown menu with a list of all tools
@@ -128,9 +128,14 @@ public class ExportTools {
 		GridData gridDataWidgets = new GridData();
 		gridDataWidgets.horizontalAlignment = SWT.FILL;
 		gridDataWidgets.grabExcessHorizontalSpace = true;
-		gridDataWidgets.horizontalSpan = 2;
+		gridDataWidgets.horizontalSpan = 3;
 		cSelectTool.setLayoutData(gridDataWidgets);
-		cSelectTool.setItems(fToolName);
+		if (fToolName != null) {
+			cSelectTool.setItems(fToolName);
+		} else {
+			String emptyList[] = {};
+			cSelectTool.setItems(emptyList);
+		}
 		// Default combofield value (blank)
 		cSelectTool.select(0);
 		cSelectTool.addSelectionListener(new SelectionAdapter() {
@@ -157,17 +162,20 @@ public class ExportTools {
 		// }
 		// });
 
-		// Fills grid cell with empty block
-		Label lEmptyBlock = new Label(shell, SWT.NONE);
-		lEmptyBlock.setLayoutData(new GridData());
-
 		Label lSaveLocation = new Label(shell, SWT.NONE);
 		lSaveLocation.setText("Export Location:");
-		lSaveLocation.setLayoutData(new GridData());
+		GridData gridDataLabel2 = new GridData();
+		gridDataLabel2.horizontalAlignment = SWT.CENTER;
+		gridDataLabel2.horizontalSpan = 1;
+		lSaveLocation.setLayoutData(gridDataLabel2);
 
 		Text tSaveLocation = new Text(shell, SWT.BORDER | SWT.SINGLE);
 		tSaveLocation.setText(fSaveLocation);
-		tSaveLocation.setLayoutData(gridDataWidgets);
+		GridData gridDataWidgetsSmall = new GridData();
+		gridDataWidgetsSmall.horizontalAlignment = SWT.FILL;
+		gridDataWidgetsSmall.grabExcessHorizontalSpace = true;
+		gridDataWidgetsSmall.horizontalSpan = 2;
+		tSaveLocation.setLayoutData(gridDataWidgetsSmall);
 		tSaveLocation.addModifyListener(new ModifyListener() {
 
 			@Override
@@ -180,7 +188,7 @@ public class ExportTools {
 		Button bSaveLocation = new Button(shell, SWT.PUSH);
 		bSaveLocation.setText("Browse");
 		GridData gridDataButtons = new GridData();
-		gridDataButtons.horizontalAlignment = SWT.FILL;
+		gridDataButtons.horizontalAlignment = SWT.CENTER;
 		gridDataButtons.verticalAlignment = SWT.FILL;
 		bSaveLocation.setLayoutData(gridDataButtons);
 		bSaveLocation.addSelectionListener(new SelectionAdapter() {
@@ -196,6 +204,10 @@ public class ExportTools {
 				}
 			}
 		});
+
+		// Fills grid cell with empty block
+		Label lEmptyBlock = new Label(shell, SWT.NONE);
+		lEmptyBlock.setLayoutData(new GridData());
 
 		// Creates OK Button.
 		Button OK = new Button(shell, SWT.PUSH);
