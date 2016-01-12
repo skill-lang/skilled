@@ -125,7 +125,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 		var wasConstantLenghtPointerUsed = false
 		var wasOneOfUsed = false
 		for (restriction : field.restrictions) {
-			switch (restriction.restrictionName) {
+			switch (restriction.restrictionName.toLowerCase) {
 				case 'nonnull': {
 					if (restriction.restrictionArguments.size() != 0) {
 						showError(NonNull_Has_Args, restriction)
@@ -154,7 +154,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 									if (isRestrictionArgumentSubTypeOfField) {
 										val restrictionArgumentRestrictions = restrictionArgumentType.restrictions
 										for (restrictionArgumentRestriction : restrictionArgumentRestrictions) {
-											if ("singleton".equals(restrictionArgumentRestriction.restrictionName)) {
+											if ("singleton".equals(restrictionArgumentRestriction.restrictionName.toLowerCase)) {
 												isRestrictionArgumentTypeSingletonRestricted = true
 											}
 										}
@@ -233,7 +233,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 		var wasDefaultUsed = false
 		var wasConstantLenghtPointerUsed = false
 		for (restriction : field.restrictions) {
-			switch (restriction.restrictionName) {
+			switch (restriction.restrictionName.toLowerCase) {
 				case 'nonnull': {
 					if (restriction.restrictionArguments.size() != 0) {
 						showError(NonNull_Has_Args, restriction)
@@ -314,7 +314,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 		var maxUsed = false
 		var minUsed = false
 		for (restriction : field.restrictions) {
-			switch (restriction.restrictionName) {
+			switch (restriction.restrictionName.toLowerCase) {
 				case 'nonnull': {
 					showError(NonNull_Usage, restriction)
 				}
@@ -524,7 +524,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 		var wasConstantLenghtPointerUsed = false
 		var wasOneOfUsed = false
 		for (restriction : field.restrictions) {
-			switch (restriction.restrictionName) {
+			switch (restriction.restrictionName.toLowerCase) {
 				case 'nonnull': {
 					showError(NonNull_Usage, restriction)
 				}
@@ -540,7 +540,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 									val restrictionArgumentRestrictions = restrictionArgumentType.restrictions
 									var isRestrictionArgumentSingletonRestricted = false
 									for (typedefRestriction : restrictionArgumentRestrictions) {
-										if ("singleton".equals(typedefRestriction.restrictionName)) {
+										if ("singleton".equals(typedefRestriction.restrictionName.toLowerCase)) {
 											isRestrictionArgumentSingletonRestricted = true
 										}
 									}
@@ -551,7 +551,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 									val restrictionArgumentRestrictions = restrictionArgumentType.restrictions
 									var isRestrictionArgumentSingletonRestricted = false
 									for (typedefRestriction : restrictionArgumentRestrictions) {
-										if ("singleton".equals(typedefRestriction.restrictionName)) {
+										if ("singleton".equals(typedefRestriction.restrictionName.toLowerCase)) {
 											isRestrictionArgumentSingletonRestricted = true
 										}
 									}
@@ -624,7 +624,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 
 	def validateBooleanTypeField(Field field) {
 		for (restriction : field.restrictions) {
-			switch (restriction.restrictionName) {
+			switch (restriction.restrictionName.toLowerCase) {
 				case 'nonnull': {
 					showError(NonNull_Usage, restriction)
 				}
@@ -671,7 +671,7 @@ class FieldRestrictionsValidator extends AbstractSKilLValidator {
 			if (fieldType instanceof Maptype) {
 				showError(Restriction_On_Map, restriction)
 			} else {
-				switch (restriction.restrictionName) {
+				switch (restriction.restrictionName.toLowerCase) {
 					case 'nonnull': {
 						showError(NonNull_Usage, restriction)
 					}

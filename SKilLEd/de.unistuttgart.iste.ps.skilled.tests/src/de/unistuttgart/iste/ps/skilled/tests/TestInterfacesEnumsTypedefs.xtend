@@ -52,13 +52,13 @@ class TestInterfacesEnumsTypedefs {
   		
   		val I = specification.declarations.get(0) as InterfacetypeImpl;
   		Assert::assertEquals("/*interface comment*/", I.comment);
-  		Assert::assertEquals("i", I.name);
+  		Assert::assertEquals("i", I.name.toLowerCase);
   		val fields1 = I.fields;
-  		Assert::assertEquals("field1", fields1.get(0).fieldcontent.name);
-  		Assert::assertEquals("field2", fields1.get(1).fieldcontent.name);
-  		Assert::assertEquals("field3", fields1.get(2).fieldcontent.name);
-  		Assert::assertEquals("field4", fields1.get(3).fieldcontent.name);
-  		Assert::assertEquals("field5", fields1.get(4).fieldcontent.name);
+  		Assert::assertEquals("field1", fields1.get(0).fieldcontent.name.toLowerCase);
+  		Assert::assertEquals("field2", fields1.get(1).fieldcontent.name.toLowerCase);
+  		Assert::assertEquals("field3", fields1.get(2).fieldcontent.name.toLowerCase);
+  		Assert::assertEquals("field4", fields1.get(3).fieldcontent.name.toLowerCase);
+  		Assert::assertEquals("field5", fields1.get(4).fieldcontent.name.toLowerCase);
   	}
   	
   	@Test
@@ -105,10 +105,10 @@ class TestInterfacesEnumsTypedefs {
   		
   		val enum = specification.declarations.get(0) as EnumtypeImpl;
   		Assert::assertEquals("/*enum description*/", enum.comment);
-  		Assert::assertEquals("day", enum.name);
-  		Assert::assertEquals("Monday", enum.instances.get(0).name);
-  		Assert::assertEquals("Sunday", enum.instances.get(6).name);
-  		Assert::assertEquals("day", enum.fields.get(0).fieldcontent.name);
+  		Assert::assertEquals("day", enum.name.toLowerCase);
+  		Assert::assertEquals("monday", enum.instances.get(0).name.toLowerCase);
+  		Assert::assertEquals("sunday", enum.instances.get(6).name.toLowerCase);
+  		Assert::assertEquals("day", enum.fields.get(0).fieldcontent.name.toLowerCase);
   		Assert::assertEquals(Integer.I8, (enum.fields.get(0).fieldcontent.fieldtype as Integertype).type);
   		val day = (specification.declarations.get(1) as UsertypeImpl).fields.get(2);
   		Assert::assertEquals(enum, (day.fieldcontent.fieldtype as DeclarationReferenceImpl).type);
@@ -120,10 +120,10 @@ class TestInterfacesEnumsTypedefs {
   		
   		val asdf = specification.declarations.get(0) as TypedefImpl;
   		Assert::assertEquals("/*typedef description*/", asdf.comment);
-  		Assert::assertEquals("asdf", asdf.name);
-  		Assert::assertEquals("unique", asdf.restrictions.get(0).restrictionName);
-  		Assert::assertEquals("monotone", asdf.restrictions.get(1).restrictionName);
-  		Assert::assertEquals("removeunknownrestrictions", asdf.hints.get(0).hintName);
+  		Assert::assertEquals("asdf", asdf.name.toLowerCase);
+  		Assert::assertEquals("unique", asdf.restrictions.get(0).restrictionName.toLowerCase);
+  		Assert::assertEquals("monotone", asdf.restrictions.get(1).restrictionName.toLowerCase);
+  		Assert::assertEquals("removeunknownrestrictions", asdf.hints.get(0).hintName.toLowerCase);
   		Assert::assertEquals("unknown", asdf.hints.get(0).hintArguments.get(0).valueString);
   	}
   	
@@ -138,14 +138,14 @@ class TestInterfacesEnumsTypedefs {
 		val aORb = specification.declarations.get(4) as TypedefImpl;
 		Assert::assertEquals(a, (asdf.fieldtype as DeclarationReferenceImpl).type);
 		
-		Assert::assertEquals("natural", natural.name);
-		Assert::assertEquals("min", natural.restrictions.get(0).restrictionName);
+		Assert::assertEquals("natural", natural.name.toLowerCase);
+		Assert::assertEquals("min", natural.restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals(0, natural.restrictions.get(0).restrictionArguments.get(0).valueLong);
 		Assert::assertEquals(Integer.I64, (natural.fieldtype as Integertype).type);
 		
-		Assert::assertEquals("oneof", aORb.restrictions.get(0).restrictionName);
+		Assert::assertEquals("oneof", aORb.restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals(b, aORb.restrictions.get(0).restrictionArguments.get(1).valueType.type);
-		Assert::assertEquals("aorb", aORb.name);
+		Assert::assertEquals("aorb", aORb.name.toLowerCase);
 		Assert::assertEquals("annotation", (aORb.fieldtype as Annotationtype).type);
   	}
 }

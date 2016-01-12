@@ -63,14 +63,14 @@ class TestCommentsHintsRestrictions {
 		val specification = testHints.parse
 
 		val usertype = specification.declarations.get(0) as UsertypeImpl;
-		Assert::assertEquals("removeunknownrestrictions", usertype.hints.get(0).hintName);
+		Assert::assertEquals("removeunknownrestrictions", usertype.hints.get(0).hintName.toLowerCase);
 		Assert::assertEquals("unique",((usertype.hints.get(0) as HintImpl).hintArguments.get(0).valueString));
 		Assert::assertEquals("monotone",((usertype.hints.get(0) as HintImpl).hintArguments.get(1).valueString));
-		Assert::assertEquals("mixin", usertype.hints.get(1).hintName);
-		Assert::assertEquals("unique", usertype.hints.get(2).hintName);
-		Assert::assertEquals("pure", usertype.hints.get(3).hintName);
-		Assert::assertEquals("monotone", usertype.hints.get(4).hintName);
-		Assert::assertEquals("readonly", usertype.hints.get(5).hintName);
+		Assert::assertEquals("mixin", usertype.hints.get(1).hintName.toLowerCase);
+		Assert::assertEquals("unique", usertype.hints.get(2).hintName.toLowerCase);
+		Assert::assertEquals("pure", usertype.hints.get(3).hintName.toLowerCase);
+		Assert::assertEquals("monotone", usertype.hints.get(4).hintName.toLowerCase);
+		Assert::assertEquals("readonly", usertype.hints.get(5).hintName.toLowerCase);
 	}
 
 	@Test
@@ -80,16 +80,16 @@ class TestCommentsHintsRestrictions {
 		val usertype = specification.declarations.get(0) as UsertypeImpl;
 		val fields = usertype.fields;
 		val field1 = fields.get(0);
-		Assert::assertEquals("constantmutator", field1.hints.get(0).hintName);
+		Assert::assertEquals("constantmutator", field1.hints.get(0).hintName.toLowerCase);
 		Assert::assertEquals(-17, (field1.hints.get(0) as HintImpl).hintArguments.get(0).valueLong);
 		Assert::assertEquals(3000000000L, (field1.hints.get(0) as HintImpl).hintArguments.get(1).valueLong);
 		val field2 = fields.get(1);
-		Assert::assertEquals("distributed", field2.hints.get(0).hintName);
-		Assert::assertEquals("ondemand", field2.hints.get(1).hintName);
+		Assert::assertEquals("distributed", field2.hints.get(0).hintName.toLowerCase);
+		Assert::assertEquals("ondemand", field2.hints.get(1).hintName.toLowerCase);
 		val field3 = fields.get(2);
-		Assert::assertEquals("ignore", field3.hints.get(0).hintName);
+		Assert::assertEquals("ignore", field3.hints.get(0).hintName.toLowerCase);
 		val field4 = fields.get(3);
-		Assert::assertEquals("hide", field4.hints.get(0).hintName);
+		Assert::assertEquals("hide", field4.hints.get(0).hintName.toLowerCase);
 	}
 
 	@Test
@@ -97,7 +97,7 @@ class TestCommentsHintsRestrictions {
 		val specification = testHints.parse
 
 		val usertype2 = specification.declarations.get(1) as UsertypeImpl;
-		Assert::assertEquals("flat", usertype2.hints.get(0).hintName);
+		Assert::assertEquals("flat", usertype2.hints.get(0).hintName.toLowerCase);
 	}
 
 	@Test
@@ -132,8 +132,8 @@ class TestCommentsHintsRestrictions {
 
 		val usertype1 = specification.declarations.get(0) as UsertypeImpl;
 		val usertype2 = specification.declarations.get(1) as UsertypeImpl;
-		Assert::assertEquals("unique", usertype1.restrictions.get(0).restrictionName);
-		Assert::assertEquals("default", usertype1.restrictions.get(1).restrictionName);
+		Assert::assertEquals("unique", usertype1.restrictions.get(0).restrictionName.toLowerCase);
+		Assert::assertEquals("default", usertype1.restrictions.get(1).restrictionName.toLowerCase);
 		Assert::assertEquals(usertype2 as TypeDeclaration,
 			usertype1.restrictions.get(1).restrictionArguments.get(0).valueType.type);
 	}
@@ -144,11 +144,11 @@ class TestCommentsHintsRestrictions {
 
 		val usertype1 = specification.declarations.get(0) as UsertypeImpl;
 		val fields1 = usertype1.fields;
-		Assert::assertEquals("default", fields1.get(0).restrictions.get(0).restrictionName);
+		Assert::assertEquals("default", fields1.get(0).restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals(-3000000000L, fields1.get(0).restrictions.get(0).restrictionArguments.get(0).valueLong);
-		Assert::assertEquals("default", fields1.get(1).restrictions.get(0).restrictionName);
+		Assert::assertEquals("default", fields1.get(1).restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals("Akemi", fields1.get(1).restrictions.get(0).restrictionArguments.get(0).valueString);
-		Assert::assertEquals("default", fields1.get(2).restrictions.get(0).restrictionName);
+		Assert::assertEquals("default", fields1.get(2).restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals(-123.456, fields1.get(2).restrictions.get(0).restrictionArguments.get(0).valueDouble,
 			0.0001);
 	}
@@ -158,8 +158,8 @@ class TestCommentsHintsRestrictions {
 		val specification = testRestrictions.parse
 
 		val usertype2 = specification.declarations.get(1) as UsertypeImpl;
-		Assert::assertEquals("singleton", usertype2.restrictions.get(0).restrictionName);
-		Assert::assertEquals("monotone", usertype2.restrictions.get(1).restrictionName);
+		Assert::assertEquals("singleton", usertype2.restrictions.get(0).restrictionName.toLowerCase);
+		Assert::assertEquals("monotone", usertype2.restrictions.get(1).restrictionName.toLowerCase);
 	}
 
 	@Test
@@ -168,11 +168,11 @@ class TestCommentsHintsRestrictions {
 
 		val usertype2 = specification.declarations.get(1) as UsertypeImpl;
 		val fields2 = usertype2.fields;
-		Assert::assertEquals("nonnull", fields2.get(0).restrictions.get(0).restrictionName);
-		Assert::assertEquals("constantlengthpointer", fields2.get(0).restrictions.get(1).restrictionName);
-		Assert::assertEquals("constantlengthpointer", fields2.get(1).restrictions.get(0).restrictionName);
-		Assert::assertEquals("constantlengthpointer", fields2.get(2).restrictions.get(0).restrictionName);
-		Assert::assertEquals("oneof", fields2.get(2).restrictions.get(1).restrictionName);
+		Assert::assertEquals("nonnull", fields2.get(0).restrictions.get(0).restrictionName.toLowerCase);
+		Assert::assertEquals("constantlengthpointer", fields2.get(0).restrictions.get(1).restrictionName.toLowerCase);
+		Assert::assertEquals("constantlengthpointer", fields2.get(1).restrictions.get(0).restrictionName.toLowerCase);
+		Assert::assertEquals("constantlengthpointer", fields2.get(2).restrictions.get(0).restrictionName.toLowerCase);
+		Assert::assertEquals("oneof", fields2.get(2).restrictions.get(1).restrictionName.toLowerCase);
 	}
 
 	@Test
@@ -199,9 +199,9 @@ class TestCommentsHintsRestrictions {
 		val specification = testRestrictions.parse
 
 		val usertype3 = specification.declarations.get(2) as UsertypeImpl;
-		Assert::assertEquals("abstract", usertype3.restrictions.get(0).restrictionName);
+		Assert::assertEquals("abstract", usertype3.restrictions.get(0).restrictionName.toLowerCase);
 		val fields3 = usertype3.fields;
-		Assert::assertEquals("coding", fields3.get(0).restrictions.get(0).restrictionName);
+		Assert::assertEquals("coding", fields3.get(0).restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals("zip", fields3.get(0).restrictions.get(0).restrictionArguments.get(0).valueString);
 	}
 
@@ -211,16 +211,16 @@ class TestCommentsHintsRestrictions {
 
 		val usertype4 = specification.declarations.get(3) as UsertypeImpl;
 		val fields4 = usertype4.fields;
-		Assert::assertEquals("min", fields4.get(0).restrictions.get(0).restrictionName);
+		Assert::assertEquals("min", fields4.get(0).restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals(0xABCD.operator_minus(),
 			fields4.get(0).restrictions.get(0).restrictionArguments.get(0).valueLong);
-		Assert::assertEquals("min", fields4.get(1).restrictions.get(0).restrictionName);
+		Assert::assertEquals("min", fields4.get(1).restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals(12345.6789, fields4.get(1).restrictions.get(0).restrictionArguments.get(0).valueDouble,
 			1e-5);
 		Assert::assertEquals("inclusive", fields4.get(1).restrictions.get(0).restrictionArguments.get(1).valueString);
-		Assert::assertEquals("max", fields4.get(2).restrictions.get(0).restrictionName);
+		Assert::assertEquals("max", fields4.get(2).restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals(-3000000000L, fields4.get(2).restrictions.get(0).restrictionArguments.get(0).valueLong);
-		Assert::assertEquals("max", fields4.get(3).restrictions.get(0).restrictionName);
+		Assert::assertEquals("max", fields4.get(3).restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals(-1.1, fields4.get(3).restrictions.get(0).restrictionArguments.get(0).valueDouble, 1e-5);
 		Assert::assertEquals("exclusive", fields4.get(3).restrictions.get(0).restrictionArguments.get(1).valueString);
 	}
@@ -231,10 +231,10 @@ class TestCommentsHintsRestrictions {
 
 		val usertype4 = specification.declarations.get(3) as UsertypeImpl;
 		val fields4 = usertype4.fields;
-		Assert::assertEquals("range", fields4.get(4).restrictions.get(0).restrictionName);
+		Assert::assertEquals("range", fields4.get(4).restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals(-10, fields4.get(4).restrictions.get(0).restrictionArguments.get(0).valueLong);
 		Assert::assertEquals(10, fields4.get(4).restrictions.get(0).restrictionArguments.get(1).valueLong);
-		Assert::assertEquals("range", fields4.get(5).restrictions.get(0).restrictionName);
+		Assert::assertEquals("range", fields4.get(5).restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals(-10.7, fields4.get(5).restrictions.get(0).restrictionArguments.get(0).valueDouble, 0.01);
 		Assert::assertEquals(10.2, fields4.get(5).restrictions.get(0).restrictionArguments.get(1).valueDouble, 0.01);
 		Assert::assertEquals("exclusive, inclusive",
@@ -248,7 +248,7 @@ class TestCommentsHintsRestrictions {
 		val usertype1 = specification.declarations.get(0) as UsertypeImpl;
 		val usertype2 = specification.declarations.get(1) as UsertypeImpl;
 		val typedef = specification.declarations.get(4) as TypedefImpl;
-		Assert::assertEquals("oneof", typedef.restrictions.get(0).restrictionName);
+		Assert::assertEquals("oneof", typedef.restrictions.get(0).restrictionName.toLowerCase);
 		Assert::assertEquals(usertype1 as TypeDeclaration,
 			typedef.restrictions.get(0).restrictionArguments.get(0).valueType.type);
 		Assert::assertEquals(usertype2 as TypeDeclaration,
@@ -261,7 +261,7 @@ class TestCommentsHintsRestrictions {
 
 		val I = specification.declarations.get(0) as InterfacetypeImpl;
 		Assert::assertEquals("/*interface comment*/", I.comment);
-		Assert::assertEquals("i", I.name);
+		Assert::assertEquals("i", I.name.toLowerCase);
 
 		val fields1 = I.fields;
 		val type1 = specification.declarations.get(1) as TypeDeclarationImpl;

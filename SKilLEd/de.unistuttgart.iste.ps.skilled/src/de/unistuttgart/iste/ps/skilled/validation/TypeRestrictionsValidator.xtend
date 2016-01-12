@@ -75,7 +75,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 		var wasAbstractUsed = false
 		var wasDefaultUsed = false
 		for (restriction : usertype.restrictions) {
-			switch (restriction.restrictionName) {
+			switch (restriction.restrictionName.toLowerCase) {
 				case 'unique': {
 					if (!wasUniqueUsed) {
 						if (restriction.restrictionArguments.size == 0) {
@@ -177,7 +177,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 			wasDefaultUsed = isUserTypeDefaultRestricted(underlyingUsertype)
 		}
 		for (restriction : typedef.restrictions) {
-			switch (restriction.restrictionName) {
+			switch (restriction.restrictionName.toLowerCase) {
 				case 'unique': {
 					if (restriction.restrictionArguments.size == 0) {
 						var errorFound = false
@@ -317,7 +317,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 
 	def boolean isUserTypeUniqueRestricted(Usertype usertype) {
 		for (restriction : usertype.restrictions) {
-			if ("unique".equals(restriction.restrictionName)) {
+			if ("unique".equals(restriction.restrictionName.toLowerCase)) {
 				return true
 			}
 		}
@@ -326,7 +326,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 	
 	def boolean isTypedefSingletonRestricted(Typedef typedef) {
 		for (restriction : typedef.restrictions) {
-			if ("singleton".equals(restriction.restrictionName)) {
+			if ("singleton".equals(restriction.restrictionName.toLowerCase)) {
 				return true
 			}
 		}
@@ -335,7 +335,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 
 	def boolean isUserTypeSingletonRestricted(Usertype usertype) {
 		for (restriction : usertype.restrictions) {
-			if ("singleton".equals(restriction.restrictionName)) {
+			if ("singleton".equals(restriction.restrictionName.toLowerCase)) {
 				return true
 			}
 		}
@@ -344,7 +344,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 
 	def boolean isUserTypeMonotoneRestricted(Usertype usertype) {
 		for (restriction : usertype.restrictions) {
-			if ("monotone".equals(restriction.restrictionName)) {
+			if ("monotone".equals(restriction.restrictionName.toLowerCase)) {
 				return true
 			}
 		}
@@ -353,7 +353,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 
 	def boolean isUserTypeAbstractRestricted(Usertype usertype) {
 		for (restriction : usertype.restrictions) {
-			if ("abstract".equals(restriction.restrictionName)) {
+			if ("abstract".equals(restriction.restrictionName.toLowerCase)) {
 				return true
 			}
 		}
@@ -362,7 +362,7 @@ class TypeRestrictionsValidator extends AbstractSKilLValidator {
 
 	def boolean isUserTypeDefaultRestricted(Usertype usertype) {
 		for (restriction : usertype.restrictions) {
-			if ("default".equals(restriction.restrictionName)) {
+			if ("default".equals(restriction.restrictionName.toLowerCase)) {
 				return true
 			}
 		}

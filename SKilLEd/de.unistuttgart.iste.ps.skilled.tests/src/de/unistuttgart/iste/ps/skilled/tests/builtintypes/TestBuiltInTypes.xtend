@@ -55,41 +55,41 @@ class TestBuiltInTypes {
 		val specification = testBasicFieldTypes.parse
 
 		val usertype = specification.declarations.get(0) as TypeDeclarationImpl;
-		Assert::assertEquals("usertype", usertype.name);
+		Assert::assertEquals("usertype", usertype.name.toLowerCase);
 		val fields = usertype.fields;
 		val field1 = fields.get(0);
-		Assert::assertEquals("int1", field1.fieldcontent.name);
+		Assert::assertEquals("int1", field1.fieldcontent.name.toLowerCase);
 		//EXAMPLE FOR NEW STRUCTURE FOR INT
 		Assert::assertEquals(Integer.I8, (field1.fieldcontent.fieldtype as Integertype).type)	
 		val field2 = fields.get(1);
-		Assert::assertEquals("int2", field2.fieldcontent.name);
+		Assert::assertEquals("int2", field2.fieldcontent.name.toLowerCase);
 		Assert::assertEquals(Integer.I16, (field2.fieldcontent.fieldtype as Integertype).type)
 		val field3 = fields.get(2);
-		Assert::assertEquals("int3", field3.fieldcontent.name);
+		Assert::assertEquals("int3", field3.fieldcontent.name.toLowerCase);
 		Assert::assertEquals(Integer.I32, (field3.fieldcontent.fieldtype as Integertype).type)
 		val field4 = fields.get(3);
-		Assert::assertEquals("int4", field4.fieldcontent.name);
+		Assert::assertEquals("int4", field4.fieldcontent.name.toLowerCase);
 		Assert::assertEquals(Integer.I64, (field4.fieldcontent.fieldtype as Integertype).type)
 		val field5 = fields.get(4);
-		Assert::assertEquals("int5", field5.fieldcontent.name);
+		Assert::assertEquals("int5", field5.fieldcontent.name.toLowerCase);
 		Assert::assertEquals(Integer.V64, (field5.fieldcontent.fieldtype as Integertype).type)
 		val field6 = fields.get(5);
-		Assert::assertEquals("float1", field6.fieldcontent.name);
+		Assert::assertEquals("float1", field6.fieldcontent.name.toLowerCase);
 		//EXAMPLE FOR NEW STRUCTURE FOR FLOAT
 		Assert::assertEquals(Float.F32, (field6.fieldcontent.fieldtype as Floattype).type)
 		val field7 = fields.get(6);
-		Assert::assertEquals("float2", field7.fieldcontent.name);
+		Assert::assertEquals("float2", field7.fieldcontent.name.toLowerCase);
 		Assert::assertEquals(Float.F64, (field7.fieldcontent.fieldtype as Floattype).type)
 		val field8 = fields.get(7);
-		Assert::assertEquals("str", field8.fieldcontent.name);
+		Assert::assertEquals("str", field8.fieldcontent.name.toLowerCase);
 		//EXAMPLE FOR NEW STRUCTURE FOR STRING
 		Assert::assertEquals("string", (field8.fieldcontent.fieldtype as Stringtype).type)
 		val field9 = fields.get(8);
-		Assert::assertEquals("b", field9.fieldcontent.name);
+		Assert::assertEquals("b", field9.fieldcontent.name.toLowerCase);
 		//EXAMPLE FOR NEW STRUCTURE FOR BOOLEAN
 		Assert::assertEquals("bool", (field9.fieldcontent.fieldtype as Booleantype).type)
 		val field10 = fields.get(9);
-		Assert::assertEquals("a", field10.fieldcontent.name);
+		Assert::assertEquals("a", field10.fieldcontent.name.toLowerCase);
 		//EXAMPLE FOR NEW STRUCTURE FOR ANNOTATION
 		Assert::assertEquals("annotation", (field10.fieldcontent.fieldtype as Annotationtype).type)
 	}
@@ -147,7 +147,7 @@ class TestBuiltInTypes {
   		Assert::assertEquals(type, ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(1) as DeclarationReferenceImpl).type);
   		Assert::assertEquals("string", ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(2) as Stringtype).type);
   		Assert::assertEquals("bool", ((c.fieldcontent.fieldtype as MaptypeImpl).basetypes.get(3) as Booleantype).type);
-  		Assert::assertEquals("readonly", c.hints.get(0).hintName);
+  		Assert::assertEquals("readonly", c.hints.get(0).hintName.toLowerCase);
   	}
   	
   	@Test
