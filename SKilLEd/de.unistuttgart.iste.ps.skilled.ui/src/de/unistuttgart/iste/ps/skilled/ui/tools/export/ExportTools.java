@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -50,6 +51,8 @@ public class ExportTools {
 	File fCheckSave;
 
 	ArrayList<File> fListofFiles = null;
+	List<String> fToolNameList = null;
+	SaveListofAllTools fSave;
 
 	// Location of the workspace the user is using
 	IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -59,30 +62,25 @@ public class ExportTools {
 	// de.unistuttgart.iste.ps.skilled.ui.views.Toolview.java
 	public void setListofAllTools(ArrayList<Tool> allToolList) {
 		// TODO
-		for (int i = 0; i < allToolList.size(); i++) {
-			fToolName[i] = allToolList.get(i).getName();
-			// fToolPath[i] = allToolList.get(i).getOutPath();
-			// fToolLanguage[i] = allToolList.get(i).getLanguage();
-			// ArrayList<Type>[] fToolTypes = (ArrayList<Type>[]) new
-			// ArrayList[allToolList.get(i).getTypes().size()];
-			// fToolTypes[i].addAll(allToolList.get(i).getTypes());
-			// ArrayList<de.unistuttgart.iste.ps.skillls.tools.File>[]
-			// fToolFiles =
-			// (ArrayList<de.unistuttgart.iste.ps.skillls.tools.File>[]) new
-			// ArrayList[allToolList
-			// .get(i).getTypes().size()];
-			// fToolFiles[i].addAll(allToolList.get(i).getFiles());
-			// fToolGenerator[i] = allToolList.get(i).getGenerator();
-			// fToolModule[i] = allToolList.get(i).getModule();
+		if (allToolList.size() > 0) {
+			fToolNameList = new ArrayList<String>();
+			for (int i = 0; i < allToolList.size(); i++) {
+				fToolNameList.add(allToolList.get(i).getName());
+				// fToolPath[i] = allToolList.get(i).getOutPath();
+				// fToolLanguage[i] = allToolList.get(i).getLanguage();
+				// ArrayList<Type>[] fToolTypes = (ArrayList<Type>[]) new
+				// ArrayList[allToolList.get(i).getTypes().size()];
+				// fToolTypes[i].addAll(allToolList.get(i).getTypes());
+				// ArrayList<de.unistuttgart.iste.ps.skillls.tools.File>[]
+				// fToolFiles =
+				// (ArrayList<de.unistuttgart.iste.ps.skillls.tools.File>[]) new
+				// ArrayList[allToolList
+				// .get(i).getTypes().size()];
+				// fToolFiles[i].addAll(allToolList.get(i).getFiles());
+				// fToolGenerator[i] = allToolList.get(i).getGenerator();
+				// fToolModule[i] = allToolList.get(i).getModule();
 
-		}
-	}
-
-	// Gets the file paths of the tools from
-	// de.unistuttgart.iste.ps.skilled.ui.views.Toolview.java
-	public void setPaths(ArrayList<String> pathList) {
-		for (int i = 0; i < pathList.size(); i++) {
-			fToolPath[i] = pathList.get(i);
+			}
 		}
 	}
 
@@ -108,6 +106,9 @@ public class ExportTools {
 	 */
 	public void createContents(final Shell shell) {
 		shell.setLayout(new GridLayout(4, true));
+		fSave = new SaveListofAllTools();
+		fToolNameList = fSave.getToolNameList();
+		System.out.println(fToolNameList.size());
 
 		Label title = new Label(shell, SWT.NONE);
 		title.setText("Export Tool");
@@ -130,9 +131,11 @@ public class ExportTools {
 		gridDataWidgets.grabExcessHorizontalSpace = true;
 		gridDataWidgets.horizontalSpan = 3;
 		cSelectTool.setLayoutData(gridDataWidgets);
-		if (fToolName != null) {
-			cSelectTool.setItems(fToolName);
+		if (fToolNameList != null) {
+			System.out.println("fToolNameList is not empty!");
+			cSelectTool.setItems((String[])fToolNameList.toArray());
 		} else {
+			System.out.println("fToolNameList is empty!");
 			String emptyList[] = {};
 			cSelectTool.setItems(emptyList);
 		}

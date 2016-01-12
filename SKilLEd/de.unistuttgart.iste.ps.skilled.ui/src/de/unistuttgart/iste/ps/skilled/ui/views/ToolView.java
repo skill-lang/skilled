@@ -33,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
-import de.unistuttgart.iste.ps.skilled.ui.tools.export.ExportToolsDialog;
+import de.unistuttgart.iste.ps.skilled.ui.tools.export.SaveListofAllTools;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.SKilLToolWizard;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
 import de.unistuttgart.iste.ps.skillls.tools.Field;
@@ -75,8 +75,8 @@ public class ToolView extends ViewPart {
 	private IProject activeProject = null;
 	private Shell shell;
 
-	ExportToolsDialog fExport = new ExportToolsDialog();
-
+	SaveListofAllTools fSave = new SaveListofAllTools();
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		tabFolder = new CTabFolder(parent, SWT.BORDER);
@@ -204,8 +204,8 @@ public class ToolView extends ViewPart {
 		if (skillFile.Tools() != null) {
 			skillFile.Tools().forEach(t -> allToolList.add(t));
 
-			skillFile.Tools().forEach(t -> pathList.add(path));
-			fExport.setPaths(pathList);
+//			skillFile.Tools().forEach(t -> pathList.add(path));
+//			fExport.setPaths(pathList);
 		}
 
 		if (skillFile.Types() != null) {
@@ -265,8 +265,9 @@ public class ToolView extends ViewPart {
 				// no default
 			}
 		});
-		fExport.setListofAllTools(allToolList);
+
 		return toolViewList;
+		
 	}
 
 	/**
@@ -723,6 +724,7 @@ public class ToolView extends ViewPart {
 	 * Method to print the values of all lists at the Console.
 	 */
 	private void printAllLists() {
+		
 		System.out.println("AllToolsList---------------");
 		for (Tool tool : allToolList) {
 			System.out.println(tool.getName());
@@ -752,4 +754,9 @@ public class ToolView extends ViewPart {
 			System.out.println(tool.getName());
 		}
 	}
+	
+	public ArrayList<Tool> getListofTools() {
+		return allToolList;
+	}
+
 }
