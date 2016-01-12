@@ -455,13 +455,28 @@
      <wizard
            category="de.unistuttgart.iste.ps.skilled.ui.category.wizards"
            class="de.unistuttgart.iste.ps.skilled.ui.wizards.SKilLNewFileWizard"
-           icon="icons/sample.gif"
+           icon="$nl$/icons/sample.gif"
            id="de.unistuttgart.iste.ps.skilled.ui.wizards.SKilLNewFileWizard"
            name="SKilL file"
            project="false">
      </wizard>
   </extension>
-    <extension
+  <extension
+        point="org.eclipse.ui.views">
+     <category
+           id="de.unistuttgart.iste.ps.skilled.ui"
+           name="SKilLEd">
+     </category>
+     <view
+           allowMultiple="false"
+           category="de.unistuttgart.iste.ps.skilled.ui"
+           class="de.unistuttgart.iste.ps.skilled.ui.views.ToolView"
+           icon="$nl$/icons/sample.gif"
+           id="de.unistuttgart.iste.ps.skilled.ui.views.ToolView"
+           name="ToolView">
+     </view>
+  </extension>
+  <extension
         point="org.eclipse.ui.perspectiveExtensions">
      <perspectiveExtension
            targetID="*">
