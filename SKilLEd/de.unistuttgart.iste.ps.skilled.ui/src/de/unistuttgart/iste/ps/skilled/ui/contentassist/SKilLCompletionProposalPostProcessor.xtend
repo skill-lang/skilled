@@ -38,10 +38,10 @@ class SKilLCompletionProposalPostProcessor extends DefaultCompletionProposalPost
 						}
 
 						if (additionalProposalInfo?.element instanceof Fieldcontent) {
-							var Fieldcontent abc = additionalProposalInfo.element as Fieldcontent;
-							var String replacementString = (abc.eContainer.eContainer as Declaration).name + "." +
-								abc.name;
-							var String displayString = abc.name + " - " + replacementString;
+							var Fieldcontent content = additionalProposalInfo.element as Fieldcontent;
+							var String replacementString = (content.eContainer.eContainer as Declaration).name + "." +
+								content.name;
+							var String displayString = content.name + " - " + replacementString;
 							p.displayString = displayString;
 							p.replacementString = replacementString;
 						}
