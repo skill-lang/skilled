@@ -20,12 +20,7 @@ public class SKilLQualifiedNameConverter extends DefaultImpl {
         QualifiedName qualifiedName = super.toQualifiedName(qualifiedNameAsString);
         List<String> segsConverted = new LinkedList<String>();
 
-        // If there is only one segment, it is an normal ID and therefore it will be converted with the typeValueConverter.
-        if (qualifiedName.getSegments().size() <= 1) {
-            return qualifiedName;
-        }
-
-        // If not get the segments and convert it.
+        // Get the segments and convert it.
         for (String s : qualifiedName.getSegments()) {
             segsConverted.add((makeEquivalent(s)));
         }
