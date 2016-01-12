@@ -17,17 +17,8 @@ public class SKilLTerminalConverters extends DefaultTerminalConverters {
     @Inject
     private HEXINTValueConverter hexintValueConverter;
 
-    @Inject
-    private TypeValueConverter typeValueConverter;
-
     @ValueConverter(rule = "HEXINT")
     public IValueConverter<Long> HEXINT() {
         return hexintValueConverter;
-    }
-
-    @Override
-    @ValueConverter(rule = "ID")
-    public IValueConverter<String> ID() {
-        return typeValueConverter;
     }
 }

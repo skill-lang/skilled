@@ -21,6 +21,11 @@ public class SKilLQualifiedNameProvider extends DefaultDeclarativeQualifiedNameP
     @Inject
     SKilLQualifiedNameConverter qualifiedNameConverter;
 
+    public static QualifiedName qualifiedName(Declaration declaration) {
+        QualifiedName q = QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(declaration.getName()));
+        return q;
+    }
+
     // get normalized fieldcontent name
     static QualifiedName qualifiedName(Fieldcontent field) {
         EObject e = field.eContainer();
@@ -33,7 +38,8 @@ public class SKilLQualifiedNameProvider extends DefaultDeclarativeQualifiedNameP
             return q;
         }
         d = (Declaration) e;
-        QualifiedName q = QualifiedName.create(d.getName(), SKilLQualifiedNameConverter.makeEquivalent(field.getName()));
+        QualifiedName q = QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(d.getName()),
+                SKilLQualifiedNameConverter.makeEquivalent(field.getName()));
         return q;
     }
 
@@ -49,7 +55,7 @@ public class SKilLQualifiedNameProvider extends DefaultDeclarativeQualifiedNameP
             return q;
         }
         d = (Declaration) e;
-        QualifiedName q = QualifiedName.create(d.getName(),
+        QualifiedName q = QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(d.getName()),
                 SKilLQualifiedNameConverter.makeEquivalent(enuminstance.getName()));
         return q;
     }
