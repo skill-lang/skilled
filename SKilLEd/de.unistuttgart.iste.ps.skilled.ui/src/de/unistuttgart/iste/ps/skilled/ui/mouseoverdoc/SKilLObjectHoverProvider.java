@@ -30,10 +30,10 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Usertype;
  * @author Tobias Heck
  */
 public class SKilLObjectHoverProvider extends DefaultEObjectHoverProvider {
-    
+
     private IInformationControlCreator presenterControlCreator;
     private IInformationControlCreator hoverControlCreator;
-    
+
     @Override
     protected String getFirstLine(EObject o) {
         String comment = "";
@@ -56,80 +56,88 @@ public class SKilLObjectHoverProvider extends DefaultEObjectHoverProvider {
         }
         return comment;
     }
-    
+
     @Override
     public IInformationControlCreator getInformationPresenterControlCreator() {
         if (presenterControlCreator == null)
             presenterControlCreator = new PresenterControlCreator() {
-            @Override
-            public IInformationControl doCreateInformationControl(Shell parent) {
-                if (BrowserInformationControl.isAvailable(parent)) {
-                    ToolBarManager tbm = new ToolBarManager(SWT.FLAT);
-                    String font = "org.eclipse.jdt.ui.javadocfont";
-                    IXtextBrowserInformationControl control = new XtextBrowserInformationControl(parent, font, tbm) {
-                        private long changeSize = 0;
-                        
-                        @Override
-                        public void setSize(int width, int height) {
-                            if (changeSize == 0) {
-                                super.setSize(width, height);
+                @Override
+                public IInformationControl doCreateInformationControl(Shell parent) {
+                    if (BrowserInformationControl.isAvailable(parent)) {
+                        ToolBarManager tbm = new ToolBarManager(SWT.FLAT);
+                        String font = "org.eclipse.jdt.ui.javadocfont";
+                        IXtextBrowserInformationControl control = new XtextBrowserInformationControl(parent, font, tbm) {
+                            private long changeSize = 0;
+                            private long time = 0;
+
+                            @Override
+                            public void setSize(int width, int height) {
+                                if (changeSize == 0 || (changeSize > 1 && (time + 100 > System.currentTimeMillis()))) {
+                                    super.setSize(width, height);
+                                }
+                                changeSize++;
+                                time = System.currentTimeMillis();
                             }
-                            changeSize++;
-                        }
-                    };
-                    configureControl(control, tbm, font);
-                    control.setSize(350, 250);
-                    return control;
-                } else {
-                    return new DefaultInformationControl(parent,true);
+                        };
+                        configureControl(control, tbm, font);
+                        control.setSize(350, 250);
+                        return control;
+                    } else {
+                        return new DefaultInformationControl(parent, true);
+                    }
                 }
-            }
-        };
+            };
         return presenterControlCreator;
     }
-    
+
     @Override
     public IInformationControlCreator getHoverControlCreator() {
         if (hoverControlCreator == null)
             hoverControlCreator = new HoverControlCreator(getInformationPresenterControlCreator()) {
-            
-            @Override
-            public IInformationControl doCreateInformationControl(Shell parent) {
-                String tooltipAffordanceString = EditorsUI.getTooltipAffordanceString();
-                if (BrowserInformationControl.isAvailable(parent)) {
-                    String font = "org.eclipse.jdt.ui.javadocfont";
-                    IXtextBrowserInformationControl iControl = new XtextBrowserInformationControl(parent, font,
-                            tooltipAffordanceString) {
-                        private long changeSize = 0;
-                        
-                        @Override
-                        public void setSize(int width, int height) {
-                            if (changeSize == 0) {
-                                super.setSize(width, height);
+
+                @Override
+                public IInformationControl doCreateInformationControl(Shell parent) {
+                    String tooltipAffordanceString = EditorsUI.getTooltipAffordanceString();
+                    if (BrowserInformationControl.isAvailable(parent)) {
+                        String font = "org.eclipse.jdt.ui.javadocfont";
+                        IXtextBrowserInformationControl iControl = new XtextBrowserInformationControl(parent, font,
+                                tooltipAffordanceString) {
+                            private long changeSize = 0;
+                            private long time = 0;
+
+                            @Override
+                            public void setSize(int width, int height) {
+                                if (changeSize == 0 || (changeSize > 1 && (time + 100 > System.currentTimeMillis()))) {
+                                    super.setSize(width, height);
+                                }
+                                changeSize++;
+                                time = System.currentTimeMillis();
                             }
-                            changeSize++;
-                        }
-                        @Override
-                        public IInformationControlCreator getInformationPresenterControlCreator() {
-                            IInformationControlCreator fInformationPresenterControlCreator = null;
-                            try {
-                                Field f = this.getClass().getDeclaredField("fInformationPresenterControlCreator");
-                                f.setAccessible(true);
-                                fInformationPresenterControlCreator = (IInformationControlCreator) f.get(this);
-                            } catch (Exception e) {
-                                //not gonna happen
+
+                            @Override
+                            public IInformationControlCreator getInformationPresenterControlCreator() {
+                                IInformationControlCreator fInformationPresenterControlCreator = null;
+                                try {
+                                    Field f = (new HoverControlCreator(null)).getClass()
+                                            .getDeclaredField("fInformationPresenterControlCreator");
+                                    f.setAccessible(true);
+                                    fInformationPresenterControlCreator = (IInformationControlCreator) f
+                                            .get(hoverControlCreator);
+                                } catch (Exception e) {
+                                    System.out.println("asdf");
+                                    // not gonna happen
+                                }
+                                return fInformationPresenterControlCreator;
                             }
-                            return fInformationPresenterControlCreator;
-                        }
-                    };
-                    addLinkListener(iControl);
-                    iControl.setSize(350, 250);
-                    return iControl;
-                } else {
-                    return new DefaultInformationControl(parent, tooltipAffordanceString);
+                        };
+                        addLinkListener(iControl);
+                        iControl.setSize(350, 250);
+                        return iControl;
+                    } else {
+                        return new DefaultInformationControl(parent, tooltipAffordanceString);
+                    }
                 }
-            }
-        };
+            };
         return hoverControlCreator;
     }
 
