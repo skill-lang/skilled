@@ -39,12 +39,21 @@ public class MainClass {
     private static boolean cleanUp = true;
 
     /**
-     * Entry Point. Generates flags for the generator execution.
+     * Entry point. Sets the exception handler to not rethrow exceptions as errors.
+     * @param args
+     */
+    public static void main(String[] args) {
+        ExceptionHandler.setRethrow(false);
+        start(args);
+    }
+
+    /**
+     * Generates flags for the generator execution.
      *
      * @param args
      *            The command line arguments.
      */
-    public static void main(String[] args) {
+    public static void start(String[] args) {
         if (args[0].equals("-e") || args[0].equals("--edit")) {
             Edit editor = new Edit(args[2]);
             File file = new File(args[1]);
