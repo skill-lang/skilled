@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.unistuttgart.iste.ps.skilled.ui.views.ToolView;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
 
 /**
@@ -52,7 +53,9 @@ public class ExportTools {
 
 	ArrayList<File> fListofFiles = null;
 	List<String> fToolNameList = null;
-	SaveListofAllTools fSave;
+	// private SaveListofAllTools fSave;
+	private ToolView fToolView;
+	ArrayList<Tool> fToolList = null;
 
 	// Location of the workspace the user is using
 	IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -61,7 +64,7 @@ public class ExportTools {
 	// Gets the names of the tools from
 	// de.unistuttgart.iste.ps.skilled.ui.views.Toolview.java
 	public void setListofAllTools(ArrayList<Tool> allToolList) {
-		// TODO
+		System.out.println("I am working!");
 		if (allToolList.size() > 0) {
 			fToolNameList = new ArrayList<String>();
 			for (int i = 0; i < allToolList.size(); i++) {
@@ -81,7 +84,11 @@ public class ExportTools {
 				// fToolModule[i] = allToolList.get(i).getModule();
 
 			}
+			System.out.println(fToolNameList.size());
+		} else if (fToolNameList == null) {
+			System.out.println("fToolNameList is null");
 		}
+
 	}
 
 	/**
@@ -92,6 +99,11 @@ public class ExportTools {
 		Shell shell = new Shell(d);
 		shell.setText("Export Tool");
 		shell.layout(true, true);
+
+		fToolList = fToolView.getListofTools();
+		System.out.println("fToolList.size() is " + fToolList.size());
+		setListofAllTools(fToolList);
+
 		createContents(shell);
 		final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		shell.setSize(newSize);
@@ -106,9 +118,6 @@ public class ExportTools {
 	 */
 	public void createContents(final Shell shell) {
 		shell.setLayout(new GridLayout(4, true));
-		fSave = new SaveListofAllTools();
-		fToolNameList = fSave.getToolNameList();
-		System.out.println(fToolNameList.size());
 
 		Label title = new Label(shell, SWT.NONE);
 		title.setText("Export Tool");
@@ -133,7 +142,7 @@ public class ExportTools {
 		cSelectTool.setLayoutData(gridDataWidgets);
 		if (fToolNameList != null) {
 			System.out.println("fToolNameList is not empty!");
-			cSelectTool.setItems((String[])fToolNameList.toArray());
+			cSelectTool.setItems((String[]) fToolNameList.toArray());
 		} else {
 			System.out.println("fToolNameList is empty!");
 			String emptyList[] = {};
@@ -147,23 +156,6 @@ public class ExportTools {
 				fName = cSelectTool.getText();
 			}
 		});
-
-		// Label lNameOfToolFile = new Label(shell, SWT.NONE);
-		// lNameOfToolFile.setText("Name of tool file:");
-		// lNameOfToolFile.setLayoutData(gridDataLabel);
-		//
-		// Text tNameOfToolFile = new Text(shell, SWT.BORDER | SWT.SINGLE);
-		// tNameOfToolFile.setText(fName);
-		// tNameOfToolFile.setLayoutData(gridDataWidgets);
-		//
-		// tNameOfToolFile.addModifyListener(new ModifyListener() {
-		//
-		// @Override
-		// public void modifyText(ModifyEvent e) {
-		// Text textWidget = (Text) e.getSource();
-		// fName = textWidget.getText();
-		// }
-		// });
 
 		Label lSaveLocation = new Label(shell, SWT.NONE);
 		lSaveLocation.setText("Export Location:");

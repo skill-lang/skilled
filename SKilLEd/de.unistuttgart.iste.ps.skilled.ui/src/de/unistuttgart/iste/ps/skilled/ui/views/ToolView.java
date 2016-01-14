@@ -77,6 +77,15 @@ public class ToolView extends ViewPart {
 
 	SaveListofAllTools fSave = new SaveListofAllTools();
 	
+	private static ToolView toolviewI = null;
+	private ToolView() {}
+	public static ToolView getToolViewInstance() {
+		if (null == toolviewI) {
+			toolviewI = new ToolView();
+		}
+		return toolviewI;
+	}
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		tabFolder = new CTabFolder(parent, SWT.BORDER);
