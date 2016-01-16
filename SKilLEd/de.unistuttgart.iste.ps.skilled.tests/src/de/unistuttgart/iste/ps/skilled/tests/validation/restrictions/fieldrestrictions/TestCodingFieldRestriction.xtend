@@ -28,6 +28,16 @@ class TestCodingFieldRestriction {
 	 * maps; other compound types and built in types and user types.
 	 */
 	 
+	@Test
+	def void testBla() {
+		assertFalse('''
+			TypeA {
+				!owner 
+				string a;
+			}   
+		'''.parse.validate.isNullOrEmpty)
+	}
+	 
 	//Map
 	
 	@Test
