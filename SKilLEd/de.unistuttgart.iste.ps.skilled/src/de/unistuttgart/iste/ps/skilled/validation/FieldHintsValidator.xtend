@@ -34,14 +34,12 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 	// An environment independent newline
 	private final static String newline = System.getProperty("line.separator");
 
-	// All hint warning and error messages
-	private final static String Unknown_Hint = "Unknown Hint"
+	// All hint warnings and error messages
+	private final static String Unknown_Hint = "Unknown Hint."
 	// Owner hint error messages
-	private final static String Owner_Usage = "The Owner hint can only be used on base-type declarations."
-	// Owner hint warning messages
-	private final static String Owner_Already_Used = "The Owner hint is already used on this field."
+	private final static String Owner_Usage = "The Owner hint can only be used on base-types."
 	// Provider hint error messages
-	private final static String Provider_Not_One_Arg = "The Provider hint must have one argument."
+	private final static String Provider_Not_One_Arg = "The Provider hint must have at least one argument."
 	private final static String Provider_Arg_Not_Type = "The Provider hint argument must be a tool."
 	private final static String Provider_Already_Used = "The Provider hint is already used on this field."
 	// Remove Unknown Restrictions hint error messages
@@ -60,32 +58,20 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 	private final static String ConstantMutator_Multiple_Used = "The Constant Mutator hint is already used on this field."
 	// Mixin hint error messages
 	private final static String Mixin_Usage = "The Mixin hint can only be used on type declarations."
-	// Mixin hint warning messages
-	private final static String Mixin_Multiple_Used = "The Mixin hint is already used on this field."
 	// Flat hint error messages
 	private final static String Flat_Usage = "The Flat hint can only be used on type declarations."
-	// Flat hint warning messages
-	private final static String Flat_Multiple_Used = "The Flat hint is already used on this field."
 	// Unique hint error messages
 	private final static String Unique_Usage = "The Unique hint can only be used on type declarations."
-	// Unique hint warning messages
-	private final static String Unique_Multiple_Used = "The Unique hint is already used on this field."
 	// Pure hint error messages
 	private final static String Pure_Usage = "The Pure hint can only be used type declarations."
-	// Pure hint warning messages
-	private final static String Pure_Multiple_Used = "The Pure hint is already used on this field."
 	// Distributed hint warning messages
 	private final static String Distributed_Multiple_Used = "The Distributed hint is already used on this field."
 	// On Demand hint warning messages
 	private final static String OnDemand_Multiple_Used = "The On Demand hint is already used on this field."
 	// Monotone hint error messages
-	private final static String Monotone_Usage = "The Monotone hint can only be used on base-type declarations."
-	// Monotone hint warning messages
-	private final static String Monotone_Multiple_Used = "The Monotone hint is already used on this field."
+	private final static String Monotone_Usage = "The Monotone hint can only be used on base-types."
 	// Read Only hint error messages
-	private final static String ReadOnly_Usage = "The Read Only hint can only be used on base-type declarations."
-	// Read Only hint warning messages
-	private final static String ReadOnly_Multiple_Used = "The Read Only hint is already used on this field."
+	private final static String ReadOnly_Usage = "The Read Only hint can only be used on base-types."
 	// Ignore hint warning messages
 	private final static String Ignore_Multiple_Used = "The Ignore hint is already used on this field."
 	// Hide hint warning messages
@@ -95,37 +81,27 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 		
 	@Check
 	def validateFieldHints(Field field) {
-		var wasOwnerUsed = false
 		var wasProviderUsed = false
 		var wasRemoveUnknownRestrictionUsed = false
 		var wasConstantMutatorUsed = false
-		var wasMixinUsed = false
-		var wasFlatUsed = false
-		var wasUniqueUsed = false
-		var wasPureUsed = false
 		var wasDistributedUsed = false
 		var wasOnDemandUsed = false
-		var wasMonotoneUsed = false
-		var wasReadOnlyUsed = false
 		var wasIgnoreUsed = false
 		var wasHideUsed = false
 		var wasPragmaUsed = false
 		for (hint : field.hints) {
 			switch (hint.hintName) {
 				case 'owner': {
-					if (!wasOwnerUsed) {
-						showError(Owner_Usage, hint)
-						wasOwnerUsed = true
-					} else {
-						showWarning(Owner_Already_Used, hint)
-					}					
+					showError(Owner_Usage, hint)					
 				}
 				case 'provider': {
 					if (!wasProviderUsed) {
-						if (hint.hintArguments.size == 1) {	// Can there be many args?
-							if (hint.hintArguments.get(0).valueType == null) {	// How to check for tools names?
-								showError(Provider_Arg_Not_Type, hint)
-							}
+						if (hint.hintArguments.size != 1) {
+							for (hintArgument : hint.hintArguments) {
+									if (hint.hintArguments.get(0).valueType == null) { // How to check for tools names?
+										showError(Provider_Arg_Not_Type, hint)
+									}
+								}
 						} else {
 							showError(Provider_Not_One_Arg, hint)
 						}
@@ -170,36 +146,16 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 					}
 				}
 				case 'mixin': {
-					if (!wasMixinUsed) {
-						showError(Mixin_Usage, hint)	// Is legal on field? 
-						wasMixinUsed = true
-					} else {
-						showWarning(Mixin_Multiple_Used, hint) // If above legal,  Warning or error?
-					}
+					showError(Mixin_Usage, hint)	// Is legal on field? 
 				}
 				case 'flat': {
-					if (!wasFlatUsed) {
-						showError(Flat_Usage, hint)
-						wasFlatUsed = true
-					} else {
-						showWarning(Flat_Multiple_Used, hint)
-					}
+					showError(Flat_Usage, hint)
 				}
 				case 'unique': {
-					if (!wasUniqueUsed) {
-						showError(Unique_Usage, hint)
-						wasUniqueUsed = true
-					} else {
-						showWarning(Unique_Multiple_Used, hint)
-					}
+					showError(Unique_Usage, hint)
 				}
 				case 'pure': {
-					if (!wasPureUsed) {
-						showError(Pure_Usage, hint)
-						wasPureUsed = true
-					} else {
-						showWarning(Pure_Multiple_Used, hint)
-					}
+					showError(Pure_Usage, hint)
 				}
 				case 'distributed': {
 					if (!wasDistributedUsed) {
@@ -216,20 +172,10 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 					}
 				}
 				case 'monotone': {
-					if (!wasMonotoneUsed) {
-						showError(Monotone_Usage, hint)
-						wasMonotoneUsed = true
-					} else {
-						showWarning(Monotone_Multiple_Used, hint)
-					}
+					showError(Monotone_Usage, hint)
 				}
 				case 'readonly': {
-					if (!wasReadOnlyUsed) {
-						showError(ReadOnly_Usage, hint)
-						wasReadOnlyUsed = true
-					} else {
-						showWarning(ReadOnly_Multiple_Used, hint)
-					}
+					showError(ReadOnly_Usage, hint)
 				}
 				case 'ignore': {
 					if (!wasIgnoreUsed) {
@@ -247,9 +193,9 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 				}
 				case 'pragma': {
 					if (!wasPragmaUsed) {
-						wasPragmaUsed = true // Legal args?
+						wasPragmaUsed = true // How to validate args?
 					} else {
-						showWarning(Pragma_Multiple_Used, hint) // Warning or error?
+						showError(Pragma_Multiple_Used, hint)
 					}
 				}
 				default: {
