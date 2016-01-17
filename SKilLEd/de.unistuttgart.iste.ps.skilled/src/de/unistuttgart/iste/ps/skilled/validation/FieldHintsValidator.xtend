@@ -22,7 +22,6 @@ import org.eclipse.xtext.validation.Check
  * hintArgument.valueLong 	- a integer type argument <br>
  * hintArgument.valueDouble	- a float type argument <br>
  * 
- * 
  * @author Nikolay Fateev
  */
 class FieldHintsValidator extends AbstractSKilLValidator {
@@ -34,13 +33,12 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 	// An environment independent newline
 	private final static String newline = System.getProperty("line.separator");
 
-	// All hint warnings and error messages
+	// All hints warnings and error messages
 	private final static String Unknown_Hint = "Unknown Hint."
 	// Owner hint error messages
 	private final static String Owner_Usage = "The Owner hint can only be used on base-types."
 	// Provider hint error messages
 	private final static String Provider_Not_One_Arg = "The Provider hint must have at least one argument."
-	private final static String Provider_Arg_Not_Type = "The Provider hint argument must be a tool."
 	private final static String Provider_Already_Used = "The Provider hint is already used on this field."
 	// Remove Unknown Restrictions hint error messages
 	private final static String RemoveUnknownRestrictions_Usage = "The argument(s) are not correct." + newline +
@@ -76,7 +74,9 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 	private final static String Ignore_Multiple_Used = "The Ignore hint is already used on this field."
 	// Hide hint warning messages
 	private final static String Hide_Multiple_Used = "The Hide hint is already used on this field."
-	// Pragma hint warning messages
+	// Pragma hint error messages
+	private final static String Pragma_Args_Not_Types = "The Pragma hint arguments must be types."+newline+"Syntax: !pragma <typeID> or !pragma <typeID>(<typeID>, ...)"
+	private final static String Pragma_Not_One_Arg = "The Pragma hint must have at least one argument."
 	private final static String Pragma_Multiple_Used = "The Pragma hint is already used on this field."
 		
 	@Check
@@ -96,13 +96,7 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 				}
 				case 'provider': {
 					if (!wasProviderUsed) {
-						if (hint.hintArguments.size != 1) {
-							for (hintArgument : hint.hintArguments) {
-									if (hint.hintArguments.get(0).valueType == null) { // How to check for tools names?
-										showError(Provider_Arg_Not_Type, hint)
-									}
-								}
-						} else {
+						if (hint.hintArguments.size == 0) {
 							showError(Provider_Not_One_Arg, hint)
 						}
 						wasProviderUsed = true
@@ -112,7 +106,8 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 				}
 				case 'removeunknownrestrictions': {
 					if (!wasRemoveUnknownRestrictionUsed) {
-						if (!areRemoveUnknownRestrictionArgumentsCorrect(hint.hintArguments)) {		// Combination of "unknown" + something else valid?
+						// Currently it is legal to have "unknown" + other restrictions names at the same time
+						if (!areRemoveUnknownRestrictionArgumentsCorrect(hint.hintArguments)) {	
 							showError(RemoveUnknownRestrictions_Usage, hint)
 						}
 						wasRemoveUnknownRestrictionUsed = true
@@ -146,7 +141,7 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 					}
 				}
 				case 'mixin': {
-					showError(Mixin_Usage, hint)	// Is legal on field? 
+					showError(Mixin_Usage, hint)
 				}
 				case 'flat': {
 					showError(Flat_Usage, hint)
@@ -161,14 +156,14 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 					if (!wasDistributedUsed) {
 						wasDistributedUsed = true
 					} else {
-						showWarning(Distributed_Multiple_Used, hint) // Warning or error?
+						showWarning(Distributed_Multiple_Used, hint)
 					}
 				}
 				case 'ondemand': {
 					if (!wasOnDemandUsed) {
 						wasOnDemandUsed = true
 					} else {
-						showWarning(OnDemand_Multiple_Used, hint) // Warning or error?
+						showWarning(OnDemand_Multiple_Used, hint)
 					}
 				}
 				case 'monotone': {
@@ -181,19 +176,28 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 					if (!wasIgnoreUsed) {
 						wasIgnoreUsed = true
 					} else {
-						showWarning(Ignore_Multiple_Used, hint) // Warning or error?
+						showWarning(Ignore_Multiple_Used, hint)
 					}
 				}
 				case 'hide': {
 					if (!wasHideUsed) {
 						wasHideUsed = true
 					} else {
-						showWarning(Hide_Multiple_Used, hint) // Warning or error?
+						showWarning(Hide_Multiple_Used, hint)
 					}
 				}
 				case 'pragma': {
 					if (!wasPragmaUsed) {
-						wasPragmaUsed = true // How to validate args?
+						if (hint.hintArguments.size != 0) {
+							for (hintArgument : hint.hintArguments) {
+								if (hintArgument.valueType == null) {
+									showError(Pragma_Args_Not_Types, hint)
+								}
+							}
+						} else {
+							showError(Pragma_Not_One_Arg, hint)
+						}
+						wasPragmaUsed = true
 					} else {
 						showError(Pragma_Multiple_Used, hint)
 					}
