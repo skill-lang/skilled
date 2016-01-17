@@ -60,7 +60,7 @@ Field:
 Fieldcontent:
 	View | Constant | Data;
 
-	// Again needed for syntax coloring and it uses qualified names because of the views notation.
+// Again needed for syntax coloring and it uses qualified names because of the views notation.
 FieldcontentReference:
 	fieldcontent=[Fieldcontent|QualifiedName];
 
@@ -126,7 +126,7 @@ RestrictionArgument:
 Hint:
 	PragmaHint | BasicHint;
 
-PragmaHint returns Hint :
+PragmaHint returns Hint:
 	'!' hintName='pragma' hintArguments+=HintArgument ('(' hintArguments+=HintArgument (',' hintArguments+=HintArgument)* ')')?;
 
 BasicHint returns Hint:
