@@ -12,7 +12,7 @@ import org.eclipse.xtext.validation.Check
  * Validates field hints and their arguments. <br>
  * <br>
  * Supported hints: Owner, Provider, Remove Unknown Restrictions, Constant Mutator, <br>
- * Mixin, Flat, Unique, Pure, Distributed, OnDemand, Monotone, ReadOnly, Ignore, Hide, Pragma <br>
+ * Mixin, Flat, Unique, Pure, Distributed, OnDemand, Monotone, ReadOnly, Ignore, Hide, Pragma. <br>
  * <br>
  * The error/warning messages give context to the conditions. <br>
  * <br>
@@ -105,8 +105,7 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 					}					
 				}
 				case 'removeunknownrestrictions': {
-					if (!wasRemoveUnknownRestrictionUsed) {
-						// Currently it is legal to have "unknown" + other restrictions names at the same time
+					if (!wasRemoveUnknownRestrictionUsed) {			
 						if (!areRemoveUnknownRestrictionArgumentsCorrect(hint.hintArguments)) {	
 							showError(RemoveUnknownRestrictions_Usage, hint)
 						}
@@ -209,6 +208,9 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 		}
 	}
 	
+	/**
+	 *  Currently it is legal to have "unknown" + other restrictions names at the same time
+	 */
 	def boolean areRemoveUnknownRestrictionArgumentsCorrect(List<HintArgument> arguments) {
 		for (hintArgument : arguments) {
 			if (hintArgument.valueString != null) {
