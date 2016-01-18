@@ -124,7 +124,7 @@ public class SKilLObjectHoverProvider extends DefaultEObjectHoverProvider {
                                     fInformationPresenterControlCreator = (IInformationControlCreator) f
                                             .get(hoverControlCreator);
                                 } catch (Exception e) {
-                                    System.out.println("asdf");
+                                    e.printStackTrace();
                                     // not gonna happen
                                 }
                                 return fInformationPresenterControlCreator;
