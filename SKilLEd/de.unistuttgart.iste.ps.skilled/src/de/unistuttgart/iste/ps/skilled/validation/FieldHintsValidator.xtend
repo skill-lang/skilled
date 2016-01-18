@@ -85,7 +85,7 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 		var wasHideUsed = false
 		var wasPragmaUsed = false
 		for (hint : field.hints) {
-			switch (hint.hintName) {
+			switch (hint.hintName.toLowerCase) {
 				case 'removeunknownrestrictions': {
 					if (!wasRemoveUnknownRestrictionUsed) {			
 						if (!areRemoveUnknownRestrictionArgumentsCorrect(hint.hintArguments)) {	
