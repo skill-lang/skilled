@@ -100,8 +100,8 @@ class TestInheritenceValidator {
 	}
 
 	@Test
-	def void testInheritanceViaInterfaceAndTypeAndInterfaceError() {
-		assertFalse("interface A:D{} interface B:E{} C:A:B{} D:E{} E{}".parse.validate.isNullOrEmpty)
+	def void testInheritanceViaInterfaceAndTypeAndInterfaceNoError() {
+		assertTrue("interface A:D{} interface B:E{} C:A:B{} D:E{} E{}".parse.validate.isNullOrEmpty)
 	}
 
 	@Test
@@ -136,7 +136,7 @@ class TestInheritenceValidator {
 
 	@Test
 	def void testNoError17() {
-		assertFalse("E:A{} interface A:B:C:D{} interface B:F{} interface C:F{} interface D:G{} F:G{} G{}".parse.validate.isNullOrEmpty)
+		assertTrue("E:A{} interface A:B:C:D{} interface B:F{} interface C:F{} interface D:G{} F:G{} G{}".parse.validate.isNullOrEmpty)
 	}
 
 	@Test
@@ -255,7 +255,7 @@ class TestInheritenceValidator {
 	}
 	
 	@Test
-	def void CycleError() {
+	def void hallo() {
 		val issues = "A:B:C{} B:A:C{} C:A:B{}".parse.validate
 		
 		assertTrue(issues.size==3)
@@ -266,7 +266,7 @@ class TestInheritenceValidator {
 	}
 	
 	@Test
-	def void errorMoreThanOneParentSameAsType() {
+	def void asdf() {
 		val issues = "A:A:A{}".parse.validate
 		
 		assertTrue(issues.size==1)

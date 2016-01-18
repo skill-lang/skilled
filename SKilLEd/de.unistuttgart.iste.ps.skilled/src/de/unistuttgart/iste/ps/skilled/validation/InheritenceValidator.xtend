@@ -108,9 +108,8 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	}
 	
 	
-	
 	def checkMultipleInheritence(TypeDeclaration dec) {
-		if(checkSupertypes(dec).size>1){
+		if(checkSupertypes(dec)==false){
 			//More than one non-interface Supertype
 			error("Error: Inheritence error.", dec,
 						SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE_ERROR, dec.name)
@@ -120,19 +119,24 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	/**
 	 * 
 	 * @param dec The Declaration to check.
-	 * @return Set with the Name of all non-Interface supertypes from dec.
+	 * @return False if inheritence error exists; else true.
 	 * 
 	 */
-	def Set<String> checkSupertypes(TypeDeclaration dec){
-		var Set<String> supertypes = new HashSet<String>;
+	def boolean checkSupertypes(TypeDeclaration dec){
+		var Set<TypeDeclaration> interfaces = new HashSet<TypeDeclaration>();
+		var Set<TypeDeclaration> types = new HashSet<TypeDeclaration>();
 		for (TypeDeclarationReference tdr: dec.supertypes){
 			if(tdr.type instanceof Interfacetype){
-				supertypes.addAll(checkSupertypes(tdr.type))
+				interfaces.add(tdr.type)
 			}else{
-				supertypes.add(tdr.type.name);
+				types.add(tdr.type)
 			}
 		}
-		return supertypes;
+		if(types.size>1){
+			//More than one non-interface supertype=> error
+			return false
+		}
+		return true;
 	}
 	
 	
