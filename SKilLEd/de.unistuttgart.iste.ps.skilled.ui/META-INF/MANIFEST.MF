@@ -19,6 +19,7 @@ Require-Bundle: de.unistuttgart.iste.ps.skilled;visibility:=reexport,
  org.antlr.runtime,
  org.eclipse.xtext.util,
  org.eclipse.xtext
+ de.unistuttgart.iste.ps.skillls;bundle-version="1.0.0"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.unistuttgart.iste.ps.skilled.ui;
@@ -46,11 +47,15 @@ Export-Package: de.unistuttgart.iste.ps.skilled.ui;
  de.unistuttgart.iste.ps.skilled.ui.preferences,
  de.unistuttgart.iste.ps.skilled.ui.quickfix;uses:="org.eclipse.xtext.ui.editor.quickfix",
  de.unistuttgart.iste.ps.skilled.ui.refactoring.combinefiles,
+ de.unistuttgart.iste.ps.skilled.ui.tools,
+ de.unistuttgart.iste.ps.skilled.ui.tools.export,
+ de.unistuttgart.iste.ps.skilled.ui.views,
  de.unistuttgart.iste.ps.skilled.ui.wizards;
   uses:="org.eclipse.ui,
    org.eclipse.swt.widgets,
    org.eclipse.jface.wizard,
-   org.eclipse.jface.viewers"
+   org.eclipse.jface.viewers",
+ de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard
 Bundle-Activator: de.unistuttgart.iste.ps.skilled.ui.internal.SKilLActivator
 Bundle-ClassPath: lib/skill.java.common.jar,
  lib/skill.jvm.common.jar,

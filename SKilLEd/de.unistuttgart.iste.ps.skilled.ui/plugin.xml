@@ -470,7 +470,7 @@
      <view
            allowMultiple="false"
            category="de.unistuttgart.iste.ps.skilled.ui"
-           class="de.unistuttgart.iste.ps.skilled.ui.views.ToolView"
+           class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.views.ToolView"
            icon="$nl$/icons/sample.gif"
            id="de.unistuttgart.iste.ps.skilled.ui.views.ToolView"
            name="ToolView">
