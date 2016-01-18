@@ -1,0 +1,56 @@
+IEclipsePreferences#org-eclipse-xtext-ui {
+	preferences:
+		'syntaxColorer.headcomment.color=255,255,255'
+		'syntaxColorer.headcomment.style=1' /* SWT.BOLD */
+		
+		'syntaxColorer.keyword.color=255,255,255'
+		'syntaxColorer.keyword.style=1' /* SWT.BOLD */
+	
+		'syntaxColorer.punctuation.color=255,255,255'
+		'syntaxColorer.punctuation.style=1' /* SWT.BOLD */
+		
+		'syntaxColorer.comment.color=255,255,255'
+		'syntaxColorer.comment.style=1' /* SWT.BOLD */
+
+		'syntaxColorer.string.color=255,255,255'
+		'syntaxColorer.string.style=1' /* SWT.BOLD */
+
+		'syntaxColorer.number.color=255,255,255'
+		'syntaxColorer.number.style=1' /* SWT.BOLD */
+
+		'syntaxColorer.default.color=255,255,255'
+		'syntaxColorer.default.style=1' /* SWT.BOLD */
+
+		'syntaxColorer.usertype.color=255,255,255'
+		'syntaxColorer.usertype.style=1' /* SWT.BOLD */
+
+		'syntaxColorer.interface.color=255,255,255'
+		'syntaxColorer.interface.style=1' /* SWT.BOLD */
+
+		'syntaxColorer.enum.color=255,255,255'
+		'syntaxColorer.enum.style=1' /* SWT.BOLD */
+
+		'syntaxColorer.typedef.color=255,255,255'
+		'syntaxColorer.typedef.style=1' /* SWT.BOLD */
+		
+		'syntaxColorer.buildintype.color=255,255,255'
+		'syntaxColorer.buildintype.style=1' /* SWT.BOLD */
+		
+		'syntaxColorer.data.color=255,255,255'
+		'syntaxColorer.data.style=1' /* SWT.BOLD */
+
+		'syntaxColorer.constant.color=255,255,255'
+		'syntaxColorer.constant.style=1' /* SWT.BOLD */
+
+		'syntaxColorer.view.color=255,255,255'
+		'syntaxColorer.view.style=1' /* SWT.BOLD */
+	
+		'syntaxColorer.hint.color=255,255,255'
+		'syntaxColorer.hint.style=1' /* SWT.BOLD */
+
+		'syntaxColorer.restriction.color=255,255,255'
+		'syntaxColorer.restriction.style=1' /* SWT.BOLD */
+
+		'syntaxColorer.compound.color=255,255,255'
+		'syntaxColorer.compound.style=1' /* SWT.BOLD */		
+}
