@@ -68,13 +68,15 @@ class ViewValidator extends AbstractDeclarativeValidator {
 									SKilLPackage.Literals.VIEW.getEStructuralFeature(2), VIEW_ERROR)
 
 							} else {
-								var Usertype usertypeSupertypeVar = null;
+								var Declaration usertypeSupertypeVar = null;
 								var boolean supertypeVarIsUsertype = false;
 								if (supertypeVar.fieldcontent.fieldtype instanceof DeclarationReference) {
 									var DeclarationReference usertypeDeclarationSupertype = supertypeVar.fieldcontent.fieldtype as DeclarationReference;
 									if ((usertypeDeclarationSupertype.type instanceof Usertype)||(usertypeDeclarationSupertype.type instanceof InterfacetypeImpl)) {
 										supertypeVarIsUsertype = true;
+										usertypeSupertypeVar = usertypeDeclarationSupertype.type;
 									}
+									
 								}
 								//If SupertypeVar isn't a usertype => error else check if the type of supertypeVar is a supertype of the as var.
 								if (!supertypeVarIsUsertype) {
