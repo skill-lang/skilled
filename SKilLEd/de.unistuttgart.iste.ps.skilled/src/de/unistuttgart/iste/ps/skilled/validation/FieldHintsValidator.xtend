@@ -23,6 +23,7 @@ import org.eclipse.xtext.validation.Check
  * hintArgument.valueDouble	- a float type argument <br>
  * 
  * @author Nikolay Fateev
+ * @author Tobias Heck
  */
 class FieldHintsValidator extends AbstractSKilLValidator {
 	
@@ -35,11 +36,6 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 
 	// All hints warnings and error messages
 	private final static String Unknown_Hint = "Unknown Hint."
-	// Owner hint error messages
-	private final static String Owner_Usage = "The Owner hint can only be used on base-types."
-	// Provider hint error messages
-	private final static String Provider_Not_One_Arg = "The Provider hint must have at least one argument."
-	private final static String Provider_Already_Used = "The Provider hint is already used on this field."
 	// Remove Unknown Restrictions hint error messages
 	private final static String RemoveUnknownRestrictions_Usage = "The argument(s) are not correct." + newline +
 		"Use no arguments to remove all restrictions." + newline +
@@ -81,7 +77,6 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 		
 	@Check
 	def validateFieldHints(Field field) {
-		var wasProviderUsed = false
 		var wasRemoveUnknownRestrictionUsed = false
 		var wasConstantMutatorUsed = false
 		var wasDistributedUsed = false
@@ -91,19 +86,6 @@ class FieldHintsValidator extends AbstractSKilLValidator {
 		var wasPragmaUsed = false
 		for (hint : field.hints) {
 			switch (hint.hintName) {
-				case 'owner': {
-					showError(Owner_Usage, hint)					
-				}
-				case 'provider': {
-					if (!wasProviderUsed) {
-						if (hint.hintArguments.size == 0) {
-							showError(Provider_Not_One_Arg, hint)
-						}
-						wasProviderUsed = true
-					} else {
-						showError(Provider_Already_Used, hint)
-					}					
-				}
 				case 'removeunknownrestrictions': {
 					if (!wasRemoveUnknownRestrictionUsed) {			
 						if (!areRemoveUnknownRestrictionArgumentsCorrect(hint.hintArguments)) {	
