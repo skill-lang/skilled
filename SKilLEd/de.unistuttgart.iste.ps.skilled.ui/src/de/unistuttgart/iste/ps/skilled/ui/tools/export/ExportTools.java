@@ -45,7 +45,6 @@ public class ExportTools {
 	String fName = "";
 	String fSaveLocation = "";
 	String[] fToolName;
-	String[] fToolPath;
 	// String[] fToolLanguage;
 	// Generator[] fToolGenerator;
 	// String[] fToolModule;
@@ -53,9 +52,10 @@ public class ExportTools {
 
 	ArrayList<File> fListofFiles = null;
 	List<String> fToolNameList = null;
-	// private SaveListofAllTools fSave;
+	private SaveListofAllTools fSave;
 	private ToolView fToolView;
 	ArrayList<Tool> fToolList = null;
+	List<String> fToolPathList = null;
 
 	// Location of the workspace the user is using
 	IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -63,33 +63,19 @@ public class ExportTools {
 
 	// Gets the names of the tools from
 	// de.unistuttgart.iste.ps.skilled.ui.views.Toolview.java
-	public void setListofAllTools(ArrayList<Tool> allToolList) {
-		System.out.println("I am working!");
-		if (allToolList.size() > 0) {
-			fToolNameList = new ArrayList<String>();
-			for (int i = 0; i < allToolList.size(); i++) {
-				fToolNameList.add(allToolList.get(i).getName());
-				// fToolPath[i] = allToolList.get(i).getOutPath();
-				// fToolLanguage[i] = allToolList.get(i).getLanguage();
-				// ArrayList<Type>[] fToolTypes = (ArrayList<Type>[]) new
-				// ArrayList[allToolList.get(i).getTypes().size()];
-				// fToolTypes[i].addAll(allToolList.get(i).getTypes());
-				// ArrayList<de.unistuttgart.iste.ps.skillls.tools.File>[]
-				// fToolFiles =
-				// (ArrayList<de.unistuttgart.iste.ps.skillls.tools.File>[]) new
-				// ArrayList[allToolList
-				// .get(i).getTypes().size()];
-				// fToolFiles[i].addAll(allToolList.get(i).getFiles());
-				// fToolGenerator[i] = allToolList.get(i).getGenerator();
-				// fToolModule[i] = allToolList.get(i).getModule();
-
-			}
-			System.out.println(fToolNameList.size());
-		} else if (fToolNameList == null) {
-			System.out.println("fToolNameList is null");
-		}
-
-	}
+//	public void setListofAllTools(ArrayList<Tool> allToolList) {
+//		System.out.println("I am working!");
+//		if (allToolList.size() > 0) {
+//			fToolNameList = new ArrayList<String>();
+//			for (int i = 0; i < allToolList.size(); i++) {
+//				fToolNameList.add(allToolList.get(i).getName());
+//			}
+//			System.out.println(fToolNameList.size());
+//		} else if (fToolNameList == null) {
+//			System.out.println("fToolNameList is null");
+//		}
+//
+//	}
 
 	/**
 	 * Creates dialog window
@@ -99,10 +85,16 @@ public class ExportTools {
 		Shell shell = new Shell(d);
 		shell.setText("Export Tool");
 		shell.layout(true, true);
-
-		fToolList = fToolView.getListofTools();
-		System.out.println("fToolList.size() is " + fToolList.size());
-		setListofAllTools(fToolList);
+		fSave = SaveListofAllTools.getInstance();
+		if (SaveListofAllTools.getToolNameList() != null && SaveListofAllTools.getToolPathList() != null) {
+			fToolNameList = SaveListofAllTools.getToolNameList();
+			fToolPathList = SaveListofAllTools.getToolPathList();
+			// fToolList = fToolView.getListofTools();
+			System.out.println("fToolNameList.size() is " + fToolNameList.size());
+			// setListofAllTools(fToolList);
+		} else {
+			System.out.println("run:fToolNameList is null");
+		}
 
 		createContents(shell);
 		final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
@@ -142,7 +134,7 @@ public class ExportTools {
 		cSelectTool.setLayoutData(gridDataWidgets);
 		if (fToolNameList != null) {
 			System.out.println("fToolNameList is not empty!");
-			cSelectTool.setItems((String[]) fToolNameList.toArray());
+			cSelectTool.setItems(fToolNameList.toArray(new String[fToolNameList.size()]));
 		} else {
 			System.out.println("fToolNameList is empty!");
 			String emptyList[] = {};
@@ -281,10 +273,10 @@ public class ExportTools {
 		int fWorkspaceLength = workspaceDirectory.getAbsolutePath().length();
 
 		System.out.println("fName is: " + fName);
-		int index = Arrays.asList(fToolName).indexOf(fName);
+		int index = fToolNameList.indexOf(fName);
 
 		// File path of tool selected from the dropdown menu
-		String fToolFilePath = fToolPath[index];
+		String fToolFilePath = fToolPathList.get(index);
 		System.out.println("fToolFilePath is: " + fToolFilePath);
 
 		String fToolFilePathWithoutWorkspace = fToolFilePath.substring(fWorkspaceLength + 1);

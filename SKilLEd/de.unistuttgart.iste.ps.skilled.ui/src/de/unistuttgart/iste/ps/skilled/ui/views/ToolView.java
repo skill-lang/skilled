@@ -75,16 +75,16 @@ public class ToolView extends ViewPart {
 	private IProject activeProject = null;
 	private Shell shell;
 
-	SaveListofAllTools fSave = new SaveListofAllTools();
+	SaveListofAllTools fSave;
 	
-	private static ToolView toolviewI = null;
-	private ToolView() {}
-	public static ToolView getToolViewInstance() {
-		if (null == toolviewI) {
-			toolviewI = new ToolView();
-		}
-		return toolviewI;
-	}
+//	private static ToolView toolviewI = null;
+//	private ToolView() {}
+//	public static ToolView getToolViewInstance() {
+//		if (null == toolviewI) {
+//			toolviewI = new ToolView();
+//		}
+//		return toolviewI;
+//	}
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -177,6 +177,7 @@ public class ToolView extends ViewPart {
 
 	public void clearLists() {
 		allToolList.clear();
+		pathList.clear();
 		allTypeList.clear();
 		typeListOfActualTool = null;
 		fieldListOfActualTool = null;
@@ -213,7 +214,7 @@ public class ToolView extends ViewPart {
 		if (skillFile.Tools() != null) {
 			skillFile.Tools().forEach(t -> allToolList.add(t));
 
-//			skillFile.Tools().forEach(t -> pathList.add(path));
+			skillFile.Tools().forEach(t -> pathList.add(path));
 //			fExport.setPaths(pathList);
 		}
 
@@ -274,7 +275,9 @@ public class ToolView extends ViewPart {
 				// no default
 			}
 		});
-
+		fSave = new SaveListofAllTools();
+		fSave.setListofAllTools(allToolList);
+		fSave.setPathofAllTools(pathList);
 		return toolViewList;
 		
 	}
