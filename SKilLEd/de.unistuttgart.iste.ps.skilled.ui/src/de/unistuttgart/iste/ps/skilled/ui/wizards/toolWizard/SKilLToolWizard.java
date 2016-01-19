@@ -1,12 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.PlatformUI;
-
-import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 
 
 public class SKilLToolWizard extends Wizard {
@@ -58,12 +53,6 @@ public class SKilLToolWizard extends Wizard {
         switch (wizardOption) {
             case CREATE:
                 this.name = pageNewTool.getTbNameText();
-                IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                        .getActivePage().getActiveEditor().getEditorInput();
-                IProject project = file.getFile().getProject();
-                if (!ToolUtil.createTool(name, project)) {
-                    showMessage("EVERYTHING BROKEN AAAAAAAAAAAAAAAAAAAA!!!!!!!!!!!A");
-                }
                 return true;
             case RENAME:
                 this.name = pageRenameTool.getTbNameText();
