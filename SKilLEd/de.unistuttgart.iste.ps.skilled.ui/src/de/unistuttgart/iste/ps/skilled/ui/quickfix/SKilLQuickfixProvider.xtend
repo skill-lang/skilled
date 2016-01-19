@@ -53,6 +53,16 @@ import static de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider.
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.resources.IWorkspaceRoot
 import org.eclipse.core.runtime.Path
+import org.eclipse.swt.widgets.Display
+import org.eclipse.swt.widgets.Shell
+import org.eclipse.swt.graphics.Point
+import org.eclipse.swt.SWT
+import org.eclipse.swt.widgets.Text
+import org.eclipse.swt.layout.GridData
+import org.eclipse.swt.layout.GridLayout
+import org.eclipse.swt.widgets.Button
+import org.eclipse.swt.widgets.Listener
+import org.eclipse.swt.widgets.Event
 
 /**
  * Custom quickfixes.
@@ -253,7 +263,61 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 			});
 	}
 
-	// Quickfix to remove the Parent that is the Type
+	//Quickfix to change name if the Name has non-ASCII Characters
+	@Fix(ASCIICharValidator::DECLARATION_HAS_NONASCII_CHARS)
+	def fixDeclarationName(Issue issue, IssueResolutionAcceptor acceptor){
+		acceptor.accept(issue, "Change name", "Change the name of the type declaration. ", "upcase.png", new ISemanticModification() {
+			override void apply(EObject element, IModificationContext context) {
+				var TypeDeclaration e =element as TypeDeclaration;
+				var GetNameField f = new GetNameField;
+				var Thread nameFieldThread = new Thread(f)
+				nameFieldThread.run
+				while(f.name==""){
+					Thread.sleep(5);
+				}				
+				e.setName(f.name)	
+			}
+		})
+	}
+	
+	def public String getNewName(String oldName){
+		newName = "";
+		var Display d;
+		var Shell shell = new Shell(d);
+		shell.setText("Extract Type or Interface");
+        shell.setLayout(new GridLayout(2, true));		
+        val Text text1 = new Text(shell, SWT.NONE);
+        text1.text = oldName
+		var GridData gridData = new GridData();
+		gridData.horizontalAlignment = SWT.CENTER;
+		gridData.horizontalSpan = 2;
+		text1.layoutData = gridData
+		var GridData gridDataButton = new GridData();
+    	gridDataButton.horizontalAlignment = SWT.CENTER;
+   		gridDataButton.horizontalSpan = 2;
+   		var Button continueButton = new Button(shell, SWT.NONE);
+    	continueButton.setText("OK");
+    	continueButton.setLayoutData(gridDataButton);
+    	continueButton.addListener(SWT.Selection, new Listener() {
+          override public void handleEvent(Event e) {
+            switch (e.type) {
+            case SWT.Selection:
+             	newName = text1.text				
+            }
+          }
+        });
+		val Point newSize = shell.computeSize(150, 150, true);
+		shell.setSize(newSize);
+		shell.open();
+		while(newName.equals("")){
+			Thread.sleep(5)
+		}
+		shell.close
+		return newName;
+		
+	}
+	
+	//Quickfix to remove the Parent that is the Type
 	@Fix(InheritenceValidator::TYPE_IS_HIS_OWN_PARENT)
 	def fixSupertype(Issue issue, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Remove Type", "Removes the supertype " + issue.data.get(0) + ".", "upcase.png",
