@@ -2,10 +2,12 @@ package de.unistuttgart.iste.ps.skilled.ui.views;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -51,6 +53,7 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
  * @author Ken Singer
  * @author Nico Russam
  * @author Marco Link
+ * @author Armin Hüneburg
  */
 public class ToolView extends ViewPart {
 
@@ -139,7 +142,7 @@ public class ToolView extends ViewPart {
     }
 
     public void refresh() {
-        writeToolBinaryFile();
+        // writeToolBinaryFile();
         try {
             clearLists();
             if (typeTabItem != null)
@@ -159,7 +162,6 @@ public class ToolView extends ViewPart {
      * reload the typelist after adding a type or hint to a tool
      */
     public void reloadTypelist() {
-        writeToolBinaryFile();
         refresh();
         buildToolContextMenu(buildToollist(tabFolder));
         buildTypeTree(activeTool);
@@ -172,7 +174,6 @@ public class ToolView extends ViewPart {
      * @param isChecked
      */
     public void reloadFieldList(Type type, boolean isChecked) {
-        writeToolBinaryFile();
         refresh();
         buildToolContextMenu(buildToollist(tabFolder));
         buildTypeTree(activeTool);
@@ -324,9 +325,14 @@ public class ToolView extends ViewPart {
         typeTabItem.setText("Types - " + tool.getName());
 
         if (null != skillFile) {
+            ArrayList<Type> typelist = (ArrayList<Type>) allTypeList.stream()
+                    .filter(t -> tool.getTypes().contains(t) || (tool.getTypes().stream()
+                            .noneMatch(ty -> ty.getName().equals(t.getName()) && ty.getFile() == t.getFile())
+                            && skillFile.Tools().stream().noneMatch(to -> to.getTypes().contains(t))))
+                    .collect(Collectors.toList());
 
             // add all types to the tree
-            for (Type type : allTypeList) {
+            for (Type type : typelist) {
                 TreeItem typeTreeItem = new TreeItem(typeTree, 0);
                 typeTreeItem.setText(type.getName());
                 typeTreeItem.setData(type);
@@ -585,34 +591,31 @@ public class ToolView extends ViewPart {
                         if (((TreeItem) event.item).getChecked()) {
                             System.out.println(field.getName() + "added");
                             ToolUtil.addField(activeTool.getName(), activeProject,
-                                    getActualTypeName(field.getType().getName()), field.getName());
-                            writeToolBinaryFile();
-                            buildFieldTree(tooltype, true);
+                                    getActualTypeName(field.getType().getName()), getActualTypeName(field.getName()));
+                            refresh();
+                            // buildFieldTree(tooltype, true);
                         } else {
                             System.out.println(field.getName() + "remove");
                             ToolUtil.removeField(activeTool.getName(), activeProject,
-                                    getActualTypeName(field.getType().getName()), field.getName());
-                            buildFieldTree(tooltype, true);
-                            writeToolBinaryFile();
+                                    getActualTypeName(field.getType().getName()), getActualTypeName(field.getName()));
+                            refresh();
                         }
                     }
 
                     if (hint != null) {
 
                         if (((TreeItem) event.item).getChecked()) {
-                            System.out.println(hint.getName() + "added");
+                            System.out.println(hint.getName() + " added");
                             ToolUtil.addFieldHint(activeTool.getName(), activeProject,
                                     getActualTypeName(((Field) hint.getParent()).getType().getName()),
-                                    ((Field) hint.getParent()).getName(), hint.getName());
-                            writeToolBinaryFile();
-                            buildFieldTree(tooltype, true);
+                                    getActualTypeName(((Field) hint.getParent()).getName()), hint.getName());
+                            refresh();
                         } else {
                             System.out.println("hint removed");
                             ToolUtil.removeFieldHint(activeTool.getName(), activeProject,
                                     getActualTypeName(((Field) hint.getParent()).getType().getName()),
-                                    ((Field) hint.getParent()).getName(), hint.getName());
-                            writeToolBinaryFile();
-                            buildFieldTree(tooltype, false);
+                                    getActualTypeName(((Field) hint.getParent()).getName()), hint.getName());
+                            refresh();
                         }
                     }
                 }
@@ -772,9 +775,17 @@ public class ToolView extends ViewPart {
     }
 
     private void createToolDialog() {
-        WizardDialog wizardDialog = new WizardDialog(shell, new SKilLToolWizard());
+        final SKilLToolWizard sKilLToolWizard = new SKilLToolWizard();
+        WizardDialog wizardDialog = new WizardDialog(shell, sKilLToolWizard);
         if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
-            refresh();
+            String newToolName = sKilLToolWizard.getToolNewName();
+            if (newToolName != null) {
+
+                if (!ToolUtil.createTool(newToolName, activeProject)) {
+                    showMessage("EVERYTHING BROKEN AAAAAAAAAAAAAAAAAAAA!!!!!!!!!!!A");
+                }
+                refresh();
+            }
         }
     }
 
@@ -815,6 +826,10 @@ public class ToolView extends ViewPart {
 
     public ArrayList<Tool> getListofTools() {
         return allToolList;
+    }
+
+    private void showMessage(String message) {
+        MessageDialog.openInformation(getShell(), "Tool View", message);
     }
 
 }

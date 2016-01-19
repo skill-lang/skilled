@@ -3,6 +3,11 @@ package de.unistuttgart.iste.ps.skilled.ui.tools;
 import org.eclipse.core.resources.IProject;
 
 import de.unistuttgart.iste.ps.skillls.main.MainClass;
+import de.unistuttgart.iste.ps.skillls.tools.Field;
+import de.unistuttgart.iste.ps.skillls.tools.Hint;
+import de.unistuttgart.iste.ps.skillls.tools.Tool;
+import de.unistuttgart.iste.ps.skillls.tools.Type;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 
 
 /**
@@ -12,6 +17,7 @@ import de.unistuttgart.iste.ps.skillls.main.MainClass;
  * @author Marco Link
  */
 public final class ToolUtil {
+    static String addendum = "";
 
     /**
      * Tries to create a new Tool.
@@ -295,5 +301,64 @@ public final class ToolUtil {
         } catch (Throwable t) {
             return false;
         }
+    }
+
+    /**
+     * Tries to delete a tool
+     * 
+     * @param project
+     *            the project containing the tool.
+     * @param name
+     *            the name of the tool to be deleted.
+     * @return true if deletion was successful
+     */
+    public static boolean removeTool(IProject project, String name) {
+        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(), name + ":0" };
+        try {
+            MainClass.start(arguments);
+            return true;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /**
+     * Tries to clone a Tool.
+     * 
+     * @param project
+     *            The project containing the tool.
+     * @param tool
+     *            The tool that should be cloned.
+     * @param sk
+     *            The skillFile object containing the type definitions.
+     * @return true if cloning was successful.
+     */
+    public static boolean cloneTool(IProject project, Tool tool, SkillFile sk) {
+        boolean value = true;
+        final String newName = tool.getName() + " - Copy";
+        addendum = "";
+        int counter = 0;
+        while (sk.Tools().stream().anyMatch(t -> t.getName().equals(newName + addendum))) {
+            addendum = String.valueOf(++counter);
+        }
+        String newToolName = newName + counter;
+        value &= createTool(newToolName, project);
+        for (Type type : tool.getTypes()) {
+            String typename = type.getName().split(" ")[1];
+            value &= addTypeToTool(newToolName, project, typename);
+            for (Hint h : type.getTypeHints()) {
+                value &= addTypeHint(newToolName, project, typename, h.getName());
+            }
+            for (Field f : type.getFields()) {
+                String[] splits = f.getName().split(" ");
+                String fieldname = splits.length > 1 ? splits[1] : splits[0];
+                value &= addField(newToolName, project, typename, fieldname);
+                for (Hint h : f.getFieldHints()) {
+                    value &= addFieldHint(newToolName, project, typename, fieldname, h.getName());
+                }
+            }
+        }
+        return value && setDefaults(newToolName, project, tool.getGenerator().getExecEnv(), tool.getGenerator().getPath(),
+                tool.getLanguage(), tool.getModule(), tool.getOutPath());
     }
 }
