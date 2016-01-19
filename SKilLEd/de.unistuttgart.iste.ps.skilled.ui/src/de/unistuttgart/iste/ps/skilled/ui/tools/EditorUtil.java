@@ -7,7 +7,10 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.ui.IEditorDescriptor;
@@ -34,6 +37,12 @@ public class EditorUtil {
     public boolean openToolInEditor(Tool tool, IProject project) {
         // URI uri = URI.createURI(project.getLocation().toPortableString() + "/.skillt/" + tool.getName());
         // project.getFolder(URIUt)
+        try {
+            project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+        } catch (CoreException e1) {
+            // TODO Auto-generated catch block
+            return false;
+        }
         Set<File> toolFiles = getToolFiles(tool, project);
         for (File f : toolFiles) {
             String platformString = f.eResource().getURI().toPlatformString(true);
