@@ -48,7 +48,6 @@ import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.util.Strings
 import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork
 import org.eclipse.xtext.validation.Issue
-import java.util.List
 
 import static de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider.*
 import org.eclipse.core.resources.ResourcesPlugin
@@ -76,8 +75,8 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 		if (files == null) return
 		val LinkedList<String> fileNames = new LinkedList()
 		for (java.io.File file : files) {
-			val distance = getLevenshteinDistance(file.absolutePath, path.toString.substring(1).replaceAll("/", "\\\\"))
-			if (3 > distance && 0 < distance) {
+			val distance = getLevenshteinDistance(file.absolutePath.replaceAll("/","\\\\"), path.toString.substring(1).replaceAll("/", "\\\\"))
+			if (3 > distance && 0 < distance && file.absolutePath.matches(".*\\.skill")) {
 				fileNames.add(file.name)
 			}
 		}
