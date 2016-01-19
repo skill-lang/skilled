@@ -67,7 +67,8 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 	
 	@Fix("Imported resource could not be found.")
 	def fixImport(Issue issue, IssueResolutionAcceptor acceptor) {
-		val URI uri = URI.createURI(issue.data.get(0))
+		var URI uri = URI.createURI(issue.data.get(0))
+		uri = URI.createURI(uri.toString.replace("../",""))
 		val IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		val URI path = URI.createURI(root.locationURI.rawPath).appendSegments(uri.segmentsList)
 		val java.io.File asdf = (new Path(path.toString)).toFile.absoluteFile.parentFile
