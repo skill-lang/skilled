@@ -19,6 +19,9 @@
                     <exclude name="**/scala/**"/>
                     <exclude name="**/SKilLEd-source/**"/>
                     <exclude name="**/SKilLEd-source.zip"/>
+                    <exclude name="**/de.unistuttgart.iste.ps.skillls/lib/**"/>
+                    <exclude name="**/de.unistuttgart.iste.ps.skilled.ui/lib/*"/>
+                    <exclude name="**/de.unistuttgart.iste.ps.skilled.tests/lib/*"/>
                 </patternset>
             </fileset>
         </copy>
