@@ -8,6 +8,7 @@
         <copy todir="../../SKilLEd-source">
             <fileset dir="../..">
                 <patternset>
+                    <exclude name="**/.git/**"/>
                     <exclude name="**/buildroot/**"/>
                     <exclude name="**/src-gen/**"/>
                     <exclude name="**/xtend-gen/**"/>
