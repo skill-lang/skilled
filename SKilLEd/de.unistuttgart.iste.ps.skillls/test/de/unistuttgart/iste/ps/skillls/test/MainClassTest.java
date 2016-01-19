@@ -1,19 +1,22 @@
 package de.unistuttgart.iste.ps.skillls.test;
 
-import org.junit.*;
-import org.junit.runners.MethodSorters;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import de.unistuttgart.iste.ps.skillls.main.MainClass;
-
-import java.io.*;
-import java.math.BigInteger;
-import java.nio.channels.FileChannel;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.security.SecureRandom;
 
-import static org.junit.Assert.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import de.unistuttgart.iste.ps.skillls.main.MainClass;
 
 
 /**
@@ -171,7 +174,8 @@ public class MainClassTest {
 
     @Test
     public void testGenerateTwoTypeWithTypeHint() {
-        String[] args = new String[] {"--edit", "resources", "oneTypeTool:2:PowerStrip;oneTypeTool:8:PowerStrip:!readOnly"};
+        String[] args = new String[] { "--edit", "resources",
+                "oneTypeTool:2:PowerStrip;oneTypeTool:8:PowerStrip:!readOnly" };
         MainClass.main(args);
         StringBuilder builder = new StringBuilder();
         builder.append("lib");
@@ -182,8 +186,8 @@ public class MainClassTest {
         } catch (IOException ignored) {
             // ignored
         }
-        args = new String[] { "-agloxmp", builder.toString(), "Java", "generated", "scala", "onetypetool",
-                "resources", "oneTypeTool" };
+        args = new String[] { "-agloxmp", builder.toString(), "Java", "generated", "scala", "onetypetool", "resources",
+                "oneTypeTool" };
         MainClass.main(args);
         assertTrue("not generated", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "src"
                 + File.separator + "main" + File.separator + "java" + File.separator + "onetypetool")));
@@ -191,54 +195,6 @@ public class MainClassTest {
                 "generated" + File.separator + "java" + File.separator + "lib" + File.separator + "skill.java.common.jar")));
         assertTrue("skill.jvm.common.jar missing", Files.exists(Paths.get(
                 "generated" + File.separator + "java" + File.separator + "lib" + File.separator + "skill.jvm.common.jar")));
-    }
-
-    @Test
-    public void testListingOfAlteredTools() {
-        outStream = new ByteArrayOutputStream();
-        errStream = new ByteArrayOutputStream();
-        out = new PrintStream(outStream);
-        err = new PrintStream(errStream);
-
-        System.setOut(out);
-        System.setErr(err);
-
-        // Add random type so that the file is changed.
-        SecureRandom random = new SecureRandom();
-        String type = "a" + new BigInteger(130, random).toString(32);
-
-        try {
-            Files.write(Paths.get("resources" + File.separator + "Furniture.skill"), (type + " {}").getBytes(),
-                    StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            fail();
-        }
-
-        String[] args = new String[] { "-lsp", "resources", "twoTypeTool" };
-        MainClass.main(args);
-
-        String[] got = outStream.toString().trim().split("\n");
-        System.setOut(origOut);
-        System.setErr(origErr);
-        assertTrue("First line does not contain file.", got[1].endsWith("resources" + File.separator + "Furniture.skill"));
-        assertTrue("SecondLine is not a type", got[2].trim().equals("Bathtub"));
-        assertTrue("SecondLine is not a type", got[3].trim().isEmpty());
-        assertTrue("SecondLine is not a type", got[4].trim().equals("Window"));
-        int i = 5;
-        String line;
-        while (i < got.length && (line = got[i]) != null) {
-            assertTrue("more output", line.trim().isEmpty());
-        }
-
-        try {
-            RandomAccessFile raf = new RandomAccessFile("resources" + File.separator + "Furniture.skill", "rw");
-            FileChannel channel = raf.getChannel();
-            channel = channel.truncate(channel.size() - type.length() - 3);
-            channel.close();
-            raf.close();
-        } catch (IOException e) {
-            fail();
-        }
     }
 
     @Test
@@ -255,17 +211,18 @@ public class MainClassTest {
         String[] args = new String[] { "--all", "--generator", builder.toString(), "--lang", "Java", "--output", "generated",
                 "--exec", "scala", "--module", "this.is.a.test", "--path", "resources" };
         MainClass.main(args);
-        assertTrue("not generated", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "src"
-                + File.separator + "main" + File.separator + "java" + File.separator + "this" + File.separator + "is" +
-                File.separator + "a" + File.separator + "test")));
+        assertTrue("not generated",
+                Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "src" + File.separator
+                        + "main" + File.separator + "java" + File.separator + "this" + File.separator + "is" + File.separator
+                        + "a" + File.separator + "test")));
         assertTrue("Bathtub not generated",
                 Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "src" + File.separator
-                        + "main" + File.separator + "java" + File.separator + "this" + File.separator + "is" +
-                        File.separator + "a" + File.separator + "test" + File.separator + "Bathtub.java")));
+                        + "main" + File.separator + "java" + File.separator + "this" + File.separator + "is" + File.separator
+                        + "a" + File.separator + "test" + File.separator + "Bathtub.java")));
         assertTrue("Window not generated",
                 Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "src" + File.separator
-                        + "main" + File.separator + "java" + File.separator + "this" + File.separator + "is" +
-                        File.separator + "a" + File.separator + "test" + File.separator + "Window.java")));
+                        + "main" + File.separator + "java" + File.separator + "this" + File.separator + "is" + File.separator
+                        + "a" + File.separator + "test" + File.separator + "Window.java")));
         assertTrue("skill.java.common.jar missing", Files.exists(Paths.get(
                 "generated" + File.separator + "java" + File.separator + "lib" + File.separator + "skill.java.common.jar")));
         assertTrue("skill.jvm.common.jar missing", Files.exists(Paths.get(
