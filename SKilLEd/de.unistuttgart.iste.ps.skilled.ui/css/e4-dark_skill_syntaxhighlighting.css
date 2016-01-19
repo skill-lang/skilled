@@ -1,30 +1,27 @@
 IEclipsePreferences#org-eclipse-xtext-ui {
 	preferences:
-		'syntaxColorer.headcomment.color=255,255,255'
+		'syntaxColorer.headcomment.color=100,100,100'
 		'syntaxColorer.headcomment.style=1' /* SWT.BOLD */
 		
-		'syntaxColorer.keyword.color=255,255,255'
+		'syntaxColorer.keyword.color=185,50,95'
 		'syntaxColorer.keyword.style=1' /* SWT.BOLD */
 	
 		'syntaxColorer.punctuation.color=255,255,255'
 		'syntaxColorer.punctuation.style=1' /* SWT.BOLD */
 		
-		'syntaxColorer.comment.color=255,255,255'
-		'syntaxColorer.comment.style=1' /* SWT.BOLD */
+		'syntaxColorer.comment.color=100,100,100'
+		'syntaxColorer.comment.style=0' /* SWT.NORMAL */
 
-		'syntaxColorer.string.color=255,255,255'
-		'syntaxColorer.string.style=1' /* SWT.BOLD */
+		'syntaxColorer.string.color=10,150,60'
+		'syntaxColorer.string.style=2' /* SWT.ITALIC */
 
-		'syntaxColorer.number.color=255,255,255'
+		'syntaxColorer.number.color=95,130,200'
 		'syntaxColorer.number.style=1' /* SWT.BOLD */
 
-		'syntaxColorer.default.color=255,255,255'
-		'syntaxColorer.default.style=1' /* SWT.BOLD */
-
-		'syntaxColorer.usertype.color=255,255,255'
+		'syntaxColorer.usertype.color=50,105,145'
 		'syntaxColorer.usertype.style=1' /* SWT.BOLD */
 
-		'syntaxColorer.interface.color=255,255,255'
+		'syntaxColorer.interface.color=40,255,255'
 		'syntaxColorer.interface.style=1' /* SWT.BOLD */
 
 		'syntaxColorer.enum.color=255,255,255'
@@ -33,7 +30,7 @@ IEclipsePreferences#org-eclipse-xtext-ui {
 		'syntaxColorer.typedef.color=255,255,255'
 		'syntaxColorer.typedef.style=1' /* SWT.BOLD */
 		
-		'syntaxColorer.buildintype.color=255,255,255'
+		'syntaxColorer.buildintype.color=40,255,255'
 		'syntaxColorer.buildintype.style=1' /* SWT.BOLD */
 		
 		'syntaxColorer.data.color=255,255,255'
@@ -45,12 +42,15 @@ IEclipsePreferences#org-eclipse-xtext-ui {
 		'syntaxColorer.view.color=255,255,255'
 		'syntaxColorer.view.style=1' /* SWT.BOLD */
 	
-		'syntaxColorer.hint.color=255,255,255'
-		'syntaxColorer.hint.style=1' /* SWT.BOLD */
+		'syntaxColorer.hint.color=170,210,60'
+		'syntaxColorer.hint.style=2' /* SWT.ITALIC */
 
-		'syntaxColorer.restriction.color=255,255,255'
-		'syntaxColorer.restriction.style=1' /* SWT.BOLD */
+		'syntaxColorer.restriction.color=255,130,10'
+		'syntaxColorer.restriction.style=2' /* SWT.ITALIC */
 
 		'syntaxColorer.compound.color=255,255,255'
-		'syntaxColorer.compound.style=1' /* SWT.BOLD */		
+		'syntaxColorer.compound.style=1' /* SWT.BOLD */
+
+		'syntaxColorer.default.color=255,255,255'
+		'syntaxColorer.default.style=1' /* SWT.BOLD */
 }
