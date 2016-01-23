@@ -6,10 +6,7 @@ import java.util.Stack;
 
 
 /**
- * Class for execute Tarjan's Algorithm.
- * 
  * @author Marco Link
- *
  */
 public class TarjanAlgorithm {
 
@@ -32,33 +29,32 @@ public class TarjanAlgorithm {
         }
     }
 
-    private void strongconnect(Vertex vertex) {
-        vertex.setIndex(index);
-        vertex.setLowlink(index++);
-        vertex.setVisited(true);
-        stack.push(vertex);
-        vertex.setOnStack(true);
+    private void strongconnect(Vertex from) {
+        from.setIndex(index);
+        from.setLowlink(index++);
+        from.setVisited(true);
+        stack.push(from);
+        from.setOnStack(true);
 
-        for (Vertex v : vertex.getEdges()) {
-
-            if (!v.isVisited()) {
-                strongconnect(v);
-                vertex.setLowlink(Math.min(vertex.getLowlink(), v.getLowlink()));
-            } else if (v.isOnStack()) {
-                vertex.setLowlink(Math.min(vertex.getLowlink(), v.getLowlink()));
+        for (Vertex to : from.getEdges()) {
+            if (!to.isVisited()) {
+                strongconnect(to);
+                from.setLowlink(Math.min(from.getLowlink(), to.getLowlink()));
+            } else if (to.isOnStack()) {
+                from.setLowlink(Math.min(from.getLowlink(), to.getLowlink()));
             }
         }
 
-        if (vertex.getLowlink() == vertex.getIndex()) {
+        if (from.getLowlink() == from.getIndex()) {
             StronglyConnectedComponent component = new StronglyConnectedComponent();
-            component.setRootVertex(vertex);
+            component.setRootVertex(from);
 
             while (true) {
                 Vertex actualVertex = stack.pop();
                 actualVertex.setOnStack(false);
                 actualVertex.setRootContainer(component);
                 component.addVertices(actualVertex);
-                if (actualVertex.getName().equals(vertex.getName())) {
+                if (actualVertex.getName().equals(from.getName())) {
                     break;
                 }
             }
@@ -69,4 +65,5 @@ public class TarjanAlgorithm {
     public List<StronglyConnectedComponent> getConnectedComponentsList() {
         return connectedComponentsList;
     }
+
 }

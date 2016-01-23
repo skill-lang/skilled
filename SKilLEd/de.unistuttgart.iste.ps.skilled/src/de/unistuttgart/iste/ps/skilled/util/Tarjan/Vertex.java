@@ -8,7 +8,6 @@ import java.util.List;
  * Class which represents a vertex for Tarjan's Algorithm.
  * 
  * @author Marco Link
- *
  */
 public class Vertex {
 

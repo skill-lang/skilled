@@ -8,12 +8,11 @@ import com.google.inject.Inject;
 
 
 /**
- * 
  * @author Marco Link
  * @author Tobias Heck
- *
  */
 public class SKilLTerminalConverters extends DefaultTerminalConverters {
+
     @Inject
     private HEXINTValueConverter hexintValueConverter;
 

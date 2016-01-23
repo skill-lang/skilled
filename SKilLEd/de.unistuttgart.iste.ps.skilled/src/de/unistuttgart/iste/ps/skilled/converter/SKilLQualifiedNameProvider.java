@@ -9,15 +9,12 @@ import com.google.inject.Inject;
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration;
 import de.unistuttgart.iste.ps.skilled.sKilL.Enuminstance;
 import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent;
-import de.unistuttgart.iste.ps.skilled.sKilL.Hint;
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction;
 
 
 /**
- * 
  * @author Tobias Heck
  * @author Marco Link
- *
+ * @author Daniel Ryan Degutis
  */
 public class SKilLQualifiedNameProvider extends DefaultDeclarativeQualifiedNameProvider {
 
@@ -25,41 +22,31 @@ public class SKilLQualifiedNameProvider extends DefaultDeclarativeQualifiedNameP
     SKilLQualifiedNameConverter qualifiedNameConverter;
 
     public static QualifiedName qualifiedName(Declaration declaration) {
-        QualifiedName q = QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(declaration.getName()));
-        return q;
+        return QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(declaration.getName()));
     }
 
-    // get normalized fieldcontent name
     static QualifiedName qualifiedName(Fieldcontent field) {
-        EObject e = field.eContainer();
-        Declaration d = null;
-        while (!Declaration.class.isInstance(e)) {
-            e = e.eContainer();
+        EObject eObj = field.eContainer();
+        while (!Declaration.class.isInstance(eObj)) {
+            eObj = eObj.eContainer();
         }
-        if (e == null) {
-            QualifiedName q = QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(field.getName()));
-            return q;
+        if (eObj == null) {
+            return QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(field.getName()));
         }
-        d = (Declaration) e;
-        QualifiedName q = QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(d.getName()),
+        return QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(((Declaration) eObj).getName()),
                 SKilLQualifiedNameConverter.makeEquivalent(field.getName()));
-        return q;
     }
 
-    // get normalized enuminstance name
     static QualifiedName qualifiedName(Enuminstance enuminstance) {
-        EObject e = enuminstance.eContainer();
-        Declaration d = null;
-        while (!Declaration.class.isInstance(e)) {
-            e = e.eContainer();
+        EObject eObj = enuminstance.eContainer();
+        while (!Declaration.class.isInstance(eObj)) {
+            eObj = eObj.eContainer();
         }
-        if (e == null) {
-            QualifiedName q = QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(enuminstance.getName()));
-            return q;
+        if (eObj == null) {
+            return QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(enuminstance.getName()));
         }
-        d = (Declaration) e;
-        QualifiedName q = QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(d.getName()),
+        return QualifiedName.create(SKilLQualifiedNameConverter.makeEquivalent(((Declaration) eObj).getName()),
                 SKilLQualifiedNameConverter.makeEquivalent(enuminstance.getName()));
-        return q;
     }
+
 }

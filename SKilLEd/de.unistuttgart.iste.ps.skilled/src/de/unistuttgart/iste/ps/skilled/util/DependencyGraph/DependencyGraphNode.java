@@ -13,12 +13,10 @@ import de.unistuttgart.iste.ps.skilled.util.Tarjan.Vertex;
 
 
 /**
- * Graphnode class for the dependency graph.
- * 
  * @author Marco Link
- *
  */
 public class DependencyGraphNode extends Vertex {
+
     private File file;
     private URI fileURI;
 
@@ -29,7 +27,7 @@ public class DependencyGraphNode extends Vertex {
     }
 
     public Set<StronglyConnectedComponent> getReferencedComponent() {
-        Set<StronglyConnectedComponent> components = new HashSet<StronglyConnectedComponent>();
+        Set<StronglyConnectedComponent> components = new HashSet<>();
         for (Vertex v : getEdges()) {
             if (v.getRootContainer() != null) {
                 components.add(v.getRootContainer());
@@ -39,8 +37,8 @@ public class DependencyGraphNode extends Vertex {
     }
 
     public Set<URI> getIncludedURIs() {
-        Set<URI> uRIs = new HashSet<URI>();
-        Set<String> includeStrings = new HashSet<String>();
+        Set<URI> uRIs = new HashSet<>();
+        Set<String> includeStrings = new HashSet<>();
         for (Include include : file.getIncludes()) {
             for (IncludeFile includeFile : include.getIncludeFiles()) {
                 includeStrings.add(includeFile.getImportURI());

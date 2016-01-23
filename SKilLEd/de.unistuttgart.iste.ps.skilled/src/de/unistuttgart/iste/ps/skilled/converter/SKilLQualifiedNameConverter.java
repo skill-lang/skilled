@@ -8,20 +8,16 @@ import org.eclipse.xtext.naming.QualifiedName;
 
 
 /**
- * 
- * @author Marco Link Tobias Heck
- *
+ * @author Marco Link
+ * @author Tobias Heck
  */
 public class SKilLQualifiedNameConverter extends DefaultImpl {
 
     @Override
     public QualifiedName toQualifiedName(String qualifiedNameAsString) {
+        List<String> segsConverted = new LinkedList<>();
 
-        QualifiedName qualifiedName = super.toQualifiedName(qualifiedNameAsString);
-        List<String> segsConverted = new LinkedList<String>();
-
-        // Get the segments and convert it.
-        for (String s : qualifiedName.getSegments()) {
+        for (String s : super.toQualifiedName(qualifiedNameAsString).getSegments()) {
             segsConverted.add((makeEquivalent(s)));
         }
 

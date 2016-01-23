@@ -21,7 +21,7 @@ import de.unistuttgart.iste.ps.skilled.util.Tarjan.Vertex;
  * Algorithm for creating a DAG first.
  * 
  * @author Marco Link
- *
+ * @author Daniel Ryan Degutis
  */
 public class DependencyGraph {
 
@@ -36,24 +36,24 @@ public class DependencyGraph {
      * @return false if one or more files don't have an eResource.
      */
     public boolean generate(Set<File> files) {
-        dependencyGraphNodes = new HashMap<String, DependencyGraphNode>();
-        List<Vertex> dependencyNodes = new ArrayList<Vertex>();
+        dependencyGraphNodes = new HashMap<>();
+        List<Vertex> dependencyNodes = new ArrayList<>();
 
         for (File file : files) {
             if (file.eResource() == null) {
                 return false;
             }
-            DependencyGraphNode dependencyNode = new DependencyGraphNode(file);
-            dependencyNodes.add(dependencyNode);
-            dependencyGraphNodes.put(dependencyNode.getName(), dependencyNode);
+            DependencyGraphNode dgn = new DependencyGraphNode(file);
+            dependencyNodes.add(dgn);
+            dependencyGraphNodes.put(dgn.getName(), dgn);
         }
 
         for (Vertex v : dependencyNodes) {
-            DependencyGraphNode g = (DependencyGraphNode) v;
-            for (URI uri : g.getIncludedURIs()) {
+            DependencyGraphNode dgn = (DependencyGraphNode) v;
+            for (URI uri : dgn.getIncludedURIs()) {
                 DependencyGraphNode inc = dependencyGraphNodes.get(uri.path());
                 if (inc != null) {
-                    g.addEdge(inc);
+                    dgn.addEdge(inc);
                 }
             }
         }
@@ -65,48 +65,38 @@ public class DependencyGraph {
     }
 
     public void computeTransitiveComponents() {
-        for (StronglyConnectedComponent s : tarjan.getConnectedComponentsList()) {
-            s.addReferencedComponent(s);
-            boolean change = s.addReferencedComponents(computeReferencedComponents(s));
-            while (change) {
-                change = s.addReferencedComponents(computeReferencedComponents(s));
+        for (StronglyConnectedComponent scc : tarjan.getConnectedComponentsList()) {
+            scc.addReferencedComponent(scc);
+            boolean changed = scc.addReferencedComponents(computeReferencedComponents(scc));
+            while (changed) {
+                changed = scc.addReferencedComponents(computeReferencedComponents(scc));
             }
         }
     }
 
-    public static Set<StronglyConnectedComponent> computeReferencedComponents(StronglyConnectedComponent s) {
-        Set<StronglyConnectedComponent> referencedComponents = new HashSet<StronglyConnectedComponent>();
-        for (StronglyConnectedComponent referencedComponent : s.getReferencedComponents()) {
+    public static Set<StronglyConnectedComponent> computeReferencedComponents(StronglyConnectedComponent scc) {
+        Set<StronglyConnectedComponent> referencedComponents = new HashSet<>();
+        for (StronglyConnectedComponent referencedComponent : scc.getReferencedComponents()) {
             for (Vertex v : referencedComponent.getContainedVertices()) {
-                DependencyGraphNode g = (DependencyGraphNode) v;
-                referencedComponents.addAll(g.getReferencedComponent());
+                referencedComponents.addAll(((DependencyGraphNode) v).getReferencedComponent());
             }
         }
         return referencedComponents;
     }
 
-    /**
-     * Returns all the included URIs (direct and transitive) of the given resource.
-     * 
-     * @param resource
-     * @return a Set of URIs or null if the resource or its URI is null.
-     */
     public Set<URI> getIncludedURIs(Resource resource) {
-        Set<URI> uris = new HashSet<URI>();
+        Set<URI> uris = new HashSet<>();
         if (resource == null) {
             return null;
         }
-        DependencyGraphNode g = dependencyGraphNodes.get(resource.getURI().path());
-        if (g == null) {
+        DependencyGraphNode depGraph = dependencyGraphNodes.get(resource.getURI().path());
+        if (depGraph == null || depGraph.getRootContainer() == null) {
             return null;
         }
-        if (g.getRootContainer() == null) {
-            return null;
-        }
-        for (StronglyConnectedComponent s : g.getRootContainer().getReferencedComponents()) {
-            for (Vertex v : s.getContainedVertices()) {
-                DependencyGraphNode g2 = (DependencyGraphNode) v;
-                uris.add(g2.getFileURI());
+        for (StronglyConnectedComponent scc : depGraph.getRootContainer().getReferencedComponents()) {
+            for (Vertex v : scc.getContainedVertices()) {
+                DependencyGraphNode dgn = (DependencyGraphNode) v;
+                uris.add(dgn.getFileURI());
             }
         }
         return uris;

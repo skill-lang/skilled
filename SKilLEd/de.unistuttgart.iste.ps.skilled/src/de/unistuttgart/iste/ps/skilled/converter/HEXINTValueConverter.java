@@ -7,9 +7,7 @@ import org.eclipse.xtext.util.Strings;
 
 
 /**
- * 
  * @author Marco Link
- *
  */
 public class HEXINTValueConverter extends AbstractLexerBasedConverter<Long> {
 

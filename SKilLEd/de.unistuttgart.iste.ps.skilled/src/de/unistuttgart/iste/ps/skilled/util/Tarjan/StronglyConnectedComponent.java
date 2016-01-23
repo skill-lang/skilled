@@ -9,7 +9,6 @@ import java.util.Set;
  * (transitive).
  * 
  * @author Marco Link
- *
  */
 public class StronglyConnectedComponent {
 
@@ -20,8 +19,8 @@ public class StronglyConnectedComponent {
     private Set<StronglyConnectedComponent> referencedComponents;
 
     public StronglyConnectedComponent() {
-        containedVertices = new HashSet<Vertex>();
-        referencedComponents = new HashSet<StronglyConnectedComponent>();
+        containedVertices = new HashSet<>();
+        referencedComponents = new HashSet<>();
     }
 
     public Vertex getRootVertex() {
