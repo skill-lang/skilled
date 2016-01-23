@@ -3,31 +3,31 @@
  */
 package de.unistuttgart.iste.ps.skilled.ui.outline
 
-import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.File
-import org.eclipse.xtext.ui.editor.outline.IOutlineNode
-import de.unistuttgart.iste.ps.skilled.sKilL.Field
+import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
 import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype
 import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
 import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
+import de.unistuttgart.iste.ps.skilled.sKilL.File
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import org.eclipse.emf.ecore.EObject
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
+import org.eclipse.xtext.ui.editor.outline.IOutlineNode
+import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
+import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode
 
 /**
  * This class defines the Outline of the Skill-Files
  * @author Ken Singer
  */
-class SKilLOutlineTreeProvider extends org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider {
-	
+class SKilLOutlineTreeProvider extends DefaultOutlineTreeProvider {
+
 	/**
 	 * creates the Nodes for the usertypes, interfaces and typedefs
 	 */
 	def protected _createChildren(DocumentRootNode parentNode, File modelElement) {
-		for (Declaration dec : modelElement.declarations) {
-			createNode(parentNode, dec)
+		for (declaration : modelElement.declarations) {
+			createNode(parentNode, declaration)
 		}
 	}
 
@@ -35,19 +35,20 @@ class SKilLOutlineTreeProvider extends org.eclipse.xtext.ui.editor.outline.impl.
 	 * creates the nodes for the fields of the the declarations
 	 */
 	def protected _createChildren(IOutlineNode parentNode, Declaration modelElement) {
+
 		if (modelElement instanceof TypeDeclaration)
-			for (Field field : modelElement.fields) {
+			for (field : modelElement.fields) {
 				createNode(parentNode, field.fieldcontent)
 			}
 
-		if (modelElement instanceof Typedef)
+		if (modelElement instanceof Typedef) {
 			_createChildren(parentNode, modelElement.fieldtype)
-
+		}
 		if (modelElement instanceof Enumtype)
-			for (Field f : modelElement.fields) {
+			for (f : modelElement.fields) {
 				createNode(parentNode, f.fieldcontent)
 			}
-		
+
 	}
 
 	/**
@@ -64,17 +65,13 @@ class SKilLOutlineTreeProvider extends org.eclipse.xtext.ui.editor.outline.impl.
 	 */
 	override protected _isLeaf(EObject modelElement) {
 		if (modelElement instanceof Fieldcontent || modelElement instanceof DeclarationReference) {
-			return true;
+			return true
 		} else if (modelElement instanceof TypeDeclaration) {
 			return modelElement.fields.empty
 		} else if (modelElement instanceof Typedef) {
-			if (!(modelElement.fieldtype instanceof DeclarationReference)) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
+			return ( !(modelElement.fieldtype instanceof DeclarationReference))
 		}
+		return false
+
 	}
 }

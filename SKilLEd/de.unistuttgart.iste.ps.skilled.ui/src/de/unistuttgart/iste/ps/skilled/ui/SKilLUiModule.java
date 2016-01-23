@@ -8,7 +8,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.common.ui.contentassist.TerminalsProposalProvider;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.ui.editor.contentassist.DefaultCompletionProposalPostProcessor;
-import org.eclipse.xtext.ui.editor.contentassist.IContentProposalProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.model.edit.ITextEditComposer;
 import org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage;
@@ -40,12 +39,12 @@ public class SKilLUiModule extends de.unistuttgart.iste.ps.skilled.ui.AbstractSK
     }
 
     // SKilL Root Preferences
-    public Class<? extends LanguageRootPreferencePage> bindLanguageRootPreferencePage() {
+    public static Class<? extends LanguageRootPreferencePage> bindLanguageRootPreferencePage() {
         return SKilLRootPreferencePage.class;
     }
 
     // SKilLls preferences
-    public Class<? extends FieldEditorPreferencePage> bindFieldEditorPreferencePage() {
+    public static Class<? extends FieldEditorPreferencePage> bindFieldEditorPreferencePage() {
         return SKilLPreferencePage.class;
 
     }
@@ -55,7 +54,7 @@ public class SKilLUiModule extends de.unistuttgart.iste.ps.skilled.ui.AbstractSK
      * 
      * @return The SKilL Hover Provider
      */
-    public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
+    public static Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
         return SKilLObjectHoverProvider.class;
     }
 
@@ -64,38 +63,38 @@ public class SKilLUiModule extends de.unistuttgart.iste.ps.skilled.ui.AbstractSK
      * 
      * @return The SKilL Documentation Provider
      */
-    public Class<? extends IEObjectDocumentationProvider> bindIEObjectDocumentationProviderr() {
+    public static Class<? extends IEObjectDocumentationProvider> bindIEObjectDocumentationProviderr() {
         return SKilLObjectDocumentationProvider.class;
     }
 
     @Override
     public java.lang.Class<? extends org.eclipse.xtext.ui.resource.IResourceSetProvider> bindIResourceSetProvider() {
         return SimpleResourceSetProvider.class;
-    };
+    }
 
     // Includes the custom settings for syntax coloring.
-    public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
+    public static Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
         return SKilLHighlightingConfiguration.class;
     }
 
     // Includes the custom settings for syntax coloring.
-    public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
+    public static Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
         return SKilLAntlrTokenToAttributeIdMapper.class;
     }
 
-    public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+    public static Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
         return SKilLSemanticHighlightingCalculator.class;
     }
 
-    public Class<? extends ITextEditComposer> bindITextEditComposer() {
+    public static Class<? extends ITextEditComposer> bindITextEditComposer() {
         return SKilLTextEditComposer.class;
     }
     
-    public Class<? extends TerminalsProposalProvider> bindTerminalsProposalProvider() {
+    public static Class<? extends TerminalsProposalProvider> bindTerminalsProposalProvider() {
         return SKilLTerminalsProposalProvider.class;
     }
     
-    public Class<? extends DefaultCompletionProposalPostProcessor> bindCompletionProposalPostProcessor () {
+    public static Class<? extends DefaultCompletionProposalPostProcessor> bindCompletionProposalPostProcessor () {
         return SKilLCompletionProposalPostProcessor.class;
     }
 }

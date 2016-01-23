@@ -28,6 +28,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Usertype;
  * @author Jan Berberich
  * @author Tobias Heck
  */
+@SuppressWarnings("restriction")
 public class SKilLObjectHoverProvider extends DefaultEObjectHoverProvider {
 
     private IInformationControlCreator presenterControlCreator;
@@ -37,21 +38,17 @@ public class SKilLObjectHoverProvider extends DefaultEObjectHoverProvider {
     protected String getFirstLine(EObject o) {
         String comment = "";
         if (o instanceof TypeDeclaration) {
-            TypeDeclaration td = (TypeDeclaration) o;
             if (o instanceof Usertype) {
                 comment = comment + "Type ";
             }
             if (o instanceof Interfacetype) {
                 comment = comment + "Interface ";
             }
-            comment = comment + td.getName();
+            comment = comment + ((TypeDeclaration) o).getName();
         } else if (o instanceof Typedef) {
-            Typedef td = (Typedef) o;
-            comment = comment + "Typedef: " + td.getName();
+            comment = comment + "Typedef: " + ((Typedef) o).getName();
         } else if (o instanceof Enumtype) {
-            Enumtype en = (Enumtype) o;
-            comment = comment + "Enum: " + en.getName();
-            return comment;
+            comment = comment + "Enum: " + ((Enumtype) o).getName();
         }
         return comment;
     }
@@ -81,9 +78,8 @@ public class SKilLObjectHoverProvider extends DefaultEObjectHoverProvider {
                         configureControl(control, tbm, font);
                         control.setSize(350, 250);
                         return control;
-                    } else {
-                        return new DefaultInformationControl(parent, true);
                     }
+                    return new DefaultInformationControl(parent, true);
                 }
             };
         return presenterControlCreator;
@@ -132,9 +128,8 @@ public class SKilLObjectHoverProvider extends DefaultEObjectHoverProvider {
                         addLinkListener(iControl);
                         iControl.setSize(350, 250);
                         return iControl;
-                    } else {
-                        return new DefaultInformationControl(parent, tooltipAffordanceString);
                     }
+                    return new DefaultInformationControl(parent, tooltipAffordanceString);
                 }
             };
         return hoverControlCreator;
