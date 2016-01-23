@@ -18,89 +18,83 @@ import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.resource.XtextResourceSet
 
 /**
- * This class contains usefull functions for the daily use. e.g get all skill files of a project.
- * 
  * @author Marco Link
+ * @author Daniel Ryan Degutis
  */
 class SKilLServices {
 
-	def dispatch Set<File> getAll(Resource resource) {
-		var Set<File> files = new HashSet();
-		var Iterable<File> files2;
-		var ResourceSet rs = getResourceSet(resource);
-
-		files2 = rs.resources.map(r|r.allContents.toList.filter(typeof(File))).flatten;
-		for (File f : files2) {
-			files.add(f);
-		}
-		return files;
+	def dispatch Set<File> getAll(File file) {
+		return file.eResource.getAll
 	}
 
-	def dispatch Set<File> getAll(File file) {
-		return getAll(file.eResource);
+	def dispatch Set<File> getAll(Resource resource) {
+		val ResourceSet rs = resource.getResourceSet
+		val Iterable<File> files2 = rs.resources.map(r|r.allContents.toList.filter(typeof(File))).flatten
+
+		var Set<File> files = new HashSet
+
+		for (f : files2) {
+			files.add(f)
+		}
+		return files
 	}
 
 	def List<URI> getAllURIs(Resource resource) {
-		var String platformString = resource.getURI().toPlatformString(true);
-		var IFile ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
-		var IProject project = ifile.getProject();
+		val String platformString = resource.getURI.toPlatformString(true)
+		val IProject project = ResourcesPlugin.getWorkspace.getRoot.getFile(new Path(platformString)).getProject
 
-		var List<IFile> ifiles = processContainer(project);
-		var List<URI> uris = new LinkedList<URI>();
-		for (IFile ifileee : ifiles) {
-			uris.add(URI.createPlatformResourceURI(ifileee.getFullPath().toString(), true));
+		var List<URI> uris = new LinkedList
+
+		for (ifile : processContainer(project)) {
+			uris.add(URI.createPlatformResourceURI(ifile.getFullPath.toString, true))
 		}
-		return uris;
+		return uris
 	}
 
 	def List<IFile> processContainer(IContainer container) {
-		var files = new LinkedList<IFile>();
-		var IResource [] members = container.members();
+		val IResource [] members = container.members
 
-		for (IResource member : members) {
+		var files = new LinkedList
+
+		for (member : members) {
 			if (member instanceof IContainer) {
-				files.addAll(processContainer(member));
+				files.addAll(processContainer(member))
 			} else if (member instanceof IFile) {
 				if (member.location.fileExtension.equals("skill")) {
-					files.add(member);
+					files.add(member)
 				}
 			}
 		}
 		return files
 	}
 
-	def dispatch ResourceSet getResourceSet(Resource resource) {
-		var List<URI> uris = getAllURIs(resource);
-		var XtextResourceSet xtextResourceSet = new XtextResourceSet();
-		xtextResourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-		for (URI uri : uris) {
-			xtextResourceSet.getResource(uri, true);
-		}
-		return xtextResourceSet;
-	}
-
 	def dispatch ResourceSet getResourceSet(File file) {
-		return getResourceSet(file.eResource);
+		return file.eResource.getResourceSet
 	}
 
-	/**
-	 * Returns the project of the resource or null if something went wrong.
-	 */
+	def dispatch ResourceSet getResourceSet(Resource resource) {
+		val List<URI> uris = resource.getAllURIs
+
+		var XtextResourceSet xtextResourceSet = new XtextResourceSet
+		xtextResourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE)
+
+		for (uri : uris) {
+			xtextResourceSet.getResource(uri, true)
+		}
+		return xtextResourceSet
+	}
+
+	def dispatch IProject getProject(File file) {
+		return file.eResource.getProject
+	}
+
 	def dispatch IProject getProject(Resource resource) {
 		try {
-			var String platformString = resource.getURI().toPlatformString(false);
-			var IFile ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
-			return ifile.getProject();
+			val String platformString = resource.getURI.toPlatformString(false)
+			return ResourcesPlugin.getWorkspace.getRoot.getFile(new Path(platformString)).getProject
 		} catch (IllegalStateException e) {
-			// Case something went wrong return null.
-			return null;
+			return null
 		}
 	}
 
-	/**
-	 * Returns the project of the resource or null if something went wrong.
-	 */
-	def dispatch IProject getProject(File file) {
-		return getProject(file.eResource);
-	}
 }

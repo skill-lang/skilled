@@ -17,11 +17,9 @@ import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference;
 
 
 /**
- * Class for finding subtypes of a TypeDeclaration.
- * 
  * @author Marco Link
  * @author Nikolay Fateev
- *
+ * @author Daniel Ryan Degutis
  */
 public class SubtypesFinder {
 
@@ -29,38 +27,40 @@ public class SubtypesFinder {
     private ResourceDescriptionsProvider resourceDescriptionsProvider;
 
     @Inject
-	private IContainer.Manager containerManager;
+    private IContainer.Manager containerManager;
 
-	/**
-	 * This Method computes the subtypes from the given TypeDeclaration
-	 * (Usertype or Interfacetype) and returns a set with the subtypes.
-	 * 
-	 * @param typeDeclaration
-	 * @return a set with TypeDeclaration or an empty set, when there are no
-	 *         subtypes.
-	 */
-	public Set<TypeDeclaration> getSubtypes(TypeDeclaration typeDeclaration) {
-		Set<TypeDeclaration> subtypes = new HashSet<TypeDeclaration>();
-		// Get all visible resources.
-		IResourceDescriptions resourceDescriptions = resourceDescriptionsProvider
-				.getResourceDescriptions(typeDeclaration.eResource());
-		IResourceDescription resourceDescription = resourceDescriptions
-				.getResourceDescription(typeDeclaration.eResource().getURI());
-		for (IContainer c : containerManager.getVisibleContainers(resourceDescription, resourceDescriptions)) {
-			for (IEObjectDescription od : c.getExportedObjectsByType(SKilLPackage.Literals.TYPE_DECLARATION)) {
-				// All found resources have to be cast to an TypeDeclaration
-				// object.
-				TypeDeclaration potentialSubtype = (TypeDeclaration) typeDeclaration.eResource().getResourceSet()
-						.getEObject(od.getEObjectURI(), true);
-				if (!potentialSubtype.equals(typeDeclaration)) {
-					for (TypeDeclarationReference supertyperef : potentialSubtype.getSupertypes()) {
-						if (supertyperef.getType().equals(typeDeclaration)) {
-							subtypes.add(potentialSubtype);
-						}
-					}
-				}
-			}
-		}
-		return subtypes;
-	}
+    public Set<TypeDeclaration> getSubtypes(TypeDeclaration typeDeclaration) {
+
+        Set<TypeDeclaration> subtypes = new HashSet<>();
+        IResourceDescriptions rDs = resourceDescriptionsProvider.getResourceDescriptions(typeDeclaration.eResource());
+        IResourceDescription rD = rDs.getResourceDescription(typeDeclaration.eResource().getURI());
+
+        for (IContainer c : containerManager.getVisibleContainers(rD, rDs)) {
+            for (IEObjectDescription od : c.getExportedObjectsByType(SKilLPackage.Literals.TYPE_DECLARATION)) {
+
+                TypeDeclaration potentialSubtype = getPotentialSubtype(typeDeclaration, od);
+
+                if (isSubtype(potentialSubtype, typeDeclaration)) {
+                    subtypes.add(potentialSubtype);
+                }
+            }
+        }
+        return subtypes;
+    }
+
+    private static TypeDeclaration getPotentialSubtype(TypeDeclaration typeDeclaration, IEObjectDescription od) {
+        return (TypeDeclaration) typeDeclaration.eResource().getResourceSet().getEObject(od.getEObjectURI(), true);
+    }
+
+    private static boolean isSubtype(TypeDeclaration potentialSubtype, TypeDeclaration typeDeclaration) {
+        if (!potentialSubtype.equals(typeDeclaration)) {
+            for (TypeDeclarationReference supertyperef : potentialSubtype.getSupertypes()) {
+                if (supertyperef.getType().equals(typeDeclaration)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
