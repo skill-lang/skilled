@@ -4,17 +4,16 @@ import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
 import de.unistuttgart.iste.ps.skilled.sKilL.File
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.validation.SKilLValidator
+import de.unistuttgart.iste.ps.skilled.tests.utils.FileLoader
+import de.unistuttgart.iste.ps.skilled.validation.ConstantValidator
+import de.unistuttgart.iste.ps.skilled.validation.NestingValidator
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.BeforeClass
-import de.unistuttgart.iste.ps.skilled.tests.utils.FileLoader
-import de.unistuttgart.iste.ps.skilled.validation.NestingValidator
-import de.unistuttgart.iste.ps.skilled.validation.ConstantValidator
 
 /**
  * TODO Comment everything

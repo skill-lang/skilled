@@ -1,6 +1,10 @@
 package de.unistuttgart.iste.ps.skilled.validation.restrictions.types
 
-class ErrorMessages {
+/**
+ * @author Nikolay Fateev
+ * @author Moritz Platzer
+ */
+class TypeRestrictionsErrorMessages {
 
 	// All restriction warning and error messages
 	protected static val Unknown_Restriction = "Unknown Restriction"
