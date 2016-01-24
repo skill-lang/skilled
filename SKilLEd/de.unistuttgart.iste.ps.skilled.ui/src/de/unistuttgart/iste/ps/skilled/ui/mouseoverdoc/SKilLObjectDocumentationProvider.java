@@ -105,7 +105,10 @@ public class SKilLObjectDocumentationProvider implements IEObjectDocumentationPr
 		for (int i = 0; i < string.length(); i++) {
 			// Replace "*" with "\n"
 			if (string.charAt(i) == '*') {
-				string = string.substring(0, i - 1) + "</br>" + string.substring(i + 1, string.length());
+				if (i == 0)
+					string = string.substring(1, string.length() - 1);
+				else
+					string = string.substring(0, i - 1) + "</br>" + string.substring(i + 1, string.length() - 1);
 			}
 		}
 		return string + "</br>";
