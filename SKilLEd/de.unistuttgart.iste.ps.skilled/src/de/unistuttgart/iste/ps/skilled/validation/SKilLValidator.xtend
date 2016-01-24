@@ -2,6 +2,7 @@ package de.unistuttgart.iste.ps.skilled.validation
 
 import de.unistuttgart.iste.ps.skilled.validation.restrictions.types.TypeRestrictionsValidator
 import org.eclipse.xtext.validation.ComposedChecks
+import de.unistuttgart.iste.ps.skilled.validation.restrictions.fields.FieldRestrictionsValidator
 
 /**
  * The base validator, that calls all other validators

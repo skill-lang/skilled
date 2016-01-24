@@ -19,9 +19,9 @@ import de.unistuttgart.iste.ps.skilled.sKilL.View
  * 
  */
 class DuplicatedTypenameValidation extends AbstractDeclarativeValidator {
-	private var List<String> fieldNames // List with all FieldNames in validate
-	private var List<TypeDeclaration> declarations // declarations of Types where fieldNames were already looked at
-	private TypeDeclaration validate // The declaration that is checked
+	private var List<String> fieldNames
+	private var List<TypeDeclaration> declarations
+	private TypeDeclaration validate
 	public static var FIELDNAME_ALREADY_EXISTS = "alreadyExists"
 
 	override register(EValidatorRegistrar registar) {}
