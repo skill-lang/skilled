@@ -14,26 +14,29 @@ import org.eclipse.swt.widgets.Text;
 public class GetNameField implements Runnable{
 	private String newName= "";
 	private String oldName = "";
+	private setName name;
 	
 	public void run(){
-		getNewName();
+		open();
 	}
-	public void getNewName(){
+	public void open(){
+		System.out.println("running");
 		newName = "";
-		Display d = new Display();
+		Display d = Display.getDefault();
+		System.out.println("display...");
 		final Shell shell = new Shell(d);
 		shell.setText("Extract Type or Interface");
-        shell.setLayout(new GridLayout(2, true));		
+        shell.setLayout(new GridLayout(2, true));	
         final Text text1 = new Text(shell, SWT.NONE);
         text1.setText(oldName);
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = SWT.CENTER;
-		gridData.horizontalSpan = 2;
+		gridData.horizontalSpan = 2;System.out.println("1");		
 		text1.setLayoutData(gridData);
 		GridData gridDataButton = new GridData();
     	gridDataButton.horizontalAlignment = SWT.CENTER;
    		gridDataButton.horizontalSpan = 2;
-   		Button continueButton = new Button(shell, SWT.NONE);
+   		Button continueButton = new Button(shell, SWT.NONE);		
     	continueButton.setText("OK");
     	continueButton.setLayoutData(gridDataButton);
     	continueButton.addListener(SWT.Selection, new Listener() {
@@ -42,6 +45,7 @@ public class GetNameField implements Runnable{
             case SWT.Selection:
              	newName = text1.getText();		
              	if(!newName.equals("")){
+             		name.setName(newName);
                  	shell.close();             		
              	}
             }
@@ -57,6 +61,10 @@ public class GetNameField implements Runnable{
 	
 	public String getName(){
 		return newName;
+	}
+	
+	public GetNameField(setName name){
+		this.name = name;
 	}
 	
 }

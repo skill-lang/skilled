@@ -263,21 +263,18 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 			});
 	}
 
+
 	//Quickfix to change name if the Name has non-ASCII Characters
 	@Fix(ASCIICharValidator::DECLARATION_HAS_NONASCII_CHARS)
 	def fixDeclarationName(Issue issue, IssueResolutionAcceptor acceptor){
-		acceptor.accept(issue, "Change name", "Change the name of the type declaration. ", "upcase.png", new ISemanticModification() {
+		acceptor.accept(issue, "Change name", "Change the name of the Type. " + issue.data.get(0) + ".", "upcase.png", new ISemanticModification() {
 			override void apply(EObject element, IModificationContext context) {
-				var TypeDeclaration e =element as TypeDeclaration;
-				var GetNameField f = new GetNameField;
-				var Thread nameFieldThread = new Thread(f)
-				nameFieldThread.run
-				while(f.name==""){
-					Thread.sleep(5);
-				}				
-				e.setName(f.name)	
-			}
-		})
+				var TypeDeclaration td = element as TypeDeclaration
+				var setName name = new setName(td, context);
+				var GetNameField f = new GetNameField(name);
+				f.open()
+			}	
+			});
 	}
 	
 	def public String getNewName(String oldName){
