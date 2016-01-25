@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @since 25.08.15.
  *
  */
-public class Edit {
+public class Editor {
     private final String COMMAND_STRING;
     private de.unistuttgart.iste.ps.skillls.tools.api.SkillFile skillFile;
 
@@ -25,7 +25,7 @@ public class Edit {
      * @param commandString
      *            String containing the commands that should be executed.
      */
-    public Edit(String commandString) {
+    public Editor(String commandString) {
         this.COMMAND_STRING = commandString;
     }
 
@@ -55,7 +55,7 @@ public class Edit {
      *            The single command, containing subcommands.
      */
     private void processCommand(String command) {
-        String[] subCommands = command.split(":");
+        String[] subCommands = command.split(":");//TODO: subcommand vllt ändern
         if (subCommands.length <= 1) {
             return;
         }
@@ -66,8 +66,8 @@ public class Edit {
             tool = newTool(subCommands[index]);
             index++;
         }
-        if (index < subCommands.length) {
-            Command cmd = getCommand(subCommands[index]);
+        if (index < subCommands.length) { //TODO: umkehren
+            Command cmd = getCommand(subCommands[index]); //TODO: mehr checks für indizes
             index++;
 
             try {
@@ -258,7 +258,7 @@ public class Edit {
         index++;
         String hintName = subCommands[index];
 
-        Type type = null;
+        Type type = null; //TODO: auslagern auch andere stellen und klone; nicht mit strings in den methoden, sondern vorlagern
         for (Type t : tool.getTypes()) {
             if (t.getName().equals(typeName)) {
                 type = t;

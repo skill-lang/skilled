@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.ps.skillls.test;
 
-import de.unistuttgart.iste.ps.skillls.main.Edit;
+import de.unistuttgart.iste.ps.skillls.main.Editor;
 import de.unistuttgart.iste.ps.skillls.main.MainClass;
 import de.unistuttgart.iste.ps.skillls.tools.Hint;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
@@ -21,8 +21,8 @@ import static org.junit.Assert.*;
  * @author Armin Hüneburg
  * @since 03.09.15.
  */
-public class EditCorrectInputTest {
-    Edit edit;
+public class EditorCorrectInputTest {
+    Editor editor;
     private static String skillFilePath = "resources/.skills";
 
     /**
@@ -53,14 +53,14 @@ public class EditCorrectInputTest {
             fail(e.getMessage());
         }
         String command = "";
-        edit = new Edit(command);
+        editor = new Editor(command);
         try {
-            edit.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Create,
+            editor.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Create,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write));
         } catch (IOException e) {
             fail();
         }
-        edit.start();
+        editor.start();
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Create,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write);
@@ -84,14 +84,14 @@ public class EditCorrectInputTest {
             fail(e.getMessage());
         }
         String command = "&n:testTool;";
-        edit = new Edit(command);
+        editor = new Editor(command);
         try {
-            edit.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
+            editor.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write));
         } catch (IOException e) {
             fail();
         }
-        edit.start();
+        editor.start();
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write);
@@ -115,14 +115,14 @@ public class EditCorrectInputTest {
             fail(e.getMessage());
         }
         String command = "testTool;";
-        edit = new Edit(command);
+        editor = new Editor(command);
         try {
-            edit.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
+            editor.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write));
         } catch (IOException e) {
             fail();
         }
-        edit.start();
+        editor.start();
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write);
@@ -683,14 +683,14 @@ public class EditCorrectInputTest {
             fail(e.getMessage());
         }
         String command = "testTool:0;";
-        edit = new Edit(command);
+        editor = new Editor(command);
         try {
-            edit.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
+            editor.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write));
         } catch (IOException e) {
             fail();
         }
-        edit.start();
+        editor.start();
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write);

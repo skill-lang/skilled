@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.ps.skillls.test;
 
-import de.unistuttgart.iste.ps.skillls.main.Edit;
+import de.unistuttgart.iste.ps.skillls.main.Editor;
 import de.unistuttgart.iste.ps.skillls.main.MainClass;
 import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 import org.junit.AfterClass;
@@ -21,8 +21,8 @@ import static org.junit.Assert.*;
  *
  * @author Armin Hüneburg
  */
-public class EditIncorrectInputTest {
-    Edit edit;
+public class EditorIncorrectInputTest {
+    Editor editor;
     private static String skillFilePath = "resources" + File.separator + ".skills";
     private final String skillsPath = "testFiles" + File.separator + "IncorrectInput" + File.separator + "%s";
 
@@ -66,14 +66,14 @@ public class EditIncorrectInputTest {
     @Test
     public void testCreateNewTool() {
         String command = "&n:testTool;";
-        edit = new Edit(command);
+        editor = new Editor(command);
         try {
-            edit.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
+            editor.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write));
         } catch (IOException e) {
             fail();
         }
-        edit.start();
+        editor.start();
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write);
@@ -97,15 +97,15 @@ public class EditIncorrectInputTest {
             fail(e.getMessage());
         }
         String command = "notTestTool:0;";
-        edit = new Edit(command);
+        editor = new Editor(command);
         try {
-            edit.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
+            editor.setSkillFile(SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write));
         } catch (IOException e) {
             fail();
         }
         try {
-            edit.start();
+            editor.start();
         } catch (Throwable t) {
             if (!(t instanceof IllegalArgumentException)) {
                 fail("wrong exception type");

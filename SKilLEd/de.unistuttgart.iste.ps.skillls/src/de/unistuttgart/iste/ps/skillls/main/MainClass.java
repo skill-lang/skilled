@@ -2,12 +2,12 @@ package de.unistuttgart.iste.ps.skillls.main;
 
 import de.unistuttgart.iste.ps.skillls.grammar.SKilLLexer;
 import de.unistuttgart.iste.ps.skillls.grammar.SKilLParser;
+import de.unistuttgart.iste.ps.skillls.tools.*;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.tree.ParseTree;
-import de.unistuttgart.iste.ps.skillls.tools.*;
-import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,10 +19,11 @@ import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.stream.Stream;
-
+//TODO: generell mehr trennen, klone entfernen
 
 /**
  * This class starts the application and runs the generator if necessary.
@@ -37,10 +38,11 @@ public class MainClass {
     private static String module;
     private static File output;
     private static boolean cleanUp = true;
+    private static String path;
 
     /**
      * Entry point. Sets the exception handler to not rethrow exceptions as errors.
-     * @param args
+     * @param args The command line arguments.
      */
     public static void main(String[] args) {
         ExceptionHandler.setRethrow(false);
@@ -54,128 +56,142 @@ public class MainClass {
      *            The command line arguments.
      */
     public static void start(String[] args) {
-        if (args[0].equals("-e") || args[0].equals("--edit")) {
-            Edit editor = new Edit(args[2]);
-            File file = new File(args[1]);
-            File sfFile = new File(file.getAbsolutePath() + File.separator + ".skills");
-            if (!sfFile.exists()) {
+        switch (args[0]) {
+            case "-e":
+            case "--edit":
+                Editor editor = new Editor(args[2]);
+                File projectDirectory = new File(args[1]);
+                File sfFile = new File(projectDirectory.getAbsolutePath() + File.separator + ".skills");
+                if (!sfFile.exists()) {
+                    try {
+                        // noinspection ResultOfMethodCallIgnored
+                        sfFile.createNewFile();
+                    } catch (IOException e1) {
+                        ExceptionHandler.handle(e1);
+                    }
+                }
+                SkillFile skillFile;
                 try {
-                    // noinspection ResultOfMethodCallIgnored
-                    sfFile.createNewFile();
+                    skillFile = SkillFile.open(sfFile.getAbsolutePath(), SkillFile.Mode.Read, SkillFile.Mode.Write);
                 } catch (IOException e1) {
                     ExceptionHandler.handle(e1);
+                    return;
                 }
-            }
-            SkillFile skillFile;
-            if (!sfFile.exists()) {
+                indexFiles(projectDirectory, skillFile);
+                editor.setSkillFile(skillFile);
+                editor.start();
+                break;
+
+            case "-h":
+            case "--help":
+                printHelp();
+                break;
+
+            default:
+                HashMap<String, ArgumentEvaluation> evaluations = new HashMap<>();
+
+                for (int i = 0; i < args.length; i++) {
+                    ArgumentEvaluation[] evals = evaluateArgument(args, i);
+                    if (evals != null) {
+                        Arrays.stream(evals).forEach(e -> evaluations.put(e.getName(), e));
+                    }
+                    for (ArgumentEvaluation e : evaluations.values()) {
+                        i = i > e.getIndex() ? i : e.getIndex();
+                    }
+                }
+
+                if (evaluations.containsKey("all")) {
+                    fileFlag = FileFlag.All;
+                }
+
+                if (evaluations.containsKey("cleanup")) {
+                    cleanUp = false;
+                }
+
+                if (evaluations.containsKey("list")) {
+                    list(evaluations.get("path").getArgument() + File.separator + ".skills", evaluations);
+                    return;
+                }
+                SkillFile sf;
                 try {
-                    sfFile.createNewFile();
+                    sf = SkillFile.open(evaluations.get("path").getArgument() + File.separator + ".skills",
+                            SkillFile.Mode.Write, SkillFile.Mode.Read);
                 } catch (IOException e) {
                     ExceptionHandler.handle(e);
                     return;
                 }
-            }
-            try {
-                skillFile = SkillFile.open(sfFile.getAbsolutePath(), de.ust.skill.common.java.api.SkillFile.Mode.Read,
-                        de.ust.skill.common.java.api.SkillFile.Mode.Write);
-            } catch (IOException e1) {
-                ExceptionHandler.handle(e1);
-                return;
-            }
-            indexFiles(file, skillFile);
-            editor.setSkillFile(skillFile);
-            editor.start();
-        } else {
-            HashMap<String, ArgumentEvaluation> evaluations = new HashMap<>();
-            for (int i = 0; i < args.length; i++) {
-                // decide what type of argument was passed. Long form (led by --) or short form (led by -) or help.
-                if (args[i].equals("--help") || args[i].equals("-h")) {
-                    printHelp();
-                    return;
-                } else if (args[i].startsWith("--")) {
-                    ArgumentEvaluation e = doubleDashArg(args, i);
-                    if (e.getArgument() != null) {
-                        if (!e.getArgument().equals("list")) {
-                            evaluations.put(e.getName(), e);
-                        }
+                buildDependencies(sf);
+                ArrayList<String> tools = new ArrayList<>();
+                // set the environment of the generation.
+                for (String key : evaluations.keySet()) {
+                    switch (key) {
+                        case "path":
+                            path = evaluations.get("path").getArgument();
+                            break;
+
+                        case "generator":
+                            generator = sf.Generators().make(evaluations.get("exec").getArgument(),
+                                    evaluations.get("generator").getArgument());
+                            break;
+
+                        case "lang":
+                            language = evaluations.get("lang").getArgument();
+                            break;
+
+                        case "module":
+                            module = evaluations.get("module").getArgument();
+                            break;
+
+                        case "output":
+                            output = new File(evaluations.get("output").getArgument());
+                            break;
+
+                        default:
+                            tools.add(evaluations.get(key).getArgument());
+
+                        case "all":
+                        case "cleanup":
+                        case "list":
+                            break;
                     }
-                    i = e.getIndex();
-                } else if (args[i].startsWith("-")) {
-                    ArgumentEvaluation[] es = singleDashArg(args, i);
-                    for (ArgumentEvaluation e : es) {
-                        if (e.getArgument() != null) {
-                            evaluations.put(e.getName(), e);
-                        }
-                        i = i < e.getIndex() ? e.getIndex() : i;
-                    }
-                } else {
-                    ArgumentEvaluation e = noDashArg(args, i);
-                    if (e.getArgument() != null) {
-                        evaluations.put(e.getName(), e);
-                    }
-                    i = e.getIndex();
                 }
-            }
-            SkillFile sf;
-            try {
-                sf = SkillFile.open(evaluations.get("path").getArgument() + File.separator + ".skills",
-                        de.ust.skill.common.java.api.SkillFile.Mode.Write, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            } catch (IOException e) {
-                ExceptionHandler.handle(e);
-                return;
-            }
-            if (evaluations.containsKey("list")) {
-                list(sf, evaluations);
-                return;
-            }
-            buildDependencies(sf);
-            String path = evaluations.get("path").getArgument();
-            evaluations.remove("path");
-            indexFiles(new File(path), sf);
-            Set<String> set = evaluations.keySet();
-            // set the environment of the generation.
-            if (set.contains("generator")) {
-                generator = sf.Generators().make(evaluations.get("exec").getArgument(),
-                        evaluations.get("generator").getArgument());
-                set.remove("exec");
-                set.remove("generator");
-            }
-            if (set.contains("lang")) {
-                language = evaluations.get("lang").getArgument();
-                set.remove("lang");
-            }
+                indexFiles(new File(path), sf);
 
-            if (set.contains("module")) {
-                module = evaluations.get("module").getArgument();
-                set.remove("module");
-            }
+                try {
+                    generate(new File(path), tools, sf);
+                } catch (IOException e) {
+                    ExceptionHandler.handle(e);
+                }
+                break;
+        }
+    }
 
-            if (set.contains("output")) {
-                output = new File(evaluations.get("output").getArgument());
-                set.remove("output");
-            }
-
-            ArrayList<String> tools = new ArrayList<>();
-            if (set.isEmpty()) {
-                tools.addAll(sf.Tools().stream().map(t -> t.getName()).collect(Collectors.toList()));
-            } else {
-                tools.addAll(set.stream().map(s -> evaluations.get(s).getArgument()).collect(Collectors.toList()));
-            }
-
-            try {
-                generate(new File(path), tools, sf);
-            } catch (IOException e) {
-                ExceptionHandler.handle(e);
-            }
+    private static ArgumentEvaluation[] evaluateArgument(String[] args, int index) {
+        // decide what type of argument was passed. Long form (led by --) or short form (led by -).
+        if (args[index].startsWith("--")) {
+            ArgumentEvaluation e = doubleDashArg(args, index);
+            return new ArgumentEvaluation[] { e };
+        } else if (args[index].startsWith("-")) {
+            return singleDashArg(args, index);
+        } else {
+            ArgumentEvaluation e = noDashArg(args, index);
+            return new ArgumentEvaluation[] { e };
         }
     }
 
     /**
      * Prints a tool with its corresponding types and their fields on the stdout.
-     * @param sf skillfile containing the tools and their types.
+     * @param sfPath skillfile path containing the tools and their types.
      * @param evaluations the evaluations of the arguments that were given on the command line.
      */
-    private static void list(SkillFile sf, HashMap<String, ArgumentEvaluation> evaluations) {
+    private static void list(String sfPath, HashMap<String, ArgumentEvaluation> evaluations) {
+        SkillFile sf;
+        try {
+            sf = SkillFile.open(sfPath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
         ArrayList<Tool> tools = new ArrayList<>();
         for (String key : evaluations.keySet()) {
             int index;
@@ -199,34 +215,48 @@ public class MainClass {
         for (Tool tool : tools) {
             System.out.println(tool.getName());
             for (de.unistuttgart.iste.ps.skillls.tools.File file : tool.getFiles()) {
-                File f = new File(file.getPath());
-                String hash = hash(f);
-                // test if file has changed
-                if (fileFlag == FileFlag.All || !file.getMd5().equals(hash)
-                        || ("" + f.lastModified()).equals(file.getTimestamp())) {
-                    // print file name
-                    System.out.println("  " + file.getPath());
-                    tool.getTypes().stream().filter(t -> t.getFile().getPath().equals(file.getPath())).forEach(type -> {
-                        // print hints
-                        for (Hint hint : type.getTypeHints()) {
-                            System.out.println("    " + hint.getName());
-                        }
-                        // print type
-                        System.out.println("    " + type.getName());
-                        // print fields
-                        for (Field field : type.getFields()) {
-                            for (Hint hint : field.getFieldHints()) {
-                                // print field hints
-                                System.out.println("      " + hint.getName());
-                            }
-                            System.out.println("      " + field.getName());
-                        }
-                        System.out.println();
-                    });
-
-                }
+                listFileContent(tool, file);
             }
         }
+    }
+
+    /**
+     * Prints the content of a tool
+     * @param tool the tool that should be printed
+     * @param file the sf-file containing the tool
+     */
+    private static void listFileContent(Tool tool, de.unistuttgart.iste.ps.skillls.tools.File file) {
+        File f = new File(file.getPath());
+        // test if file has changed
+        if (fileFlag == FileFlag.All || !file.getMd5().equals(hash(f))
+                || ("" + f.lastModified()).equals(file.getTimestamp())) {
+            // print file name
+            System.out.println("  " + file.getPath());
+            tool.getTypes().stream().filter(t ->
+                    t.getFile().getPath().equals(file.getPath())).forEach(MainClass::listTypeContent);
+        }
+    }
+
+    /**
+     * Prints the type content
+     * @param type the type whose content should be printed.
+     */
+    private static void listTypeContent(Type type) {
+        // print hints
+        for (Hint hint : type.getTypeHints()) {
+            System.out.println("    " + hint.getName());
+        }
+        // print type
+        System.out.println("    " + type.getName());
+        // print fields
+        for (Field field : type.getFields()) {
+            for (Hint hint : field.getFieldHints()) {
+                // print field hints
+                System.out.println("      " + hint.getName());
+            }
+            System.out.println("      " + field.getName());
+        }
+        System.out.println();
     }
 
     /**
@@ -259,21 +289,14 @@ public class MainClass {
             switch (c) {
                 case 'g':
                     // test if l was typed
-                    if (last == 'l') {
-                        index++;
-                        list.add(new ArgumentEvaluation(index, args[index], "lang"));
-                    }
+                    index = wasLastCharL(index, list, last, args[index + 1]);
                     index++;
                     list.add(new ArgumentEvaluation(index, args[index], "generator"));
                     break;
 
                 case 'a':
                     // test if l was typed
-                    if (last == 'l') {
-                        index++;
-                        list.add(new ArgumentEvaluation(index, args[index], "lang"));
-                    }
-                    fileFlag = FileFlag.All;
+                    index = wasLastCharL(index, list, last, args[index + 1]);
                     list.add(new ArgumentEvaluation(index, null, "all"));
                     break;
 
@@ -282,40 +305,28 @@ public class MainClass {
 
                 case 'x':
                     // test if l was typed
-                    if (last == 'l') {
-                        index++;
-                        list.add(new ArgumentEvaluation(index, args[index], "lang"));
-                    }
+                    index = wasLastCharL(index, list, last, args[index + 1]);
                     index++;
                     list.add(new ArgumentEvaluation(index, args[index], "exec"));
                     break;
 
                 case 'p':
                     // test if l was typed
-                    if (last == 'l') {
-                        index++;
-                        list.add(new ArgumentEvaluation(index, args[index], "lang"));
-                    }
+                    index = wasLastCharL(index, list, last, args[index + 1]);
                     index++;
                     list.add(new ArgumentEvaluation(index, args[index], "path"));
                     break;
 
                 case 'o':
                     // test if l was typed
-                    if (last == 'l') {
-                        index++;
-                        list.add(new ArgumentEvaluation(index, args[index], "lang"));
-                    }
+                    index = wasLastCharL(index, list, last, args[index + 1]);
                     index++;
                     list.add(new ArgumentEvaluation(index, args[index], "output"));
                     break;
 
                 case 'm':
                     // test if l was typed
-                    if (last == 'l') {
-                        index++;
-                        list.add(new ArgumentEvaluation(index, args[index], "lang"));
-                    }
+                    index = wasLastCharL(index, list, last, args[index + 1]);
                     index++;
                     list.add(new ArgumentEvaluation(index, args[index], "module"));
                     break;
@@ -333,8 +344,24 @@ public class MainClass {
             }
             last = c;
         }
-        // noinspection ToArrayCallWithZeroLengthArrayArgument
-        return list.toArray(new ArgumentEvaluation[0]);
+        return list.toArray(new ArgumentEvaluation[list.size()]);
+    }
+
+    /**
+     * Checks whether the last char was an L and sets the language argument if it was.
+     * @param globalIndex the index of the current argument
+     * @param list the list of argument evaluations
+     * @param c the char which was the one before the current
+     * @param arg the argument at globalIndex
+     * @return new globalIndex
+     */
+    private static int wasLastCharL(int globalIndex, ArrayList<ArgumentEvaluation> list, char c, String arg) {
+        int index = globalIndex;
+        if (c == 'l') {
+            index++;
+            list.add(new ArgumentEvaluation(index, arg, "lang"));
+        }
+        return index;
     }
 
     /**
@@ -349,39 +376,22 @@ public class MainClass {
     private static ArgumentEvaluation doubleDashArg(String[] args, int globalIndex) {
         int index = globalIndex;
         switch (args[index]) {
-            case "--generator":
-                index++;
-                return new ArgumentEvaluation(index, args[index], "generator");
-
             case "--all":
-                fileFlag = FileFlag.All;
                 return new ArgumentEvaluation(index, null, "all");
 
             case "--lang":
-                index++;
-                return new ArgumentEvaluation(index, args[index], "lang");
-
+            case "--generator":
             case "--exec":
-                index++;
-                return new ArgumentEvaluation(index, args[index], "exec");
-
             case "--path":
-                index++;
-                return new ArgumentEvaluation(index, args[index], "path");
-
             case "--output":
-                index++;
-                return new ArgumentEvaluation(index, args[index], "output");
-
             case "--module":
                 index++;
-                return new ArgumentEvaluation(index, args[index], "module");
+                return new ArgumentEvaluation(index, args[index], args[index - 1].substring(2));
 
             case "--list":
                 return new ArgumentEvaluation(index, null, "list");
 
             case "--no-cleanup":
-                cleanUp = false;
                 return new ArgumentEvaluation(index, null, "cleanup");
 
             default:
@@ -413,20 +423,19 @@ public class MainClass {
 
         for (String t : tools) {
             for (Tool tool : skillFile.Tools()) {
-                if (t.equals(tool.getName())) {
+                if (t.equals(tool.getName()) || fileFlag == FileFlag.All) {
                     ArrayList<File> files = new ArrayList<>();
                     for (de.unistuttgart.iste.ps.skillls.tools.File f : tool.getFiles()) {
                         File file = new File(f.getPath());
                         String hash = hash(new File(file.getAbsolutePath()));
                         // check if modified or all files are considered
-                        if (!f.getMd5().equals(hash) || file.lastModified() != Long.parseLong(f.getTimestamp())
-                                || fileFlag == FileFlag.All) {
+                        if (!f.getMd5().equals(hash) || file.lastModified() != Long.parseLong(f.getTimestamp())) {
                             f.setMd5(hash);
                             f.setTimestamp(String.valueOf(file.lastModified()));
                             files.add(file);
                         }
                     }
-                    if (files.size() != 0) {
+                    if (files.size() != 0 || fileFlag == FileFlag.All) {
                         files.clear();
                         for (de.unistuttgart.iste.ps.skillls.tools.File f : tool.getFiles()) {
                             File file = new File(f.getPath());
@@ -453,7 +462,7 @@ public class MainClass {
      *            Directory which contains the tool specific files.
      */
     private static void runGeneration(HashMap<Tool, ArrayList<File>> toolToFile,
-            File tempDir) {
+                                      File tempDir) {
         ArrayList<Thread> commands = new ArrayList<>();
         for (de.unistuttgart.iste.ps.skillls.tools.Tool t : toolToFile.keySet()) {
             StringBuilder builder = new StringBuilder();
@@ -470,6 +479,7 @@ public class MainClass {
             // noinspection SuspiciousMethodCalls
             builder.append(" %s ");
             builder.append(output.getAbsolutePath());
+            //noinspection Convert2streamapi
             for (File f : toolToFile.get(t)) {
                 commands.add(new GenerationThread(String.format(builder.toString(), f.getAbsolutePath()),
                         new File(generator == null ? t.getGenerator().getPath() : generator.getPath())));
@@ -484,7 +494,6 @@ public class MainClass {
             }
         });
         if (cleanUp) {
-            System.out.println("cleanup");
             cleanUp(tempDir);
         }
     }
@@ -500,6 +509,7 @@ public class MainClass {
      * @throws IOException
      *             Thrown if there is a problem with creating temporary files.
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static File createToolFile(File project, Tool tool, File file) throws IOException {
         File tempDir = new File(project.getAbsolutePath() + File.separator + ".skillt");
         tempDir = new File(tempDir, tool.getName());
@@ -528,16 +538,20 @@ public class MainClass {
             SKilLParser parser = new SKilLParser(tokens);
             parser.addParseListener(new SkillExtractListener(fs, file, tool));
             // Call has side effect: the .skill-file is parsed.
-            @SuppressWarnings({ "unused" })
-            ParseTree tree = parser.file();
+            parser.file();
         }
         return newFile;
     }
 
+    /**
+     * Creates a directory and its parents if they don't exist
+     * @param file the complete directory path
+     */
     private static void createDirectory(File file) {
         if (!file.getParentFile().exists()) {
             createDirectory(file.getParentFile());
         }
+        //noinspection ResultOfMethodCallIgnored
         file.mkdir();
     }
 
@@ -604,7 +618,7 @@ public class MainClass {
                 if (child.isDirectory()) {
                     indexFiles(child, skillFile);
                 } else if (child.getAbsolutePath().endsWith(".skill")) {
-                	de.unistuttgart.iste.ps.skillls.tools.File f = null;
+                    de.unistuttgart.iste.ps.skillls.tools.File f = null;
                     if (getStream(child, skillFile).count() != 0) {
                         f = getStream(child, skillFile).findFirst().get();
                     }
@@ -634,39 +648,16 @@ public class MainClass {
      * @param skillFile the skillfile containing the files.
      */
     static void buildDependencies(SkillFile skillFile) {
+        ArrayList<Thread> builder = new ArrayList<>();
         for (Tool tool : skillFile.Tools()) {
-            for (de.unistuttgart.iste.ps.skillls.tools.File file : tool.getFiles()) {
-                ArrayList<Type> types = tool.getTypes().stream()
-                        .filter(type -> type.getFile().getPath().equals(file.getPath()))
-                        .collect(Collectors.toCollection(ArrayList::new));
-                for (Type type : types) {
-                    ArrayList<String> deps = new ArrayList<>();
-                    for (String extension : type.getExtends()) {
-                        tool.getTypes().stream().filter(t -> t.getName().equals(extension))
-                                .filter(t -> !t.getFile().getPath().equals(type.getFile().getPath())
-                                        && !deps.contains(t.getFile().getPath()))
-                                .forEach(t -> deps.add(t.getFile().getPath()));
-                    }
-                    for (Field field : type.getFields()) {
-                        for (Type t : skillFile.Types()) {
-                            String name = field.getName();
-                            if (name.startsWith("auto")) {
-                                name = name.substring(5);
-                            }
-                            int index = name.indexOf(' ');
-                            if (index == -1) {
-                                index = name.length();
-                            }
-                            if (t.getName().startsWith(name.substring(0, index))) {
-                                if (!t.getFile().getPath().equals(file.getPath()) && !deps.contains(t.getFile().getPath())) {
-                                    deps.add(t.getFile().getPath());
-                                }
-                            }
-                        }
-                    }
-                    deps.stream().filter(dep -> !file.getDependencies().contains(dep))
-                            .forEach(dep -> file.getDependencies().add(dep));
-                }
+            builder.add(new Thread(new DependencyBuilder(tool, skillFile)));
+            builder.get(builder.size() - 1).start();
+        }
+        for (Thread t : builder) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -737,52 +728,6 @@ public class MainClass {
         } catch (IOException e) {
             ExceptionHandler.handle(e);
             return "";
-        }
-    }
-
-    /**
-     * Class for handling program arguments.
-     */
-    private static class ArgumentEvaluation {
-        private final int INDEX;
-        private final String ARGUMENT;
-        private final String NAME;
-
-        /**
-         * Constructor. Only way to set the attributes.
-         *
-         * @param index
-         *            the last index this argument is concerned with.
-         * @param argument
-         *            if the argument has a second parameter, this is it.
-         * @param name
-         *            the name of the argument.
-         */
-        public ArgumentEvaluation(int index, String argument, String name) {
-            this.INDEX = index;
-            this.ARGUMENT = argument;
-            this.NAME = name;
-        }
-
-        /**
-         * @return Returns the index.
-         */
-        public int getIndex() {
-            return INDEX;
-        }
-
-        /**
-         * @return returns the parameter to the argument.
-         */
-        public String getArgument() {
-            return ARGUMENT;
-        }
-
-        /**
-         * @return returns the name of the argument.
-         */
-        public String getName() {
-            return NAME;
         }
     }
 }
