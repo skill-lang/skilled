@@ -29,25 +29,24 @@ class StringTypeFieldRestrictions extends FieldRestrictionsValidator {
 			showError(FieldRestrictionErrorMessages.Default_Already_Used, restriction)
 			return
 		}
+
 		if (restriction.restrictionArguments.size() == 1) {
 			val restrictionArgument = restriction.restrictionArguments.get(0)
-			if (restrictionArgument.valueString == null) {
-				if (restrictionArgument.valueType != null) {
-					val restrictionArgumentType = (restrictionArgument.valueType).type
-					if (restrictionArgumentType instanceof Typedef) {
-						if (!(restrictionArgumentType.fieldtype instanceof Stringtype)) {
-							showError(FieldRestrictionErrorMessages.Default_Arg_Not_String, restriction)
-						}
-					} else {
-						showError(FieldRestrictionErrorMessages.Default_Arg_Not_String, restriction)
+			
+			if (restrictionArgument.valueString != null) {
+				return
+			}
+			
+			if (restrictionArgument.valueType != null) {
+				val restrictionArgumentType = (restrictionArgument.valueType).type
+				if (restrictionArgumentType instanceof Typedef) {
+					if ((restrictionArgumentType.fieldtype instanceof Stringtype)) {
+						return
 					}
-				} else {
-					showError(FieldRestrictionErrorMessages.Default_Arg_Not_String, restriction)
 				}
 			}
-		} else {
-			showError(FieldRestrictionErrorMessages.Default_Not_One_Arg, restriction)
 		}
+		showError(FieldRestrictionErrorMessages.Default_Not_One_Arg, restriction)
 	}
 
 	override void handleConstantLengthPointerRestriction(Fieldtype fieldtype, Restriction restriction,

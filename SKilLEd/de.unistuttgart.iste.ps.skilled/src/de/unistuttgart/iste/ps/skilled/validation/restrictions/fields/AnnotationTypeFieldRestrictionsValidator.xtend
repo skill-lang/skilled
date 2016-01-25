@@ -7,6 +7,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
+import org.eclipse.emf.common.util.EList
 
 /**
  * @author Daniel Ryan Degutis
@@ -23,6 +24,7 @@ class AnnotationTypeFieldRestrictionsValidator extends FieldRestrictionsValidato
 			showError(FieldRestrictionErrorMessages.Default_Already_Used, restriction)
 			return
 		}
+
 		if (restriction.restrictionArguments.size() == 1) {
 			val restrictionArgument = restriction.restrictionArguments.get(0)
 			if (restrictionArgument.valueType == null) {
@@ -30,33 +32,27 @@ class AnnotationTypeFieldRestrictionsValidator extends FieldRestrictionsValidato
 			} else {
 				val restrictionArgumentType = (restrictionArgument.valueType).type
 				if (restrictionArgumentType instanceof Typedef) {
-					val restrictionArgumentRestrictions = restrictionArgumentType.restrictions
-					var isRestrictionArgumentSingletonRestricted = false
-					for (typedefRestriction : restrictionArgumentRestrictions) {
-						if ("singleton".equals(typedefRestriction.restrictionName.toLowerCase)) {
-							isRestrictionArgumentSingletonRestricted = true
-						}
-					}
-					if (!isRestrictionArgumentSingletonRestricted) {
-						showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton_Or_Enum, restriction)
-					}
+					handleDefaultRestrictionTypedef(restrictionArgumentType.restrictions, restriction)
 				} else if (restrictionArgumentType instanceof Usertype) {
-					val restrictionArgumentRestrictions = restrictionArgumentType.restrictions
-					var isRestrictionArgumentSingletonRestricted = false
-					for (typedefRestriction : restrictionArgumentRestrictions) {
-						if ("singleton".equals(typedefRestriction.restrictionName.toLowerCase)) {
-							isRestrictionArgumentSingletonRestricted = true
-						}
-					}
-					if (!isRestrictionArgumentSingletonRestricted) {
-						showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton_Or_Enum, restriction)
-					}
+					handleDefaultRestrictionTypedef(restrictionArgumentType.restrictions, restriction)
 				} else if (restrictionArgumentType instanceof Interfacetype) {
 					showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton_Or_Enum, restriction)
 				}
 			}
 		} else {
 			showError(FieldRestrictionErrorMessages.Default_Not_One_Arg, restriction)
+		}
+	}
+
+	def private handleDefaultRestrictionTypedef(EList<Restriction> rs, Restriction r) {
+		var isRestrictionArgumentSingletonRestricted = false
+		for (typedefRestriction : rs) {
+			if ("singleton".equals(typedefRestriction.restrictionName.toLowerCase)) {
+				isRestrictionArgumentSingletonRestricted = true
+			}
+		}
+		if (!isRestrictionArgumentSingletonRestricted) {
+			showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton_Or_Enum, r)
 		}
 	}
 
@@ -74,7 +70,7 @@ class AnnotationTypeFieldRestrictionsValidator extends FieldRestrictionsValidato
 			showError(FieldRestrictionErrorMessages.OneOf_Already_Used, restriction)
 			return
 		}
-		
+
 		if (restriction.restrictionArguments.size() >= 1) {
 			for (restrictionArgument : restriction.restrictionArguments) {
 				if (restrictionArgument.valueType == null) {
