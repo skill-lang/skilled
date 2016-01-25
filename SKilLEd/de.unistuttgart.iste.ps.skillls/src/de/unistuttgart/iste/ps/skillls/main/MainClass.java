@@ -1,5 +1,14 @@
 package de.unistuttgart.iste.ps.skillls.main;
 
+import de.unistuttgart.iste.ps.skillls.grammar.SKilLLexer;
+import de.unistuttgart.iste.ps.skillls.grammar.SKilLParser;
+import de.unistuttgart.iste.ps.skillls.tools.*;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.tree.ParseTree;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,22 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Stream;
-
-import org.antlr.v4.runtime.ANTLRFileStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.tree.ParseTree;
-
-import de.unistuttgart.iste.ps.skillls.grammar.SKilLLexer;
-import de.unistuttgart.iste.ps.skillls.grammar.SKilLParser;
-import de.unistuttgart.iste.ps.skillls.tools.Field;
-import de.unistuttgart.iste.ps.skillls.tools.Generator;
-import de.unistuttgart.iste.ps.skillls.tools.Hint;
-import de.unistuttgart.iste.ps.skillls.tools.Tool;
-import de.unistuttgart.iste.ps.skillls.tools.Type;
-import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
-// TODO: generell mehr trennen, klone entfernen
-
+//TODO: generell mehr trennen, klone entfernen
 
 /**
  * This class starts the application and runs the generator if necessary.
@@ -48,24 +42,20 @@ public class MainClass {
 
     /**
      * Entry point. Sets the exception handler to not rethrow exceptions as errors.
-     *
-     * @param args
-     *            The command line arguments.
+     * @param args The command line arguments.
      */
     public static void main(String[] args) {
         ExceptionHandler.setRethrow(false);
-        start(Indexing.NORMAL, args);
+        start(args);
     }
 
     /**
      * Generates flags for the generator execution.
      *
-     * @param indexing
-     *            Determines whether files should be indexed or not
      * @param args
      *            The command line arguments.
      */
-    public static void start(Indexing indexing, String[] args) {
+    public static void start(String[] args) {
         switch (args[0]) {
             case "-e":
             case "--edit":
@@ -87,10 +77,7 @@ public class MainClass {
                     ExceptionHandler.handle(e1);
                     return;
                 }
-                indexFiles(projectDirectory, skillFile, indexing);
-                if (indexing == Indexing.JUST_INDEXING) {
-                    return;
-                }
+                indexFiles(projectDirectory, skillFile);
                 editor.setSkillFile(skillFile);
                 editor.start();
                 break;
@@ -168,10 +155,7 @@ public class MainClass {
                             break;
                     }
                 }
-                indexFiles(new File(path), sf, indexing);
-                if (indexing == Indexing.JUST_INDEXING) {
-                    return;
-                }
+                indexFiles(new File(path), sf);
 
                 try {
                     generate(new File(path), tools, sf);
@@ -197,11 +181,8 @@ public class MainClass {
 
     /**
      * Prints a tool with its corresponding types and their fields on the stdout.
-     * 
-     * @param sfPath
-     *            skillfile path containing the tools and their types.
-     * @param evaluations
-     *            the evaluations of the arguments that were given on the command line.
+     * @param sfPath skillfile path containing the tools and their types.
+     * @param evaluations the evaluations of the arguments that were given on the command line.
      */
     private static void list(String sfPath, HashMap<String, ArgumentEvaluation> evaluations) {
         SkillFile sf;
@@ -241,11 +222,8 @@ public class MainClass {
 
     /**
      * Prints the content of a tool
-     * 
-     * @param tool
-     *            the tool that should be printed
-     * @param file
-     *            the sf-file containing the tool
+     * @param tool the tool that should be printed
+     * @param file the sf-file containing the tool
      */
     private static void listFileContent(Tool tool, de.unistuttgart.iste.ps.skillls.tools.File file) {
         File f = new File(file.getPath());
@@ -254,16 +232,14 @@ public class MainClass {
                 || ("" + f.lastModified()).equals(file.getTimestamp())) {
             // print file name
             System.out.println("  " + file.getPath());
-            tool.getTypes().stream().filter(t -> t.getFile().getPath().equals(file.getPath()))
-                    .forEach(MainClass::listTypeContent);
+            tool.getTypes().stream().filter(t ->
+                    t.getFile().getPath().equals(file.getPath())).forEach(MainClass::listTypeContent);
         }
     }
 
     /**
      * Prints the type content
-     * 
-     * @param type
-     *            the type whose content should be printed.
+     * @param type the type whose content should be printed.
      */
     private static void listTypeContent(Type type) {
         // print hints
@@ -373,15 +349,10 @@ public class MainClass {
 
     /**
      * Checks whether the last char was an L and sets the language argument if it was.
-     * 
-     * @param globalIndex
-     *            the index of the current argument
-     * @param list
-     *            the list of argument evaluations
-     * @param c
-     *            the char which was the one before the current
-     * @param arg
-     *            the argument at globalIndex
+     * @param globalIndex the index of the current argument
+     * @param list the list of argument evaluations
+     * @param c the char which was the one before the current
+     * @param arg the argument at globalIndex
      * @return new globalIndex
      */
     private static int wasLastCharL(int globalIndex, ArrayList<ArgumentEvaluation> list, char c, String arg) {
@@ -490,7 +461,8 @@ public class MainClass {
      * @param tempDir
      *            Directory which contains the tool specific files.
      */
-    private static void runGeneration(HashMap<Tool, ArrayList<File>> toolToFile, File tempDir) {
+    private static void runGeneration(HashMap<Tool, ArrayList<File>> toolToFile,
+                                      File tempDir) {
         ArrayList<Thread> commands = new ArrayList<>();
         for (de.unistuttgart.iste.ps.skillls.tools.Tool t : toolToFile.keySet()) {
             StringBuilder builder = new StringBuilder();
@@ -507,7 +479,7 @@ public class MainClass {
             // noinspection SuspiciousMethodCalls
             builder.append(" %s ");
             builder.append(output.getAbsolutePath());
-            // noinspection Convert2streamapi
+            //noinspection Convert2streamapi
             for (File f : toolToFile.get(t)) {
                 commands.add(new GenerationThread(String.format(builder.toString(), f.getAbsolutePath()),
                         new File(generator == null ? t.getGenerator().getPath() : generator.getPath())));
@@ -544,8 +516,7 @@ public class MainClass {
         if (!tempDir.exists()) {
             tempDir.mkdirs();
         }
-        Path relativizedPath = Paths.get(project.getAbsolutePath()).relativize(Paths.get(file.getAbsolutePath()))
-                .normalize();
+        Path relativizedPath = Paths.get(project.getAbsolutePath()).relativize(Paths.get(file.getAbsolutePath())).normalize();
 
         File newFile = new File(tempDir, relativizedPath.toString());
 
@@ -574,15 +545,13 @@ public class MainClass {
 
     /**
      * Creates a directory and its parents if they don't exist
-     * 
-     * @param file
-     *            the complete directory path
+     * @param file the complete directory path
      */
     private static void createDirectory(File file) {
         if (!file.getParentFile().exists()) {
             createDirectory(file.getParentFile());
         }
-        // noinspection ResultOfMethodCallIgnored
+        //noinspection ResultOfMethodCallIgnored
         file.mkdir();
     }
 
@@ -641,18 +610,13 @@ public class MainClass {
      *            The project the tools belong to.
      * @param skillFile
      *            The skill file containing the definitions for the tools.
-     * @param indexing
-     *            Determines whether files should be indexed or not
      */
-    private static void indexFiles(File project, SkillFile skillFile, Indexing indexing) {
-        if (indexing == Indexing.NO_INDEXING) {
-            return;
-        }
+    private static void indexFiles(File project, SkillFile skillFile) {
         if (project != null && project.listFiles() != null) {
             // noinspection ConstantConditions
             for (File child : project.listFiles()) {
                 if (child.isDirectory()) {
-                    indexFiles(child, skillFile, indexing);
+                    indexFiles(child, skillFile);
                 } else if (child.getAbsolutePath().endsWith(".skill")) {
                     de.unistuttgart.iste.ps.skillls.tools.File f = null;
                     if (getStream(child, skillFile).count() != 0) {
@@ -661,7 +625,8 @@ public class MainClass {
                     String hash = hash(child);
                     if (f == null) {
                         // noinspection UnusedAssignment
-                        f = skillFile.Files().make(new ArrayList<>(), "", hash, child.getPath(), child.lastModified() + "");
+                        f = skillFile.Files().make(new ArrayList<>(), "", hash, child.getPath(),
+                                child.lastModified() + "");
                         indexTypes(child, skillFile);
                     } else if (Paths.get(child.getPath()).relativize(Paths.get(f.getPath())).toString().equals("")
                             && (!f.getMd5().equals(hash) || !f.getTimestamp().equals("" + child.lastModified()))) {
@@ -680,9 +645,7 @@ public class MainClass {
 
     /**
      * Adds the dependencies of a file to the file.
-     * 
-     * @param skillFile
-     *            the skillfile containing the files.
+     * @param skillFile the skillfile containing the files.
      */
     static void buildDependencies(SkillFile skillFile) {
         ArrayList<Thread> builder = new ArrayList<>();
@@ -701,11 +664,8 @@ public class MainClass {
 
     /**
      * returns a stream of tools.File with identical path.
-     * 
-     * @param file
-     *            the original file.
-     * @param skillFile
-     *            the skillfile containing the files.
+     * @param file the original file.
+     * @param skillFile the skillfile containing the files.
      * @return a stream of the tool.Files.
      */
     private static Stream<de.unistuttgart.iste.ps.skillls.tools.File> getStream(File file, SkillFile skillFile) {
@@ -746,9 +706,7 @@ public class MainClass {
 
     /**
      * Creates a MD5 hash of a file and transforms it into a hexadecimal String.
-     * 
-     * @param file
-     *            The file that should be hashed.
+     * @param file The file that should be hashed.
      * @return The MD5 hash of the given file as hexadecimal string.
      */
     private static String hash(File file) {

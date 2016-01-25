@@ -1,13 +1,13 @@
 package de.unistuttgart.iste.ps.skillls.main;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import de.unistuttgart.iste.ps.skillls.tools.Field;
 import de.unistuttgart.iste.ps.skillls.tools.Hint;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
 import de.unistuttgart.iste.ps.skillls.tools.Type;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -55,7 +55,7 @@ public class Editor {
      *            The single command, containing subcommands.
      */
     private void processCommand(String command) {
-        String[] subCommands = command.split(":");// TODO: subcommand vllt ändern
+        String[] subCommands = command.split(":");//TODO: subcommand vllt ändern
         if (subCommands.length <= 1) {
             return;
         }
@@ -66,8 +66,8 @@ public class Editor {
             tool = newTool(subCommands[index]);
             index++;
         }
-        if (index < subCommands.length) { // TODO: umkehren
-            Command cmd = getCommand(subCommands[index]); // TODO: mehr checks für indizes
+        if (index < subCommands.length) { //TODO: umkehren
+            Command cmd = getCommand(subCommands[index]); //TODO: mehr checks für indizes
             index++;
 
             try {
@@ -213,8 +213,7 @@ public class Editor {
             throw new Error("Type not in Tool");
         }
         for (Type t : skillFile.Types()) {
-            if (t.getName().equals(typeName)
-                    && skillFile.Tools().stream().noneMatch(tool1 -> tool1.getTypes().contains(t))) {
+            if (t.getName().equals(typeName) && skillFile.Tools().stream().noneMatch(tool1 -> tool1.getTypes().contains(t))) {
                 skType = t;
                 break;
             }
@@ -259,8 +258,7 @@ public class Editor {
         index++;
         String hintName = subCommands[index];
 
-        Type type = null; // TODO: auslagern auch andere stellen und klone; nicht mit strings in den methoden, sondern
-                          // vorlagern
+        Type type = null; //TODO: auslagern auch andere stellen und klone; nicht mit strings in den methoden, sondern vorlagern
         for (Type t : tool.getTypes()) {
             if (t.getName().equals(typeName)) {
                 type = t;
@@ -290,7 +288,7 @@ public class Editor {
                 break;
             }
         }
-        // exit if arguemnt error: hint not found
+        //exit if arguemnt error: hint not found
         if (hint == null) {
             throw new Error("Hint not found");
         }
@@ -397,7 +395,6 @@ public class Editor {
         }
         type.getFields().remove(field);
         skillFile.delete(field);
-        removeFieldContent(field);
     }
 
     /**
@@ -482,36 +479,11 @@ public class Editor {
             return;
         }
         skillFile.delete(type);
-        removeTypeContent(type);
         for (Type t : tool.getTypes()) {
             if (t.getFile().equals(file)) {
                 tool.getFiles().add(file);
                 break;
             }
-        }
-    }
-
-    /**
-     * Removes the fields and hints from a type
-     * @param type type that is deleted
-     */
-    private void removeTypeContent(Type type) {
-        for (Hint hint : type.getTypeHints()) {
-            skillFile.delete(hint);
-        }
-        for (Field f : type.getFields()) {
-            skillFile.delete(f);
-            removeFieldContent(f);
-        }
-    }
-
-    /**
-     * Removes the hints from a field
-     * @param field field that is deleted
-     */
-    private void removeFieldContent(Field field) {
-        for (Hint h : field.getFieldHints()) {
-            skillFile.delete(h);
         }
     }
 
@@ -575,11 +547,8 @@ public class Editor {
 
     /**
      * Adds the groundtype of typedefs to a tool.
-     * 
-     * @param type
-     *            typedef which has a groundtype.
-     * @param tool
-     *            tool the new types are added to.
+     * @param type typedef which has a groundtype.
+     * @param tool tool the new types are added to.
      */
     private void addGroundType(Type type, Tool tool) {
         String groundTypeName = type.getName().split(" ")[type.getName().split(" ").length - 1].toLowerCase();
@@ -669,7 +638,6 @@ public class Editor {
      */
     private void delete(Tool tool) {
         skillFile.delete(tool);
-        tool.getTypes().forEach(this::removeTypeContent);
     }
 
     /**

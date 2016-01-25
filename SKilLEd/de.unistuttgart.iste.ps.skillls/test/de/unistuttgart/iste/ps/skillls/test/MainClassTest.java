@@ -219,21 +219,15 @@ public class MainClassTest {
         String[] got = outStream.toString().trim().split("\n");
         System.setOut(origOut);
         System.setErr(origErr);
-        assertTrue("First line does not contain file.", got[1].trim().startsWith("resources" + File.separator));
+        assertTrue("First line does not contain file.", got[1].endsWith("resources" + File.separator + "Furniture.skill"));
         assertTrue("SecondLine is not a type", got[2].trim().equals("Bathtub"));
-        assertTrue("Third line is not a empty", got[3].trim().isEmpty());
-        assertTrue("fourth line does not contain file.", got[4].trim().startsWith("resources" + File.separator));
-        assertEquals("fifth line is not a type", got[5].trim(), "Window");
-        int i = 6;
-        String line = "";
-        do {
-            if (i >= got.length || line == null) {
-                break;
-            }
-            line = got[i];
-            assertTrue("more output", line == null || line.trim().isEmpty());
-            i++;
-        } while (true);
+        assertTrue("SecondLine is not a type", got[3].trim().isEmpty());
+        assertTrue("SecondLine is not a type", got[4].trim().equals("Window"));
+        int i = 5;
+        String line;
+        while (i < got.length && (line = got[i]) != null) {
+            assertTrue("more output", line.trim().isEmpty());
+        }
 
         try {
             RandomAccessFile raf = new RandomAccessFile("resources" + File.separator + "Furniture.skill", "rw");
