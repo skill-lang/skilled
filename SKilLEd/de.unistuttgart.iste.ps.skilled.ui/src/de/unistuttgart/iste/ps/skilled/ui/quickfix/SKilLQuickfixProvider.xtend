@@ -270,7 +270,7 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 		acceptor.accept(issue, "Change name", "Change the name of the Type. " + issue.data.get(0) + ".", "upcase.png", new ISemanticModification() {
 			override void apply(EObject element, IModificationContext context) {
 				var TypeDeclaration td = element as TypeDeclaration
-				var setName name = new setName(td, context);
+				var setName name = new setName(td, context, issue, acceptor);
 				var GetNameField f = new GetNameField(name);
 				f.open()
 			}	
