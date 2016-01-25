@@ -6,7 +6,6 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification
 import org.eclipse.xtext.validation.Issue
-import javax.inject.Inject
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolution
 
 class setName {
@@ -22,31 +21,20 @@ class setName {
 	}
 	def setName(String name){
 		if(name!= null){
-			/*
-			var ISemanticModification sem = new ISemanticModification() {
-			override void apply(EObject element, IModificationContext context) {
-				var TypeDeclaration e =element as TypeDeclaration;				
-				e.name = name;
-				print("Name set to "+ e.name+ "!" )
-			}
-			}
-			sem.apply(declara, context);
-		*/
-			acceptor.accept(issue, "Change name", "changing name" + issue.data.get(0) + ".", "upcase.png", new ISemanticModification() {
+			acceptor.accept(issue, "Change name", "changing name", "upcase.png", new ISemanticModification() {
 				override void apply(EObject element, IModificationContext context) {
 					var TypeDeclaration td = element as TypeDeclaration
 					td.name= name
-					println("Name set to "+ td.name+ "!" )
 				}	
 			});
-		
+			var int count = 0;
 			for(IssueResolution i :acceptor.issueResolutions){
+				count++;
+				println("fix: "+ count+ "Description: "+ i.description)
 				if(i.description.equals("changing name")){
-					println("Apply fix")
 					i.apply
 				}
-			}
-			println("Name now: "+declara.name)			
+			}		
 		}
 	}
 }

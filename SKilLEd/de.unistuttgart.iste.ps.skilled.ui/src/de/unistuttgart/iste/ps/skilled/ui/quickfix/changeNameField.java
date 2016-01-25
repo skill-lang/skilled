@@ -11,14 +11,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class GetNameField implements Runnable{
+public class changeNameField{
 	private String newName= "";
 	private String oldName = "";
 	private setName name;
 	
-	public void run(){
-		open();
-	}
 	public void open(){
 		System.out.println("running");
 		newName = "";
@@ -63,7 +60,7 @@ public class GetNameField implements Runnable{
 		return newName;
 	}
 	
-	public GetNameField(setName name){
+	public changeNameField(setName name){
 		this.name = name;
 	}
 	

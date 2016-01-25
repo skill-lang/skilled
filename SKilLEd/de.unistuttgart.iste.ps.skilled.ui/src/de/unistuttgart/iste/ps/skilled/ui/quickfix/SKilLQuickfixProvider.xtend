@@ -15,6 +15,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.SKilLFactory
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
 import de.unistuttgart.iste.ps.skilled.validation.InheritenceValidator
+
 import de.unistuttgart.iste.ps.skilled.validation.ScopingValidator
 import java.util.ArrayList
 import java.util.LinkedList
@@ -63,6 +64,8 @@ import org.eclipse.swt.layout.GridLayout
 import org.eclipse.swt.widgets.Button
 import org.eclipse.swt.widgets.Listener
 import org.eclipse.swt.widgets.Event
+import de.unistuttgart.iste.ps.skilled.validation.ASCIICharValidator
+
 
 /**
  * Custom quickfixes.
@@ -267,11 +270,14 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 	//Quickfix to change name if the Name has non-ASCII Characters
 	@Fix(ASCIICharValidator::DECLARATION_HAS_NONASCII_CHARS)
 	def fixDeclarationName(Issue issue, IssueResolutionAcceptor acceptor){
-		acceptor.accept(issue, "Change name", "Change the name of the Type. " + issue.data.get(0) + ".", "upcase.png", new ISemanticModification() {
+		acceptor.accept(issue, "Change name", "Change the name of the Type." , "upcase.png", new ISemanticModification() {
 			override void apply(EObject element, IModificationContext context) {
 				var TypeDeclaration td = element as TypeDeclaration
+				//Create xtend class with a method to change the name to a new one
 				var setName name = new setName(td, context, issue, acceptor);
-				var GetNameField f = new GetNameField(name);
+				//Open name-change Window that will allow the User to enter a new name
+				var changeNameField f = new changeNameField(name);
+				f.oldName = td.name
 				f.open()
 			}	
 			});
