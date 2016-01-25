@@ -67,7 +67,6 @@ import org.eclipse.swt.widgets.Event
 import de.unistuttgart.iste.ps.skilled.validation.ASCIICharValidator
 import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
 
-
 /**
  * Custom quickfixes.
  * 
@@ -78,30 +77,26 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#quick-fixes
  */
 public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
-	
+
 	@Fix("Imported resource could not be found.")
 	def fixImport(Issue issue, IssueResolutionAcceptor acceptor) {
 		var URI uri = URI.createURI(issue.data.get(0))
-		uri = URI.createURI(uri.toString.replace("../",""))
+		uri = URI.createURI(uri.toString.replace("../", ""))
 		val IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		val URI path = URI.createURI(root.locationURI.rawPath).appendSegments(uri.segmentsList)
 		val java.io.File asdf = (new Path(path.toString)).toFile.absoluteFile.parentFile
 		val java.io.File[] files = asdf.listFiles();
-		if (files == null) return
+		if(files == null) return
 		val LinkedList<String> fileNames = new LinkedList()
 		for (java.io.File file : files) {
-			val distance = getLevenshteinDistance(file.absolutePath.replaceAll("/","\\\\"), path.toString.substring(1).replaceAll("/", "\\\\"))
+			val distance = getLevenshteinDistance(file.absolutePath.replaceAll("/", "\\\\"),
+				path.toString.substring(1).replaceAll("/", "\\\\"))
 			if (3 > distance && 0 < distance && file.absolutePath.matches(".*\\.skill")) {
 				fileNames.add(file.name)
 			}
 		}
 		for (String name : fileNames) {
-			acceptor.accept(
-			issue,
-			"Change to " + name,
-			"Change to " + name,
-			"upcase.png",
-			new ISemanticModification() {
+			acceptor.accept(issue, "Change to " + name, "Change to " + name, "upcase.png", new ISemanticModification() {
 				override apply(EObject element, IModificationContext context) {
 					var IncludeFile include = null
 					if (element instanceof IncludeFile) {
@@ -120,7 +115,7 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 
 	@Inject
 	private CrossRefResolutionConverter converter;
-	
+
 	def private int getLevenshteinDistance(String s0, String s1) {
 		val m = s0.length
 		val n = s1.length
@@ -141,17 +136,18 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 		for (var j = 1; j <= n; j++) {
 			for (var i = 1; i <= m; i++) {
 				if (s0.charAt(i - 1) == s1.charAt(j - 1)) {
-					d.get(i).set(j, d.get(i-1).get(j-1))
+					d.get(i).set(j, d.get(i - 1).get(j - 1))
 				} else {
-					d.get(i).set(j, Integer.min(d.get(i-1).get(j), Integer.min(d.get(i).get(j-1), d.get(i-1).get(j-1))) + 1)
+					d.get(i).set(j,
+						Integer.min(d.get(i - 1).get(j), Integer.min(d.get(i).get(j - 1), d.get(i - 1).get(j - 1))) + 1)
 				}
 			}
 		}
 		return d.get(m).get(n)
 	}
-	
+
 	def private boolean isSimilar(String s0, String s1) {
-		if(Strings.isEmpty(s0) || Strings.isEmpty(s1)) {
+		if (Strings.isEmpty(s0) || Strings.isEmpty(s1)) {
 			return false;
 		}
 		var double levenshteinDistance = getLevenshteinDistance(s0, s1);
@@ -181,8 +177,7 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 				IssueResolutionAcceptor myAcceptor = null;
 
 				@Override
-				override public String exec(XtextResource state,
-					CancelIndicator cancelIndicator) throws Exception {
+				override public String exec(XtextResource state, CancelIndicator cancelIndicator) throws Exception {
 					myAcceptor = getCancelableAcceptor(issueResolutionAcceptor, cancelIndicator);
 					val EObject target = state.getEObject(issue.getUriToProblem().fragment());
 					val EReference reference = getUnresolvedEReference(issue, target);
@@ -214,8 +209,7 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 						if (checkedDescriptions <= 100) {
 							var String referableElementQualifiedName = qualifiedNameConverter.toString(
 								referableElement.getQualifiedName());
-							if (isSimilar(issueString,
-								qualifiedNameConverter.toString(referableElement.getName()))) {
+							if (isSimilar(issueString, qualifiedNameConverter.toString(referableElement.getName()))) {
 								addedDescriptions++;
 								createResolution(issueString, referableElement, ruleName, keyword, caseInsensitive);
 								qualifiedNames.add(referableElementQualifiedName);
@@ -267,76 +261,78 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 			});
 	}
 
-
-	//Quickfix to change name if the Name has non-ASCII Characters
-	@Fix(ASCIICharValidator::DECLARATION_HAS_NONASCII_CHARS)
-	def fixDeclarationName(Issue issue, IssueResolutionAcceptor acceptor){
-		acceptor.accept(issue, "Change name", "Change the name of the Type." , "upcase.png", new ISemanticModification() {
-			override void apply(EObject element, IModificationContext context) {
-				var TypeDeclaration td = element as TypeDeclaration
-				//Create xtend class with a method to change the name to a new one
-				var setName name = new setName(issue, acceptor);
-				//Open name-change Window that will allow the User to enter a new name
-				var changeNameField f = new changeNameField(name);
-				f.oldName = td.name
-				f.open()
-			}	
+	// Quickfix to change name if the Name has non-ASCII Characters
+	@Fix("declarationNonASCII")
+	def fixDeclarationName(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, "Change name", "Change the name of the Type.", "upcase.png",
+			new ISemanticModification() {
+				override void apply(EObject element, IModificationContext context) {
+					var TypeDeclaration td = element as TypeDeclaration
+					// Create xtend class with a method to change the name to a new one
+					var setName name = new setName(issue, acceptor);
+					// Open name-change Window that will allow the User to enter a new name
+					var changeNameField f = new changeNameField(name);
+					f.oldName = td.name
+					f.open()
+				}
 			});
 	}
 	
-	def public String getNewName(String oldName){
-		newName = "";
+	var String newName;
+
+	def public String getNewName(String oldName) {
 		var Display d;
 		var Shell shell = new Shell(d);
 		shell.setText("Extract Type or Interface");
-        shell.setLayout(new GridLayout(2, true));		
-        val Text text1 = new Text(shell, SWT.NONE);
-        text1.text = oldName
+		shell.setLayout(new GridLayout(2, true));
+		val Text text1 = new Text(shell, SWT.NONE);
+		text1.text = oldName
 		var GridData gridData = new GridData();
 		gridData.horizontalAlignment = SWT.CENTER;
 		gridData.horizontalSpan = 2;
 		text1.layoutData = gridData
 		var GridData gridDataButton = new GridData();
-    	gridDataButton.horizontalAlignment = SWT.CENTER;
-   		gridDataButton.horizontalSpan = 2;
-   		var Button continueButton = new Button(shell, SWT.NONE);
-    	continueButton.setText("OK");
-    	continueButton.setLayoutData(gridDataButton);
-    	continueButton.addListener(SWT.Selection, new Listener() {
-          override public void handleEvent(Event e) {
-            switch (e.type) {
-            case SWT.Selection:
-             	newName = text1.text				
-            }
-          }
-        });
+		gridDataButton.horizontalAlignment = SWT.CENTER;
+		gridDataButton.horizontalSpan = 2;
+		var Button continueButton = new Button(shell, SWT.NONE);
+		continueButton.setText("OK");
+		continueButton.setLayoutData(gridDataButton);
+		continueButton.addListener(SWT.Selection, new Listener() {
+			override public void handleEvent(Event e) {
+				switch (e.type) {
+					case SWT.Selection:
+						newName = text1.text
+				}
+			}
+		});
 		val Point newSize = shell.computeSize(150, 150, true);
 		shell.setSize(newSize);
 		shell.open();
-		while(newName.equals("")){
+		while (newName.equals("")) {
 			Thread.sleep(5)
 		}
 		shell.close
 		return newName;
-		
+
 	}
-	
-	@Fix(ASCIICharValidator::FIELD_HAS_NONASCII_CHARS)
-	def fixFieldName(Issue issue, IssueResolutionAcceptor acceptor){
-		acceptor.accept(issue, "Change name", "Change the name of the Field." , "upcase.png", new ISemanticModification() {
-			override void apply(EObject element, IModificationContext context) {
-				var Fieldcontent field = element as Fieldcontent
-				//Create xtend class with a method to change the name to a new one
-				var setName name = new setName(issue, acceptor);
-				//Open name-change Window that will allow the User to enter a new name
-				var changeNameField f = new changeNameField(name);
-				f.oldName = field.name
-				f.open()
-			}	
+
+	@Fix("fieldNonASCII")
+	def fixFieldName(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue, "Change name", "Change the name of the Field.", "upcase.png",
+			new ISemanticModification() {
+				override void apply(EObject element, IModificationContext context) {
+					var Fieldcontent field = element as Fieldcontent
+					// Create xtend class with a method to change the name to a new one
+					var setName name = new setName(issue, acceptor);
+					// Open name-change Window that will allow the User to enter a new name
+					var changeNameField f = new changeNameField(name);
+					f.oldName = field.name
+					f.open()
+				}
 			});
 	}
-	
-	//Quickfix to remove the Parent that is the Type
+
+	// Quickfix to remove the Parent that is the Type
 	@Fix(InheritenceValidator::TYPE_IS_HIS_OWN_PARENT)
 	def fixSupertype(Issue issue, IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Remove Type", "Removes the supertype " + issue.data.get(0) + ".", "upcase.png",
