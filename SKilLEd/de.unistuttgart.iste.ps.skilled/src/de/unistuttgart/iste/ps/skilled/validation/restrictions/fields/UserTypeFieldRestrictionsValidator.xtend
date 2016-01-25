@@ -26,45 +26,56 @@ class UserTypeFieldRestrictions extends FieldRestrictionsValidator {
 	}
 
 	override void handleDefaultRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasDefaultUsed) {
-		val fieldTypeName = (fieldtype as DeclarationReference).type.name
-		if (!wasDefaultUsed) {
-			if (restriction.restrictionArguments.size() == 1) {
-				val restrictionArgument = restriction.restrictionArguments.get(0)
-				if (restrictionArgument.valueType == null) {
-					showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton, restriction)
-				} else {
-					val restrictionArgumentType = (restrictionArgument.valueType).type
-					if (restrictionArgumentType instanceof Usertype) {
-						val restrictionArgumentSupertypes = restrictionArgumentType.supertypes
-						var isRestrictionArgumentSubTypeOfField = false
-						for (supertype : restrictionArgumentSupertypes) {
-							if (fieldTypeName.equals(supertype.type.name)) {
-								isRestrictionArgumentSubTypeOfField = true
-							}
-						}
-						var isRestrictionArgumentTypeSingletonRestricted = false
-						if (isRestrictionArgumentSubTypeOfField) {
-							val restrictionArgumentRestrictions = restrictionArgumentType.restrictions
-							for (restrictionArgumentRestriction : restrictionArgumentRestrictions) {
-								if ("singleton".equals(restrictionArgumentRestriction.restrictionName.toLowerCase)) {
-									isRestrictionArgumentTypeSingletonRestricted = true
-								}
-							}
-						}
-						if (!isRestrictionArgumentSubTypeOfField || !isRestrictionArgumentTypeSingletonRestricted) {
-							showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton, restriction)
-						}
-					} else if (restrictionArgumentType instanceof Enumtype) {
-					} else {
-						showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton, restriction)
-					}
-				}
+		if (wasDefaultUsed) {
+			showError(FieldRestrictionErrorMessages.Default_Already_Used, restriction)
+			return
+		}
+
+		if (restriction.restrictionArguments.size() == 1) {
+			if (restriction.restrictionArguments.get(0).valueType == null) {
+				showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton, restriction)
 			} else {
-				showError(FieldRestrictionErrorMessages.Default_Not_One_Arg, restriction)
+				handleIsRestrictionArgumentUsertype(fieldtype, restriction)
 			}
 		} else {
-			showError(FieldRestrictionErrorMessages.Default_Already_Used, restriction)
+			showError(FieldRestrictionErrorMessages.Default_Not_One_Arg, restriction)
 		}
+	}
+
+	def private void handleIsRestrictionArgumentUsertype(Fieldtype fieldtype, Restriction restriction) {
+		val restrictionArgumentType = (restriction.restrictionArguments.get(0).valueType).type
+
+		if (restrictionArgumentType instanceof Usertype) {
+			if (!isRestrictionArgumentSubTypeOfField(restrictionArgumentType, fieldtype)) {
+				showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton, restriction)
+			} else if (!isRestrictionArgumentTypeSingletonRestricted(restrictionArgumentType)) {
+				showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton, restriction)
+			}
+		} else if (restrictionArgumentType instanceof Enumtype) {
+			return
+		} else {
+			showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton, restriction)
+		}
+	}
+
+	def private boolean isRestrictionArgumentSubTypeOfField(Usertype ut, Fieldtype fieldtype) {
+		val fieldTypeName = (fieldtype as DeclarationReference).type.name
+
+		for (supertype : ut.supertypes) {
+			if (fieldTypeName.equals(supertype.type.name)) {
+				return true
+			}
+		}
+		return false
+	}
+
+	def private boolean isRestrictionArgumentTypeSingletonRestricted(Usertype ut) {
+		for (restrictionArgumentRestriction : ut.restrictions) {
+			if ("singleton".equals(restrictionArgumentRestriction.restrictionName.toLowerCase)) {
+				return true
+			}
+		}
+		return false
 	}
 
 	override void handleConstantLengthPointerRestriction(Fieldtype fieldtype, Restriction restriction,
@@ -77,18 +88,19 @@ class UserTypeFieldRestrictions extends FieldRestrictionsValidator {
 	}
 
 	override void handleOneOfRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasOneOfUsed) {
-		if (!wasOneOfUsed) {
-			if (restriction.restrictionArguments.size() >= 1) {
-				for (restrictionArgument : restriction.restrictionArguments) {
-					if (restrictionArgument.valueType == null) {
-						showError(FieldRestrictionErrorMessages.OneOf_Arg_Not_Usertype, restriction)
-					}
+		if (wasOneOfUsed) {
+			showError(FieldRestrictionErrorMessages.OneOf_Already_Used, restriction)
+			return
+		}
+
+		if (restriction.restrictionArguments.size() >= 1) {
+			for (restrictionArgument : restriction.restrictionArguments) {
+				if (restrictionArgument.valueType == null) {
+					showError(FieldRestrictionErrorMessages.OneOf_Arg_Not_Usertype, restriction)
 				}
-			} else {
-				showError(FieldRestrictionErrorMessages.OneOf_Not_One_Arg, restriction)
 			}
 		} else {
-			showError(FieldRestrictionErrorMessages.OneOf_Already_Used, restriction)
+			showError(FieldRestrictionErrorMessages.OneOf_Not_One_Arg, restriction)
 		}
 	}
 }

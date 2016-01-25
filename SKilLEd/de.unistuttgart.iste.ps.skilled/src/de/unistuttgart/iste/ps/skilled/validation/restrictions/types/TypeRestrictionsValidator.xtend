@@ -8,19 +8,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.validation.AbstractSKilLValidator
 import org.eclipse.xtext.validation.ComposedChecks
 
-/**  
- * Validates type restrictions and their arguments. <br>
- * <br>
- * Supported restrictions: Unique, Singleton, Monotone, Abstract, Default <br>
- * <br>
- * The error/warning messages give context to the conditions. <br>
- * <br>
- * Guide to restriction arguments (parameters): <br>
- * restrictionArgument.valueType 	- a declaration (typedef, enum, interface, usertype) type argument <br>
- * restrictionArgument.valueString 	- a string type argument <br>
- * restrictionArgument.valueLong 	- a integer type argument <br>
- * restrictionArgument.valueDouble	- a float type argument <br>
- * 
+/** 
  * @author Nikolay Fateev
  * @author Moritz Platzer
  */

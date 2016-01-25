@@ -2,12 +2,13 @@ package de.unistuttgart.iste.ps.skilled.validation.restrictions.types
 
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.util.SubtypesFinder
-import org.eclipse.xtext.validation.Check
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Maptype
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
+import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
+import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.util.SubtypesFinder
+import de.unistuttgart.iste.ps.skilled.validation.errormessages.TypeRestrictionsErrorMessages
+import org.eclipse.xtext.validation.Check
 
 /**
  * @author Nikolay Fateev

@@ -1,7 +1,11 @@
 package de.unistuttgart.iste.ps.skilled.validation.errormessages
 
+/**
+ * @author Nikolay Fateev
+ * @author Daniel Ryan Degutis
+ */
 class FieldRestrictionErrorMessages {
-	
+
 	// All restriction warning and error messages
 	public static val String Unknown_Restriction = "Unknown Restriction"
 	public static val Restriction_On_Map = "Map-typed fields can't have restrictions."
@@ -31,26 +35,16 @@ class FieldRestrictionErrorMessages {
 	public static val Range_Usage = "The Range restriction can only be used on integers and floats."
 	// Range restriction warning messages
 	public static val Range_Multiple_Used = "The use of multiple Range restrictions is highly discouraged. The correctness of the intersection is not checked."
-	// Max restriction error messages
-	public static val Max_Arg_Not_Integer = "Restriction argument must be an integer."
-	public static val Max_Arg_Not_Float = "Restriction argument must be a float."
-	public static val Max_First_Arg_Not_Integer = "The first argument must be an integer."
-	public static val Max_First_Arg_Not_Float = "The first argument must be an float."
-	public static val Max_Second_Arg_Not_Lowercase_String = "The second argument must be a lowercase string."
-	public static val Max_Not_1or2_Args = "The Max restriction must have one or two arguments."
-	public static val Max_Usage = "The Max restriction can only be used on integers and floats."
-	// Max restriction warning messages
-	public static val Max_Multiple_Used = "The use of multiple Max restrictions is highly discouraged. The correctness of the intersection is not checked."
-	// Min restriction error messages
-	public static val Min_Arg_Not_Integer = "Restriction argument must be an integer."
-	public static val Min_Arg_Not_Float = "Restriction argument must be a float."
-	public static val Min_First_Arg_Not_Integer = "The first argument must be an integer."
-	public static val Min_First_Arg_Not_Float = "The first argument must be an float."
-	public static val Min_Second_Arg_Not_Lowercase_String = "The second argument must be a lowercase string."
-	public static val Min_Not_1or2_Args = "The Min restriction must have one or two arguments."
-	public static val Min_Usage = "The Min restriction can only be used on integers and floats."
-	// Min restriction warning messages
-	public static val Min_Multiple_Used = "The use of multiple Min restrictions is highly discouraged. The correctness of the intersection is not checked."
+	// MinMax restriction error messages
+	public static val MinMax_Arg_Not_Integer = "Restriction argument must be an integer."
+	public static val MinMax_Arg_Not_Float = "Restriction argument must be a float."
+	public static val MinMax_First_Arg_Not_Integer = "The first argument must be an integer."
+	public static val MinMax_First_Arg_Not_Float = "The first argument must be an float."
+	public static val MinMax_Second_Arg_Not_Lowercase_String = "The second argument must be a lowercase string."
+	public static val MinMax_Not_1or2_Args = "The Min or Max restrictions must have one or two arguments."
+	public static val MinMax_Usage = "The Min or Max restrictions can only be used on integers and floats."
+	// MinMax restriction warning messages
+	public static val MinMax_Multiple_Used = "The use of multiple Min or Max restrictions is highly discouraged. The correctness of the intersection is not checked."
 	// Coding restriction error messages
 	public static val Coding_Arg_Not_String = "The Coding restriction argument value must be a string."
 	public static val Coding_Not_One_Arg = "The Coding restriction must have one argument."
