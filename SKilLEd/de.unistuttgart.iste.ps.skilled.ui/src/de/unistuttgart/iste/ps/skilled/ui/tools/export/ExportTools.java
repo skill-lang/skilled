@@ -284,7 +284,8 @@ public class ExportTools {
 			ToolUtil.generateTemporarySKilLFiles(fName, project);
 			System.out.println(".skillt Folder made");
 		}
-
+		
+		fListofFiles = new ArrayList<>();
 		listFiles(fToolFolder, fListofFiles);
 
 		for (File f : fListofFiles) {
