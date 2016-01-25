@@ -65,6 +65,7 @@ import org.eclipse.swt.widgets.Button
 import org.eclipse.swt.widgets.Listener
 import org.eclipse.swt.widgets.Event
 import de.unistuttgart.iste.ps.skilled.validation.ASCIICharValidator
+import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
 
 
 /**
@@ -274,7 +275,7 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 			override void apply(EObject element, IModificationContext context) {
 				var TypeDeclaration td = element as TypeDeclaration
 				//Create xtend class with a method to change the name to a new one
-				var setName name = new setName(td, context, issue, acceptor);
+				var setName name = new setName(issue, acceptor);
 				//Open name-change Window that will allow the User to enter a new name
 				var changeNameField f = new changeNameField(name);
 				f.oldName = td.name
@@ -318,6 +319,21 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 		shell.close
 		return newName;
 		
+	}
+	
+	@Fix(ASCIICharValidator::FIELD_HAS_NONASCII_CHARS)
+	def fixFieldName(Issue issue, IssueResolutionAcceptor acceptor){
+		acceptor.accept(issue, "Change name", "Change the name of the Field." , "upcase.png", new ISemanticModification() {
+			override void apply(EObject element, IModificationContext context) {
+				var Fieldcontent field = element as Fieldcontent
+				//Create xtend class with a method to change the name to a new one
+				var setName name = new setName(issue, acceptor);
+				//Open name-change Window that will allow the User to enter a new name
+				var changeNameField f = new changeNameField(name);
+				f.oldName = field.name
+				f.open()
+			}	
+			});
 	}
 	
 	//Quickfix to remove the Parent that is the Type
