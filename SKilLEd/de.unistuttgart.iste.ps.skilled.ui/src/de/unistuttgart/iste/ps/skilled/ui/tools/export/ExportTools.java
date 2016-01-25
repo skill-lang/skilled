@@ -7,11 +7,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.SWT;
@@ -30,14 +30,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.unistuttgart.iste.ps.skilled.ui.views.ToolView;
+import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
 
 /**
  * This class provides the dialog window for "Export Tools" which allows the
  * user to export a certain tool to a location of his or her choice
  * 
- * @author Leslie
+ * @author Leslie Tso
  *
  */
 public class ExportTools {
@@ -45,37 +45,17 @@ public class ExportTools {
 	String fName = "";
 	String fSaveLocation = "";
 	String[] fToolName;
-	// String[] fToolLanguage;
-	// Generator[] fToolGenerator;
-	// String[] fToolModule;
 	File fCheckSave;
 
 	ArrayList<File> fListofFiles = null;
 	List<String> fToolNameList = null;
-	private SaveListofAllTools fSave;
-	private ToolView fToolView;
+	SaveListofAllTools fSave;
 	ArrayList<Tool> fToolList = null;
 	List<String> fToolPathList = null;
 
 	// Location of the workspace the user is using
 	IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	File workspaceDirectory = workspace.getRoot().getLocation().toFile();
-
-	// Gets the names of the tools from
-	// de.unistuttgart.iste.ps.skilled.ui.views.Toolview.java
-//	public void setListofAllTools(ArrayList<Tool> allToolList) {
-//		System.out.println("I am working!");
-//		if (allToolList.size() > 0) {
-//			fToolNameList = new ArrayList<String>();
-//			for (int i = 0; i < allToolList.size(); i++) {
-//				fToolNameList.add(allToolList.get(i).getName());
-//			}
-//			System.out.println(fToolNameList.size());
-//		} else if (fToolNameList == null) {
-//			System.out.println("fToolNameList is null");
-//		}
-//
-//	}
 
 	/**
 	 * Creates dialog window
@@ -85,13 +65,12 @@ public class ExportTools {
 		Shell shell = new Shell(d);
 		shell.setText("Export Tool");
 		shell.layout(true, true);
+		// Gets list of tool names and their paths from SaveListofAllTools.java
 		fSave = SaveListofAllTools.getInstance();
 		if (SaveListofAllTools.getToolNameList() != null && SaveListofAllTools.getToolPathList() != null) {
 			fToolNameList = SaveListofAllTools.getToolNameList();
 			fToolPathList = SaveListofAllTools.getToolPathList();
-			// fToolList = fToolView.getListofTools();
 			System.out.println("fToolNameList.size() is " + fToolNameList.size());
-			// setListofAllTools(fToolList);
 		} else {
 			System.out.println("run:fToolNameList is null");
 		}
@@ -140,8 +119,7 @@ public class ExportTools {
 			String emptyList[] = {};
 			cSelectTool.setItems(emptyList);
 		}
-		// Default combofield value (blank)
-		cSelectTool.select(0);
+		fName = cSelectTool.getText();
 		cSelectTool.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				// TODO
@@ -156,6 +134,7 @@ public class ExportTools {
 		gridDataLabel2.horizontalSpan = 1;
 		lSaveLocation.setLayoutData(gridDataLabel2);
 
+		// Export location here
 		Text tSaveLocation = new Text(shell, SWT.BORDER | SWT.SINGLE);
 		tSaveLocation.setText(fSaveLocation);
 		GridData gridDataWidgetsSmall = new GridData();
@@ -217,7 +196,8 @@ public class ExportTools {
 					if (overwrite == JOptionPane.YES_OPTION) {
 						fCheckSave.delete();
 						combineFiles();
-						// Reset save location
+						// Reset text fields
+						fName = "";
 						fSaveLocation = "";
 						shell.dispose();
 					}
@@ -226,6 +206,8 @@ public class ExportTools {
 				else {
 					combineFiles();
 					shell.dispose();
+					fName = "";
+					fSaveLocation = "";
 
 				}
 
@@ -268,53 +250,62 @@ public class ExportTools {
 	 * Combines all files found by method listFiles
 	 * 
 	 */
+	@SuppressWarnings("static-access")
 	public void combineFiles() {
-
-		int fWorkspaceLength = workspaceDirectory.getAbsolutePath().length();
 
 		System.out.println("fName is: " + fName);
 		int index = fToolNameList.indexOf(fName);
+		System.out.println("Index is: " + index);
 
-		// File path of tool selected from the dropdown menu
+		// File path of the .skills file of the tool selected from the dropdown
+		// menu (i.e. C:\\...\Workspace\Project\.skills)
 		String fToolFilePath = fToolPathList.get(index);
 		System.out.println("fToolFilePath is: " + fToolFilePath);
 
-		String fToolFilePathWithoutWorkspace = fToolFilePath.substring(fWorkspaceLength + 1);
-		System.out.println("fToolFilePathWithoutWorkspace is: " + fToolFilePathWithoutWorkspace);
+		// File path of the project of the tool (i.e. C:\\...\Workspace\Project)
+		String fToolProjectPath = fToolFilePath.substring(0, fToolFilePath.lastIndexOf(File.separator));
+		System.out.println("fToolProjectPath is: " + fToolProjectPath);
 
-		String fToolFilePathWithoutProjectFolder = fToolFilePathWithoutWorkspace
-				.substring(fToolFilePathWithoutWorkspace.indexOf(File.separator) + 1);
-		System.out.println("fToolFilePathWithoutProjectFolder is: " + fToolFilePathWithoutProjectFolder);
-
-		int fLengthofProject = fToolFilePathWithoutWorkspace.length() - fToolFilePathWithoutProjectFolder.length();
-
-		String fProjectPath = fToolFilePath.substring(0, fToolFilePath.length() + fLengthofProject);
-		System.out.println("fProjectPath is: " + fProjectPath);
-
-		// i.e. C:\\...\ProjectRoot\.tools\toolname
-		String fToolFolder = fProjectPath + File.separator + ".tools" + File.separator + fName;
+		// File path of the tool folder in the .skillt folder (i.e.
+		// C:\\...\Workspace\Project\.skillt\Tool
+		String fToolFolder = fToolProjectPath + File.separator + ".skillt" + File.separator + fName;
 		System.out.println("fToolFolder is: " + fToolFolder);
 
-		// File fToolDirectory = new File(fToolFolder);
-		// File[] fListofFiles = fToolDirectory.listFiles();
+		File fCheckExistsToolFolder = new File(fToolFolder);
+		
+		// Name of the project (i.e. Project)
+		String fToolProjectName = fToolProjectPath.substring(fToolProjectPath.lastIndexOf(File.separator) + 1,
+				fToolProjectPath.length());
+		System.out.println("fToolProjectName is: " + fToolProjectName);
+
+		// If the tool folder does not exist, Export Tools will generate the it from the .skills file
+		if (!fCheckExistsToolFolder.exists()) {
+			IProject project = workspace.getRoot().getProject(fToolProjectName);
+			ToolUtil.generateTemporarySKilLFiles(fName, project);
+			System.out.println(".skillt Folder made");
+		}
 
 		listFiles(fToolFolder, fListofFiles);
 
 		for (File f : fListofFiles) {
 			FileInputStream fis;
+			String fText = "";
 			try {
 				FileWriter fw = new FileWriter(fCheckSave, true);
 				fis = new FileInputStream(f);
 				BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 				String line;
-				// Head comment that says which tool the merged files are
-				fw.write("# Tool " + fName);
+				
 				while ((line = br.readLine()) != null) {
 					// Ignore all other head comments
 					if (!line.startsWith("#")) {
-						fw.write(line);
+						fText += line + "\n";
 					}
 				}
+				
+				// Head comment that says which tool the merged files belong to
+				fw.write("# Tool " + fName);
+				fw.write(fText);
 				br.close();
 				fw.close();
 

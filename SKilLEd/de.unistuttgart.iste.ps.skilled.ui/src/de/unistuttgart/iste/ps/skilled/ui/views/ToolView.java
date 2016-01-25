@@ -56,6 +56,7 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
  * @author Nico Russam
  * @author Marco Link
  * @author Armin Hüneburg
+ * @author Leslie Tso
  */
 public class ToolView extends ViewPart {
 

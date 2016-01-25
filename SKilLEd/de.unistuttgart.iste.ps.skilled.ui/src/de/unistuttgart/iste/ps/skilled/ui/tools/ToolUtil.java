@@ -80,7 +80,7 @@ public final class ToolUtil {
      */
     public static boolean generateTemporarySKilLFiles(String toolname, IProject project) {
         String[] arguments = { "--no-cleanup", "-aplomx", project.getLocation().toPortableString(), "Java",
-                project.getLocation().toString() + ".skillt", "scala", toolname };
+                project.getLocation().toString(), "scala", toolname };
         try {
             MainClass.start(arguments);
             return true;
