@@ -1,17 +1,18 @@
 package de.unistuttgart.iste.ps.skillls.main;
 
-import de.unistuttgart.iste.ps.skillls.grammar.SKilLParser;
-import de.unistuttgart.iste.ps.skillls.grammar.SKilLParserBaseListener;
-import org.antlr.v4.runtime.tree.TerminalNode;
-import de.unistuttgart.iste.ps.skillls.tools.Field;
-import de.unistuttgart.iste.ps.skillls.tools.Hint;
-import de.unistuttgart.iste.ps.skillls.tools.Tool;
-import de.unistuttgart.iste.ps.skillls.tools.Type;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
+
+import org.antlr.v4.runtime.tree.TerminalNode;
+
+import de.unistuttgart.iste.ps.skillls.grammar.SKilLParser;
+import de.unistuttgart.iste.ps.skillls.grammar.SKilLParserBaseListener;
+import de.unistuttgart.iste.ps.skillls.tools.Field;
+import de.unistuttgart.iste.ps.skillls.tools.Hint;
+import de.unistuttgart.iste.ps.skillls.tools.Tool;
+import de.unistuttgart.iste.ps.skillls.tools.Type;
 
 
 /**
@@ -26,11 +27,14 @@ public class SkillExtractListener extends SKilLParserBaseListener {
     private Tool tool;
 
     /**
-     * Constructor.
-     * Sets the values of the instance attributes.
-     * @param outFile the file the extraction should be places in.
-     * @param inFile the file that should be parsed.
-     * @param tool tool that contains the data for the specifications and tools.
+     * Constructor. Sets the values of the instance attributes.
+     * 
+     * @param outFile
+     *            the file the extraction should be places in.
+     * @param inFile
+     *            the file that should be parsed.
+     * @param tool
+     *            tool that contains the data for the specifications and tools.
      */
     public SkillExtractListener(FileOutputStream outFile, File inFile, Tool tool) {
         this.outFile = outFile;
@@ -40,12 +44,14 @@ public class SkillExtractListener extends SKilLParserBaseListener {
 
     /**
      * Method called when the complete file is parsed.
-     * @param fileContext The parsed content of the file.
+     * 
+     * @param fileContext
+     *            The parsed content of the file.
      */
     @Override
     public void exitFile(SKilLParser.FileContext fileContext) {
         try {
-        	de.unistuttgart.iste.ps.skillls.tools.File file = null;
+            de.unistuttgart.iste.ps.skillls.tools.File file = null;
             for (de.unistuttgart.iste.ps.skillls.tools.File f : tool.getFiles()) {
                 if (Paths.get(inFile.getPath()).relativize(Paths.get(f.getPath())).toString().isEmpty()) {
                     file = f;
@@ -93,8 +99,11 @@ public class SkillExtractListener extends SKilLParserBaseListener {
 
     /**
      * Decides which processing method for a typedeclaration is to be used.
-     * @param ctx The context of the declaration.
-     * @throws IOException thrown if a exception occurred while writing a type to the outfile.
+     * 
+     * @param ctx
+     *            The context of the declaration.
+     * @throws IOException
+     *             thrown if a exception occurred while writing a type to the outfile.
      */
     private void processDeclaration(SKilLParser.DeclarationContext ctx) throws IOException {
         if (ctx.interfacetype() != null) {
@@ -110,8 +119,11 @@ public class SkillExtractListener extends SKilLParserBaseListener {
 
     /**
      * Processes a typedef typedeclaration.
-     * @param ctx the context of the typedef.
-     * @throws IOException thrown if an exception occurs while writing to the outfile.
+     * 
+     * @param ctx
+     *            the context of the typedef.
+     * @throws IOException
+     *             thrown if an exception occurs while writing to the outfile.
      */
     private void processTypedef(SKilLParser.TypedefContext ctx) throws IOException {
         Type type = null;
@@ -142,8 +154,11 @@ public class SkillExtractListener extends SKilLParserBaseListener {
 
     /**
      * Processes an enumtype typedeclaration.
-     * @param ctx The context of the typedeclaration.
-     * @throws IOException thrown if an error occurs while writing to outfile.
+     * 
+     * @param ctx
+     *            The context of the typedeclaration.
+     * @throws IOException
+     *             thrown if an error occurs while writing to outfile.
      */
     private void processEnumtype(SKilLParser.EnumtypeContext ctx) throws IOException {
         Type type = null;
@@ -194,8 +209,11 @@ public class SkillExtractListener extends SKilLParserBaseListener {
 
     /**
      * Processes a usertype typedeclaration.
-     * @param ctx The context of the typedeclaration.
-     * @throws IOException Thrown when an exception occurs while writing to outfile.
+     * 
+     * @param ctx
+     *            The context of the typedeclaration.
+     * @throws IOException
+     *             Thrown when an exception occurs while writing to outfile.
      */
     private void processUsertype(SKilLParser.UsertypeContext ctx) throws IOException {
         Type type = null;
@@ -234,8 +252,11 @@ public class SkillExtractListener extends SKilLParserBaseListener {
 
     /**
      * Processes an interfacetype typedeclaration.
-     * @param ctx The context of the typedeclaration.
-     * @throws IOException thrown if an exception occurs while writing to outfile.
+     * 
+     * @param ctx
+     *            The context of the typedeclaration.
+     * @throws IOException
+     *             thrown if an exception occurs while writing to outfile.
      */
     private void processInterface(SKilLParser.InterfacetypeContext ctx) throws IOException {
         Type type = null;

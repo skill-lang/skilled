@@ -1,12 +1,5 @@
 package de.unistuttgart.iste.ps.skillls.main;
 
-import de.unistuttgart.iste.ps.skillls.grammar.SKilLParser;
-import de.unistuttgart.iste.ps.skillls.grammar.SKilLParserBaseListener;
-import de.unistuttgart.iste.ps.skillls.tools.Field;
-import de.unistuttgart.iste.ps.skillls.tools.Hint;
-import de.unistuttgart.iste.ps.skillls.tools.Type;
-import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +11,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+
+import de.unistuttgart.iste.ps.skillls.grammar.SKilLParser;
+import de.unistuttgart.iste.ps.skillls.grammar.SKilLParserBaseListener;
+import de.unistuttgart.iste.ps.skillls.tools.Field;
+import de.unistuttgart.iste.ps.skillls.tools.Hint;
+import de.unistuttgart.iste.ps.skillls.tools.Type;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 
 
 /**
@@ -31,10 +31,12 @@ class SkillIndexListener extends SKilLParserBaseListener {
     private de.unistuttgart.iste.ps.skillls.tools.File file;
 
     /**
-     * Constructor.
-     * This object indexes all types, fields, and other attributes of a specification file.
-     * @param skillFile the skillfile dedicated to saving the attributes of the specification.
-     * @param file the file to be indexed.
+     * Constructor. This object indexes all types, fields, and other attributes of a specification file.
+     * 
+     * @param skillFile
+     *            the skillfile dedicated to saving the attributes of the specification.
+     * @param file
+     *            the file to be indexed.
      */
     public SkillIndexListener(SkillFile skillFile, File file) {
         super();
@@ -56,7 +58,8 @@ class SkillIndexListener extends SKilLParserBaseListener {
         }
         for (de.unistuttgart.iste.ps.skillls.tools.File f : skillFile.Files()) {
             if (new File(f.getPath()).getAbsolutePath().equals(file.getAbsolutePath())) {
-                if (Arrays.equals(f.getMd5().getBytes(), bytes) && f.getTimestamp().equals(String.valueOf(file.lastModified()))) {
+                if (Arrays.equals(f.getMd5().getBytes(), bytes)
+                        && f.getTimestamp().equals(String.valueOf(file.lastModified()))) {
                     this.file = null;
                     break;
                 }
@@ -69,7 +72,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
     /**
      * Method for the end of parsing a file.
-     * @param ctx the content of the parsed file tokenized.
+     * 
+     * @param ctx
+     *            the content of the parsed file tokenized.
      */
     @Override
     public void exitFile(SKilLParser.FileContext ctx) {
@@ -81,7 +86,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
     /**
      * method for processing a typedeclaration.
-     * @param declarationContext the content of the typedeclaration.
+     * 
+     * @param declarationContext
+     *            the content of the typedeclaration.
      */
     private void processDeclaration(SKilLParser.DeclarationContext declarationContext) {
         for (Type type : skillFile.Types()) {
@@ -123,7 +130,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
     /**
      * processes a typedef typedeclaration.
-     * @param typedef the context of the declaration.
+     * 
+     * @param typedef
+     *            the context of the declaration.
      */
     private void processTypedef(SKilLParser.TypedefContext typedef) {
         String name = "typedef " + typedef.name.getText() + " %s " + typedef.type().getText();
@@ -131,8 +140,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
         ArrayList<String> restrictions = new ArrayList<>();
 
         // Iterate over all restrictions of typedef
-        for (SKilLParser.RestrictionContext restrictionContext : typedef.restrictionHint().stream().filter(rh -> rh.restriction() != null)
-                .map(SKilLParser.RestrictionHintContext::restriction).collect(Collectors.toList())) {
+        for (SKilLParser.RestrictionContext restrictionContext : typedef.restrictionHint().stream()
+                .filter(rh -> rh.restriction() != null).map(SKilLParser.RestrictionHintContext::restriction)
+                .collect(Collectors.toList())) {
             skillFile.Strings().add(restrictionContext.getText());
             restrictions.add(restrictionContext.getText());
         }
@@ -156,7 +166,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
     /**
      * processes a enumtype typedeclaration.
-     * @param enumtype the context of the declaration.
+     * 
+     * @param enumtype
+     *            the context of the declaration.
      */
     private void processEnumtype(SKilLParser.EnumtypeContext enumtype) {
         String name = "enum " + enumtype.name.getText();
@@ -176,7 +188,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
     /**
      * processes a field in a typedeclaration
-     * @param fieldContext the context of the declaration.
+     * 
+     * @param fieldContext
+     *            the context of the declaration.
      * @return the found field.
      */
     private Field processField(SKilLParser.FieldContext fieldContext) {
@@ -188,7 +202,7 @@ class SkillIndexListener extends SKilLParserBaseListener {
         String name;
         if (fieldContext.data() != null) {
             name = fieldContext.data().type().getText() + " " + fieldContext.data().extendedIdentifer().getText();
-        } else if (fieldContext.constant() != null){
+        } else if (fieldContext.constant() != null) {
             name = fieldContext.constant().getText();
         } else {
             name = fieldContext.view().data().extendedIdentifer().getText();
@@ -197,8 +211,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
         ArrayList<String> restrictions = new ArrayList<>();
 
         // Iterate over all restrictions
-        for (SKilLParser.RestrictionContext r : fieldContext.description().restrictionHint().stream().filter(rh -> rh.restriction() != null)
-                .map(SKilLParser.RestrictionHintContext::restriction).collect(Collectors.toList())) {
+        for (SKilLParser.RestrictionContext r : fieldContext.description().restrictionHint().stream()
+                .filter(rh -> rh.restriction() != null).map(SKilLParser.RestrictionHintContext::restriction)
+                .collect(Collectors.toList())) {
             skillFile.Strings().add(r.getText());
             restrictions.add(r.getText());
         }
@@ -214,7 +229,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
     /**
      * processes a usertype typedeclaration.
-     * @param usertype the context of the declaration.
+     * 
+     * @param usertype
+     *            the context of the declaration.
      */
     private void processUsertype(SKilLParser.UsertypeContext usertype) {
         ArrayList<Hint> hints = new ArrayList<>();
@@ -237,8 +254,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
         ArrayList<String> restrictions = new ArrayList<>();
 
         // Iterate over all restrictions
-        for (SKilLParser.RestrictionContext r : usertype.description().restrictionHint().stream().filter(rh -> rh.restriction() != null)
-                .map(SKilLParser.RestrictionHintContext::restriction).collect(Collectors.toList())) {
+        for (SKilLParser.RestrictionContext r : usertype.description().restrictionHint().stream()
+                .filter(rh -> rh.restriction() != null).map(SKilLParser.RestrictionHintContext::restriction)
+                .collect(Collectors.toList())) {
             skillFile.Strings().add(r.getText());
             restrictions.add(r.getText());
         }
@@ -264,7 +282,9 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
     /**
      * processes an interfacetype typedeclaration.
-     * @param interfacetype the context of the declaration.
+     * 
+     * @param interfacetype
+     *            the context of the declaration.
      */
     private void processInterface(SKilLParser.InterfacetypeContext interfacetype) {
         ArrayList<Hint> hints = new ArrayList<>();
