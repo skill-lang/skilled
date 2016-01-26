@@ -13,7 +13,7 @@ import org.eclipse.emf.common.util.EList
  * @author Daniel Ryan Degutis
  * @author Nikolay Fateev
  */
-class AnnotationTypeFieldRestrictionsValidator extends FieldRestrictionsValidator {
+class AnnotationTypeFieldRestrictionsValidator extends AbstractFieldRestrictionsValidator {
 
 	override handleActivationCondition(Fieldtype fieldtype) {
 		return fieldtype instanceof Annotationtype

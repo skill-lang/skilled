@@ -8,7 +8,8 @@ import de.unistuttgart.iste.ps.skilled.validation.restrictions.fields.IntegerTyp
 import de.unistuttgart.iste.ps.skilled.validation.restrictions.fields.MapTypeFieldRestrictionsValidator
 import de.unistuttgart.iste.ps.skilled.validation.restrictions.fields.StringTypeFieldRestrictions
 import de.unistuttgart.iste.ps.skilled.validation.restrictions.fields.UserTypeFieldRestrictions
-import de.unistuttgart.iste.ps.skilled.validation.restrictions.types.TypeRestrictionsValidator
+import de.unistuttgart.iste.ps.skilled.validation.restrictions.types.TypedefRestrictionValidator
+import de.unistuttgart.iste.ps.skilled.validation.restrictions.types.UserTypeRestrictionValidator
 import org.eclipse.xtext.validation.ComposedChecks
 
 /**
@@ -18,7 +19,7 @@ import org.eclipse.xtext.validation.ComposedChecks
 	IntegerTypeFieldRestrictionsValidator, FloatTypeFieldRestrictionsValidator,
 	AnnotationTypeFieldRestrictionsValidator, BooleanTypeFieldRestrictionsValidator,
 	ContainerTypeFieldRestrictionsValidator, MapTypeFieldRestrictionsValidator, DuplicatedTypenameValidation,
-	KeywordWarning, ASCIICharValidator, ViewValidator, ScopingValidator, TypeRestrictionsValidator, ImportValidator,
-	FieldHintsValidator, ConstantValidator, NestingValidator])
+	KeywordWarning, ASCIICharValidator, ViewValidator, ScopingValidator, UserTypeRestrictionValidator,
+	TypedefRestrictionValidator, ImportValidator, FieldHintsValidator, ConstantValidator, NestingValidator])
 class SKilLValidator extends AbstractSKilLValidator {
 }

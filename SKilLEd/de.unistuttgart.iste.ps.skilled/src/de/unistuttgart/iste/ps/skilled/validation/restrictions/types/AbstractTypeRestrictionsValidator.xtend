@@ -6,15 +6,13 @@ import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.validation.AbstractSKilLValidator
-import org.eclipse.xtext.validation.ComposedChecks
 
 /** 
  * @author Nikolay Fateev
  * @author Moritz Platzer
  */
- @ComposedChecks(validators=#[UserTypeRestrictionValidator, TypedefRestrictionValidator])
-class TypeRestrictionsValidator extends AbstractSKilLValidator {
-	
+class AbstractTypeRestrictionsValidator extends AbstractSKilLValidator {
+
 	def Usertype returnTypedefDeclaration(Typedef typedef) {
 		if (typedef.fieldtype instanceof DeclarationReference) {
 			val typedefType = (typedef.fieldtype as DeclarationReference).type

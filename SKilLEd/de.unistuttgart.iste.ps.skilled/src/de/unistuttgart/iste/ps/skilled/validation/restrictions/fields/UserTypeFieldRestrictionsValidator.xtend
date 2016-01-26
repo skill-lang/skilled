@@ -11,7 +11,7 @@ import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestriction
  * @author Daniel Ryan Degutis
  * @author Nikolay Fateev
  */
-class UserTypeFieldRestrictions extends FieldRestrictionsValidator {
+class UserTypeFieldRestrictions extends AbstractFieldRestrictionsValidator {
 
 	override boolean handleActivationCondition(Fieldtype fieldtype) {
 		return fieldtype instanceof DeclarationReference

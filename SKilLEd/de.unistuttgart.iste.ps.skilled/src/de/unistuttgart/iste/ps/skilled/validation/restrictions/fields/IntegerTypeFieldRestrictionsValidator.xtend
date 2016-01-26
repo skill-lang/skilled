@@ -8,7 +8,7 @@ import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestriction
 /**
  * @author Daniel Ryan Degutis
  */
-class IntegerTypeFieldRestrictionsValidator extends NumericFieldRestrictionValidator {
+class IntegerTypeFieldRestrictionsValidator extends AbstractNumericFieldRestrictionValidator {
 
 	override boolean handleActivationCondition(Fieldtype fieldtype) {
 		return fieldtype instanceof Integertype

@@ -10,7 +10,7 @@ import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestriction
  * @author Daniel Ryan Degutis
  * @author Nikolay Fateev
  */
-class StringTypeFieldRestrictions extends FieldRestrictionsValidator {
+class StringTypeFieldRestrictions extends AbstractFieldRestrictionsValidator {
 
 	override boolean handleActivationCondition(Fieldtype fieldtype) {
 		return fieldtype instanceof Stringtype

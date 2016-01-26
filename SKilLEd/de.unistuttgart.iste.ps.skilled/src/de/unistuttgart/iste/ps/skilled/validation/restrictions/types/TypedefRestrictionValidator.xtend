@@ -14,7 +14,7 @@ import org.eclipse.xtext.validation.Check
  * @author Nikolay Fateev
  * @author Moritz Platzer
  */
-class TypedefRestrictionValidator extends TypeRestrictionsValidator {
+class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 
 	@Inject
 	private SubtypesFinder subtypesFinder

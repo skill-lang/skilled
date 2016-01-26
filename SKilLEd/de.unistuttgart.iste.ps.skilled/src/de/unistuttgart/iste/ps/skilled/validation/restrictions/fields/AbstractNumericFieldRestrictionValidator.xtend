@@ -7,7 +7,7 @@ import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestriction
 /**
  * @author Daniel Ryan Degutis
  */
-abstract class NumericFieldRestrictionValidator extends FieldRestrictionsValidator {
+abstract class AbstractNumericFieldRestrictionValidator extends AbstractFieldRestrictionsValidator {
 
 	override void handleRangeRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasRangeUsed) {
 		var errorFound = false

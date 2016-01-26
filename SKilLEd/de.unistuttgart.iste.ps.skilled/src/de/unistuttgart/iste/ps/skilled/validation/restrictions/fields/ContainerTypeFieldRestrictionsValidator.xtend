@@ -8,7 +8,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Settype
 /**
  * @author Daniel Ryan Degutis
  */
-class ContainerTypeFieldRestrictionsValidator extends FieldRestrictionsValidator {
+class ContainerTypeFieldRestrictionsValidator extends AbstractFieldRestrictionsValidator {
 
 	override boolean handleActivationCondition(Fieldtype fieldtype) {
 		return fieldtype instanceof Settype || fieldtype instanceof Arraytype || fieldtype instanceof Listtype

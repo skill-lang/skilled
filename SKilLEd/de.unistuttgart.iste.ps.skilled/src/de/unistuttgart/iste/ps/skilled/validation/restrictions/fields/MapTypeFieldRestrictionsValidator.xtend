@@ -8,7 +8,7 @@ import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestriction
 /**
  * @author Daniel Ryan Degutis
  */
-class MapTypeFieldRestrictionsValidator extends FieldRestrictionsValidator {
+class MapTypeFieldRestrictionsValidator extends AbstractFieldRestrictionsValidator {
 
 	override boolean handleActivationCondition(Fieldtype fieldtype) {
 		return fieldtype instanceof Maptype

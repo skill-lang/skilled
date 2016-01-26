@@ -13,7 +13,7 @@ import org.eclipse.xtext.validation.Check
  * @author Nikolay Fateev
  * @author Moritz Platzer
  */
-class UserTypeRestrictionValidator extends TypeRestrictionsValidator {
+class UserTypeRestrictionValidator extends AbstractTypeRestrictionsValidator {
 
 	@Inject
 	private SubtypesFinder subtypesFinder

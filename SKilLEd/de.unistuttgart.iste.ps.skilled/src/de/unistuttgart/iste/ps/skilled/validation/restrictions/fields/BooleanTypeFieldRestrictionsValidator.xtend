@@ -6,7 +6,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
 /**
  * @author Daniel Ryan Degutis
  */
-class BooleanTypeFieldRestrictionsValidator extends FieldRestrictionsValidator {
+class BooleanTypeFieldRestrictionsValidator extends AbstractFieldRestrictionsValidator {
 
 	override boolean handleActivationCondition(Fieldtype fieldtype) {
 		return fieldtype instanceof Booleantype

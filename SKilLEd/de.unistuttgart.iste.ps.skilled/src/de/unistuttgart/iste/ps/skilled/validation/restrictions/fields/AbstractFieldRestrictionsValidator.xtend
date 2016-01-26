@@ -15,7 +15,7 @@ import org.eclipse.xtext.validation.Check
  * @author Nikolay Fateev
  * @author Daniel Ryan Degutis
  */
-abstract class FieldRestrictionsValidator extends AbstractSKilLValidator {
+abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator {
 
 	@Check
 	def validateFieldRestrictions(Field field) {
