@@ -9,16 +9,24 @@
         <unzip src="lib/scala.zip" dest="../.."/>
     </target>
 
-    <target name="build-SKilLls" depends="unpack-scala">
+    <target name="build-skillls" depends="unpack-scala">
         <exec executable="bash" dir="../de.unistuttgart.iste.ps.skillls">
             <arg value="launch_build-SKilLls.sh"/>
         </exec>
     </target>
 
-    <target name="build-SKilLEd" depends="build-SKilLls">
+    <target name="build-skilled">
         <ant antfile="build-SKilLEd.xml"/>
     </target>
 
-    <target name="complete-build" depends="build-SKilLEd"/>
+    <target name="build-skilled-ui">
+        <ant antfile="build-SKilLEd-ui.xml"/>
+    </target>
+
+    <target name="build-skilled-tests">
+        <ant antfile="build-SKilLEd-tests.xml"/>
+    </target>
+
+    <target name="complete-build" depends="build-skillls,build-skilled,build-skilled-ui,build-skilled-tests"/>
 
 </project>

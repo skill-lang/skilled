@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="de.unistuttgart.iste.ps.skilled" default="all" xmlns:jacoco="antlib:org.jacoco.ant">
+<project name="de.unistuttgart.iste.ps.skilled" default="build-skilled">
     <property name="workflow" value="src/de/unistuttgart/iste/ps/skilled/GenerateSKilL.mwe2"/>
     <property name="tests-project-path" value="../de.unistuttgart.iste.ps.skilled.tests" />
     <property name="ui-project-path" value="../de.unistuttgart.iste.ps.skilled.ui" />
@@ -13,30 +13,27 @@
                 <exclude name="*antlr*4*.jar"/>
             </patternset>
         </fileset>
-        <fileset dir="lib2" includes="*.jar"/>
         <fileset dir="." includes=".antlr-generator-3.2.0.jar"/>
-        <pathelement location="src"/>
     </path>
-
-    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
-        <classpath path="lib/jacocoant.jar"/>
-    </taskdef>
-
+    
     <target name="clean">
         <delete dir="ant"/>
-        <delete dir="xtend-gen"/>
-        <delete dir="src-gen"/>
         <delete dir="bin"/>
         <delete dir="resources"/>
-        <delete dir="${tests-project-path}/ant" />
-        <delete dir="${tests-project-path}/xtend-gen" />
-        <delete dir="${tests-project-path}/src-gen" />
-        <delete dir="${tests-project-path}/bin" />
+        <delete dir="model"/>
         <delete dir="${ui-project-path}/ant" />
+        <delete dir="${ui-project-path}/bin" />
+        <delete dir="${tests-project-path}/ant" />
+        <delete dir="${tests-project-path}/bin" />
+        <delete file="lib2/de.unistuttgart.iste.ps.skilled.jar"/>
+        <delete file="lib2/de.unistuttgart.iste.ps.skilled.ui.jar"/>
+        <delete file="lib2/de.unistuttgart.iste.ps.skilled.tests.jar"/>
+        <delete dir="xtend-gen"/>
+        <delete dir="src-gen"/>
         <delete dir="${ui-project-path}/xtend-gen" />
         <delete dir="${ui-project-path}/src-gen" />
-        <delete dir="${ui-project-path}/bin" />
-        <delete file="lib2/*.jar"/>
+        <delete dir="${tests-project-path}/xtend-gen" />
+        <delete dir="${tests-project-path}/src-gen" />
     </target>
     
     <target name="generate-xtext-artifacts">
@@ -63,9 +60,8 @@
             <arg value="${basedir}/src-gen${path.separator}${basedir}/src" />
         </java>
     </target>   
-
     
-    <target name="compile-java">
+    <target name="compile-java" depends="compile-xtend">
         <mkdir dir="ant/bin"/>
         <javac classpathref="classpath" destdir="ant/bin" source="${source}" target="${target}" includeantruntime="true">
             <src path="src" />
@@ -87,151 +83,11 @@
             <fileset dir="ant/bin"/>
         </jar>
     </target>
-    
-    <target name="compile-xtend-ui" depends="make-jar-skilled">
-        <pathconvert pathsep="${path.separator}" 
-                     property="classpath-string" 
-                     refid="classpath">
-        </pathconvert>
-        <java classpathref="classpath"
-              classname="org.eclipse.xtend.core.compiler.batch.Main"
-              fork="true"
-              failonerror="yes">
-            <arg value="-cp" />
-            <arg value="${classpath-string}" />
-            <arg value="-d" />
-            <arg value="${ui-project-path}/ant/xtend-gen" />
-            <arg value="${ui-project-path}/src-gen${path.separator}${ui-project-path}/src" />
-        </java>
-    </target> 
-    
-    <target name="compile-java-ui" depends="compile-xtend-ui">
-        <mkdir dir="${ui-project-path}/ant/bin" />
-        <javac classpathref="classpath" destdir="${ui-project-path}/ant/bin" source="${source}" target="${target}" includeantruntime="true">
-            <src path="${ui-project-path}/src" />
-            <src path="${ui-project-path}/src-gen" />
-            <src path="${ui-project-path}/ant/xtend-gen" />
-        </javac>
-        <copy todir="${ui-project-path}/ant/bin">
-            <fileset dir="${ui-project-path}/src" excludes="**/*.java,**/*.xtend" />
-            <fileset dir="${ui-project-path}/src-gen" excludes="**/*.java,**/*.xtend" />
-        </copy>
-    </target>
 
-
-    <target name="make-jar-skilled-ui" depends="compile-java-ui">
-        <jar destfile="lib2/de.unistuttgart.iste.ps.skilled.ui.jar" filesetmanifest="mergewithoutmain">
-            <manifest>
-                <attribute name="Class-Path" value="../lib"/>
-            </manifest>
-            <fileset dir="${ui-project-path}/ant/bin"/>
-        </jar>
-    </target>    
-    
-     <target name="compile-xtend-tests" depends="make-jar-skilled-ui">
-        <pathconvert pathsep="${path.separator}" 
-                     property="classpath-string" 
-                     refid="classpath">
-        </pathconvert>
-        <java classpathref="classpath"
-              classname="org.eclipse.xtend.core.compiler.batch.Main"
-              fork="true"
-              failonerror="yes">
-            <arg value="-cp" />
-            <arg value="${classpath-string}" />
-            <arg value="-d" />
-            <arg value="${tests-project-path}/ant/xtend-gen" />
-            <arg value="${tests-project-path}/src-gen${path.separator}${tests-project-path}/src" />
-        </java>
-    </target> 
-
-    <target name="compile-java-tests" depends="compile-xtend-tests">
-        <mkdir dir="${tests-project-path}/ant/bin" />
-        <javac classpathref="classpath" destdir="${tests-project-path}/ant/bin" source="${source}" target="${target}" includeantruntime="true">
-            <src path="${tests-project-path}/src" />
-            <src path="${tests-project-path}/src-gen" />
-            <src path="${tests-project-path}/ant/xtend-gen" />
-        </javac>
-        <copy todir="${tests-project-path}/ant/bin">
-            <fileset dir="${tests-project-path}/src" excludes="**/*.java,**/*.xtend" />
-            <fileset dir="${tests-project-path}/src-gen" excludes="**/*.java,**/*.xtend" />
-        </copy>
-    </target>
-
-    <target name="do-tests">
-        <mkdir dir="ant/junit"/>
-        <mkdir dir="resources"/>
-        <copy todir="resources">
-            <fileset dir="${tests-project-path}/resources"/>
-        </copy>
-        <jacoco:coverage destfile="ant/junit/jacoco_SKilLEd.exec">
-            <junit fork="yes" forkmode="once" printsummary="on" haltonerror="false" haltonfailure="false">
-                <classpath>
-		    <path refid="classpath"/>
-		    <pathelement location="../../scala/lib/scala-library.jar"/>
-                </classpath>
-                <formatter type="xml"/>
-                <batchtest todir="ant/junit">
-                    <fileset dir="${tests-project-path}/ant/bin">
-                        <include name="**/Test*.class"/>
-                    </fileset>
-                </batchtest>
-            </junit>
-        </jacoco:coverage>
-        <delete dir="resources"/>
-    </target>
-    
-    <target name="make-jar-skilled-tests" depends="compile-java-tests">
-        <jar destfile="lib2/de.unistuttgart.iste.ps.skilled.tests.jar" filesetmanifest="mergewithoutmain">
-            <manifest>
-                <attribute name="Class-Path" value="../lib"/>
-            </manifest>
-            <fileset dir="${tests-project-path}/ant/bin"/>
-        </jar>
-    </target>
-
-    <target name="prepare-xtend-gen" depends="make-jar-skilled-tests">
+    <target name="prepare-xtend-gen">
         <mkdir dir="xtend-gen"/>
         <copy todir="xtend-gen">
             <fileset dir="ant/xtend-gen"/>
-        </copy>
-        <mkdir dir="${tests-project-path}/xtend-gen"/>
-        <copy todir="${tests-project-path}/xtend-gen">
-            <fileset dir="ant/xtend-gen"/>
-        </copy>
-        <mkdir dir="${ui-project-path}/xtend-gen" />
-        <copy todir="${ui-project-path}/xtend-gen">
-            <fileset dir="ant/xtend-gen"/>
-        </copy>
-    </target>
-
-    <target name="setup-UI-project-libs">
-        <copy todir="${ui-project-path}/lib">
-            <fileset dir="lib/deps">
-                <include name="skill.java.common.jar"/>
-                <include name="skill.jvm.common.jar"/>
-            </fileset>
-            <fileset dir="../../scala/lib">
-                <include name="scala-library.jar"/>
-            </fileset>
-            <fileset dir="lib">
-                <include name="skill_2.11-0.3.jar"/>
-            </fileset>
-        </copy>
-    </target>
-
-    <target name="setup-tests-project-libs">
-        <copy todir="${tests-project-path}/lib">
-            <fileset dir="lib/deps">
-                <include name="skill.java.common.jar"/>
-                <include name="skill.jvm.common.jar"/>
-            </fileset>
-            <fileset dir="../../scala/lib">
-                <include name="scala-library.jar"/>
-            </fileset>
-            <fileset dir="lib">
-                <include name="skill_2.11-0.3.jar"/>
-            </fileset>
         </copy>
     </target>
 
@@ -247,6 +103,6 @@
         </copy>
     </target>
 
-    <target name="all" depends="clean,setup-UI-project-libs,setup-tests-project-libs,setup-project-libs,generate-xtext-artifacts,compile-xtend,compile-java,make-jar-skilled-tests,do-tests,prepare-xtend-gen"/>
+    <target name="build-skilled" depends="clean,setup-project-libs,generate-xtext-artifacts,compile-java,make-jar-skilled,prepare-xtend-gen"/>
 
 </project>
