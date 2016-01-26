@@ -15,6 +15,7 @@ import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
  * 
  * @author Armin Hüneburg
  * @author Marco Link
+ * @author Ken Singer
  */
 public final class ToolUtil {
     static String addendum = "";
@@ -361,4 +362,52 @@ public final class ToolUtil {
         return value && setDefaults(newToolName, project, tool.getGenerator().getExecEnv(), tool.getGenerator().getPath(),
                 tool.getLanguage(), tool.getModule(), tool.getOutPath());
     }
+
+    /**
+     * returns the pure name of a type without any extensions like enum, interface, typedef, etc.
+     * 
+     * @param longName
+     * @return
+     */
+    public static String getActualName(String longName) {
+        String[] splits = longName.split(" ");
+        return splits.length > 1 ? splits[1] : splits[0];
+    }
+
+    /**
+     * delete all the tool-specific objects out of the .skillls file, when a tool is deleted
+     * 
+     * @param project
+     *            - the project, where the tool originates in
+     * @param tool
+     *            - the tool, which is deleted
+     */
+    public static void cleanUpAfterDeletion(IProject project, Tool tool) {
+        for (Type toDelete : tool.getTypes()) {
+            removeAllTypeHints(project, tool, toDelete);
+            removeAllFields(project, tool, toDelete);
+            removeTypeFromTool(tool.getName(), project, getActualName(toDelete.getName()));
+        }
+    }
+
+    private static void removeAllTypeHints(IProject project, Tool tool, Type type) {
+        for (Hint toDelete : type.getTypeHints()) {
+            removeTypeHint(tool.getName(), project, getActualName(type.getName()), getActualName(toDelete.getName()));
+        }
+    }
+
+    private static void removeAllFields(IProject project, Tool tool, Type type) {
+        for (Field toDelete : type.getFields()) {
+            removeAllFieldHints(project, tool, type, toDelete);
+            removeField(tool.getName(), project, getActualName(type.getName()), getActualName(toDelete.getName()));
+        }
+    }
+
+    private static void removeAllFieldHints(IProject project, Tool tool, Type type, Field field) {
+        for (Hint toDelete : field.getFieldHints()) {
+            removeFieldHint(tool.getName(), project, getActualName(type.getName()), getActualName(field.getName()),
+                    getActualName(toDelete.getName()));
+        }
+    }
+
 }
