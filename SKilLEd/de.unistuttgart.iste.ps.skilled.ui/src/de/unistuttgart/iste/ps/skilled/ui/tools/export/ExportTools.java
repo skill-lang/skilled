@@ -234,14 +234,23 @@ public class ExportTools {
 	 * @param directoryName
 	 * @param checkFiles
 	 */
-	public void listFiles(String directoryName, ArrayList<File> checkFiles) {
+	public void listAllFiles(String directoryName, ArrayList<File> checkFiles) {
 		File fProjectDirectory = new File(directoryName);
 		File[] listofFiles = fProjectDirectory.listFiles();
-		for (File file : listofFiles) {
-			if (file.isFile() && file.getName().endsWith(".skill")) {
-				checkFiles.add(file);
-			} else if (file.isDirectory()) {
-				listFiles(file.getAbsolutePath(), checkFiles);
+		if (null == listofFiles) {
+
+			JOptionPane.showMessageDialog(null, "Problem with .skillt files generation!", "File Generation Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+
+		} else {
+			System.out.println("listofFiles is: " + listofFiles.toString());
+			for (File file : listofFiles) {
+				if (file.isFile() && file.getName().endsWith(".skill")) {
+					checkFiles.add(file);
+				} else if (file.isDirectory()) {
+					listAllFiles(file.getAbsolutePath(), checkFiles);
+				}
 			}
 		}
 	}
@@ -250,7 +259,6 @@ public class ExportTools {
 	 * Combines all files found by method listFiles
 	 * 
 	 */
-	@SuppressWarnings("static-access")
 	public void combineFiles() {
 
 		System.out.println("fName is: " + fName);
@@ -271,22 +279,18 @@ public class ExportTools {
 		String fToolFolder = fToolProjectPath + File.separator + ".skillt" + File.separator + fName;
 		System.out.println("fToolFolder is: " + fToolFolder);
 
-		File fCheckExistsToolFolder = new File(fToolFolder);
-		
 		// Name of the project (i.e. Project)
 		String fToolProjectName = fToolProjectPath.substring(fToolProjectPath.lastIndexOf(File.separator) + 1,
 				fToolProjectPath.length());
 		System.out.println("fToolProjectName is: " + fToolProjectName);
 
-		// If the tool folder does not exist, Export Tools will generate the it from the .skills file
-		if (!fCheckExistsToolFolder.exists()) {
-			IProject project = workspace.getRoot().getProject(fToolProjectName);
-			ToolUtil.generateTemporarySKilLFiles(fName, project);
-			System.out.println(".skillt Folder made");
-		}
-		
+		// Generate tool folder and files
+		IProject project = workspace.getRoot().getProject(fToolProjectName);
+		ToolUtil.generateTemporarySKilLFiles(fName, project);
+		System.out.println(".skillt Folder made");
+
 		fListofFiles = new ArrayList<>();
-		listFiles(fToolFolder, fListofFiles);
+		listAllFiles(fToolFolder, fListofFiles);
 
 		for (File f : fListofFiles) {
 			FileInputStream fis;
@@ -296,16 +300,16 @@ public class ExportTools {
 				fis = new FileInputStream(f);
 				BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 				String line;
-				
+
 				while ((line = br.readLine()) != null) {
-					// Ignore all other head comments
+					// Ignore all head comments
 					if (!line.startsWith("#")) {
 						fText += line + "\n";
 					}
 				}
-				
+
 				// Head comment that says which tool the merged files belong to
-				fw.write("# Tool " + fName);
+				fw.write("# Tool " + fName + "\n");
 				fw.write(fText);
 				br.close();
 				fw.close();
