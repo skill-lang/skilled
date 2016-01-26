@@ -480,5 +480,15 @@
          </themeid>	
 	  </stylesheet>	
    </extension>
+   <extension
+         point="com.github.eclipsecolortheme.mapper">
+  	 <mapper
+       class="com.github.eclipsecolortheme.mapper.GenericMapper"
+       name="SKilL"
+       pluginId="de.unistuttgart.iste.ps.skilled.SKilL"
+       xml="mappings/de.unistuttgart.iste.ps.skilled.ui.xml">
+  	 </mapper>
+  </extension>
+   
 
 </plugin>

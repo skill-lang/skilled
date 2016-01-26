@@ -16,7 +16,8 @@ Require-Bundle: de.unistuttgart.iste.ps.skilled;visibility:=reexport,
  org.eclipse.ui.editors,
  org.eclipse.ui,
  org.eclipse.xtext.xbase.lib,
- org.antlr.runtime
+ org.antlr.runtime,
+ com.github.eclipsecolortheme
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.unistuttgart.iste.ps.skilled.ui;
