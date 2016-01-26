@@ -17,15 +17,14 @@ import org.eclipse.swt.widgets.Text;
  * 
  *         This field is used in the Quickfix for nonASCIICharWarnings. It opens a dialog to enter a new name for the Field
  *         or TypeDeclarationand changes the name to the entered name if the user clicks on the OK Button.
- *
  */
-public class changeNameField {
+public class ChangeNameField {
+
     private String oldName = ""; // The old name of the element.
-    private setName name; // The class used to change the name.
+    private SetName name; // The class used to change the name.
 
     /**
      * Opens the chanceNameField window.
-     * 
      */
     public void open() {
         // create Shell
@@ -65,17 +64,11 @@ public class changeNameField {
         shell.open();
     }
 
-    /**
-     * Sets the old name of the Element.
-     * 
-     * @param s
-     *            old Name of the Element
-     */
-    public void setOldName(String s) {
-        oldName = s;
+    public void setOldName(String oldName) {
+        this.oldName = oldName;
     }
 
-    public changeNameField(setName name) {
+    public ChangeNameField(SetName name) {
         this.name = name;
     }
 

@@ -1,12 +1,12 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import org.eclipse.xtext.validation.EValidatorRegistrar
+import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
+import de.unistuttgart.iste.ps.skilled.sKilL.Field
+import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.util.CheckASCII
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.Check
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.sKilL.Field
-import de.unistuttgart.iste.ps.skilled.util.CheckASCII;
+import org.eclipse.xtext.validation.EValidatorRegistrar
 
 /**
  * This class checks if a name has non-ASCII-Characters in it 
@@ -15,12 +15,11 @@ import de.unistuttgart.iste.ps.skilled.util.CheckASCII;
  * @author Jan Berberich
  */
 class ASCIICharValidator extends AbstractDeclarativeValidator {
+
 	override register(EValidatorRegistrar registar) {}
 
 	public static val DECLARATION_HAS_NONASCII_CHARS = "declarationNonASCII"
 	public static val FIELD_HAS_NONASCII_CHARS = "fieldNonASCII"
-	
-	
 
 	@Check
 	/**
@@ -45,4 +44,5 @@ class ASCIICharValidator extends AbstractDeclarativeValidator {
 				SKilLPackage.Literals.FIELDCONTENT__NAME, FIELD_HAS_NONASCII_CHARS, f.fieldcontent.name)
 		}
 	}
+
 }

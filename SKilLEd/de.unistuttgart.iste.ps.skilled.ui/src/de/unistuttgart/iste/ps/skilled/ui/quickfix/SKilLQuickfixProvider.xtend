@@ -8,6 +8,7 @@ import com.google.common.collect.Sets
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
 import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
 import de.unistuttgart.iste.ps.skilled.sKilL.File
 import de.unistuttgart.iste.ps.skilled.sKilL.Include
 import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
@@ -15,17 +16,29 @@ import de.unistuttgart.iste.ps.skilled.sKilL.SKilLFactory
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
 import de.unistuttgart.iste.ps.skilled.validation.InheritenceValidator
-
 import de.unistuttgart.iste.ps.skilled.validation.ScopingValidator
 import java.util.ArrayList
 import java.util.LinkedList
 import java.util.List
 import java.util.Set
 import org.apache.log4j.Logger
+import org.eclipse.core.resources.IWorkspaceRoot
+import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.core.runtime.Path
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.jface.text.BadLocationException
+import org.eclipse.swt.SWT
+import org.eclipse.swt.graphics.Point
+import org.eclipse.swt.layout.GridData
+import org.eclipse.swt.layout.GridLayout
+import org.eclipse.swt.widgets.Button
+import org.eclipse.swt.widgets.Display
+import org.eclipse.swt.widgets.Event
+import org.eclipse.swt.widgets.Listener
+import org.eclipse.swt.widgets.Shell
+import org.eclipse.swt.widgets.Text
 import org.eclipse.xtext.AbstractElement
 import org.eclipse.xtext.CrossReference
 import org.eclipse.xtext.Keyword
@@ -51,21 +64,6 @@ import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork
 import org.eclipse.xtext.validation.Issue
 
 import static de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider.*
-import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.core.resources.IWorkspaceRoot
-import org.eclipse.core.runtime.Path
-import org.eclipse.swt.widgets.Display
-import org.eclipse.swt.widgets.Shell
-import org.eclipse.swt.graphics.Point
-import org.eclipse.swt.SWT
-import org.eclipse.swt.widgets.Text
-import org.eclipse.swt.layout.GridData
-import org.eclipse.swt.layout.GridLayout
-import org.eclipse.swt.widgets.Button
-import org.eclipse.swt.widgets.Listener
-import org.eclipse.swt.widgets.Event
-import de.unistuttgart.iste.ps.skilled.validation.ASCIICharValidator
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
 
 /**
  * Custom quickfixes.
@@ -269,15 +267,15 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 				override void apply(EObject element, IModificationContext context) {
 					var TypeDeclaration td = element as TypeDeclaration
 					// Create xtend class with a method to change the name to a new one
-					var setName name = new setName(issue, acceptor);
+					var SetName name = new SetName(issue, acceptor);
 					// Open name-change Window that will allow the User to enter a new name
-					var changeNameField f = new changeNameField(name);
+					var ChangeNameField f = new ChangeNameField(name);
 					f.oldName = td.name
 					f.open()
 				}
 			});
 	}
-	
+
 	var String newName;
 
 	def public String getNewName(String oldName) {
@@ -323,9 +321,9 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 				override void apply(EObject element, IModificationContext context) {
 					var Fieldcontent field = element as Fieldcontent
 					// Create xtend class with a method to change the name to a new one
-					var setName name = new setName(issue, acceptor);
+					var SetName name = new SetName(issue, acceptor);
 					// Open name-change Window that will allow the User to enter a new name
-					var changeNameField f = new changeNameField(name);
+					var ChangeNameField f = new ChangeNameField(name);
 					f.oldName = field.name
 					f.open()
 				}
