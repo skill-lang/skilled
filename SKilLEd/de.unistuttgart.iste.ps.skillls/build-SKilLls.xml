@@ -29,6 +29,8 @@
     <target name="clean">
         <delete dir="out"/>
         <delete dir="lib"/>
+        <delete file="${libs.location}/SKilLls.jar"/>
+        <delete dir="src/de/unistuttgart/iste/ps/skillls/tools"/>
         <delete dir="generated"/>
         <delete dir="bin"/>
         <delete dir="${tools.location}"/>

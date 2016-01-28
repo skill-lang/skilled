@@ -134,6 +134,9 @@ runtime-SKilLEd/
 
 #output
 buildroot/
+#SKilLls
+SKilLEd/de.unistuttgart.iste.ps.skillls/generated/
+SKilLEd/de.unistuttgart.iste.ps.skillls/resources/.skillt/
 
 #generated through tests
 de.unistuttgart.iste.ps.skillls/generated/
