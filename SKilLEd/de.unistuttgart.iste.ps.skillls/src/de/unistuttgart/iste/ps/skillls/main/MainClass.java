@@ -128,7 +128,7 @@ public class MainClass {
                 SkillFile sf;
                 try {
                     sf = SkillFile.open(evaluations.get("path").getArgument() + File.separator + ".skills",
-                            SkillFile.Mode.Write, SkillFile.Mode.Read);
+                            SkillFile.Mode.Write, SkillFile.Mode.ReadOnly);
                 } catch (IOException e) {
                     ExceptionHandler.handle(e);
                     return;
