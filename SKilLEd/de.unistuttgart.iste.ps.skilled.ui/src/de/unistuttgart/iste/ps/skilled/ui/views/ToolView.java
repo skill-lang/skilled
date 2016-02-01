@@ -129,7 +129,7 @@ public class ToolView extends ViewPart {
 
             @Override
             public void partActivated(IWorkbenchPart part) {
-                // not used
+                setFocus();
             }
         });
         shell = parent.getShell();
@@ -154,6 +154,7 @@ public class ToolView extends ViewPart {
             if (fieldTabItem != null)
                 fieldTabItem.dispose();
             buildToolContextMenu(buildToollist(tabFolder));
+            setFocus();
         } catch (Exception e) {
             e.printStackTrace();
         }
