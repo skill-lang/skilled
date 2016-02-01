@@ -48,22 +48,24 @@ public class MainClass {
 
     /**
      * Entry point. Sets the exception handler to not rethrow exceptions as errors.
-     * 
+     *
      * @param args
      *            The command line arguments.
      */
     public static void main(String[] args) {
         ExceptionHandler.setRethrow(false);
-        start(args);
+        start(Indexing.NORMAL, args);
     }
 
     /**
      * Generates flags for the generator execution.
      *
+     * @param indexing
+     *            Determines whether files should be indexed or not
      * @param args
      *            The command line arguments.
      */
-    public static void start(String[] args) {
+    public static void start(Indexing indexing, String[] args) {
         switch (args[0]) {
             case "-e":
             case "--edit":
@@ -85,7 +87,10 @@ public class MainClass {
                     ExceptionHandler.handle(e1);
                     return;
                 }
-                indexFiles(projectDirectory, skillFile);
+                indexFiles(projectDirectory, skillFile, indexing);
+                if (indexing == Indexing.JUST_INDEXING) {
+                    return;
+                }
                 editor.setSkillFile(skillFile);
                 editor.start();
                 break;
@@ -163,7 +168,10 @@ public class MainClass {
                             break;
                     }
                 }
-                indexFiles(new File(path), sf);
+                indexFiles(new File(path), sf, indexing);
+                if (indexing == Indexing.JUST_INDEXING) {
+                    return;
+                }
 
                 try {
                     generate(new File(path), tools, sf);
@@ -633,13 +641,18 @@ public class MainClass {
      *            The project the tools belong to.
      * @param skillFile
      *            The skill file containing the definitions for the tools.
+     * @param indexing
+     *            Determines whether files should be indexed or not
      */
-    private static void indexFiles(File project, SkillFile skillFile) {
+    private static void indexFiles(File project, SkillFile skillFile, Indexing indexing) {
+        if (indexing == Indexing.NO_INDEXING) {
+            return;
+        }
         if (project != null && project.listFiles() != null) {
             // noinspection ConstantConditions
             for (File child : project.listFiles()) {
                 if (child.isDirectory()) {
-                    indexFiles(child, skillFile);
+                    indexFiles(child, skillFile, indexing);
                 } else if (child.getAbsolutePath().endsWith(".skill")) {
                     de.unistuttgart.iste.ps.skillls.tools.File f = null;
                     if (getStream(child, skillFile).count() != 0) {
