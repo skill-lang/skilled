@@ -304,16 +304,35 @@ public class ToolView extends ViewPart {
         }
 
         typeTabItem.setText("Types - " + tool.getName());
+        ArrayList<Type> typeList = new ArrayList<>();
 
         if (null != skillFile) {
-            ArrayList<Type> typelist = (ArrayList<Type>) allTypeList.stream()
-                    .filter(t -> tool.getTypes().contains(t) || (tool.getTypes().stream()
-                            .noneMatch(ty -> ty.getName().equals(t.getName()) && ty.getFile() == t.getFile())
-                            && skillFile.Tools().stream().noneMatch(to -> to.getTypes().contains(t))))
-                    .collect(Collectors.toList());
+            for (Type t : allTypeList) {
+                if (tool.getTypes().contains(t)) {
+                    allTypeList.add(t);
+                    continue;
+                }
+                boolean toolType = false;
+                boolean sameTypeInTool = false;
+                for (Tool to : skillFile.Tools()) {
+                    if (to.getTypes().contains(t)) {
+                        toolType = true;
+                        break;
+                    }
+                }
+                for (Type ty : tool.getTypes()) {
+                    if (ty.getName().equals(t.getName()) && ty.getFile().equals(t.getFile())) {
+                        sameTypeInTool = true;
+                        break;
+                    }
+                }
+                if (!toolType && !sameTypeInTool) {
+                    allTypeList.add(t);
+                }
+            }
 
             // add all types to the tree
-            for (Type type : typelist) {
+            for (Type type : typeList) {
                 TreeItem typeTreeItem = new TreeItem(typeTree, 0);
                 typeTreeItem.setText(type.getName());
                 typeTreeItem.setData(type);
