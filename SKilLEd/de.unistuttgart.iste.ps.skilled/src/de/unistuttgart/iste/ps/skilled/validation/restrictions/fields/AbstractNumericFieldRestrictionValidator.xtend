@@ -16,7 +16,8 @@ abstract class AbstractNumericFieldRestrictionValidator extends AbstractFieldRes
 			if (getRestrictionArgumentNumeric(restriction, 0) == null) {
 				showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
 				errorFound = true
-			} else if (getRestrictionArgumentNumeric(restriction, 1) == null) {
+			}
+			if (getRestrictionArgumentNumeric(restriction, 1) == null) {
 				showError(FieldRestrictionErrorMessages.Range_Second_Arg_Not_Integer, restriction)
 				errorFound = true
 			}
@@ -24,13 +25,16 @@ abstract class AbstractNumericFieldRestrictionValidator extends AbstractFieldRes
 			if (getRestrictionArgumentNumeric(restriction, 0) == null) {
 				showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
 				errorFound = true
-			} else if (getRestrictionArgumentNumeric(restriction, 1) == null) {
+			}
+			if (getRestrictionArgumentNumeric(restriction, 1) == null) {
 				showError(FieldRestrictionErrorMessages.Range_Second_Arg_Not_Integer, restriction)
 				errorFound = true
-			} else if (!isStringNullOrLowercase(restriction.restrictionArguments.get(2).valueString)) {
+			}
+			if (!isStringNullOrLowercase(restriction.restrictionArguments.get(2).valueString)) {
 				showError(FieldRestrictionErrorMessages.Range_Third_Arg_Not_Lowercase_String, restriction)
 				errorFound = true
-			} else if (!isStringNullOrLowercase(restriction.restrictionArguments.get(3).valueString)) {
+			}
+			if (!isStringNullOrLowercase(restriction.restrictionArguments.get(3).valueString)) {
 				showError(FieldRestrictionErrorMessages.Range_Fourth_Arg_Not_Lowercase_String, restriction)
 				errorFound = true
 			}
@@ -64,7 +68,8 @@ abstract class AbstractNumericFieldRestrictionValidator extends AbstractFieldRes
 			if (getRestrictionArgumentNumeric(restriction, 0) == null) {
 				showError(FieldRestrictionErrorMessages.MinMax_First_Arg_Not_Integer, restriction)
 				errorFound = true
-			} else if (!isStringNullOrLowercase(restriction.restrictionArguments.get(1).valueString)) {
+			}
+			if (!isStringNullOrLowercase(restriction.restrictionArguments.get(1).valueString)) {
 				showError(FieldRestrictionErrorMessages.MinMax_Second_Arg_Not_Lowercase_String, restriction)
 				errorFound = true
 			}

@@ -71,9 +71,7 @@ abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator
 		}
 	}
 
-	def boolean handleActivationCondition(Fieldtype fieldtype) {
-		return false
-	}
+	def abstract boolean handleActivationCondition(Fieldtype fieldtype)
 
 	def void handleNonNullRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasNonNullUsed) {
 		showError(FieldRestrictionErrorMessages.NonNull_Usage, restriction)
@@ -117,11 +115,11 @@ abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator
 		showError(FieldRestrictionErrorMessages.OneOf_Usage, restriction)
 	}
 
-	def showError(String message, Restriction restriction) {
+	def void showError(String message, Restriction restriction) {
 		error(message, restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 	}
 
-	def showWarning(String message, Restriction restriction) {
+	def void showWarning(String message, Restriction restriction) {
 		warning(message, restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 	}
 

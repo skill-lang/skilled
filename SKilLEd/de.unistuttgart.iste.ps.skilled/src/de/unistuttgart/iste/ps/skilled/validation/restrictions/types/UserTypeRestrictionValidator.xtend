@@ -67,7 +67,7 @@ class UserTypeRestrictionValidator extends AbstractTypeRestrictionsValidator {
 	def handleMonotoneRestriction(Restriction restriction, boolean wasMonotoneUsed, Usertype declaration) {
 		if (!wasMonotoneUsed) {
 			if (restriction.restrictionArguments.size == 0) {
-				if (declaration.supertypes.size != 0) { // Check for supertypes
+				if (declaration.supertypes.size != 0) {
 					showError(TypeRestrictionsErrorMessages.Monotone_Usage, restriction)
 				}
 			} else {
@@ -82,7 +82,7 @@ class UserTypeRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		if (!wasDefaultUsed) {
 			if (restriction.restrictionArguments.size() == 1) {
 				val restrictionArgument = restriction.restrictionArguments.get(0)
-				if (restrictionArgument.valueType == null) { // The argument is not a Usertype/Typedef/Enum/Interface
+				if (restrictionArgument.valueType == null) {
 					showError(TypeRestrictionsErrorMessages.Default_Arg_Not_Singleton, restriction)
 				} else {
 					val restrictionArgumentType = (restrictionArgument.valueType).type
