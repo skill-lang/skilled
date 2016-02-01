@@ -85,7 +85,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		if (restriction.restrictionArguments.size == 0) {
 			var errorFound = false
 			if (underlyingUsertype != null) {
-				if (underlyingUsertype.supertypes.size != 0) { // Check for supertypes
+				if (underlyingUsertype.supertypes.size != 0) {
 					showError(TypeRestrictionsErrorMessages.Monotone_Usage, restriction)
 					errorFound = true
 				}
@@ -105,7 +105,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		if (restriction.restrictionArguments.size == 0) {
 			var errorFound = false
 			if (underlyingUsertype != null) {
-				if (subtypesFinder.getSubtypes(underlyingUsertype).size != 0) { // Check for subtypes
+				if (subtypesFinder.getSubtypes(underlyingUsertype).size != 0) {
 					showError(TypeRestrictionsErrorMessages.Singleton_Usage, restriction)
 					errorFound = true
 				}
@@ -125,10 +125,10 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		if (restriction.restrictionArguments.size == 0) {
 			var errorFound = false
 			if (underlyingUsertype != null) {
-				if (underlyingUsertype.supertypes.size != 0) { // Check for supertypes
+				if (underlyingUsertype.supertypes.size != 0) {
 					showError(TypeRestrictionsErrorMessages.Unique_Usage, restriction)
 					errorFound = true
-				} else if (subtypesFinder.getSubtypes(underlyingUsertype).size != 0) { // Check for subtypes
+				} else if (subtypesFinder.getSubtypes(underlyingUsertype).size != 0) {
 					showError(TypeRestrictionsErrorMessages.Unique_Usage, restriction)
 					errorFound = true
 				}
@@ -149,7 +149,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 			if (restriction.restrictionArguments.size() == 1) {
 				if (underlyingUsertype != null) {
 					val restrictionArgument = restriction.restrictionArguments.get(0)
-					if (restrictionArgument.valueType == null) { // The argument is not a Usertype/Typedef/Enum/Interface
+					if (restrictionArgument.valueType == null) {
 						showError(TypeRestrictionsErrorMessages.Default_Arg_Not_Singleton, restriction)
 					} else {
 						val restrictionArgumentType = (restrictionArgument.valueType).type
@@ -175,4 +175,5 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 			showError(TypeRestrictionsErrorMessages.Default_Already_Used, restriction)
 		}
 	}
+	
 }

@@ -64,11 +64,11 @@ class AbstractTypeRestrictionsValidator extends AbstractSKilLValidator {
 		return false
 	}
 
-	def showError(String message, Restriction restriction) {
+	def void showError(String message, Restriction restriction) {
 		error(message, restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 	}
 
-	def showWarning(String message, Restriction restriction) {
+	def void showWarning(String message, Restriction restriction) {
 		warning(message, restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 	}
 }
