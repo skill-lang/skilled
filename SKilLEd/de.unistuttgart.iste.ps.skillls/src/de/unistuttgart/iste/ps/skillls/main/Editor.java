@@ -397,6 +397,7 @@ public class Editor {
         }
         type.getFields().remove(field);
         skillFile.delete(field);
+        removeFieldContent(field);
     }
 
     /**
@@ -481,11 +482,36 @@ public class Editor {
             return;
         }
         skillFile.delete(type);
+        removeTypeContent(type);
         for (Type t : tool.getTypes()) {
             if (t.getFile().equals(file)) {
                 tool.getFiles().add(file);
                 break;
             }
+        }
+    }
+
+    /**
+     * Removes the fields and hints from a type
+     * @param type type that is deleted
+     */
+    private void removeTypeContent(Type type) {
+        for (Hint hint : type.getTypeHints()) {
+            skillFile.delete(hint);
+        }
+        for (Field f : type.getFields()) {
+            skillFile.delete(f);
+            removeFieldContent(f);
+        }
+    }
+
+    /**
+     * Removes the hints from a field
+     * @param field field that is deleted
+     */
+    private void removeFieldContent(Field field) {
+        for (Hint h : field.getFieldHints()) {
+            skillFile.delete(h);
         }
     }
 
@@ -643,6 +669,7 @@ public class Editor {
      */
     private void delete(Tool tool) {
         skillFile.delete(tool);
+        tool.getTypes().forEach(this::removeTypeContent);
     }
 
     /**
