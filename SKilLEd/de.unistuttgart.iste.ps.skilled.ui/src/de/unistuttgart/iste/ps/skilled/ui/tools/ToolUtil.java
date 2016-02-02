@@ -364,10 +364,10 @@ public final class ToolUtil {
     }
 
     /**
-     * returns the pure name of a type without any extensions like enum, interface, typedef, etc.
+     * returns the pure name of a type or field without any extensions like enum, interface, typedef, etc.
      * 
      * @param longName
-     * @return
+     * @return the actual name of the Type or Field
      */
     public static String getActualName(String longName) {
         String[] splits = longName.split(" ");
@@ -390,20 +390,102 @@ public final class ToolUtil {
         }
     }
 
-    private static void removeAllTypeHints(IProject project, Tool tool, Type type) {
+    /**
+     * add all typehints of a type to a tool
+     * 
+     * @param project-
+     *            the project, where the tool originates in
+     * @param tool-
+     *            the tool, where the hints should be added to
+     * @param type
+     *            - the type containing the hints
+     */
+    public static void addAllTypeHints(IProject project, Tool tool, Type type) {
+        for (Hint toAdd : type.getTypeHints())
+            addTypeHint(tool.getName(), project, getActualName(type.getName()), toAdd.getName());
+    }
+
+    /**
+     * remove all hints of a type from a tool
+     * 
+     * @param project
+     *            - the project, where the tool originates in
+     * @param tool
+     *            - the tool, which contains the typeHints
+     * @param type
+     *            - the type to delete
+     */
+    public static void removeAllTypeHints(IProject project, Tool tool, Type type) {
         for (Hint toDelete : type.getTypeHints()) {
             removeTypeHint(tool.getName(), project, getActualName(type.getName()), getActualName(toDelete.getName()));
         }
     }
 
-    private static void removeAllFields(IProject project, Tool tool, Type type) {
+    /**
+     * add all field of a type to a tool
+     * 
+     * @param project-
+     *            the project, where the tool originates in
+     * @param tool
+     *            - the tool, where the fields should be added to
+     * @param type
+     *            - the type containing the fields
+     */
+    public static void AddAllFields(IProject project, Tool tool, Type type) {
+        for (Field toAdd : type.getFields()) {
+            addField(tool.getName(), project, getActualName(type.getName()), getActualName(toAdd.getName()));
+            addAllFieldHints(project, tool, type, toAdd);
+        }
+    }
+
+    /**
+     * remove all fields of a type from a tool
+     * 
+     * @param project
+     *            - the project, where the tool originates in
+     * @param tool
+     *            - the tool, which contains the fields
+     * @param type
+     *            - the type to delete
+     */
+    public static void removeAllFields(IProject project, Tool tool, Type type) {
         for (Field toDelete : type.getFields()) {
             removeAllFieldHints(project, tool, type, toDelete);
             removeField(tool.getName(), project, getActualName(type.getName()), getActualName(toDelete.getName()));
         }
     }
 
-    private static void removeAllFieldHints(IProject project, Tool tool, Type type, Field field) {
+    /**
+     * add all fieldhints of a field to a tool
+     * 
+     * @param project-
+     *            the project, where the tool originates in
+     * @param tool
+     *            - the tool, where the field should be added to
+     * @param type
+     *            - the type, containing the field
+     * @param field
+     *            - the field containing the fieldhints
+     */
+    public static void addAllFieldHints(IProject project, Tool tool, Type type, Field field) {
+        for (Hint toAdd : field.getFieldHints())
+            ToolUtil.addFieldHint(tool.getName(), project, getActualName(type.getName()), getActualName(field.getName()),
+                    toAdd.getName());
+    }
+
+    /**
+     * remove all fieldhints of a field from a tool
+     * 
+     * @param project
+     *            - the project, where the tool originates in
+     * @param tool
+     *            - the tool, which contains the fieldhints
+     * @param type
+     *            - the type , which contains the fields
+     * @param field
+     *            - the field to delete
+     */
+    public static void removeAllFieldHints(IProject project, Tool tool, Type type, Field field) {
         for (Hint toDelete : field.getFieldHints()) {
             removeFieldHint(tool.getName(), project, getActualName(type.getName()), getActualName(field.getName()),
                     getActualName(toDelete.getName()));
