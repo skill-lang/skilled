@@ -81,6 +81,7 @@ public class ToolView extends ViewPart {
 	private IProject activeProject = null;
 	private Type selectedType = null;
 	private Shell shell;
+	private Composite parent = null;
 
 	SaveListofAllTools fSave;
 
@@ -135,6 +136,10 @@ public class ToolView extends ViewPart {
 	private void refresh() {
 		try {
 			clearLists();
+			if (tabFolder != null) {
+				tabFolder.dispose();
+				tabFolder = null;
+			}
 			if (toolTabItem != null) {
 				toolTabItem.dispose();
 				toolTabItem = null;
@@ -147,7 +152,10 @@ public class ToolView extends ViewPart {
 				fieldTabItem.dispose();
 				fieldTabItem = null;
 			}
+			tabFolder = new CTabFolder(parent, SWT.BORDER);
 			buildToolContextMenu(buildToollist(tabFolder));
+			setFocus();
+			tabFolder.setSelection(toolTabItem);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -163,6 +171,7 @@ public class ToolView extends ViewPart {
 				activeTool = t;
 		}
 		buildTypeTree(activeTool);
+		tabFolder.setSelection(typeTabItem);
 	}
 
 	/**
@@ -174,6 +183,7 @@ public class ToolView extends ViewPart {
 	private void reloadFieldList(Type type, boolean isChecked) {
 		reloadTypelist();
 		buildFieldTree(type, isChecked);
+		tabFolder.setSelection(fieldTabItem);
 	}
 
 	private void clearLists() {
@@ -203,7 +213,6 @@ public class ToolView extends ViewPart {
 
 		if (skillFile.Tools() != null) {
 			skillFile.Tools().forEach(t -> allToolList.add(t));
-
 			skillFile.Tools().forEach(t -> pathList.add(path));
 			// fExport.setPaths(pathList);
 		}
@@ -374,6 +383,7 @@ public class ToolView extends ViewPart {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// no default
+
 			}
 		});
 
@@ -470,6 +480,7 @@ public class ToolView extends ViewPart {
 				}
 			}
 		});
+
 	}
 
 	/**
