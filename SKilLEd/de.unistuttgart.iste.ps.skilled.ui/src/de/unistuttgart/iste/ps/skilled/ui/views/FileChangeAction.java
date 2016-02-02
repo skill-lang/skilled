@@ -12,11 +12,21 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 
+import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
+
+/**
+ * Handle the ChangeActions of files in the workspace.
+ * 
+ * @author Nico Rusam
+ *
+ */
 public class FileChangeAction {
 
-	// TODO: Je nachdem was Armin aussagt werden anstatt seine skillls.jar
-	// aufzurufen direkt seine Methoden verwendet. Diese Methoden müssen
-	// aufgerufen werden um die .skills Datei zu erzeugen.
+	ToolView tv = null;
+
+	public FileChangeAction(ToolView tv) {
+		this.tv = tv;
+	}
 
 	public void save() {
 		String commandId = "org.eclipse.ui.file.save";
@@ -41,27 +51,10 @@ public class FileChangeAction {
 
 			@Override
 			public void preExecute(String arg0, ExecutionEvent arg1) {
-				// Process p = null;
-				// try {
-				// p = Runtime.getRuntime().exec("java -jar skillls.jar -e
-				// $PATH_TO_PROJECT $PARAMS", null,
-				// new File("lib"));
-				// p.waitFor();
-				// } catch (IOException e) {
-				// e.printStackTrace();
-				// } catch (InterruptedException e) {
-				// e.printStackTrace();
-				// }
-				// try (InputStreamReader reader = new
-				// InputStreamReader(p.getInputStream())) {
-				// } catch (IOException e) {
-				// e.printStackTrace();
-				// }
-				String pathToProject = "C:\\Users\\nicoa\\Documents\\skilled-skilled.code2\\runtime-New_configuration\\Test";
-				String parameter = "--help";
-				System.out.println(new String[] { "-e", pathToProject, parameter });
-				de.unistuttgart.iste.ps.skillls.main.MainClass.main(new String[] { "-e", pathToProject, parameter });
-				System.out.println("save preExecute");
+				if (tv.getActiveTool() != null && tv.getActiveProject() != null) {
+					ToolUtil.generateTemporarySKilLFiles(tv.getActiveTool().getName(), tv.getActiveProject());
+					System.out.println("save preExecute");
+				}
 			}
 
 		});
