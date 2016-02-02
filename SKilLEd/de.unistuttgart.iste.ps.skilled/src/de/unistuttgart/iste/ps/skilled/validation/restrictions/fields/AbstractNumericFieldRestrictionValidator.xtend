@@ -10,40 +10,39 @@ import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestriction
 abstract class AbstractNumericFieldRestrictionValidator extends AbstractFieldRestrictionsValidator {
 
 	override void handleRangeRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasRangeUsed) {
-		var errorFound = false
 
 		if (restriction.restrictionArguments.size() == 2) {
 			if (getRestrictionArgumentNumeric(restriction, 0) == null) {
 				showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
-				errorFound = true
+				return
 			}
 			if (getRestrictionArgumentNumeric(restriction, 1) == null) {
 				showError(FieldRestrictionErrorMessages.Range_Second_Arg_Not_Integer, restriction)
-				errorFound = true
+				return
 			}
 		} else if (restriction.restrictionArguments.size() == 4) {
 			if (getRestrictionArgumentNumeric(restriction, 0) == null) {
 				showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
-				errorFound = true
+				return
 			}
 			if (getRestrictionArgumentNumeric(restriction, 1) == null) {
 				showError(FieldRestrictionErrorMessages.Range_Second_Arg_Not_Integer, restriction)
-				errorFound = true
+				return
 			}
 			if (!isStringNullOrLowercase(restriction.restrictionArguments.get(2).valueString)) {
 				showError(FieldRestrictionErrorMessages.Range_Third_Arg_Not_Lowercase_String, restriction)
-				errorFound = true
+				return
 			}
 			if (!isStringNullOrLowercase(restriction.restrictionArguments.get(3).valueString)) {
 				showError(FieldRestrictionErrorMessages.Range_Fourth_Arg_Not_Lowercase_String, restriction)
-				errorFound = true
+				return
 			}
 		} else {
 			showError(FieldRestrictionErrorMessages.Range_Not_2or4_Args, restriction)
-			errorFound = true
+			return
 		}
 
-		if (!errorFound && wasRangeUsed) {
+		if (wasRangeUsed) {
 			showWarning(FieldRestrictionErrorMessages.Range_Multiple_Used, restriction)
 		}
 	}
@@ -56,7 +55,7 @@ abstract class AbstractNumericFieldRestrictionValidator extends AbstractFieldRes
 		handleMinMaxRestriction(restriction, wasMinUsed)
 	}
 
-	def private void handleMinMaxRestriction(Restriction restriction, boolean wasMinMaxUsed) {
+	def void handleMinMaxRestriction(Restriction restriction, boolean wasMinMaxUsed) {
 		var errorFound = false
 
 		if (restriction.restrictionArguments.size() == 1) {

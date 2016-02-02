@@ -14,6 +14,7 @@ import org.eclipse.xtext.validation.Check
  * 
  * @author Nikolay Fateev
  * @author Daniel Ryan Degutis
+ * @author Tobias Heck
  */
 abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator {
 
@@ -23,7 +24,6 @@ abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator
 
 		var wasNonNullUsed = false
 		var wasDefaultUsed = false
-		var wasRangeUsed = false
 		var wasMaxUsed = false
 		var wasMinUsed = false
 		var wasConstantLenghtPointerUsed = false
@@ -41,8 +41,7 @@ abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator
 						wasDefaultUsed = true
 					}
 					case 'range': {
-						handleRangeRestriction(fieldtype, restriction, wasRangeUsed)
-						wasRangeUsed = true
+						handleRangeRestriction(fieldtype, restriction, false)
 					}
 					case 'max': {
 						handleMaxRestriction(fieldtype, restriction, wasMaxUsed)
