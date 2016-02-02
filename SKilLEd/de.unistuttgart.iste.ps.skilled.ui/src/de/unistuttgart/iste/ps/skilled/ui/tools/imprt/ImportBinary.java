@@ -54,10 +54,11 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import com.google.common.base.Strings;
 
+import de.unistuttgart.iste.ps.skilled.ui.sfparser.api.SkillFile;
 import de.ust.skill.common.java.api.Access;
 import de.ust.skill.common.java.api.FieldDeclaration;
 import de.ust.skill.common.java.api.SkillException;
-import de.ust.skill.common.java.api.SkillFile;
+import de.ust.skill.common.java.api.SkillFile.Mode;
 import de.ust.skill.common.java.internal.LazyField;
 import de.ust.skill.common.java.internal.SkillObject;
 
@@ -244,7 +245,7 @@ public class ImportBinary {
                 }
 
                 try {
-                    SkillFile skillFile = SkillFile.open(fSelectedBinary, true);
+                    SkillFile skillFile = SkillFile.open(fSelectedBinary, Mode.ReadOnly);
                     Iterator<? extends Access<? extends SkillObject>> it = skillFile.allTypes().iterator();
                     LinkedList<String> strings = new LinkedList<String>();
                     while (it.hasNext()) {
@@ -412,7 +413,7 @@ public class ImportBinary {
                         IPath path = root.getLocation();
                         String shortPath = fImportLocationPath.toString().split(path.lastSegment())[1];
                         org.eclipse.core.internal.resources.File file = constructor.newInstance(
-                                new org.eclipse.core.runtime.Path(shortPath), (Workspace) ResourcesPlugin.getWorkspace());
+                                new org.eclipse.core.runtime.Path(shortPath), ResourcesPlugin.getWorkspace());
                         File rename = new File(fImportLocationPath.toString());
                         File deleteLater = new File(fImportLocationPath.toString() + "asdf");
                         rename.renameTo(deleteLater);
