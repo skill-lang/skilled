@@ -13,6 +13,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
+import de.ust.skill.common.java.api.SkillException;
+import de.ust.skill.common.java.api.SkillFile.Mode;
 
 /**
  * Handle the ChangeActions of files in the workspace.
@@ -51,10 +54,13 @@ public class FileChangeAction {
 
 			@Override
 			public void preExecute(String arg0, ExecutionEvent arg1) {
-				if (tv.getActiveTool() != null && tv.getActiveProject() != null) {
-					ToolUtil.generateTemporarySKilLFiles(tv.getActiveTool().getName(), tv.getActiveProject());
-					System.out.println("save preExecute");
-				}
+				// if (tv.getActiveTool() != null && tv.getActiveProject() !=
+				// null) {
+				// ToolUtil.generateTemporarySKilLFiles(tv.getActiveTool().getName(),
+				// tv.getActiveProject());
+				// System.out.println("save preExecute");
+				// }
+				
 			}
 
 		});
