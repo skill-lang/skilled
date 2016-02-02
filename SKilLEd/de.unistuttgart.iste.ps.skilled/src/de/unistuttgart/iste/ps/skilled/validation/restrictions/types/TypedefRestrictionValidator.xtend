@@ -28,6 +28,9 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 			var wasMonotoneUsed = false
 			var wasAbstractUsed = false
 			var wasDefaultUsed = false
+			var wasRangeUsed = false
+			var wasMinUsed = false
+			var wasMaxUsed = false
 
 			if (underlyingUsertype != null) {
 				wasUniqueUsed = isUserTypeRestricted(underlyingUsertype, "unique")
@@ -35,6 +38,9 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 				wasMonotoneUsed = isUserTypeRestricted(underlyingUsertype, "monotone")
 				wasAbstractUsed = isUserTypeRestricted(underlyingUsertype, "abstract")
 				wasDefaultUsed = isUserTypeRestricted(underlyingUsertype, "default")
+				wasRangeUsed = isUserTypeRestricted(underlyingUsertype, "range")
+				wasMinUsed = isUserTypeRestricted(underlyingUsertype, "min")
+				wasMaxUsed = isUserTypeRestricted(underlyingUsertype, "max")
 			}
 
 			for (restriction : declaration.restrictions) {
@@ -58,6 +64,18 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 					case 'default': {
 						handleDefaultRestriction(restriction, underlyingUsertype, wasDefaultUsed)
 						wasDefaultUsed = true
+					}
+					case 'range': {
+						handleRangeRestriction(restriction, underlyingUsertype, wasRangeUsed)
+						wasRangeUsed = true
+					}
+					case 'min': {
+						handleMinRestriction(restriction, underlyingUsertype, wasMinUsed)
+						wasMinUsed = true
+					}
+					case 'max': {
+						handleMaxRestriction(restriction, underlyingUsertype, wasMaxUsed)
+						wasMaxUsed = true
 					}
 					default: {
 						showError(TypeRestrictionsErrorMessages.Unknown_Restriction, restriction)
@@ -145,6 +163,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 	}
 
 	def handleDefaultRestriction(Restriction restriction, Usertype underlyingUsertype, boolean wasDefaultUsed) {
+		//TODO default bool, string, int, float
 		if (!wasDefaultUsed) {
 			if (restriction.restrictionArguments.size() == 1) {
 				if (underlyingUsertype != null) {
@@ -174,6 +193,10 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		} else {
 			showError(TypeRestrictionsErrorMessages.Default_Already_Used, restriction)
 		}
+	}
+	
+	def handleRangeRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasRangeUsed) {
+		
 	}
 	
 }
