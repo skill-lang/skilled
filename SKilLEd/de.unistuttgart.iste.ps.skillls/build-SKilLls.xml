@@ -2,10 +2,21 @@
     <property name="libs.location" value="../de.unistuttgart.iste.ps.skilled/lib"/>
     <property name="grammar.location" value="src/de/unistuttgart/iste/ps/skillls/grammar"/>
     <property name="tools.location" value="src/de/unistuttgart/iste/ps/skillls/tools"/>
+    <property name="ui.src.location" value="../de.unistuttgart.iste.ps.skilled.ui/src/de/unistuttgart/iste/ps/skilled/ui"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
     <property name="source" value="1.8"/>
-   
+
+    <condition property="isUnix">
+        <os family="unix" />
+    </condition>
+
+    <condition property="scala.call" value="scala">
+        <os family="unix" />
+    </condition>
+
+    <property name="scala.call" value="scala.bat"/>
+
     <path id="SKilLls.classpath">
         <fileset dir="${libs.location}" includes="*.jar"/>
         <pathelement location="out/production/SKilLls"/>
@@ -19,12 +30,15 @@
     <target name="clean">
         <delete dir="out"/>
         <delete dir="lib"/>
+        <delete file="${libs.location}/empty.skill"/>
         <delete file="${libs.location}/SKilLls.jar"/>
         <delete dir="src/de/unistuttgart/iste/ps/skillls/tools"/>
         <delete dir="generated"/>
         <delete dir="bin"/>
+        <delete dir="${ui.src.location}/sfparser"/>
         <delete dir="${tools.location}"/>
         <delete dir="${grammar.location}"/>
+        <delete dir="${ui.src.location}/sfparser"/>
         <delete file="${libs.location}/skill.java.common.jar"/>
         <delete file="${libs.location}/skill.jvm.common.jar"/>
     </target>
@@ -49,7 +63,7 @@
         </java>
     </target>
 
-    <target name="gensrc-skill-antlr-lexer-post" depends="gensrc-skill-antlr-lexer">
+    <target name="gensrc-skill-antlr-lexer-post" depends="gensrc-skill-antlr-lexer" if="isUnix">
         <copy todir="${grammar.location}">
             <fileset dir="${grammar.location}/SKilLANTLR"/>
         </copy>
@@ -66,16 +80,32 @@
         </java>
     </target>
 
-    <target name="gensrc-skill-antlr-parser-post" depends="gensrc-skill-antlr-parser">
+    <target name="gensrc-skill-antlr-parser-post" depends="gensrc-skill-antlr-parser" if="isUnix">
         <copy todir="${grammar.location}">
             <fileset dir="${grammar.location}/SKilLANTLR"/>
         </copy>
         <delete dir="${grammar.location}/SKilLANTLR" />
     </target>
 
+    <target name="gen-empty-skill-binding">
+        <mkdir dir="${libs.location}/temp-esb"/>
+        <touch file="${libs.location}/empty.skill"/>
+        <exec executable="${scala.call}" dir="${libs.location}">
+            <arg value="skill_2.11-0.3.jar"/>
+            <arg line="-p de.unistuttgart.iste.ps.skilled.ui.sfparser"/>
+            <arg line="-L Java empty.skill"/>
+            <arg line="temp-esb"/>
+        </exec>
+        <copy todir="${ui.src.location}/sfparser">
+            <fileset dir="${libs.location}/temp-esb/java/src/main/java/de/unistuttgart/iste/ps/skilled/ui/sfparser"/>
+        </copy>
+        <delete file="${libs.location}/empty.skill"/>
+        <delete dir="${libs.location}/temp-esb"/>
+    </target>
+
     <target name="build-skill-binding" depends="setup">
         <mkdir dir="${tools.location}"/>
-        <exec executable="scala" dir="${libs.location}">
+        <exec executable="${scala.call}" dir="${libs.location}">
             <arg value="skill_2.11-0.3.jar"/>
             <arg line="-p de.unistuttgart.iste.ps.skillls.tools"/>
             <arg line="-L Java ../../de.unistuttgart.iste.ps.skillls/Tools/SKilLEd.skill"/>
@@ -158,6 +188,6 @@
         <delete file="${libs.location}/skill.jvm.common.jar"/>
     </target>
 
-    <target depends="clean,gensrc-skill-antlr-parser-post,compile-skillls,run-tests,create-jar" name="build-skillls"/>
+    <target depends="clean,gensrc-skill-antlr-parser-post,gen-empty-skill-binding,compile-skillls,run-tests,create-jar" name="build-skillls"/>
 
 </project>

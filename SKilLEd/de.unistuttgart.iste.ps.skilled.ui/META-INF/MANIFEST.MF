@@ -51,4 +51,6 @@ Export-Package: de.unistuttgart.iste.ps.skilled.ui;
 Bundle-Activator: de.unistuttgart.iste.ps.skilled.ui.internal.SKilLActivator
 Bundle-ClassPath: lib/scala-library.jar,
  lib/skill_2.11-0.3.jar,
- .
+ .,
+ lib/skill.java.common.jar,
+ lib/skill.jvm.common.jar

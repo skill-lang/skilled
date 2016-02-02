@@ -20,7 +20,6 @@ class NestingValidator extends AbstractSKilLValidator{
 	
 	public static val INVALID_NESTED_TYPEDEF = 'invalidNestedTypedef'
 
-	@Check
 	def checkInvalidNestedTypes(DeclarationReference dr) {
 		if(dr.type instanceof Typedef) {
 			val td = dr.type as Typedef
