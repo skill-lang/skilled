@@ -13,6 +13,7 @@ import org.eclipse.xtext.validation.Check
 /**
  * @author Nikolay Fateev
  * @author Moritz Platzer
+ * @author Tobias Heck
  */
 class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 
@@ -101,17 +102,16 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 
 	def handleMonotoneRestriction(Restriction restriction, Usertype underlyingUsertype, boolean wasMonotoneUsed) {
 		if (restriction.restrictionArguments.size == 0) {
-			var errorFound = false
 			if (underlyingUsertype != null) {
 				if (underlyingUsertype.supertypes.size != 0) {
 					showError(TypeRestrictionsErrorMessages.Monotone_Usage, restriction)
-					errorFound = true
+					return
 				}
 			} else {
 				showError(TypeRestrictionsErrorMessages.Monotone_Usage, restriction)
-				errorFound = true
+				return
 			}
-			if (!errorFound && wasMonotoneUsed) {
+			if (wasMonotoneUsed) {
 				showWarning(TypeRestrictionsErrorMessages.Monotone_Already_Used, restriction)
 			}
 		} else {
@@ -121,17 +121,16 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 
 	def handleSingletonRestriction(Restriction restriction, Usertype underlyingUsertype, boolean wasSingletonUsed) {
 		if (restriction.restrictionArguments.size == 0) {
-			var errorFound = false
 			if (underlyingUsertype != null) {
 				if (subtypesFinder.getSubtypes(underlyingUsertype).size != 0) {
 					showError(TypeRestrictionsErrorMessages.Singleton_Usage, restriction)
-					errorFound = true
+					return
 				}
 			} else {
 				showError(TypeRestrictionsErrorMessages.Singleton_Usage, restriction)
-				errorFound = true
+				return
 			}
-			if (!errorFound && wasSingletonUsed) {
+			if (wasSingletonUsed) {
 				showWarning(TypeRestrictionsErrorMessages.Singleton_Already_Used, restriction)
 			}
 		} else {
@@ -141,20 +140,19 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 
 	def handleUniqueRestriction(Restriction restriction, Usertype underlyingUsertype, boolean wasUniqueUsed) {
 		if (restriction.restrictionArguments.size == 0) {
-			var errorFound = false
 			if (underlyingUsertype != null) {
 				if (underlyingUsertype.supertypes.size != 0) {
 					showError(TypeRestrictionsErrorMessages.Unique_Usage, restriction)
-					errorFound = true
+					return
 				} else if (subtypesFinder.getSubtypes(underlyingUsertype).size != 0) {
 					showError(TypeRestrictionsErrorMessages.Unique_Usage, restriction)
-					errorFound = true
+					return
 				}
 			} else {
 				showError(TypeRestrictionsErrorMessages.Unique_Usage, restriction)
-				errorFound = true
+				return
 			}
-			if (!errorFound && wasUniqueUsed) {
+			if (wasUniqueUsed) {
 				showWarning(TypeRestrictionsErrorMessages.Unique_Already_Used, restriction)
 			}
 		} else {
@@ -196,6 +194,16 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 	}
 	
 	def handleRangeRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasRangeUsed) {
+		if (restriction.restrictionArguments.size() != 2) {
+			
+		}
+	}
+	
+	def handleMinRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasMinUsed) {
+		
+	}
+	
+	def handleMaxRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasMaxUsed) {
 		
 	}
 	
