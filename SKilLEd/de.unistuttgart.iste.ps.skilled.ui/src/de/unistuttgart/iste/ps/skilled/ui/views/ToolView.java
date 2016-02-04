@@ -87,6 +87,7 @@ public class ToolView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
+		this.parent = parent;
 		tabFolder = new CTabFolder(parent, SWT.BORDER);
 		tabFolder.setVisible(true);
 		fileChangeAction.save();
@@ -154,11 +155,10 @@ public class ToolView extends ViewPart {
 			}
 			tabFolder = new CTabFolder(parent, SWT.BORDER);
 			buildToolContextMenu(buildToollist(tabFolder));
-			setFocus();
-			tabFolder.setSelection(toolTabItem);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		tabFolder.setSelection(toolTabItem);
 	}
 
 	/**
@@ -301,21 +301,20 @@ public class ToolView extends ViewPart {
 	 *            - {@link Tool}
 	 */
 	private void buildTypeTree(Tool tool) {
-		Tree typeTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.FULL_SELECTION);
+		Tree typeTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.SINGLE);
 		typeListOfActualTool = tool.getTypes();
 		TreeItem typeHintItem;
 
-		if (null == typeTabItem || typeTabItem.isDisposed())
+		if (null == typeTabItem || typeTabItem.isDisposed()) {
 			typeTabItem = new CTabItem(tabFolder, 0, 1);
+		}
 
 		typeTabItem.setText("Types - " + tool.getName());
 		ArrayList<Type> typeList = new ArrayList<>();
 
 		if (null != skillFile) {
 			for (Type t : allTypeList) {
-				if (tool.getTypes().contains(t))
-					typeList.add(t);
-				else if (typeList.stream().noneMatch(tt -> t.getName().equals(tt.getName())))
+				if (allToolList.stream().noneMatch(to -> to.getTypes().contains(t)))
 					typeList.add(t);
 			}
 
@@ -486,31 +485,30 @@ public class ToolView extends ViewPart {
 	/**
 	 * Build the fieldtree, listing all fields with their specific hints.
 	 * 
-	 * @param tooltype
+	 * @param type
 	 *            - {@link Type}
 	 */
-	private void buildFieldTree(Type tooltype, boolean typeIsChecked) {
+	private void buildFieldTree(Type type, boolean typeIsChecked) {
 		Tree fieldTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.FULL_SELECTION);
-		fieldListOfActualType = tooltype.getFields();
+		fieldListOfActualType = type.getFields();
 
-		Type type = new Type();
+		Type tooltype = new Type();
 		for (Type t : allTypeList) {
-			if (tooltype.getName().equals(t.getName())) {
-				type = t;
+			if (type.getName().equals(t.getName())) {
+				tooltype = t;
 				break;
 			}
 		}
 
 		if (null == fieldTabItem || fieldTabItem.isDisposed()) {
 			fieldTabItem = new CTabItem(tabFolder, 0, 2);
-			fieldTabItem.setShowClose(true);
 		}
 
-		fieldTabItem.setText("Fields - " + tooltype.getName());
+		fieldTabItem.setText("Fields - " + type.getName());
 
 		if (null != skillFile) {
 			// add all fields to the tree
-			for (Field field : type.getFields()) {
+			for (Field field : tooltype.getFields()) {
 				TreeItem fieldTreeItem = new TreeItem(fieldTree, 0);
 				fieldTreeItem.setText(field.getName());
 				fieldTreeItem.setChecked(false);
@@ -553,7 +551,7 @@ public class ToolView extends ViewPart {
 		}
 
 		fieldTabItem.setControl(fieldTree);
-		initFieldTreeListener(fieldTree, tooltype);
+		initFieldTreeListener(fieldTree, type);
 	}
 
 	/**
