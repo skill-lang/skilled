@@ -619,5 +619,71 @@
            id="de.unistuttgart.iste.ps.skilled.ui.tools.export"
            name="Export Tools">
      </command>
+     <command
+           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.wizards.handler.SKilLNewProjectHandler"
+           id="de.unistuttgart.iste.ps.skilled.ui.SKilLNewProjectHandler"
+           name="New SKilL Project">
+     </command>
+     <command
+           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.wizards.handler.SKilLNewFileHandler"
+           id="de.unistuttgart.iste.ps.skilled.ui.SKilLNewFileHandler"
+           name="New SKilL File">
+     </command>
   </extension>
+  <extension
+        point="org.eclipse.ui.perspectives">
+     <perspective
+           class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.SKilLPerspectiveFactory"
+           id="de.unistuttgart.iste.ps.skilled.ui.SKilLPerspective"
+           name="SKilL">
+     </perspective>
+  </extension>
+  <extension
+        point="org.eclipse.ui.perspectiveExtensions">
+     <perspectiveExtension
+           targetID="org.eclipse.ui.resourcePerspective">
+        <newWizardShortcut
+              id="de.unistuttgart.iste.ps.skilled.ui.wizard.new.SKilL">
+        </newWizardShortcut>
+        <newWizardShortcut
+              id="de.unistuttgart.iste.ps.skilled.ui.wizards.SKilLNewFileWizard">
+        </newWizardShortcut>
+     </perspectiveExtension>
+  </extension>
+  <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:common.new.menu?after=new">
+         <command
+               commandId="de.unistuttgart.iste.ps.skilled.ui.SKilLNewProjectHandler"
+               icon="icons/sample.gif"
+               label="SKilL Project"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="de.unistuttgart.iste.ps.skilled.ui.SKilLPerspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="de.unistuttgart.iste.ps.skilled.ui.SKilLNewFileHandler"
+               icon="icons/sample.gif"
+               label="New SKilL File"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="de.unistuttgart.iste.ps.skilled.ui.SKilLPerspective">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
 </plugin>

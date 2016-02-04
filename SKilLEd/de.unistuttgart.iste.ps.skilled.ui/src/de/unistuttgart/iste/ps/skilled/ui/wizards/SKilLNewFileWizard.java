@@ -28,6 +28,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
+import de.unistuttgart.iste.ps.skilled.ui.SKilLPerspectiveFactory;
+
 /**
  * This is a new wizard. Its role is to create a new file resource in the
  * provided container. If the container resource (a folder or a project) is
@@ -87,6 +89,7 @@ public class SKilLNewFileWizard extends Wizard implements INewWizard {
 			MessageDialog.openError(getShell(), "Error", realException.getMessage());
 			return false;
 		}
+		SKilLPerspectiveFactory.openSKilLPerspective();
 		return true;
 	}
 
