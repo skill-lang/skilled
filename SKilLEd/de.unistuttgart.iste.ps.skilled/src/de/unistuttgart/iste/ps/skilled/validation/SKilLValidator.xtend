@@ -20,6 +20,7 @@ import org.eclipse.xtext.validation.ComposedChecks
 	AnnotationTypeFieldRestrictionsValidator, BooleanTypeFieldRestrictionsValidator,
 	ContainerTypeFieldRestrictionsValidator, MapTypeFieldRestrictionsValidator, DuplicatedTypenameValidation,
 	KeywordWarning, ASCIICharValidator, ViewValidator, ScopingValidator, UserTypeRestrictionValidator,
-	TypedefRestrictionValidator, ImportValidator, FieldHintsValidator, ConstantValidator, NestingValidator])
-class SKilLValidator extends AbstractSKilLValidator {
-}
+	TypedefRestrictionValidator, ImportURIValidator, ImportValidator, FieldHintsValidator, ConstantValidator,
+	NestingValidator])
+	class SKilLValidator extends AbstractSKilLValidator {
+	}
