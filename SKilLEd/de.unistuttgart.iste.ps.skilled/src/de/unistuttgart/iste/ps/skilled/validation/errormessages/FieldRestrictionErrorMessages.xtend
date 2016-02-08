@@ -18,6 +18,7 @@ class FieldRestrictionErrorMessages {
 	// Default restriction error messages
 	public static val Default_Arg_Not_Singleton = "Restriction argument must be a singleton restricted sub-type."
 	public static val Default_Arg_Not_Singleton_Or_Enum = "Restriction argument must be an enum or a singleton restricted type."
+	public static val Default_Arg_Not_Boolean = "Restriction argument must be a boolean."
 	public static val Default_Arg_Not_Integer = "Restriction argument must be an integer."
 	public static val Default_Arg_Not_Float = "Restriction argument must be a float."
 	public static val Default_Arg_Not_String = "Restriction argument must be a string."

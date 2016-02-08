@@ -15,11 +15,11 @@ class FloatTypeFieldRestrictionsValidator extends AbstractNumericFieldRestrictio
 
 		if (restriction.restrictionArguments.size() == 2) {
 			if (getRestrictionArgumentNumeric(restriction, 0) == null) {
-				showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
+				showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Float, restriction)
 				return
 			}
 			if (getRestrictionArgumentNumeric(restriction, 1) == null) {
-				showError(FieldRestrictionErrorMessages.Range_Second_Arg_Not_Integer, restriction)
+				showError(FieldRestrictionErrorMessages.Range_Second_Arg_Not_Float, restriction)
 				return
 			}
 			if (getRestrictionArgumentNumeric(restriction, 0).doubleValue >
@@ -42,11 +42,11 @@ class FloatTypeFieldRestrictionsValidator extends AbstractNumericFieldRestrictio
 
 		} else if (restriction.restrictionArguments.size() == 4) {
 			if (getRestrictionArgumentNumeric(restriction, 0) == null) {
-				showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
+				showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Float, restriction)
 				return
 			}
 			if (getRestrictionArgumentNumeric(restriction, 1) == null) {
-				showError(FieldRestrictionErrorMessages.Range_Second_Arg_Not_Integer, restriction)
+				showError(FieldRestrictionErrorMessages.Range_Second_Arg_Not_Float, restriction)
 				return
 			}
 			if (!isStringNullOrLowercase(restriction.restrictionArguments.get(2).valueString)) {

@@ -122,7 +122,7 @@ abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator
 		warning(message, restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 	}
 
-	def boolean isStringNullOrLowercase(String string) {
+	def public static boolean isStringNullOrLowercase(String string) {
 		return string != null && string.equals(string.toLowerCase())
 	}
 

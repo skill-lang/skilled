@@ -9,6 +9,13 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.util.SubtypesFinder
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.TypeRestrictionsErrorMessages
 import org.eclipse.xtext.validation.Check
+import de.unistuttgart.iste.ps.skilled.sKilL.Booleantype
+import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
+import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
+import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
+import de.unistuttgart.iste.ps.skilled.validation.restrictions.fields.AbstractFieldRestrictionsValidator
+import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
 
 /**
  * @author Nikolay Fateev
@@ -32,6 +39,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 			var wasRangeUsed = false
 			var wasMinUsed = false
 			var wasMaxUsed = false
+			var wasOneOfUsed = false
 
 			if (underlyingUsertype != null) {
 				wasUniqueUsed = isUserTypeRestricted(underlyingUsertype, "unique")
@@ -42,6 +50,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 				wasRangeUsed = isUserTypeRestricted(underlyingUsertype, "range")
 				wasMinUsed = isUserTypeRestricted(underlyingUsertype, "min")
 				wasMaxUsed = isUserTypeRestricted(underlyingUsertype, "max")
+				wasOneOfUsed = isUserTypeRestricted(underlyingUsertype, "oneof")
 			}
 
 			for (restriction : declaration.restrictions) {
@@ -63,26 +72,49 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						wasAbstractUsed = true
 					}
 					case 'default': {
-						handleDefaultRestriction(restriction, underlyingUsertype, wasDefaultUsed)
+						handleDefaultRestriction(restriction, underlyingUsertype, wasDefaultUsed, declaration)
 						wasDefaultUsed = true
 					}
 					case 'range': {
-						handleRangeRestriction(restriction, underlyingUsertype, wasRangeUsed)
+						handleRangeRestriction(restriction, underlyingUsertype, wasRangeUsed, declaration)
 						wasRangeUsed = true
 					}
 					case 'min': {
-						handleMinRestriction(restriction, underlyingUsertype, wasMinUsed)
+						handleMinRestriction(restriction, underlyingUsertype, wasMinUsed, declaration)
 						wasMinUsed = true
 					}
 					case 'max': {
-						handleMaxRestriction(restriction, underlyingUsertype, wasMaxUsed)
+						handleMaxRestriction(restriction, underlyingUsertype, wasMaxUsed, declaration)
 						wasMaxUsed = true
+					}
+					case 'oneof': {
+						handleOneOfRestriction(restriction, underlyingUsertype, wasOneOfUsed, declaration)
 					}
 					default: {
 						showError(TypeRestrictionsErrorMessages.Unknown_Restriction, restriction)
 					}
 				}
 			}
+		}
+	}
+
+	def handleOneOfRestriction(Restriction restriction, Usertype usertype, boolean wasOneOfUsed, Typedef typedef) {
+		if (typedef.fieldtype instanceof Annotationtype) {
+			if (wasOneOfUsed) {
+				showError(FieldRestrictionErrorMessages.OneOf_Already_Used, restriction)
+				return
+			}
+			if (restriction.restrictionArguments.size() >= 1) {
+				for (restrictionArgument : restriction.restrictionArguments) {
+					if (restrictionArgument.valueType == null) {
+						showError(FieldRestrictionErrorMessages.OneOf_Arg_Not_Usertype, restriction)
+					}
+				}
+			} else {
+				showError(FieldRestrictionErrorMessages.OneOf_Not_One_Arg, restriction)
+			}
+		} else {
+			showError(FieldRestrictionErrorMessages.OneOf_Usage, restriction)
 		}
 	}
 
@@ -160,8 +192,8 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		}
 	}
 
-	def handleDefaultRestriction(Restriction restriction, Usertype underlyingUsertype, boolean wasDefaultUsed) {
-		//TODO default bool, string, int, float
+	def handleDefaultRestriction(Restriction restriction, Usertype underlyingUsertype, boolean wasDefaultUsed,
+		Typedef typedef) {
 		if (!wasDefaultUsed) {
 			if (restriction.restrictionArguments.size() == 1) {
 				if (underlyingUsertype != null) {
@@ -183,6 +215,55 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						}
 					}
 				} else {
+					if (typedef.fieldtype instanceof Booleantype) {
+						if (restriction.restrictionArguments.get(0).valueBoolean == null) {
+							showError(FieldRestrictionErrorMessages.Default_Arg_Not_Boolean, restriction)
+						}
+						return
+					}
+					if (typedef.fieldtype instanceof Stringtype) {
+						if (restriction.restrictionArguments.get(0).valueString == null) {
+							showError(FieldRestrictionErrorMessages.Default_Arg_Not_String, restriction)
+						}
+						return
+					}
+					if (typedef.fieldtype instanceof Floattype) {
+						if (restriction.restrictionArguments.get(0).valueDouble == null) {
+							showError(FieldRestrictionErrorMessages.Default_Arg_Not_Float, restriction)
+							return
+						}
+						var double maxValue = 0
+						switch ((restriction.restrictionArguments.get(0).valueType as Floattype).type) {
+							case F32: maxValue = Float.MAX_VALUE
+							default: maxValue = Double.MAX_VALUE
+						}
+						if (restriction.restrictionArguments.get(0).valueDouble < -maxValue ||
+							restriction.restrictionArguments.get(0).valueDouble > maxValue) {
+							showError(FieldRestrictionErrorMessages.Default_Boundary, restriction)
+							return
+						}
+						return
+					}
+					if (typedef.fieldtype instanceof Integertype) {
+						if (restriction.restrictionArguments.get(0).valueLong == null) {
+							showError(FieldRestrictionErrorMessages.Default_Arg_Not_Integer, restriction)
+							return
+						}
+						var long maxValue = 0
+						switch ((restriction.restrictionArguments.get(0).valueType as Integertype).type) {
+							case I8: maxValue = Byte.MAX_VALUE
+							case I16: maxValue = Short.MAX_VALUE
+							case I32: maxValue = Integer.MAX_VALUE
+							case I64: maxValue = Long.MAX_VALUE
+							default: maxValue = Long.MAX_VALUE
+						}
+						if (restriction.restrictionArguments.get(0).valueLong < -maxValue - 1 ||
+							restriction.restrictionArguments.get(0).valueLong > maxValue) {
+							showError(FieldRestrictionErrorMessages.Default_Boundary, restriction)
+							return
+						}
+						return
+					}
 					showError(TypeRestrictionsErrorMessages.Default_Arg_Not_Singleton, restriction)
 				}
 			} else {
@@ -192,19 +273,469 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 			showError(TypeRestrictionsErrorMessages.Default_Already_Used, restriction)
 		}
 	}
-	
-	def handleRangeRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasRangeUsed) {
-		if (restriction.restrictionArguments.size() != 2) {
-			
+
+	def handleRangeRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasRangeUsed,
+		Typedef typedef) {
+		if (typedef.fieldtype instanceof Integertype) {
+			if (restriction.restrictionArguments.size() == 2) {
+				if (restriction.restrictionArguments.get(0).valueLong == null) {
+					showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
+					return
+				}
+				if (restriction.restrictionArguments.get(1).valueLong == null) {
+					showError(FieldRestrictionErrorMessages.Range_Second_Arg_Not_Integer, restriction)
+					return
+				}
+				if (restriction.restrictionArguments.get(0).valueLong >
+					restriction.restrictionArguments.get(1).valueLong) {
+					showError(FieldRestrictionErrorMessages.Range_Arguments_Switched, restriction)
+				} else {
+					var long maxValue = 0
+					switch ((typedef.fieldtype as Integertype).type) {
+						case I8: maxValue = Byte.MAX_VALUE
+						case I16: maxValue = Short.MAX_VALUE
+						case I32: maxValue = Integer.MAX_VALUE
+						case I64: maxValue = Long.MAX_VALUE
+						default: maxValue = Long.MAX_VALUE
+					}
+					if (restriction.restrictionArguments.get(1).valueLong < -maxValue - 1 ||
+						restriction.restrictionArguments.get(0).valueLong > maxValue) {
+						showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+					} else if (restriction.restrictionArguments.get(0).valueLong < -maxValue - 1 ||
+						restriction.restrictionArguments.get(1).valueLong > maxValue) {
+						showWarning(FieldRestrictionErrorMessages.Range_Partly_Outside, restriction)
+					}
+				}
+			} else if (restriction.restrictionArguments.size() == 4) {
+				if (restriction.restrictionArguments.get(0).valueLong == null) {
+					showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
+					return
+				}
+				if (restriction.restrictionArguments.get(1).valueLong == null) {
+					showError(FieldRestrictionErrorMessages.Range_Second_Arg_Not_Integer, restriction)
+					return
+				}
+				if (!AbstractFieldRestrictionsValidator.isStringNullOrLowercase(
+					restriction.restrictionArguments.get(2).valueString)) {
+					showError(FieldRestrictionErrorMessages.Range_Third_Arg_Not_Lowercase_String, restriction)
+					return
+				}
+				if (!AbstractFieldRestrictionsValidator.isStringNullOrLowercase(
+					restriction.restrictionArguments.get(3).valueString)) {
+					showError(FieldRestrictionErrorMessages.Range_Fourth_Arg_Not_Lowercase_String, restriction)
+					return
+				}
+				if (!restriction.restrictionArguments.get(2).valueString.toLowerCase.matches(
+					"(\\s)*(inclusive|exclusive)(\\s)*")) {
+					showError(FieldRestrictionErrorMessages.Range_Third_Arg_Wrong_String, restriction)
+					return
+				}
+				if (!restriction.restrictionArguments.get(3).valueString.toLowerCase.matches(
+					"(\\s)*(inclusive|exclusive)(\\s)*")) {
+					showError(FieldRestrictionErrorMessages.Range_Fourth_Arg_Wrong_String, restriction)
+					return
+				}
+				if (restriction.restrictionArguments.get(0).valueLong >
+					restriction.restrictionArguments.get(1).valueLong) {
+					showError(FieldRestrictionErrorMessages.Range_Arguments_Switched, restriction)
+					return
+				}
+				if (restriction.restrictionArguments.get(0).valueLong + 1 ==
+					restriction.restrictionArguments.get(1).valueLong &&
+					restriction.restrictionArguments.get(2).valueString.toLowerCase.contains("ex") &&
+					restriction.restrictionArguments.get(3).valueString.toLowerCase.contains("ex")) {
+					showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+					return
+				}
+				if (restriction.restrictionArguments.get(0).valueLong ==
+					restriction.restrictionArguments.get(1).valueLong &&
+					(restriction.restrictionArguments.get(2).valueString.toLowerCase.contains("ex") ||
+						restriction.restrictionArguments.get(3).valueString.toLowerCase.contains("ex"))) {
+						showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+						return
+					}
+					var long maxValue = 0
+					switch ((typedef.fieldtype as Integertype).type) {
+						case I8: maxValue = Byte.MAX_VALUE
+						case I16: maxValue = Short.MAX_VALUE
+						case I32: maxValue = Integer.MAX_VALUE
+						case I64: maxValue = Long.MAX_VALUE
+						default: maxValue = Long.MAX_VALUE
+					}
+					var notAsLow = 0
+					var notAsHigh = 0
+					if(restriction.restrictionArguments.get(2).valueString.toLowerCase.contains("ex")) notAsLow = 1
+					if(restriction.restrictionArguments.get(3).valueString.toLowerCase.contains("ex")) notAsHigh = 1
+					if (restriction.restrictionArguments.get(1).valueLong < -maxValue - 1 + notAsHigh ||
+						restriction.restrictionArguments.get(0).valueLong > maxValue - notAsLow) {
+						showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+						return
+					}
+					if (restriction.restrictionArguments.get(0).valueLong < -maxValue - 1 - notAsLow ||
+						restriction.restrictionArguments.get(1).valueLong > maxValue + notAsHigh) {
+						showWarning(FieldRestrictionErrorMessages.Range_Partly_Outside, restriction)
+						return
+					}
+				} else {
+					showError(FieldRestrictionErrorMessages.Range_Not_2or4_Args, restriction)
+					return
+				}
+				if (wasRangeUsed) {
+					showWarning(FieldRestrictionErrorMessages.Range_Multiple_Used, restriction)
+				}
+			} else if (typedef.fieldtype instanceof Floattype) {
+				if (restriction.restrictionArguments.size() == 2) {
+					if (restriction.restrictionArguments.get(0).valueDouble == null) {
+						showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
+						return
+					}
+					if (restriction.restrictionArguments.get(1).valueDouble == null) {
+						showError(FieldRestrictionErrorMessages.Range_Second_Arg_Not_Integer, restriction)
+						return
+					}
+					if (restriction.restrictionArguments.get(0).valueDouble.doubleValue >
+						restriction.restrictionArguments.get(1).valueDouble.doubleValue) {
+						showError(FieldRestrictionErrorMessages.Range_Arguments_Switched, restriction)
+					} else {
+						var double maxValue = 0
+						switch ((typedef.fieldtype as Floattype).type) {
+							case F32: maxValue = Float.MAX_VALUE
+							default: maxValue = Double.MAX_VALUE
+						}
+						if (restriction.restrictionArguments.get(1).valueDouble.doubleValue < -maxValue ||
+							restriction.restrictionArguments.get(0).valueDouble.doubleValue > maxValue) {
+							showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+						} else if (restriction.restrictionArguments.get(0).valueDouble.doubleValue < -maxValue ||
+							restriction.restrictionArguments.get(1).valueDouble.doubleValue > maxValue) {
+							showWarning(FieldRestrictionErrorMessages.Range_Partly_Outside, restriction)
+						}
+					}
+
+				} else if (restriction.restrictionArguments.size() == 4) {
+					if (restriction.restrictionArguments.get(0).valueDouble == null) {
+						showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
+						return
+					}
+					if (restriction.restrictionArguments.get(1).valueDouble == null) {
+						showError(FieldRestrictionErrorMessages.Range_Second_Arg_Not_Integer, restriction)
+						return
+					}
+					if (!AbstractFieldRestrictionsValidator.isStringNullOrLowercase(
+						restriction.restrictionArguments.get(2).valueString)) {
+						showError(FieldRestrictionErrorMessages.Range_Third_Arg_Not_Lowercase_String, restriction)
+						return
+					}
+					if (!AbstractFieldRestrictionsValidator.isStringNullOrLowercase(
+						restriction.restrictionArguments.get(3).valueString)) {
+						showError(FieldRestrictionErrorMessages.Range_Fourth_Arg_Not_Lowercase_String, restriction)
+						return
+					}
+					if (!restriction.restrictionArguments.get(2).valueString.toLowerCase.matches(
+						"(\\s)*(inclusive|exclusive)(\\s)*")) {
+						showError(FieldRestrictionErrorMessages.Range_Third_Arg_Wrong_String, restriction)
+						return
+					}
+					if (!restriction.restrictionArguments.get(3).valueString.toLowerCase.matches(
+						"(\\s)*(inclusive|exclusive)(\\s)*")) {
+						showError(FieldRestrictionErrorMessages.Range_Fourth_Arg_Wrong_String, restriction)
+						return
+					}
+					if (restriction.restrictionArguments.get(0).valueDouble.doubleValue >
+						restriction.restrictionArguments.get(1).valueDouble.doubleValue) {
+						showError(FieldRestrictionErrorMessages.Range_Arguments_Switched, restriction)
+						return
+					}
+					if (restriction.restrictionArguments.get(0).valueDouble.doubleValue ==
+						restriction.restrictionArguments.get(1).valueDouble.doubleValue &&
+						(restriction.restrictionArguments.get(2).valueString.toLowerCase.contains("ex") ||
+							restriction.restrictionArguments.get(3).valueString.toLowerCase.contains("ex"))) {
+							showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+							return
+						}
+						var double maxValue = 0
+						switch ((typedef.fieldtype as Floattype).type) {
+							case F32: maxValue = Float.MAX_VALUE
+							default: maxValue = Double.MAX_VALUE
+						}
+						if (restriction.restrictionArguments.get(1).valueDouble.doubleValue < -maxValue ||
+							restriction.restrictionArguments.get(0).valueDouble.doubleValue > maxValue) {
+							showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+							return
+						}
+						if (restriction.restrictionArguments.get(0).valueDouble.doubleValue < -maxValue ||
+							restriction.restrictionArguments.get(1).valueDouble.doubleValue > maxValue) {
+							showWarning(FieldRestrictionErrorMessages.Range_Partly_Outside, restriction)
+							return
+						}
+					} else {
+						showError(FieldRestrictionErrorMessages.Range_Not_2or4_Args, restriction)
+						return
+					}
+
+					if (wasRangeUsed) {
+						showWarning(FieldRestrictionErrorMessages.Range_Multiple_Used, restriction)
+					}
+				} else {
+					showError(FieldRestrictionErrorMessages.Range_Usage, restriction)
+				}
+			}
+
+			def handleMinRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasMinUsed,
+				Typedef typedef) {
+				if (typedef.fieldtype instanceof Integertype) {
+					if (restriction.restrictionArguments.size() == 1) {
+						if (restriction.restrictionArguments.get(0).valueLong == null) {
+							showError(FieldRestrictionErrorMessages.MinMax_Arg_Not_Integer, restriction)
+							return
+						}
+						var long maxValue = 0
+						switch ((typedef.fieldtype as Integertype).type) {
+							case I8: maxValue = Byte.MAX_VALUE
+							case I16: maxValue = Short.MAX_VALUE
+							case I32: maxValue = Integer.MAX_VALUE
+							case I64: maxValue = Long.MAX_VALUE
+							default: maxValue = Long.MAX_VALUE
+						}
+						if (restriction.restrictionArguments.get(0).valueLong.longValue > maxValue) {
+							showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+							return
+						}
+						if (restriction.restrictionArguments.get(0).valueLong.longValue < -maxValue) {
+							showWarning(FieldRestrictionErrorMessages.MinMax_Partly_Outside, restriction)
+							return
+						}
+
+					} else if (restriction.restrictionArguments.size() == 2) {
+						if (restriction.restrictionArguments.get(0).valueLong == null) {
+							showError(FieldRestrictionErrorMessages.MinMax_First_Arg_Not_Integer, restriction)
+							return
+						}
+						if (!AbstractFieldRestrictionsValidator.isStringNullOrLowercase(
+							restriction.restrictionArguments.get(1).valueString)) {
+							showError(FieldRestrictionErrorMessages.MinMax_Second_Arg_Not_Lowercase_String, restriction)
+							return
+						}
+						if (!restriction.restrictionArguments.get(1).valueString.toLowerCase.matches(
+							"(\\s)*(inclusive|exclusive)(\\s)*")) {
+							showError(FieldRestrictionErrorMessages.MinMax_Second_Arg_Wrong_String, restriction)
+							return
+						}
+						var long maxValue = 0
+						switch ((typedef.fieldtype as Integertype).type) {
+							case I8: maxValue = Byte.MAX_VALUE
+							case I16: maxValue = Short.MAX_VALUE
+							case I32: maxValue = Integer.MAX_VALUE
+							case I64: maxValue = Long.MAX_VALUE
+							default: maxValue = Long.MAX_VALUE
+						}
+						var notAsHigh = 0
+						if(restriction.restrictionArguments.get(1).valueString.toLowerCase.contains("ex")) notAsHigh = 1
+						if (restriction.restrictionArguments.get(0).valueLong.longValue > maxValue - notAsHigh) {
+							showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+							return
+						}
+						if (restriction.restrictionArguments.get(0).valueLong.longValue < -maxValue - notAsHigh) {
+							showWarning(FieldRestrictionErrorMessages.MinMax_Partly_Outside, restriction)
+							return
+						}
+
+					} else {
+						showError(FieldRestrictionErrorMessages.MinMax_Not_1or2_Args, restriction)
+						return
+					}
+
+					if (wasMinUsed) {
+						showWarning(FieldRestrictionErrorMessages.MinMax_Multiple_Used, restriction)
+						return
+					}
+				} else if (typedef.fieldtype instanceof Floattype) {
+					if (restriction.restrictionArguments.size() == 1) {
+						if (restriction.restrictionArguments.get(0).valueDouble == null) {
+							showError(FieldRestrictionErrorMessages.MinMax_Arg_Not_Float, restriction)
+							return
+						}
+						var double maxValue = 0
+						switch ((typedef.fieldtype as Floattype).type) {
+							case F32: maxValue = Float.MAX_VALUE
+							default: maxValue = Double.MAX_VALUE
+						}
+						if (restriction.restrictionArguments.get(0).valueDouble.doubleValue > maxValue) {
+							showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+							return
+						}
+						if (restriction.restrictionArguments.get(0).valueDouble.doubleValue < -maxValue) {
+							showWarning(FieldRestrictionErrorMessages.MinMax_Partly_Outside, restriction)
+							return
+						}
+
+					} else if (restriction.restrictionArguments.size() == 2) {
+						if (restriction.restrictionArguments.get(0).valueDouble == null) {
+							showError(FieldRestrictionErrorMessages.MinMax_First_Arg_Not_Float, restriction)
+							return
+						}
+						if (!AbstractFieldRestrictionsValidator.isStringNullOrLowercase(
+							restriction.restrictionArguments.get(1).valueString)) {
+							showError(FieldRestrictionErrorMessages.MinMax_Second_Arg_Not_Lowercase_String, restriction)
+							return
+						}
+						if (!restriction.restrictionArguments.get(1).valueString.toLowerCase.matches(
+							"(\\s)*(inclusive|exclusive)(\\s)*")) {
+							showError(FieldRestrictionErrorMessages.MinMax_Second_Arg_Wrong_String, restriction)
+							return
+						}
+						var double maxValue = 0
+						switch ((typedef.fieldtype as Floattype).type) {
+							case F32: maxValue = Float.MAX_VALUE
+							default: maxValue = Double.MAX_VALUE
+						}
+						if (restriction.restrictionArguments.get(0).valueDouble.doubleValue > maxValue) {
+							showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+							return
+						} else if (restriction.restrictionArguments.get(0).valueDouble.doubleValue < -maxValue) {
+							showWarning(FieldRestrictionErrorMessages.MinMax_Partly_Outside, restriction)
+							return
+						}
+
+					} else {
+						showError(FieldRestrictionErrorMessages.MinMax_Not_1or2_Args, restriction)
+						return
+					}
+
+					if (wasMinUsed) {
+						showWarning(FieldRestrictionErrorMessages.MinMax_Multiple_Used, restriction)
+						return
+					}
+				} else {
+					showError(FieldRestrictionErrorMessages.MinMax_Usage, restriction)
+				}
+			}
+
+			def handleMaxRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasMaxUsed,
+				Typedef typedef) {
+				if (typedef.fieldtype instanceof Integertype) {
+					if (restriction.restrictionArguments.size() == 1) {
+						if (restriction.restrictionArguments.get(0).valueLong == null) {
+							showError(FieldRestrictionErrorMessages.MinMax_Arg_Not_Integer, restriction)
+							return
+						}
+						var long maxValue = 0
+						switch ((typedef.fieldtype as Integertype).type) {
+							case I8: maxValue = Byte.MAX_VALUE
+							case I16: maxValue = Short.MAX_VALUE
+							case I32: maxValue = Integer.MAX_VALUE
+							case I64: maxValue = Long.MAX_VALUE
+							default: maxValue = Long.MAX_VALUE
+						}
+						if (restriction.restrictionArguments.get(0).valueLong.longValue < -maxValue - 1) {
+							showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+							return
+						} else if (restriction.restrictionArguments.get(0).valueLong.longValue > maxValue - 1) {
+							showWarning(FieldRestrictionErrorMessages.MinMax_Partly_Outside, restriction)
+							return
+						}
+					} else if (restriction.restrictionArguments.size() == 2) {
+						if (restriction.restrictionArguments.get(0).valueLong == null) {
+							showError(FieldRestrictionErrorMessages.MinMax_First_Arg_Not_Integer, restriction)
+							return
+						}
+						if (!AbstractFieldRestrictionsValidator.isStringNullOrLowercase(
+							restriction.restrictionArguments.get(1).valueString)) {
+							showError(FieldRestrictionErrorMessages.MinMax_Second_Arg_Not_Lowercase_String, restriction)
+							return
+						}
+						if (!restriction.restrictionArguments.get(1).valueString.toLowerCase.matches(
+							"(\\s)*(inclusive|exclusive)(\\s)*")) {
+							showError(FieldRestrictionErrorMessages.MinMax_Second_Arg_Wrong_String, restriction)
+							return
+						}
+						var long maxValue = 0
+						switch ((typedef.fieldtype as Integertype).type) {
+							case I8: maxValue = Byte.MAX_VALUE
+							case I16: maxValue = Short.MAX_VALUE
+							case I32: maxValue = Integer.MAX_VALUE
+							case I64: maxValue = Long.MAX_VALUE
+							default: maxValue = Long.MAX_VALUE
+						}
+						var notAsLow = 0
+						if(restriction.restrictionArguments.get(1).valueString.toLowerCase.contains("ex")) notAsLow = 1
+						if (restriction.restrictionArguments.get(0).valueLong.longValue < -maxValue - 1 + notAsLow) {
+							showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+							return
+						}
+						if (restriction.restrictionArguments.get(0).valueLong.longValue > maxValue + notAsLow - 1) {
+							showWarning(FieldRestrictionErrorMessages.MinMax_Partly_Outside, restriction)
+							return
+						}
+					} else {
+						showError(FieldRestrictionErrorMessages.MinMax_Not_1or2_Args, restriction)
+						return
+					}
+
+					if (wasMaxUsed) {
+						showWarning(FieldRestrictionErrorMessages.MinMax_Multiple_Used, restriction)
+						return
+					}
+				} else if (typedef.fieldtype instanceof Floattype) {
+					if (restriction.restrictionArguments.size() == 1) {
+						if (restriction.restrictionArguments.get(0).valueDouble == null) {
+							showError(FieldRestrictionErrorMessages.MinMax_Arg_Not_Float, restriction)
+							return
+						}
+						var double maxValue = 0
+						switch ((typedef.fieldtype as Floattype).type) {
+							case F32: maxValue = Float.MAX_VALUE
+							default: maxValue = Double.MAX_VALUE
+						}
+						if (restriction.restrictionArguments.get(0).valueDouble.doubleValue < -maxValue) {
+							showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+							return
+						}
+						if (restriction.restrictionArguments.get(0).valueDouble.doubleValue > maxValue) {
+							showWarning(FieldRestrictionErrorMessages.MinMax_Partly_Outside, restriction)
+							return
+						}
+
+					} else if (restriction.restrictionArguments.size() == 2) {
+						if (restriction.restrictionArguments.get(0).valueDouble == null) {
+							showError(FieldRestrictionErrorMessages.MinMax_First_Arg_Not_Float, restriction)
+							return
+						}
+						if (!AbstractFieldRestrictionsValidator.isStringNullOrLowercase(
+							restriction.restrictionArguments.get(1).valueString)) {
+							showError(FieldRestrictionErrorMessages.MinMax_Second_Arg_Not_Lowercase_String, restriction)
+							return
+						}
+						if (!restriction.restrictionArguments.get(1).valueString.toLowerCase.matches(
+							"(\\s)*(inclusive|exclusive)(\\s)*")) {
+							showError(FieldRestrictionErrorMessages.MinMax_Second_Arg_Wrong_String, restriction)
+							return
+						}
+						var double maxValue = 0
+						switch ((typedef.fieldtype as Floattype).type) {
+							case F32: maxValue = Float.MAX_VALUE
+							default: maxValue = Double.MAX_VALUE
+						}
+						if (restriction.restrictionArguments.get(0).valueDouble.doubleValue < -maxValue) {
+							showError(FieldRestrictionErrorMessages.Range_Outside, restriction)
+							return
+						}
+						if (restriction.restrictionArguments.get(0).valueDouble.doubleValue > maxValue) {
+							showWarning(FieldRestrictionErrorMessages.MinMax_Partly_Outside, restriction)
+							return
+
+						}
+					} else {
+						showError(FieldRestrictionErrorMessages.MinMax_Not_1or2_Args, restriction)
+						return
+					}
+
+					if (wasMaxUsed) {
+						showWarning(FieldRestrictionErrorMessages.MinMax_Multiple_Used, restriction)
+						return
+					}
+				} else {
+					showError(FieldRestrictionErrorMessages.MinMax_Usage, restriction)
+				}
+			}
+
 		}
-	}
-	
-	def handleMinRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasMinUsed) {
-		
-	}
-	
-	def handleMaxRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasMaxUsed) {
-		
-	}
-	
-}
