@@ -17,17 +17,26 @@ import org.eclipse.xtext.validation.Check
  * @author Tobias Heck
  */
 abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator {
+	
+	var protected wasNonNullUsed = false
+	var protected wasDefaultUsed = false
+	var protected wasMaxUsed = false
+	var protected wasMinUsed = false
+	var protected wasConstantLenghtPointerUsed = false
+	var protected wasOneOfUsed = false
+	var protected wasRangeUsed = false
 
 	@Check
 	def validateFieldRestrictions(Field field) {
 		val Fieldtype fieldtype = field.fieldcontent.fieldtype
 
-		var wasNonNullUsed = false
-		var wasDefaultUsed = false
-		var wasMaxUsed = false
-		var wasMinUsed = false
-		var wasConstantLenghtPointerUsed = false
-		var wasOneOfUsed = false
+		wasNonNullUsed = false
+		wasDefaultUsed = false
+		wasMaxUsed = false
+		wasMinUsed = false
+		wasConstantLenghtPointerUsed = false
+		wasOneOfUsed = false
+		wasRangeUsed = false
 
 		if (handleActivationCondition(fieldtype)) {
 			for (restriction : field.restrictions) {
@@ -41,7 +50,8 @@ abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator
 						wasDefaultUsed = true
 					}
 					case 'range': {
-						handleRangeRestriction(fieldtype, restriction, false)
+						handleRangeRestriction(fieldtype, restriction, wasRangeUsed)
+						wasRangeUsed = true
 					}
 					case 'max': {
 						handleMaxRestriction(fieldtype, restriction, wasMaxUsed)

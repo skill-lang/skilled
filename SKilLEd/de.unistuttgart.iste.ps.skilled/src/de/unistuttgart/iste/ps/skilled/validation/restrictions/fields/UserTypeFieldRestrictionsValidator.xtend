@@ -6,15 +6,28 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
 import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
+import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
+import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
+import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
 
 /**
  * @author Daniel Ryan Degutis
  * @author Nikolay Fateev
+ * @author Tobias Heck
  */
 class UserTypeFieldRestrictions extends AbstractFieldRestrictionsValidator {
 
 	override boolean handleActivationCondition(Fieldtype fieldtype) {
-		return fieldtype instanceof DeclarationReference
+		if (fieldtype instanceof DeclarationReference) {
+			if (fieldtype.type instanceof Typedef) {
+				if ((fieldtype.type as Typedef).fieldtype instanceof Integertype)
+					return false
+				if ((fieldtype.type as Typedef).fieldtype instanceof Floattype)
+					return false
+			}
+			return true
+		}
+		return false
 	}
 
 	override void handleNonNullRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasNonNullUsed) {
@@ -52,6 +65,7 @@ class UserTypeFieldRestrictions extends AbstractFieldRestrictionsValidator {
 				showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton, restriction)
 			}
 		} else if (restrictionArgumentType instanceof Enumtype) {
+			// TODO
 			return
 		} else {
 			showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton, restriction)

@@ -41,7 +41,7 @@ class FieldRestrictionErrorMessages {
 	public static val Range_Third_Arg_Wrong_String = "The third argument must be either 'inclusive' or 'exclusive'"
 	public static val Range_Fourth_Arg_Wrong_String = "The fourth argument must be either 'inclusive' or 'exclusive'"
 	// Range restriction warning messages
-	public static val Range_Multiple_Used = "The use of multiple Range restrictions is highly discouraged. The correctness of the intersection is not checked."
+	public static val Range_Multiple_Used = "The usage of multiple range delimitating restrictions is highly discouraged. The correctness of the intersection is not checked."
 	public static val Range_Partly_Outside = "The declared range is partly outside the fields' boundaries"
 	// MinMax restriction error messages
 	public static val MinMax_Arg_Not_Integer = "Restriction argument must be an integer."
@@ -54,7 +54,7 @@ class FieldRestrictionErrorMessages {
 	public static val MinMax_Partly_Outside = "The range of the field isn't restricted."
 	public static val MinMax_Second_Arg_Wrong_String = "The second argument must be either 'inclusive' or 'exclusive'"
 	// MinMax restriction warning messages
-	public static val MinMax_Multiple_Used = "The use of multiple Min or Max restrictions is highly discouraged. The correctness of the intersection is not checked."
+	public static val MinMax_Multiple_Used = "The usage of multiple range delimitating restrictions is highly discouraged. The correctness of the intersection is not checked."
 	// Coding restriction error messages
 	public static val Coding_Arg_Not_String = "The Coding restriction argument value must be a string."
 	public static val Coding_Not_One_Arg = "The Coding restriction must have one argument."

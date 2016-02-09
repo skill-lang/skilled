@@ -4,6 +4,8 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
 import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
 import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
+import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 
 /**
  * @author Daniel Ryan Degutis
@@ -11,7 +13,13 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
  */
 class IntegerTypeFieldRestrictionsValidator extends AbstractNumericFieldRestrictionValidator {
 
-	override void handleRangeRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasRangeUsed) {
+	override void handleRangeRestriction(Fieldtype fieldtype2, Restriction restriction, boolean wasRangeUsed) {
+		var Fieldtype fieldtype = null
+		if (fieldtype2 instanceof DeclarationReference) {
+			fieldtype = (fieldtype2.type as Typedef).fieldtype
+		} else {
+			fieldtype = fieldtype2
+		}
 		if (restriction.restrictionArguments.size() == 2) {
 			if (getRestrictionArgumentNumeric(restriction, 0) == null) {
 				showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
@@ -112,16 +120,41 @@ class IntegerTypeFieldRestrictionsValidator extends AbstractNumericFieldRestrict
 				showError(FieldRestrictionErrorMessages.Range_Not_2or4_Args, restriction)
 				return
 			}
-			if (wasRangeUsed) {
+			if (wasRangeUsed || wasMinUsed || wasMaxUsed) {
 				showWarning(FieldRestrictionErrorMessages.Range_Multiple_Used, restriction)
 			}
 		}
 
 		override boolean handleActivationCondition(Fieldtype fieldtype) {
-			return fieldtype instanceof Integertype
+			if(fieldtype instanceof Integertype) return true
+			if (fieldtype instanceof DeclarationReference) {
+				if (fieldtype.type instanceof Typedef) {
+					if ((fieldtype.type as Typedef).fieldtype instanceof Integertype) {
+						for (Restriction r : (fieldtype.type as Typedef).restrictions) {
+							switch (r.restrictionName.toLowerCase) {
+								case 'nonnull': wasNonNullUsed = true
+								case 'default': wasDefaultUsed = true
+								case 'range': wasRangeUsed = true
+								case 'max': wasMaxUsed = true
+								case 'min': wasMinUsed = true
+								case 'constantlengthpointer': wasConstantLenghtPointerUsed = true
+								case 'oneof': wasOneOfUsed = true
+							}
+						}
+					return true
+					}
+				}
+			}
+			return false
 		}
 
-		override void handleDefaultRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasDefaultUsed) {
+		override void handleDefaultRestriction(Fieldtype fieldtype2, Restriction restriction, boolean wasDefaultUsed) {
+			var Fieldtype fieldtype = null
+			if (fieldtype2 instanceof DeclarationReference) {
+				fieldtype = (fieldtype2.type as Typedef).fieldtype
+			} else {
+				fieldtype = fieldtype2
+			}
 			if (wasDefaultUsed) {
 				showError(FieldRestrictionErrorMessages.Default_Already_Used, restriction)
 				return
@@ -149,7 +182,13 @@ class IntegerTypeFieldRestrictionsValidator extends AbstractNumericFieldRestrict
 			return r.restrictionArguments.size() == 1 && r.restrictionArguments.get(0).valueLong == null
 		}
 
-		override void handleMaxRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasMaxUsed) {
+		override void handleMaxRestriction(Fieldtype fieldtype2, Restriction restriction, boolean wasMaxUsed) {
+			var Fieldtype fieldtype = null
+			if (fieldtype2 instanceof DeclarationReference) {
+				fieldtype = (fieldtype2.type as Typedef).fieldtype
+			} else {
+				fieldtype = fieldtype2
+			}
 
 			if (restriction.restrictionArguments.size() == 1) {
 				if (getRestrictionArgumentNumeric(restriction, 0) == null) {
@@ -208,14 +247,20 @@ class IntegerTypeFieldRestrictionsValidator extends AbstractNumericFieldRestrict
 				return
 			}
 
-			if (wasMaxUsed) {
+			if (wasMaxUsed || wasMinUsed || wasRangeUsed) {
 				showWarning(FieldRestrictionErrorMessages.MinMax_Multiple_Used, restriction)
 				return
 			}
 
 		}
 
-		override void handleMinRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasMinUsed) {
+		override void handleMinRestriction(Fieldtype fieldtype2, Restriction restriction, boolean wasMinUsed) {
+			var Fieldtype fieldtype = null
+			if (fieldtype2 instanceof DeclarationReference) {
+				fieldtype = (fieldtype2.type as Typedef).fieldtype
+			} else {
+				fieldtype = fieldtype2
+			}
 			if (restriction.restrictionArguments.size() == 1) {
 				if (getRestrictionArgumentNumeric(restriction, 0) == null) {
 					showError(FieldRestrictionErrorMessages.MinMax_Arg_Not_Integer, restriction)
@@ -276,7 +321,7 @@ class IntegerTypeFieldRestrictionsValidator extends AbstractNumericFieldRestrict
 				return
 			}
 
-			if (wasMinUsed) {
+			if (wasMinUsed || wasMaxUsed || wasRangeUsed) {
 				showWarning(FieldRestrictionErrorMessages.MinMax_Multiple_Used, restriction)
 				return
 			}

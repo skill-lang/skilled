@@ -76,15 +76,18 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						wasDefaultUsed = true
 					}
 					case 'range': {
-						handleRangeRestriction(restriction, underlyingUsertype, wasRangeUsed, declaration)
+						handleRangeRestriction(restriction, underlyingUsertype, wasRangeUsed, wasMinUsed, wasMaxUsed,
+							declaration)
 						wasRangeUsed = true
 					}
 					case 'min': {
-						handleMinRestriction(restriction, underlyingUsertype, wasMinUsed, declaration)
+						handleMinRestriction(restriction, underlyingUsertype, wasMinUsed, wasMaxUsed, wasRangeUsed,
+							declaration)
 						wasMinUsed = true
 					}
 					case 'max': {
-						handleMaxRestriction(restriction, underlyingUsertype, wasMaxUsed, declaration)
+						handleMaxRestriction(restriction, underlyingUsertype, wasMaxUsed, wasMinUsed, wasRangeUsed,
+							declaration)
 						wasMaxUsed = true
 					}
 					case 'oneof': {
@@ -275,7 +278,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 	}
 
 	def handleRangeRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasRangeUsed,
-		Typedef typedef) {
+		boolean wasMinUsed, boolean wasMaxUsed, Typedef typedef) {
 		if (typedef.fieldtype instanceof Integertype) {
 			if (restriction.restrictionArguments.size() == 2) {
 				if (restriction.restrictionArguments.get(0).valueLong == null) {
@@ -380,7 +383,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 					showError(FieldRestrictionErrorMessages.Range_Not_2or4_Args, restriction)
 					return
 				}
-				if (wasRangeUsed) {
+				if (wasRangeUsed || wasMinUsed || wasMaxUsed) {
 					showWarning(FieldRestrictionErrorMessages.Range_Multiple_Used, restriction)
 				}
 			} else if (typedef.fieldtype instanceof Floattype) {
@@ -472,7 +475,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						return
 					}
 
-					if (wasRangeUsed) {
+					if (wasRangeUsed || wasMinUsed || wasMaxUsed) {
 						showWarning(FieldRestrictionErrorMessages.Range_Multiple_Used, restriction)
 					}
 				} else {
@@ -481,7 +484,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 			}
 
 			def handleMinRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasMinUsed,
-				Typedef typedef) {
+				boolean wasMaxUsed, boolean wasRangeUsed, Typedef typedef) {
 				if (typedef.fieldtype instanceof Integertype) {
 					if (restriction.restrictionArguments.size() == 1) {
 						if (restriction.restrictionArguments.get(0).valueLong == null) {
@@ -544,7 +547,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						return
 					}
 
-					if (wasMinUsed) {
+					if (wasMinUsed || wasMaxUsed || wasRangeUsed) {
 						showWarning(FieldRestrictionErrorMessages.MinMax_Multiple_Used, restriction)
 						return
 					}
@@ -601,7 +604,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						return
 					}
 
-					if (wasMinUsed) {
+					if (wasMinUsed || wasMaxUsed || wasRangeUsed) {
 						showWarning(FieldRestrictionErrorMessages.MinMax_Multiple_Used, restriction)
 						return
 					}
@@ -611,7 +614,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 			}
 
 			def handleMaxRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasMaxUsed,
-				Typedef typedef) {
+				boolean wasMinUsed, boolean wasRangeUsed, Typedef typedef) {
 				if (typedef.fieldtype instanceof Integertype) {
 					if (restriction.restrictionArguments.size() == 1) {
 						if (restriction.restrictionArguments.get(0).valueLong == null) {
@@ -671,7 +674,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						return
 					}
 
-					if (wasMaxUsed) {
+					if (wasMaxUsed || wasMinUsed || wasRangeUsed) {
 						showWarning(FieldRestrictionErrorMessages.MinMax_Multiple_Used, restriction)
 						return
 					}
@@ -729,7 +732,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						return
 					}
 
-					if (wasMaxUsed) {
+					if (wasMaxUsed || wasMinUsed || wasRangeUsed) {
 						showWarning(FieldRestrictionErrorMessages.MinMax_Multiple_Used, restriction)
 						return
 					}
