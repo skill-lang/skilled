@@ -2,18 +2,17 @@ package de.unistuttgart.iste.ps.skilled.ui.tools.imprt
 
 import java.io.File
 import java.util.ArrayList
+import org.eclipse.core.resources.IProject
+import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.core.runtime.Path
 
 class ImportCombine {
 	var String fImportedFile = ""
-	var ArrayList<File> fListofFiles = null
-	
+	var IProject fProject
+
 	def void run() {
-		if (ImportTools.getListofFiles() != null) {
-			fListofFiles = ImportTools.getListofFiles()
-		}
 		if (ImportTools.getImportLocation() != null) {
 			fImportedFile = ImportTools.getImportLocation()
 		}
 	}
-	
 }
