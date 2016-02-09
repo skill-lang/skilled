@@ -9,6 +9,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 
@@ -18,7 +19,7 @@ import de.ust.skill.common.java.api.SkillException;
 import de.ust.skill.common.java.api.SkillFile.Mode;
 
 /**
- * Handle the ChangeActions of files in the workspace.
+ * Handle the ChangeActions of files in the editor.
  * 
  * @author Nico Rusam
  *
@@ -31,6 +32,9 @@ public class FileChangeAction {
 		this.tv = tv;
 	}
 
+	/**
+	 * Handle save-action of active file in the editor.
+	 */
 	public void save() {
 		String commandId = "org.eclipse.ui.file.save";
 		ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
@@ -50,22 +54,20 @@ public class FileChangeAction {
 			@Override
 			public void postExecuteSuccess(String arg0, Object arg1) {
 				System.out.println("save ExecuteSuccess");
+				indexFile();
 			}
 
 			@Override
 			public void preExecute(String arg0, ExecutionEvent arg1) {
-				// if (tv.getActiveTool() != null && tv.getActiveProject() !=
-				// null) {
-				// ToolUtil.generateTemporarySKilLFiles(tv.getActiveTool().getName(),
-				// tv.getActiveProject());
-				// System.out.println("save preExecute");
-				// }
-				
+				System.out.println("save preExecute");
 			}
 
 		});
 	}
 
+	/**
+	 * Handle save-all-action of active file in the editor.
+	 */
 	public void saveAll() {
 		String commandId = "org.eclipse.ui.file.saveAll";
 		ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
@@ -85,6 +87,7 @@ public class FileChangeAction {
 			@Override
 			public void postExecuteSuccess(String arg0, Object arg1) {
 				System.out.println("saveAll ExecuteSuccess");
+				indexFile();
 			}
 
 			@Override
@@ -95,7 +98,10 @@ public class FileChangeAction {
 		});
 	}
 
-	public void rename() {
+	/**
+	 * Handle import-action of active file in the editor.
+	 */
+	public void imp0rt() {
 		String commandId = "org.eclipse.ui.file.import";
 		ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command command = service.getCommand(commandId);
@@ -114,6 +120,7 @@ public class FileChangeAction {
 			@Override
 			public void postExecuteSuccess(String arg0, Object arg1) {
 				System.out.println("import ExecuteSuccess");
+				indexFile();
 			}
 
 			@Override
@@ -122,5 +129,17 @@ public class FileChangeAction {
 			}
 
 		});
+	}
+
+	private boolean indexFile() {
+		if (tv != null && tv.getActiveProject() != null) {
+			// if (ToolUtil.cleanup(tv.getActiveProject())) {
+			// tv.refresh();
+			// return true;
+			// } else {
+			// return false;
+			// }
+		}
+		return false;
 	}
 }
