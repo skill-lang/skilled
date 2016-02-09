@@ -23,6 +23,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.resource.XtextResourceSet
+import java.util.ArrayList
+import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 
 /**
  * @author Marco Link
@@ -51,6 +53,16 @@ class SKilLServices {
       files.add(f)
     }
     return files
+  }
+
+  def File getFile(String absolutePath) {
+    var List<URI> uri = new ArrayList<URI>();
+    uri.add(URI.createFileURI(absolutePath));
+    var resourceSet = getResourceSet(uri);
+    for (File f : getAll(resourceSet)) {
+      return f;
+    }
+    return null;
   }
 
   def dispatch List<URI> getAllURIs(Resource resource) {
