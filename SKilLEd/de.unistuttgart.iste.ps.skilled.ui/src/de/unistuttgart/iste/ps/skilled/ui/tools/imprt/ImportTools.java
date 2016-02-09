@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import static java.nio.file.StandardCopyOption.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -50,13 +51,15 @@ public class ImportTools {
 	String fSelectedTool = "";
 	String fToolName;
 	String fToolFilePath;
-	String fTempFileForCombining;
+	static String fTempFileForCombining;
 	String fImports;
 	String fBody;
 	String fImportRenamed = "";
 	String fStartDirectoryForChecker = "";
 
-	ArrayList<File> fListofFiles = null;
+	static ArrayList<File> fListofFiles = null;
+
+	ImportCombine fImportCombine = new ImportCombine();
 
 	// Location of the workspace the user is using
 	IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -208,6 +211,24 @@ public class ImportTools {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 
+				// String fCheckIfProjectSelected = tSelectTool.getText()
+				// .substring(tSelectTool.getText().lastIndexOf(workspaceDirectory.getAbsolutePath())
+				// + 1);
+				// System.out.println("fCheckIfProjectSelected: " +
+				// fCheckIfProjectSelected);
+				// if (fCheckIfProjectSelected.endsWith(File.separator)) {
+				// fCheckIfProjectSelected =
+				// fCheckIfProjectSelected.substring(0,
+				// fCheckIfProjectSelected.lastIndexOf(File.separator) - 1);
+				// }
+				// int count = fCheckIfProjectSelected.length()
+				// - fCheckIfProjectSelected.replace(File.separator,
+				// "").length();
+				// System.out.println("count: " + count);
+
+				File fCheckIfProjectSelected = new File(tSelectTool.getText());
+				String fCheckIfParentIsWorkspace = fCheckIfProjectSelected.getParent();
+
 				String fCheckEmptyImportRename = fImportRenamed.replace("/s+", "");
 				// Use tool file name as imported file name if rename field is
 				// empty
@@ -240,16 +261,24 @@ public class ImportTools {
 					JOptionPane.showMessageDialog(null, "Invalid tool file!", "Invalid File Type",
 							JOptionPane.ERROR_MESSAGE);
 					return;
-				}
-				// Check if import location is in a .tool folder in the
-				// workspace
-				else if (!tSaveLocation.getText().contains(".tools")
-						|| !tSaveLocation.getText().contains(workspaceDirectory.getAbsolutePath())) {
-					JOptionPane.showMessageDialog(null,
-							"Import location is not in the workspace or a child of the .tools folder!",
+				} else if (!tSelectTool.getText().contains(workspaceDirectory.getAbsolutePath())
+						|| fCheckIfParentIsWorkspace != workspaceDirectory.getAbsolutePath()) {
+					JOptionPane.showMessageDialog(null, "Import location is not in the workspace or a project folder!",
 							"Invalid Import Location", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
+				// Check if import location is in a .tool folder in the
+				// workspace
+				// else if (!tSaveLocation.getText().contains(".skillt")
+				// ||
+				// !tSaveLocation.getText().contains(workspaceDirectory.getAbsolutePath()))
+				// {
+				// JOptionPane.showMessageDialog(null,
+				// "Import location is not in the workspace or a child of the
+				// .skillts folder!",
+				// "Invalid Import Location", JOptionPane.ERROR_MESSAGE);
+				// return;
+				// }
 				// Check if file to import already exists
 				else if (fCheckDuplicate.exists()) {
 					int overwrite = JOptionPane.showOptionDialog(null,
@@ -270,10 +299,16 @@ public class ImportTools {
 					// Converts string filepaths to paths
 					Path fSelectedToolPath = Paths.get(tSelectTool.getText());
 					Path fImportLocationPath = Paths.get(fToolFilePath);
+					File fChangeName = new File(fToolFilePath);
+					String fChangedName = tSaveLocation.getText() + File.separator + "ToBeMergedBySKilLEd.skill";
+					File fChangedNameFile = new File(fChangedName);
+
 					// Moves to-be-imported tool from original location to its
-					// import location
+					// import location and renames so it can be merged
 					try {
 						Files.move(fSelectedToolPath, fImportLocationPath, REPLACE_EXISTING);
+						fChangeName.renameTo(fChangedNameFile);
+
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -283,17 +318,17 @@ public class ImportTools {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-
-					combineFiles();
+					listFiles(fSaveLocation, fListofFiles);
+					fImportCombine.run();
 					fSaveLocation = "";
 					fSelectedTool = "";
 					shell.dispose();
 				}
 				// Create tool file
 				else {
-					// Creates a file with the name of the tool if \.tools
+					// Creates a file with the name of the tool if \.skillt
 					// folder is selected
-					if (fSaveLocation.endsWith(".tools")) {
+					if (fSaveLocation.endsWith(".skillt")) {
 						fToolFilePath = fSaveLocation + File.separator + fToolName + File.separator + fToolName
 								+ ".skill";
 						fTempFileForCombining = tSaveLocation.getText() + File.separator + fToolName + File.separator
@@ -303,7 +338,7 @@ public class ImportTools {
 						if (!makeDirectory2.exists()) {
 							makeDirectory2.mkdirs();
 						}
-					} else if (fSaveLocation.endsWith(".tools" + File.separator)) {
+					} else if (fSaveLocation.endsWith(".skillt" + File.separator)) {
 						fToolFilePath = fSaveLocation + fToolName + File.separator + fToolName + ".skill";
 						fTempFileForCombining = tSaveLocation.getText() + fToolName + File.separator
 								+ "TempFileBySKilLEd.skill";
@@ -330,8 +365,8 @@ public class ImportTools {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-
-					combineFiles();
+					listFiles(fSaveLocation, fListofFiles);
+					fImportCombine.run();
 					fSaveLocation = "";
 					fSelectedTool = "";
 					shell.dispose();
@@ -363,6 +398,7 @@ public class ImportTools {
 
 	public void checkForDuplicateTypes(String importLocation) throws IOException {
 		Set<String> duplicateType = new HashSet<>();
+		fListofFiles = new ArrayList<>();
 
 		listFiles(fSaveLocation, fListofFiles);
 
@@ -419,84 +455,69 @@ public class ImportTools {
 		File fProjectDirectory = new File(directoryName);
 		File[] listofFiles = fProjectDirectory.listFiles();
 		for (File file : listofFiles) {
-			if (file.isFile() && file.getName().endsWith(".skill")) {
+			if (file.isFile() && file.getName().endsWith(".skill") && !file.getName().startsWith(".")) {
 				checkFiles.add(file);
-			} else if (file.isDirectory()) {
+			} else if (file.isDirectory() && !file.getName().startsWith(".")) {
 				listFiles(file.getAbsolutePath(), checkFiles);
 			}
 		}
 	}
 
-	/**
-	 * Combines all files found by method listFiles
-	 * 
-	 */
-	public void combineFiles() {
+	// /**
+	// * Combines all files found by method listFiles
+	// *
+	// */
+	// public void combineFiles() {
+	//
+	// listFiles(fSaveLocation, fListofFiles);
+	//
+	// if (fListofFiles != null) {
+	// for (File f : fListofFiles) {
+	// FileInputStream fis;
+	// try {
+	// FileWriter fw = new FileWriter(fTempFileForCombining, true);
+	// fis = new FileInputStream(f);
+	// BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+	// String line;
+	//
+	// while ((line = br.readLine()) != null) {
+	// // Ignore all other head comments
+	// if (!line.startsWith("#")) {
+	// if (line.startsWith("include") || line.startsWith("with")) {
+	// fImports += line + "\n";
+	// } else {
+	// fBody += line + "\n";
+	// }
+	// }
+	// }
+	// br.close();
+	// System.out.println("Check");
+	// // Head comment that says which tool the merged files are
+	// fw.write("# Tool " + fToolName);
+	// if (fImports != null) {
+	// fw.write(fImports);
+	// }
+	// if (fBody != null) {
+	// fw.write(fBody);
+	// }
+	// fw.close();
+	// File fRenameFile = new File(fTempFileForCombining);
+	// File fRenameToFile= new File(fToolFilePath);
+	// fRenameFile.renameTo(fRenameToFile);
+	//
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// }
+	//
+	// }
+	// }
+	public static ArrayList<File> getListofFiles() {
+		return fListofFiles;
+	}
 
-		listFiles(fSaveLocation, fListofFiles);
-
-		if (fListofFiles != null) {
-			for (File f : fListofFiles) {
-				FileInputStream fis;
-				try {
-					FileWriter fw = new FileWriter(fTempFileForCombining, true);
-					fis = new FileInputStream(f);
-					BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-					String line;
-
-					while ((line = br.readLine()) != null) {
-						// Ignore all other head comments
-						if (!line.startsWith("#")) {
-							if (line.startsWith("include") || line.startsWith("with")) {
-								fImports += line + "\n";
-							} else {
-								fBody += line + "\n";
-							}
-						}
-					}
-					br.close();
-					System.out.println("Check");
-					// Head comment that says which tool the merged files are
-					fw.write("# Tool " + fToolName);
-					fw.write(fImports);
-					fw.write(fBody);
-					fw.close();
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-			}
-
-		} 
-//		else {
-//			FileInputStream fis;
-//			try {
-//				FileWriter fw = new FileWriter(fToolFilePath, true);
-//				fis = new FileInputStream(fSelectedTool);
-//				BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-//				String line;
-//
-//				while ((line = br.readLine()) != null) {
-//					// Ignore all other head comments
-//					if (!line.startsWith("#")) {
-//						if (line.startsWith("include") || line.startsWith("with")) {
-//							fImports += line + "\n";
-//						} else {
-//							fBody += line + "\n";
-//						}
-//					}
-//				}
-//				br.close();
-//				System.out.println("Check");
-//				// Head comment that says which tool the merged files are
-//				fw.write("# Tool " + fToolName);
-//				fw.write(fImports);
-//				fw.write(fBody);
-//				fw.close();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
+	public static String getImportLocation() {
+		return fTempFileForCombining;
 	}
 }

@@ -600,6 +600,11 @@
                  label="Export Tools"
                  style="push">
            </command>
+           <command
+                 commandId="de.unistuttgart.iste.ps.skilled.ui.tools.imprt"
+                 label="Import Tools"
+                 style="push">
+           </command>
         </menu>
      </menuContribution>
   </extension>
@@ -610,6 +615,12 @@
            contextId="org.eclipse.ui.contexts.window"
            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
            sequence="M1+3">
+     </key>
+     <key
+           commandId="de.unistuttgart.iste.ps.skilled.ui.tools.imprt"
+           contextId="org.eclipse.ui.contexts.window"
+           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+           sequence="M1+4">
      </key>
   </extension>
   <extension
@@ -628,6 +639,11 @@
            defaultHandler="de.unistuttgart.iste.ps.skilled.ui.wizards.handler.SKilLNewFileHandler"
            id="de.unistuttgart.iste.ps.skilled.ui.SKilLNewFileHandler"
            name="New SKilL File">
+     </command>
+     <command
+           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.tools.imprt.ImportToolsHandler"
+           id="de.unistuttgart.iste.ps.skilled.ui.tools.imprt"
+           name="Import Tools">
      </command>
   </extension>
   <extension
