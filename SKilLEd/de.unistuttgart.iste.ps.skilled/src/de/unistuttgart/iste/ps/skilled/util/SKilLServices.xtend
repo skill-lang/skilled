@@ -36,14 +36,37 @@ class SKilLServices {
 
   def dispatch Set<File> getAll(Resource resource) {
     val ResourceSet rs = getResourceSet(resource);
+    return getAll(rs);
+  }
+
+  def dispatch Set<File> getAll(IProject project) {
+    val ResourceSet rs = getResourceSet(project);
+    return getAll(rs);
+  }
+
+  def dispatch Set<File> getAll(ResourceSet rs) {
     val Iterable<File> files2 = rs.resources.map(r|r.allContents.toList.filter(typeof(File))).flatten
-
     var Set<File> files = new HashSet
-
     for (f : files2) {
       files.add(f)
     }
     return files
+  }
+
+  def dispatch List<URI> getAllURIs(Resource resource) {
+    val String platformString = resource.getURI.toPlatformString(true)
+    val IProject project = ResourcesPlugin.getWorkspace.getRoot.getFile(new Path(platformString)).getProject
+
+    return getAllURIs(project);
+  }
+
+  def dispatch List<URI> getAllURIs(IProject project) {
+    var List<URI> uris = new LinkedList
+
+    for (ifile : processContainer(project)) {
+      uris.add(URI.createPlatformResourceURI(ifile.getFullPath.toString, true))
+    }
+    return uris
   }
 
   def List<IFile> processContainer(IContainer container) {
@@ -70,6 +93,15 @@ class SKilLServices {
   def dispatch ResourceSet getResourceSet(Resource resource) {
     val List<URI> uris = resource.getAllURIs
 
+    return getResourceSet(uris);
+  }
+
+  def dispatch ResourceSet getResourceSet(IProject project) {
+    val List<URI> uris = project.getAllURIs
+    return getResourceSet(uris);
+  }
+
+  def dispatch ResourceSet getResourceSet(List<URI> uris) {
     var XtextResourceSet xtextResourceSet = new XtextResourceSet
     xtextResourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE)
 
@@ -197,55 +229,7 @@ class SKilLServices {
     return null;
 
   }
-
-  def dispatch List<URI> getAllURIs(Resource resource) {
-
-    val String platformString = resource.getURI.toPlatformString(true)
-
-    val IProject project = ResourcesPlugin.getWorkspace.getRoot.getFile(new Path(platformString)).getProject
-
-    return getAllURIs(project);
-
-  }
-
-  def dispatch List<URI> getAllURIs(IProject project) {
-
-    var List<URI> uris = new LinkedList
-
-    for (ifile : processContainer(project)) {
-
-      uris.add(URI.createPlatformResourceURI(ifile.getFullPath.toString, true))
-
-    }
-
-    return uris
-
-  }
-
-  def dispatch ResourceSet getResourceSet(IProject project) {
-
-    val List<URI> uris = project.getAllURIs
-
-    return getResourceSet(uris);
-
-  }
-
-  def dispatch ResourceSet getResourceSet(List<URI> uris) {
-
-    var XtextResourceSet xtextResourceSet = new XtextResourceSet
-
-    xtextResourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE)
-
-    for (uri : uris) {
-
-      xtextResourceSet.getResource(uri, true)
-
-    }
-
-    return xtextResourceSet
-
-  }
-
+  
   def boolean isToolFile(URI uri) {
 
     var uriSegments = uri.segments;
