@@ -1,10 +1,10 @@
 package de.unistuttgart.iste.ps.skilled.ui.tools;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -21,125 +21,197 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.xtext.nodemodel.ICompositeNode;
+import org.eclipse.ui.texteditor.MarkerUtilities;
+import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration;
+import de.unistuttgart.iste.ps.skilled.sKilL.Field;
 import de.unistuttgart.iste.ps.skilled.sKilL.File;
+import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage;
+import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
 import de.unistuttgart.iste.ps.skillls.tools.Type;
 
+
 public class EditorUtil {
 
-	EditorUtil2 eu = new EditorUtil2();
+    private SKilLServices services = new SKilLServices();
 
-	public boolean openToolInEditor(Tool tool, IProject project) {
-		// URI uri = URI.createURI(project.getLocation().toPortableString() +
-		// "/.skillt/" + tool.getName());
-		// project.getFolder(URIUt)
-		try {
-			project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
-			return false;
-		}
-		Set<File> toolFiles = getToolFiles(tool, project);
-		for (File f : toolFiles) {
-			String platformString = f.eResource().getURI().toPlatformString(true);
-			IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
+    public boolean openToolInEditor(Tool tool, IProject project) {
+        try {
+            refreshToolFolder(tool, project);
+        } catch (CoreException e1) {
+            e1.printStackTrace();
+            return false;
+        }
+        Set<File> toolFiles = services.getToolFiles(tool.getName(), project);
+        for (File f : toolFiles) {
+            URI u = f.eResource().getURI();
+            services.isToolFile(u);
+            String platformString = f.eResource().getURI().toPlatformString(true);
+            IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
 
-			IWorkbench wb = PlatformUI.getWorkbench();
-			IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-			IWorkbenchPage page = win.getActivePage();
+            IWorkbench wb = PlatformUI.getWorkbench();
+            IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+            IWorkbenchPage page = win.getActivePage();
 
-			IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(myFile.getName());
-			try {
-				page.openEditor(new FileEditorInput(myFile), desc.getId());
-			} catch (PartInitException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return true;
-	}
+            IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(myFile.getName());
+            try {
+                page.openEditor(new FileEditorInput(myFile), desc.getId());
+            } catch (PartInitException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }
 
-	public boolean openTypeInEditor(Tool tool, Type type, IProject project) {
+    public boolean openTypeInEditor(Tool tool, Type type, IProject project) {
+        try {
+            refreshToolFolder(tool, project);
+        } catch (CoreException e1) {
+            e1.printStackTrace();
+            return false;
+        }
+        URI toolFileURI = getToolFileURI(tool, type, project);
+        File file = services.getFile(toolFileURI);
+        if (file == null) {
+            return false;
+        }
 
-		URI toolFileURI = getToolFileURI(tool, type, project);
-		File file = eu.getFileFromURI(toolFileURI);
-		int i = 0;
-		for (Declaration dec : file.getDeclarations()) {
-			if (dec.getName().equals(type.getName())) {
-				ICompositeNode ic = NodeModelUtils.getNode(dec);
-				i = ic.getStartLine();
-			}
-		}
+        INode typeNameToMark = null;
 
-		IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(toolFileURI.toPlatformString(false)));
+        for (Declaration dec : file.getDeclarations()) {
+            if (dec.getName().equals(ToolUtil.getActualName(type.getName()))) {
+                List<INode> nodes = NodeModelUtils.findNodesForFeature(dec, SKilLPackage.Literals.DECLARATION__NAME);
+                if (nodes != null) {
+                    if (nodes.size() == 1) {
+                        typeNameToMark = nodes.get(0);
+                    }
+                }
+                break;
+            }
+        }
 
-		IWorkbench wb = PlatformUI.getWorkbench();
-		IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-		IWorkbenchPage page = win.getActivePage();
+        if (typeNameToMark == null) {
+            return false;
+        }
 
-		try {
-			HashMap map = new HashMap();
-			map.put(IMarker.LINE_NUMBER, i);
-			IMarker marker = myFile.createMarker(IMarker.TEXT);
-			marker.setAttributes(map);
-			// page.openEditor(marker); //2.1 API
+        IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(toolFileURI.toPlatformString(false)));
 
-			IDE.openEditor(page, marker);
-			marker.delete();
+        if (myFile == null) {
+            return false;
+        }
 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} // 3.0 API
+        return openFileAtSpecificLocation(myFile, typeNameToMark.getStartLine(), typeNameToMark.getOffset(),
+                typeNameToMark.getTotalEndOffset());
+    }
 
-		return true;
-	}
+    public boolean openFieldInEditor(Tool tool, de.unistuttgart.iste.ps.skillls.tools.Field field, IProject project) {
+        try {
+            refreshToolFolder(tool, project);
+        } catch (CoreException e1) {
+            e1.printStackTrace();
+            return false;
+        }
+        URI toolFileURI = getToolFileURI(tool, field.getType(), project);
+        File file = services.getFile(toolFileURI);
+        if (file == null) {
+            return false;
+        }
 
-	public URI getToolFileURI(Tool tool, Type type, IProject project) {
-		String originalFilePath = type.getFile().getPath();
-		URI originalFileUri = URI.createPlatformResourceURI(originalFilePath, true);
-		// String[] segments = uri.segments();
-		URI deresolvedOriginalFileUri = originalFileUri
-				.deresolve(URI.createPlatformResourceURI(project.getLocation().toString(), true));
-		String[] segments = deresolvedOriginalFileUri.segments();
-		String path = "";
-		if (segments[0].equals(project.getName())) {
-			for (int i = 0; i < segments.length; i++) {
-				if (i == 1) {
-					path += "/.skillt" + "/" + tool.getName();
-				}
-				if (i == 0) {
-					path += segments[i];
-				} else {
-					path += "/" + segments[i];
-				}
-			}
-		}
+        INode fieldToMark = null;
 
-		return URI.createPlatformResourceURI(path, true);
-	}
+        Declaration declaration = null;
 
-	public Set<File> getToolFiles(Tool tool, IProject project) {
-		Set<File> toolFiles = new HashSet<File>();
-		// URI uri = URI.createURI(project.getLocation().toPortableString() +
-		// "/.skillt/" + tool.getName());
-		// project.getFolder(URIUt)
-		Set<File> files = eu.getAll(project);
-		for (File f : files) {
-			String[] segments = f.eResource().getURI().segments();
-			if (segments.length >= 5) {
-				if (segments[3].equals(tool.getName())) {
-					toolFiles.add(f);
-				}
-			}
-		}
+        for (Declaration dec : file.getDeclarations()) {
+            if (dec.getName().equals(ToolUtil.getActualName(field.getType().getName()))) {
+                declaration = dec;
+                break;
+            }
+        }
 
-		return toolFiles;
+        if (declaration == null) {
+            return false;
+        }
 
-	}
+        for (Field f : services.getFields(declaration)) {
+            if (f.getFieldcontent().getName().equals(ToolUtil.getActualName(field.getName()))) {
+                List<INode> nodes = NodeModelUtils.findNodesForFeature(f.getFieldcontent(),
+                        SKilLPackage.Literals.FIELDCONTENT__NAME);
+                if (nodes != null) {
+                    if (nodes.size() == 1) {
+                        fieldToMark = nodes.get(0);
+                    }
+                }
+            }
+        }
 
+        if (fieldToMark == null) {
+            return false;
+        }
+
+        IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(toolFileURI.toPlatformString(false)));
+
+        if (myFile == null) {
+            return false;
+        }
+
+        return openFileAtSpecificLocation(myFile, fieldToMark.getStartLine(), fieldToMark.getOffset(),
+                fieldToMark.getTotalEndOffset());
+    }
+
+    public static URI getToolFileURI(Tool tool, Type type, IProject project) {
+        String originalFilePath = type.getFile().getPath();
+        URI originalFileUri = URI.createPlatformResourceURI(originalFilePath, true);
+        URI deresolvedOriginalFileUri = originalFileUri
+                .deresolve(URI.createPlatformResourceURI(project.getLocation().toString(), true));
+        String[] segments = deresolvedOriginalFileUri.segments();
+        String path = "";
+        if (segments[0].equals(project.getName())) {
+            for (int i = 0; i < segments.length; i++) {
+                if (i == 1) {
+                    path += "/.skillt" + "/" + tool.getName();
+                }
+                if (i == 0) {
+                    path += segments[i];
+                } else {
+                    path += "/" + segments[i];
+                }
+            }
+        }
+
+        return URI.createPlatformResourceURI(path, true);
+    }
+
+    public static boolean openFileAtSpecificLocation(IFile fileToOpen, int startLineNumber, int charStart, int charEnd) {
+        IWorkbench wb = PlatformUI.getWorkbench();
+        IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+        IWorkbenchPage page = win.getActivePage();
+
+        if (fileToOpen == null) {
+            return false;
+        }
+
+        try {
+            IMarker marker = fileToOpen.createMarker(IMarker.TEXT);
+            MarkerUtilities.setLineNumber(marker, startLineNumber);
+            MarkerUtilities.setCharStart(marker, charStart);
+            MarkerUtilities.setCharEnd(marker, charEnd);
+            IDE.openEditor(page, marker);
+            marker.delete();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    public static void refreshToolFolder(Tool tool, IProject project) throws CoreException {
+        IFolder folder = project.getFolder(".skillt/" + tool.getName());
+        folder.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+    }
 }

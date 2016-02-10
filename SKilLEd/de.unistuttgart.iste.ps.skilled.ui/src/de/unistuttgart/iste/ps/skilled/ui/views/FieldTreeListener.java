@@ -3,11 +3,14 @@ package de.unistuttgart.iste.ps.skilled.ui.views;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import de.unistuttgart.iste.ps.skilled.ui.tools.EditorUtil;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 import de.unistuttgart.iste.ps.skillls.tools.Field;
 import de.unistuttgart.iste.ps.skillls.tools.Hint;
@@ -24,6 +27,8 @@ public class FieldTreeListener {
 
     private ToolView toolview;
 
+    private EditorUtil editorUtil = new EditorUtil();
+
     public FieldTreeListener(ToolView toolview) {
         this.toolview = toolview;
     }
@@ -35,6 +40,25 @@ public class FieldTreeListener {
      * @param tooltype
      */
     public void initFieldTreeListener(Tree fieldTree, Type tooltype) {
+        fieldTree.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                try {
+                    if (((TreeItem) e.item).getData() instanceof Field) {
+                        toolview.setSelectedField((Field) (((TreeItem) e.item).getData()));
+                    }
+                } catch (ClassCastException ee) {
+                    //
+                }
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                // no default
+
+            }
+        });
+
         fieldTree.addMouseListener(new MouseListener() {
 
             @Override
@@ -51,8 +75,10 @@ public class FieldTreeListener {
 
             @Override
             public void mouseDoubleClick(MouseEvent arg0) {
-                // TODO temp files
-
+                // open the temporary file of the selected type
+                ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(), toolview.getActiveProject());
+                editorUtil.openFieldInEditor(toolview.getActiveTool(), toolview.getSelectedField(),
+                        toolview.getActiveProject());
             }
         });
 

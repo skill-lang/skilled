@@ -66,6 +66,7 @@ public class ToolView extends ViewPart {
     private Tool activeTool = null;
     private IProject activeProject = null;
     private Type selectedType = null;
+    private Field selectedField = null;
 
     private boolean typeIsInTool = false;
 
@@ -435,6 +436,14 @@ public class ToolView extends ViewPart {
 
     private void showMessage(String message) {
         MessageDialog.openInformation(shell, "Tool View", message);
+    }
+
+    Field getSelectedField() {
+        return selectedField;
+    }
+
+    void setSelectedField(Field selectedField) {
+        this.selectedField = selectedField;
     }
 
     Type getSelectedType() {

@@ -26,6 +26,8 @@ public class TypeTreeListener {
 
     private ToolView toolview;
 
+    private EditorUtil editorUtil = new EditorUtil();
+
     public TypeTreeListener(ToolView toolview) {
         this.toolview = toolview;
     }
@@ -86,8 +88,9 @@ public class TypeTreeListener {
             @Override
             public void mouseDoubleClick(MouseEvent arg0) {
                 // open the temporary file of the selected type
-                EditorUtil eu = new EditorUtil();
-                eu.openTypeInEditor(toolview.getActiveTool(), toolview.getSelectedType(), toolview.getActiveProject());
+                ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(), toolview.getActiveProject());
+                editorUtil.openTypeInEditor(toolview.getActiveTool(), toolview.getSelectedType(),
+                        toolview.getActiveProject());
             }
         });
 

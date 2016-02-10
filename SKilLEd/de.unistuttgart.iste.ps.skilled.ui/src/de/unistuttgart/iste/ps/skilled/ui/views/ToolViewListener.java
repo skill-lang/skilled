@@ -10,6 +10,7 @@ import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.unistuttgart.iste.ps.skilled.ui.tools.EditorUtil;
+import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 
 
 /**
@@ -20,6 +21,8 @@ import de.unistuttgart.iste.ps.skilled.ui.tools.EditorUtil;
  */
 public class ToolViewListener {
     private ToolView toolview;
+
+    private EditorUtil editorUtil = new EditorUtil();
 
     public ToolViewListener(ToolView toolView) {
         this.toolview = toolView;
@@ -66,8 +69,8 @@ public class ToolViewListener {
 
             @Override
             public void mouseDoubleClick(MouseEvent arg0) {
-                EditorUtil eu = new EditorUtil();
-                eu.openToolInEditor(toolview.getActiveTool(), toolview.getActiveProject());
+                ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(), toolview.getActiveProject());
+                editorUtil.openToolInEditor(toolview.getActiveTool(), toolview.getActiveProject());
             }
         });
     }
