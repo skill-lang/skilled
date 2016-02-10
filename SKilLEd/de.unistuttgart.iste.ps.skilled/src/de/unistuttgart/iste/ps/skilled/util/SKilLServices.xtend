@@ -31,29 +31,6 @@ import org.eclipse.xtext.ui.util.ResourceUtil
  */
 class SKilLServices {
 
-	def dispatch Set<File> getAll(File file) {
-		return file.eResource.getAll
-	}
-
-	def dispatch Set<File> getAll(Resource resource) {
-		val ResourceSet rs = getResourceSet(resource);
-		return getAll(rs);
-	}
-
-	def dispatch Set<File> getAll(IProject project) {
-		val ResourceSet rs = getResourceSet(project);
-		return getAll(rs);
-	}
-
-	def dispatch Set<File> getAll(ResourceSet rs) {
-		val Iterable<File> files2 = rs.resources.map(r|r.allContents.toList.filter(typeof(File))).flatten
-		var Set<File> files = new HashSet
-		for (f : files2) {
-			files.add(f)
-		}
-		return files
-	}
-
 	def dispatch File getFile(String absolutePath) {
 		return getFile(URI.createFileURI(absolutePath));
 	}
@@ -62,7 +39,7 @@ class SKilLServices {
 		var List<URI> uris = new ArrayList<URI>();
 		uris.add(uri);
 		var resourceSet = getResourceSet(uris);
-		for (File f : getAll(resourceSet)) {
+		for (File f : getAll(resourceSet, true)) {
 			return f;
 		}
 		return null;
@@ -93,8 +70,10 @@ class SKilLServices {
 			if (member instanceof IContainer) {
 				files.addAll(processContainer(member))
 			} else if (member instanceof IFile) {
-				if (member.location.fileExtension.equals("skill")) {
-					files.add(member)
+				if (member.location.fileExtension != null) {
+					if (member.location.fileExtension.equals("skill")) {
+						files.add(member)
+					}
 				}
 			}
 		}
@@ -151,7 +130,7 @@ class SKilLServices {
 	}
 
 	def File getMainFile(File file) {
-		var Set<File> files = getAll(file);
+		var Set<File> files = getAll(file, true);
 		for (File file1 : files) {
 			for (String headcomment : file1.headComments) {
 				if (headcomment.toLowerCase.contains("@main")) {
@@ -168,56 +147,6 @@ class SKilLServices {
 		return null;
 	}
 
-	def dispatch Set<File> getAll(File file, boolean ignoreToolFiles) {
-
-		return getAll(file.eResource, ignoreToolFiles);
-
-	}
-
-	def dispatch Set<File> getAll(Resource resource, boolean ignoreToolFiles) {
-
-		val ResourceSet rs = resource.getResourceSet
-
-		return getAll(rs, ignoreToolFiles);
-
-	}
-
-	def dispatch Set<File> getAll(IProject project, boolean ignoreToolFiles) {
-
-		val ResourceSet rs = project.getResourceSet
-
-		return getAll(rs, ignoreToolFiles);
-
-	}
-
-	def dispatch Set<File> getAll(ResourceSet rs, boolean ignoreToolFiles) {
-
-		val Iterable<File> files2 = rs.resources.map(r|r.allContents.toList.filter(typeof(File))).flatten
-
-		var Set<File> files = new HashSet
-
-		for (f : files2) {
-
-			if (ignoreToolFiles) {
-
-				if (!isToolFile(f.eResource.getURI())) {
-
-					files.add(f);
-
-				}
-
-			} else {
-
-				files.add(f)
-
-			}
-
-		}
-
-		return files
-
-	}
-
 	def boolean isToolFile(URI uri) {
 		var uriSegments = uri.segments;
 		if (uriSegments.size() > 3) {
@@ -230,7 +159,7 @@ class SKilLServices {
 
 	def Set<File> getToolFiles(String toolname, IProject project) {
 		var Set<File> toolFiles = new HashSet<File>();
-		var Set<File> files = getAll(project);
+		var Set<File> files = getAll(project, false);
 		for (File f : files) {
 			var fileURI = EcoreUtil2.getURI(f);
 			if (isToolFile(fileURI)) {
@@ -255,5 +184,34 @@ class SKilLServices {
 			return declaration.fields;
 		}
 		return null;
+	}
+
+	def dispatch Set<File> getAll(File file, boolean ignoreToolFiles) {
+		return getAll(file.eResource, ignoreToolFiles);
+	}
+
+	def dispatch Set<File> getAll(Resource resource, boolean ignoreToolFiles) {
+		val ResourceSet rs = getResourceSet(resource);
+		return getAll(rs, ignoreToolFiles);
+	}
+
+	def dispatch Set<File> getAll(IProject project, boolean ignoreToolFiles) {
+		val ResourceSet rs = getResourceSet(project);
+		return getAll(rs, ignoreToolFiles);
+	}
+
+	def dispatch Set<File> getAll(ResourceSet rs, boolean ignoreToolFiles) {
+		val Iterable<File> files2 = rs.resources.map(r|r.allContents.toList.filter(typeof(File))).flatten
+		var Set<File> files = new HashSet
+		for (f : files2) {
+			if (ignoreToolFiles) {
+				if (!isToolFile(f.eResource.getURI())) {
+					files.add(f);
+				}
+			} else {
+				files.add(f)
+			}
+		}
+		return files
 	}
 }
