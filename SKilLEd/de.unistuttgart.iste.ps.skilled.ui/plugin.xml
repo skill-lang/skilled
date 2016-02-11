@@ -605,6 +605,11 @@
                  label="Import Tools"
                  style="push">
            </command>
+           <command
+                 commandId="de.unistuttgart.iste.ps.skilled.ui.views"
+                 label="Tool View"
+                 style="push">
+           </command>
         </menu>
      </menuContribution>
   </extension>
@@ -641,10 +646,17 @@
            name="New SKilL File">
      </command>
      <command
+           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.views.ToolViewHandler"
+           id="de.unistuttgart.iste.ps.skilled.ui.views"
+           name="Tool View">
+     </command>
+     <command
            defaultHandler="de.unistuttgart.iste.ps.skilled.ui.tools.imprt.ImportToolsHandler"
            id="de.unistuttgart.iste.ps.skilled.ui.tools.imprt"
            name="Import Tools">
-     </command>
+     </command>"de.unistuttgart.iste.ps.skilled.ui.tools.imprt.ImportToolsHandler"
+           id="de.unistuttgart.iste.ps.skilled.ui.tools.imprt"
+           name="Import Tools">
   </extension>
   <extension
         point="org.eclipse.ui.perspectives">
