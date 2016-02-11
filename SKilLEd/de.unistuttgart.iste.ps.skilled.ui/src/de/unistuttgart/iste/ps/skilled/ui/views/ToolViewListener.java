@@ -40,11 +40,7 @@ public class ToolViewListener {
             public void widgetSelected(SelectionEvent arg0) {
                 if (toolViewList.getSelectionCount() != 0) {
                     toolview.setActiveTool(toolview.getAllToolList().get(toolViewList.getSelectionIndex()));
-                    toolview.buildTypeTree(toolview.getActiveTool());
-                    if (null != toolview.getFieldTabItem()) {
-                        toolview.getFieldTabItem().dispose();
-                        toolview.setFieldTabItem(null);
-                    }
+                    toolview.buildTypeTree();
                 }
             }
 

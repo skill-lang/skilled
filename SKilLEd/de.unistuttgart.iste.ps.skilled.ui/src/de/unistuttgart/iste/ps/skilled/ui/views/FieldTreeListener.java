@@ -43,13 +43,8 @@ public class FieldTreeListener {
         fieldTree.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                try {
-                    if (((TreeItem) e.item).getData() instanceof Field) {
-                        toolview.setSelectedField((Field) (((TreeItem) e.item).getData()));
-                    }
-                } catch (ClassCastException ee) {
-                    //
-                }
+                if (((TreeItem) e.item).getData() instanceof Field)
+                    toolview.setSelectedField((Field) (((TreeItem) e.item).getData()));
             }
 
             @Override
@@ -110,8 +105,7 @@ public class FieldTreeListener {
                                     ToolUtil.getActualName(field.getName()));
                             ToolUtil.addAllFieldHints(toolview.getActiveProject(), toolview.getActiveTool(), tooltype,
                                     field);
-                            toolview.setTypeIsInTool(true);
-                            toolview.reloadFieldList(tooltype);
+                            toolview.reloadFieldList();
                         } else {
                             // if the user checks the checkbox add the selected field and all its hints
                             System.out.println(field.getName() + "remove");
@@ -120,8 +114,7 @@ public class FieldTreeListener {
                             ToolUtil.removeField(toolview.getActiveTool().getName(), toolview.getActiveProject(),
                                     ToolUtil.getActualName(field.getType().getName()),
                                     ToolUtil.getActualName(field.getName()));
-                            toolview.setTypeIsInTool(true);
-                            toolview.reloadFieldList(tooltype);
+                            toolview.reloadFieldList();
                         }
                     }
 
@@ -143,16 +136,14 @@ public class FieldTreeListener {
                             ToolUtil.addFieldHint(toolview.getActiveTool().getName(), toolview.getActiveProject(),
                                     ToolUtil.getActualName(((Field) hint.getParent()).getType().getName()),
                                     ToolUtil.getActualName(((Field) hint.getParent()).getName()), hint.getName());
-                            toolview.setTypeIsInTool(true);
-                            toolview.reloadFieldList(tooltype);
+                            toolview.reloadFieldList();
                         } else {
                             // if the user unchecks the checkbox remove the selected hint
                             System.out.println("hint removed");
                             ToolUtil.removeFieldHint(toolview.getActiveTool().getName(), toolview.getActiveProject(),
                                     ToolUtil.getActualName(((Field) hint.getParent()).getType().getName()),
                                     ToolUtil.getActualName(((Field) hint.getParent()).getName()), hint.getName());
-                            toolview.setTypeIsInTool(true);
-                            toolview.reloadFieldList(tooltype);
+                            toolview.reloadFieldList();
                         }
                     }
                 }

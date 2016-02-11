@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
@@ -68,10 +69,8 @@ public class ToolView extends ViewPart {
     private Type selectedType = null;
     private Field selectedField = null;
 
-    private boolean typeIsInTool = false;
-
-    private Shell shell;
     private Composite parent = null;
+    private Shell shell;
 
     SaveListofAllTools fSave;
 
@@ -79,19 +78,23 @@ public class ToolView extends ViewPart {
     public void createPartControl(Composite parent) {
         this.parent = parent;
         tabFolder = new CTabFolder(parent, SWT.BORDER);
+        toolTabItem = new CTabItem(tabFolder, 0, 0);
+        typeTabItem = new CTabItem(tabFolder, 0, 1);
+        fieldTabItem = new CTabItem(tabFolder, 0, 2);
+
         tabFolder.setVisible(true);
         fileChangeAction.save();
         fileChangeAction.saveAll();
         fileChangeAction.imp0rt();
-
-        ToolViewListener tvl = new ToolViewListener(this);
-        tvl.initPartListener(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService());
-
         shell = parent.getShell();
-        buildToolContextMenu(buildToollist(tabFolder));
+
+        buildToolContextMenu(buildToollist(parent));
         setFocus();
         makeActions();
         contributeToActionBars();
+
+        ToolViewListener tvl = new ToolViewListener(this);
+        tvl.initPartListener(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService());
     }
 
     @Override
@@ -100,30 +103,14 @@ public class ToolView extends ViewPart {
     }
 
     void refresh() {
-        try {
+        if (!parent.isDisposed()) {
             clearLists();
-            if (tabFolder != null) {
-                tabFolder.dispose();
-                tabFolder = null;
-            }
-            if (toolTabItem != null) {
-                toolTabItem.dispose();
-                toolTabItem = null;
-            }
-            if (typeTabItem != null) {
-                typeTabItem.dispose();
-                typeTabItem = null;
-            }
-            if (fieldTabItem != null) {
-                fieldTabItem.dispose();
-                fieldTabItem = null;
-            }
-            tabFolder = new CTabFolder(parent, SWT.BORDER);
-            buildToolContextMenu(buildToollist(tabFolder));
-        } catch (Exception e) {
-            e.printStackTrace();
+            toolTabItem.dispose();
+            typeTabItem.dispose();
+            fieldTabItem.dispose();
+            buildToolContextMenu(buildToollist(parent));
+            tabFolder.setSelection(toolTabItem);
         }
-        tabFolder.setSelection(toolTabItem);
     }
 
     /**
@@ -135,18 +122,17 @@ public class ToolView extends ViewPart {
             if (t.getName().equals(activeTool.getName()))
                 activeTool = t;
         }
-        buildTypeTree(activeTool);
+        buildTypeTree();
         tabFolder.setSelection(typeTabItem);
     }
 
     /**
      * reload the fieldlist after adding a field or hint to a tooltype
      * 
-     * @param type
      */
-    void reloadFieldList(Type type) {
+    void reloadFieldList() {
         reloadTypelist();
-        buildFieldTree(type);
+        buildFieldTree();
         tabFolder.setSelection(fieldTabItem);
     }
 
@@ -195,16 +181,21 @@ public class ToolView extends ViewPart {
      */
     private List buildToollist(Composite parent) {
         readToolBinaryFile();
-        List toolViewList = new List(parent, SWT.SINGLE);
-        if (toolTabItem == null || toolTabItem.isDisposed()) {
+
+        if (tabFolder.isDisposed())
+            tabFolder = new CTabFolder(parent, SWT.BORDER);
+
+        List toolViewList = new List(tabFolder, SWT.SINGLE);
+
+        if (toolTabItem.isDisposed())
             toolTabItem = new CTabItem(tabFolder, 0, 0);
-            try {
-                toolTabItem.setText("Tools - " + activeProject.getName());
-            } catch (NullPointerException e) {
-                toolTabItem.setText("Tools");
-            }
-            toolTabItem.setControl(toolViewList);
+
+        try {
+            toolTabItem.setText("Tools - " + activeProject.getName());
+        } catch (NullPointerException e) {
+            toolTabItem.setText("Tools");
         }
+        toolTabItem.setControl(toolViewList);
 
         if (null != skillFile)
             allToolList.forEach(t -> toolViewList.add(t.getName()));
@@ -223,19 +214,18 @@ public class ToolView extends ViewPart {
     /**
      * Build up the typetree, listing all types with their specific hints.
      * 
-     * @param tool
+     * @param activeTool
      *            - {@link Tool}
      */
-    void buildTypeTree(Tool tool) {
+    void buildTypeTree() {
         Tree typeTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.SINGLE);
-        typeListOfActualTool = tool.getTypes();
+        typeListOfActualTool = activeTool.getTypes();
         TreeItem typeHintItem;
 
-        if (null == typeTabItem || typeTabItem.isDisposed()) {
+        if (typeTabItem.isDisposed())
             typeTabItem = new CTabItem(tabFolder, 0, 1);
-        }
 
-        typeTabItem.setText("Types - " + tool.getName());
+        typeTabItem.setText("Types - " + activeTool.getName());
         ArrayList<Type> typeList = new ArrayList<>();
 
         if (null != skillFile) {
@@ -292,66 +282,59 @@ public class ToolView extends ViewPart {
     /**
      * Build the fieldtree, listing all fields with their specific hints.
      * 
-     * @param type
+     * @param tooltype
      *            - {@link Type}
      */
-    void buildFieldTree(Type type) {
+    void buildFieldTree() {
         Tree fieldTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.FULL_SELECTION);
+        Type tooltype;
 
-        Type tooltype = new Type();
-        for (Type t : allTypeList) {
-            if (type.getName().equals(t.getName())) {
-                tooltype = t;
-                break;
-            }
-        }
-
-        if (null == fieldTabItem || fieldTabItem.isDisposed()) {
+        if (fieldTabItem.isDisposed())
             fieldTabItem = new CTabItem(tabFolder, 0, 2);
+
+        try {
+            tooltype = typeListOfActualTool.stream().filter(t -> selectedType.getName().equals(t.getName())).findFirst()
+                    .get();
+        } catch (NoSuchElementException e) {
+            tooltype = null;
         }
 
-        fieldTabItem.setText("Fields - " + type.getName());
+        fieldTabItem.setText("Fields - " + selectedType.getName());
 
-        if (null != skillFile) {
+        if (null != skillFile && selectedType != null) {
             // add all fields to the tree
-            for (Field field : tooltype.getFields()) {
-                if (!field.getType().getName().contains("enum")) {
-                    TreeItem fieldTreeItem = new TreeItem(fieldTree, 0);
-                    fieldTreeItem.setText(field.getName());
-                    fieldTreeItem.setChecked(false);
-                    fieldTreeItem.setData(field);
-                    Field toolField = null;
+            for (Field field : selectedType.getFields()) {
+                TreeItem fieldTreeItem = new TreeItem(fieldTree, 0);
+                fieldTreeItem.setText(field.getName());
+                fieldTreeItem.setChecked(false);
+                fieldTreeItem.setData(field);
+                Field toolField = null;
 
-                    if (typeIsInTool) {
-                        // check all the fields used by the actual tool
-                        if (null != type.getFields()) {
-                            for (Field f : type.getFields()) {
-                                if (field.getName().equals(f.getName())) {
-                                    fieldTreeItem.setChecked(true);
-                                    toolField = f;
-                                    break;
-                                }
-                            }
+                // check all the fields used by the actual tool
+                if (null != tooltype) {
+                    for (Field f : tooltype.getFields()) {
+                        if (field.getName().equals(f.getName())) {
+                            fieldTreeItem.setChecked(true);
+                            toolField = f;
+                            break;
                         }
                     }
+                }
 
-                    // add all the fieldhints to the tree
-                    for (Hint hint : field.getFieldHints()) {
-                        TreeItem fieldHintItem = new TreeItem(fieldTreeItem, 0);
-                        fieldHintItem.setText(hint.getName());
-                        fieldHintItem.setChecked(false);
-                        fieldTreeItem.setExpanded(true);
-                        fieldHintItem.setData(hint);
+                // add all the fieldhints to the tree
+                for (Hint hint : field.getFieldHints()) {
+                    TreeItem fieldHintItem = new TreeItem(fieldTreeItem, 0);
+                    fieldHintItem.setText(hint.getName());
+                    fieldHintItem.setChecked(false);
+                    fieldTreeItem.setExpanded(true);
+                    fieldHintItem.setData(hint);
 
-                        if (typeIsInTool) {
-                            // check all the hints used by the tool
-                            if (null != toolField) {
-                                for (Hint h : toolField.getFieldHints()) {
-                                    if (hint.getName().equals(h.getName())) {
-                                        fieldHintItem.setChecked(true);
-                                        break;
-                                    }
-                                }
+                    // check all the hints used by the tool
+                    if (null != toolField) {
+                        for (Hint h : toolField.getFieldHints()) {
+                            if (hint.getName().equals(h.getName())) {
+                                fieldHintItem.setChecked(true);
+                                break;
                             }
                         }
                     }
@@ -464,14 +447,6 @@ public class ToolView extends ViewPart {
 
     IProject getActiveProject() {
         return activeProject;
-    }
-
-    boolean isTypeIsInTool() {
-        return typeIsInTool;
-    }
-
-    void setTypeIsInTool(boolean typeIsInTool) {
-        this.typeIsInTool = typeIsInTool;
     }
 
     ArrayList<Tool> getAllToolList() {

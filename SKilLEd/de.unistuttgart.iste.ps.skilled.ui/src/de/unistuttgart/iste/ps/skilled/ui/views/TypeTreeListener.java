@@ -43,11 +43,8 @@ public class TypeTreeListener {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-                try {
+                if (((TreeItem) e.item).getData() instanceof Type)
                     toolview.setSelectedType((Type) (((TreeItem) e.item).getData()));
-                } catch (ClassCastException ee) {
-                    //
-                }
             }
 
             @Override
@@ -72,7 +69,7 @@ public class TypeTreeListener {
                     @Override
                     public void widgetSelected(SelectionEvent arg0) {
                         try {
-                            toolview.buildFieldTree(toolview.getSelectedType());
+                            toolview.buildFieldTree();
                         } catch (ClassCastException e) {
                             // hint was selected
                         }
@@ -118,7 +115,6 @@ public class TypeTreeListener {
                                     ToolUtil.getActualName(type.getName()));
                             ToolUtil.addAllTypeHints(toolview.getActiveProject(), toolview.getActiveTool(), type);
                             ToolUtil.AddAllFields(toolview.getActiveProject(), toolview.getActiveTool(), type);
-                            toolview.setTypeIsInTool(true);
                             toolview.reloadTypelist();
                         } else {
                             // if the user unchecks the checkbox remove the selected type and all its fields and hints
@@ -127,7 +123,6 @@ public class TypeTreeListener {
                             ToolUtil.removeAllTypeHints(toolview.getActiveProject(), toolview.getActiveTool(), type);
                             ToolUtil.removeTypeFromTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
                                     ToolUtil.getActualName(type.getName()));
-                            toolview.setTypeIsInTool(false);
                             toolview.reloadTypelist();
                         }
                     }
