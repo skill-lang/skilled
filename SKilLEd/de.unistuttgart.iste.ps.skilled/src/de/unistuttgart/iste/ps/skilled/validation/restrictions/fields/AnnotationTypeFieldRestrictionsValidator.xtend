@@ -8,15 +8,34 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
 import org.eclipse.emf.common.util.EList
+import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
 
 /**
  * @author Daniel Ryan Degutis
  * @author Nikolay Fateev
+ * @author Tobias Heck
  */
 class AnnotationTypeFieldRestrictionsValidator extends AbstractFieldRestrictionsValidator {
 
+
 	override handleActivationCondition(Fieldtype fieldtype) {
-		return fieldtype instanceof Annotationtype
+		if(fieldtype instanceof Annotationtype) return true
+		if (fieldtype instanceof DeclarationReference) {
+			if (fieldtype.type instanceof Typedef) {
+				if ((fieldtype.type as Typedef).fieldtype instanceof Annotationtype) {
+					for (Restriction r : (fieldtype.type as Typedef).restrictions) {
+						switch (r.restrictionName.toLowerCase) {
+							case 'nonnull': wasNonNullUsed = true
+							case 'default': wasDefaultUsed = true
+							case 'constantlengthpointer': wasConstantLenghtPointerUsed = true
+							case 'oneof': wasOneOfUsed = true
+						}
+					}
+					return true
+				}
+			}
+		}
+		return false
 	}
 
 	override handleDefaultRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasDefaultUsed) {
@@ -45,15 +64,12 @@ class AnnotationTypeFieldRestrictionsValidator extends AbstractFieldRestrictions
 	}
 
 	def private handleDefaultRestrictionTypedef(EList<Restriction> rs, Restriction r) {
-		var isRestrictionArgumentSingletonRestricted = false
 		for (typedefRestriction : rs) {
 			if ("singleton".equals(typedefRestriction.restrictionName.toLowerCase)) {
-				isRestrictionArgumentSingletonRestricted = true
+				return
 			}
 		}
-		if (!isRestrictionArgumentSingletonRestricted) {
-			showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton_Or_Enum, r)
-		}
+		showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton_Or_Enum, r)
 	}
 
 	override handleConstantLengthPointerRestriction(Fieldtype fieldtype, Restriction restriction,

@@ -7,6 +7,7 @@ import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestriction
 
 /**
  * @author Daniel Ryan Degutis
+ * @author Tobias Heck
  */
 class BooleanTypeFieldRestrictionsValidator extends AbstractFieldRestrictionsValidator {
 
@@ -19,7 +20,15 @@ class BooleanTypeFieldRestrictionsValidator extends AbstractFieldRestrictionsVal
 			showError(FieldRestrictionErrorMessages.Default_Not_One_Arg, restriction)
 			return
 		}
-		if (restriction.restrictionArguments.get(0).valueBoolean == null) {
+		//For some reason restriction arguments always have a valueBoolean != null
+		//that's why we need to check all other values
+		var boolean isBoolean = true
+		val argument = restriction.restrictionArguments.get(0)
+		if (argument.valueDouble != null) isBoolean = false
+		if (argument.valueLong != null) isBoolean = false
+		if (argument.valueString != null) isBoolean = false
+		if (argument.valueType != null) isBoolean = false
+		if (!isBoolean) {
 			showError(FieldRestrictionErrorMessages.Default_Arg_Not_Boolean, restriction)
 		}
 	}

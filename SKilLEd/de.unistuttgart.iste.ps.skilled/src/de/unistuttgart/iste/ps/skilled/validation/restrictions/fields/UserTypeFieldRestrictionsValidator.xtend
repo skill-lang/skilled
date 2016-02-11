@@ -9,6 +9,12 @@ import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestriction
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
 import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
+import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
+import com.google.inject.Inject
+import de.unistuttgart.iste.ps.skilled.util.SubtypesFinder
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import java.util.Set
+import de.unistuttgart.iste.ps.skilled.sKilL.Enuminstance
 
 /**
  * @author Daniel Ryan Degutis
@@ -16,6 +22,9 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
  * @author Tobias Heck
  */
 class UserTypeFieldRestrictions extends AbstractFieldRestrictionsValidator {
+	
+	@Inject
+	private SubtypesFinder subtypes
 
 	override boolean handleActivationCondition(Fieldtype fieldtype) {
 		if (fieldtype instanceof DeclarationReference) {
@@ -24,6 +33,9 @@ class UserTypeFieldRestrictions extends AbstractFieldRestrictionsValidator {
 					return false
 				if ((fieldtype.type as Typedef).fieldtype instanceof Floattype)
 					return false
+				if ((fieldtype.type as Typedef).fieldtype instanceof Annotationtype) {
+					return false
+				}
 			}
 			return true
 		}
@@ -65,10 +77,25 @@ class UserTypeFieldRestrictions extends AbstractFieldRestrictionsValidator {
 				showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton, restriction)
 			}
 		} else if (restrictionArgumentType instanceof Enumtype) {
-			// TODO
-			return
+			if ((fieldtype as DeclarationReference).type instanceof Enumtype) {
+				if (restrictionArgumentType == (fieldtype as DeclarationReference).type) {
+					if (restriction.restrictionArguments.get(0).enumInstance == null ||
+							restriction.restrictionArguments.get(0).enumInstance == "") {
+						showWarning(FieldRestrictionErrorMessages.Default_Redundant, restriction)
+					}
+					for (Enuminstance i : restrictionArgumentType.instances) {
+						if (i.name.toLowerCase.equals(restriction.restrictionArguments.get(0).enumInstance.toLowerCase))
+						return
+					}
+					showError(FieldRestrictionErrorMessages.Default_Instance_Does_Not_Exist, restriction)
+				} else {
+					showError(FieldRestrictionErrorMessages.Default_Wrong_Enum, restriction)
+				}
+			} else {
+				showError(FieldRestrictionErrorMessages.Default_Arg_Type_Mismatch, restriction)
+			}
 		} else {
-			showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton, restriction)
+			showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton_Or_Enum, restriction)
 		}
 	}
 
@@ -106,11 +133,35 @@ class UserTypeFieldRestrictions extends AbstractFieldRestrictionsValidator {
 			showError(FieldRestrictionErrorMessages.OneOf_Already_Used, restriction)
 			return
 		}
+		
+		var TypeDeclaration type = null
+		
+		if ((fieldtype as DeclarationReference).type instanceof TypeDeclaration) {
+			type = (fieldtype as DeclarationReference).type as TypeDeclaration
+		} else {
+			showError(FieldRestrictionErrorMessages.OneOf_Usage, restriction)
+			return
+		}
 
 		if (restriction.restrictionArguments.size() >= 1) {
+			val Set<TypeDeclaration> subtype = subtypes.getSubtypes(type)
 			for (restrictionArgument : restriction.restrictionArguments) {
 				if (restrictionArgument.valueType == null) {
 					showError(FieldRestrictionErrorMessages.OneOf_Arg_Not_Usertype, restriction)
+					return
+				}
+				var boolean isSubtype = false
+				for (TypeDeclaration decl : subtype) {
+					if (decl == restrictionArgument.valueType.type || restrictionArgument.valueType.type == type) {
+						isSubtype = true
+					}
+				}
+				if (!isSubtype)  {
+					showError(FieldRestrictionErrorMessages.OneOf_Arg_Not_Subtype, restriction)
+					return
+				}
+				if (restrictionArgument.valueType.type == type) {
+					showWarning(FieldRestrictionErrorMessages.OneOf_Arg_Is_Type, restriction)
 				}
 			}
 		} else {

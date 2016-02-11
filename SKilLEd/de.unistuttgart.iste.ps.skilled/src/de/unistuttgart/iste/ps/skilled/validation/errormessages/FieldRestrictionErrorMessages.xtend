@@ -25,8 +25,12 @@ class FieldRestrictionErrorMessages {
 	public static val Default_Not_One_Arg = "The Default restriction must have one argument."
 	public static val Default_Usage = "The Default restriction can only be used on strings, integers, floats, annotations and user-types."
 	public static val Default_Boundary = "The value is outside the fields' boundaries."
+	public static val Default_Arg_Type_Mismatch = "A non-enum type cannot have an enum as default value."
+	public static val Default_Wrong_Enum = "The default value type doesn't match the field type."
+	public static val Default_Instance_Does_Not_Exist = "The specified enum instance does not exist."
 	// Default restriction warning messages
 	public static val Default_Already_Used = "The Default restriction is already used on this field."
+	public static val Default_Redundant = "This restriction is redundant."
 	// Range restriction error messages
 	public static val Range_First_Arg_Not_Integer = "The first argument must be an integer."
 	public static val Range_First_Arg_Not_Float = "The first argument must be an float."
@@ -69,6 +73,8 @@ class FieldRestrictionErrorMessages {
 	public static val OneOf_Arg_Not_Usertype = "Restriction argument must be a user-type."
 	public static val OneOf_Not_One_Arg = "The One Of restriction requires at least one argument."
 	public static val OneOf_Usage = "The One Of restriction can only be used on annotations and user-types."
+	public static val OneOf_Arg_Not_Subtype = "Restriction argument must be a subtype."
 	// OneOf restriction warning messages
 	public static val OneOf_Already_Used = "The One Of restriction is already used on this field."
+	public static val OneOf_Arg_Is_Type = "It is not necessary to name the type itself."
 }
