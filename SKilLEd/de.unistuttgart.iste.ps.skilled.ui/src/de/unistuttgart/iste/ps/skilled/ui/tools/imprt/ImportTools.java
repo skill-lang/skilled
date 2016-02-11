@@ -1,20 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.ui.tools.imprt;
 
-import java.io.BufferedReader;
+import java.awt.EventQueue;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static java.nio.file.StandardCopyOption.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -38,486 +25,250 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+
 /**
- * This class provides the dialog window for "Export Tools" which allows the
- * user to export a certain tool to a location of his or her choice
+ * This class provides the dialog window for "Export Tools" which allows the user to export a certain tool to a location of
+ * his or her choice
  * 
  * @author Leslie
  *
  */
 public class ImportTools {
-	Display d;
-	String fSaveLocation = "";
-	String fSelectedTool = "";
-	String fToolName;
-	String fToolFilePath;
-	static String fTempFileForCombining;
-	String fImports;
-	String fBody;
-	String fImportRenamed = "";
-	String fStartDirectoryForChecker = "";
+    Display d;
+    String fSaveLocation = "";
+    String fSelectedTool = "";
+    String fImportRenamed = "";
 
-	static ArrayList<File> fListofFiles = null;
+    ImportCombine fImportCombine = new ImportCombine();
+    static String fProjectName = "";
+    static String fSelectedToolPath = "";
 
-	ImportCombine fImportCombine = new ImportCombine();
+    // Location of the workspace the user is using
+    IWorkspace workspace = ResourcesPlugin.getWorkspace();
+    File workspaceDirectory = workspace.getRoot().getLocation().toFile();
 
-	// Location of the workspace the user is using
-	IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	File workspaceDirectory = workspace.getRoot().getLocation().toFile();
+    /**
+     * Creates dialog window
+     * 
+     */
+    public void run() {
+        Shell shell = new Shell(d);
+        shell.setText("Import Tool");
+        shell.layout(true, true);
+        createContents(shell);
+        final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+        shell.setSize(newSize);
+        shell.open();
+    }
 
-	/**
-	 * Creates dialog window
-	 * 
-	 */
-	public void run() {
-		Shell shell = new Shell(d);
-		shell.setText("Import Tool");
-		shell.layout(true, true);
-		createContents(shell);
-		final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		shell.setSize(newSize);
-		shell.open();
-	}
+    /**
+     * Creates contents of the dialog window
+     * 
+     * @param shell
+     *            The window in which the content is created in
+     */
+    public void createContents(final Shell shell) {
+        shell.setLayout(new GridLayout(5, false));
 
-	/**
-	 * Creates contents of the dialog window
-	 * 
-	 * @param shell
-	 *            The window in which the content is created in
-	 */
-	public void createContents(final Shell shell) {
-		shell.setLayout(new GridLayout(5, false));
+        Label title = new Label(shell, SWT.NONE);
+        title.setFont(new Font(title.getDisplay(), new FontData(title.getFont().toString(), 12, SWT.BOLD)));
+        title.setText("Import Tool");
+        GridData gridDataTitle = new GridData();
+        gridDataTitle.horizontalAlignment = SWT.CENTER;
+        gridDataTitle.horizontalSpan = 5;
+        title.setLayoutData(gridDataTitle);
 
-		Label title = new Label(shell, SWT.NONE);
-		title.setFont(new Font(title.getDisplay(), new FontData(title.getFont().toString(), 12, SWT.BOLD)));
-		title.setText("Import Tool");
-		GridData gridDataTitle = new GridData();
-		gridDataTitle.horizontalAlignment = SWT.CENTER;
-		gridDataTitle.horizontalSpan = 5;
-		title.setLayoutData(gridDataTitle);
+        Label lSelectTool = new Label(shell, SWT.NONE);
+        lSelectTool.setText("Select tool to import:");
+        GridData gridDataLabel = new GridData();
+        gridDataLabel.horizontalAlignment = SWT.CENTER;
+        gridDataLabel.horizontalSpan = 2;
+        lSelectTool.setLayoutData(gridDataLabel);
 
-		Label lSelectTool = new Label(shell, SWT.NONE);
-		lSelectTool.setText("Select tool to import:");
-		GridData gridDataLabel = new GridData();
-		gridDataLabel.horizontalAlignment = SWT.CENTER;
-		gridDataLabel.horizontalSpan = 2;
-		lSelectTool.setLayoutData(gridDataLabel);
+        Text tSelectTool = new Text(shell, SWT.BORDER | SWT.SINGLE);
+        tSelectTool.setText(fSelectedTool);
+        GridData gridDataWidgets = new GridData();
+        gridDataWidgets.horizontalAlignment = SWT.FILL;
+        gridDataWidgets.grabExcessHorizontalSpace = true;
+        gridDataWidgets.horizontalSpan = 2;
+        tSelectTool.setLayoutData(gridDataWidgets);
+        tSelectTool.addModifyListener(new ModifyListener() {
 
-		Text tSelectTool = new Text(shell, SWT.BORDER | SWT.SINGLE);
-		tSelectTool.setText(fSelectedTool);
-		GridData gridDataWidgets = new GridData();
-		gridDataWidgets.horizontalAlignment = SWT.FILL;
-		gridDataWidgets.grabExcessHorizontalSpace = true;
-		gridDataWidgets.horizontalSpan = 2;
-		tSelectTool.setLayoutData(gridDataWidgets);
-		tSelectTool.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                Text textWidget = (Text) e.getSource();
+                fSelectedTool = textWidget.getText();
+            }
+        });
 
-			@Override
-			public void modifyText(ModifyEvent e) {
-				Text textWidget = (Text) e.getSource();
-				fSelectedTool = textWidget.getText();
-			}
-		});
+        Button bSelectTool = new Button(shell, SWT.PUSH);
+        bSelectTool.setText("Browse");
+        GridData gridDataButtons = new GridData();
+        gridDataButtons.horizontalAlignment = SWT.CENTER;
+        gridDataButtons.verticalAlignment = SWT.FILL;
+        gridDataButtons.horizontalSpan = 1;
+        bSelectTool.setLayoutData(gridDataButtons);
+        bSelectTool.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                FileDialog saveDialog = new FileDialog(shell);
+                saveDialog.setFilterPath(workspaceDirectory.getAbsolutePath());
+                String[] filterExtensions = { "*.skill" };
+                saveDialog.setFilterExtensions(filterExtensions);
+                String fSelectedPath = saveDialog.open();
+                if (fSelectedPath != null) {
+                    tSelectTool.setText(fSelectedPath);
+                }
+            }
+        });
 
-		Button bSelectTool = new Button(shell, SWT.PUSH);
-		bSelectTool.setText("Browse");
-		GridData gridDataButtons = new GridData();
-		gridDataButtons.horizontalAlignment = SWT.CENTER;
-		gridDataButtons.verticalAlignment = SWT.FILL;
-		gridDataButtons.horizontalSpan = 1;
-		bSelectTool.setLayoutData(gridDataButtons);
-		bSelectTool.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog saveDialog = new FileDialog(shell);
-				saveDialog.setFilterPath(workspaceDirectory.getAbsolutePath());
-				String[] filterExtensions = { "*.skill" };
-				saveDialog.setFilterExtensions(filterExtensions);
-				String fSelectedPath = saveDialog.open();
-				if (fSelectedPath != null) {
-					tSelectTool.setText(fSelectedPath);
-				}
-			}
-		});
+        Label lImportRename = new Label(shell, SWT.WRAP | SWT.CENTER | SWT.NONE);
+        lImportRename.setText("Rename imported file to:\n(If blank, the name of the exported file will be used)");
+        GridData gridDataLabel1 = new GridData();
+        gridDataLabel1.horizontalAlignment = SWT.CENTER;
+        gridDataLabel1.horizontalSpan = 2;
+        lImportRename.setLayoutData(gridDataLabel1);
 
-		Label lImportRename = new Label(shell, SWT.WRAP | SWT.CENTER | SWT.NONE);
-		lImportRename.setText("Rename imported file to:\n(If blank, the name of the exported file will be used)");
-		GridData gridDataLabel1 = new GridData();
-		gridDataLabel1.horizontalAlignment = SWT.CENTER;
-		gridDataLabel1.horizontalSpan = 2;
-		lImportRename.setLayoutData(gridDataLabel1);
+        Text tImportRename = new Text(shell, SWT.BORDER | SWT.SINGLE);
+        tImportRename.setText(fImportRenamed);
+        GridData gridDataWidgetsBig = new GridData();
+        gridDataWidgetsBig.horizontalAlignment = SWT.FILL;
+        gridDataWidgetsBig.grabExcessHorizontalSpace = true;
+        gridDataWidgetsBig.horizontalSpan = 3;
+        tImportRename.setLayoutData(gridDataWidgetsBig);
+        tImportRename.addModifyListener(new ModifyListener() {
 
-		Text tImportRename = new Text(shell, SWT.BORDER | SWT.SINGLE);
-		tImportRename.setText(fImportRenamed);
-		GridData gridDataWidgetsBig = new GridData();
-		gridDataWidgetsBig.horizontalAlignment = SWT.FILL;
-		gridDataWidgetsBig.grabExcessHorizontalSpace = true;
-		gridDataWidgetsBig.horizontalSpan = 3;
-		tImportRename.setLayoutData(gridDataWidgetsBig);
-		tImportRename.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                Text textWidget = (Text) e.getSource();
+                fImportRenamed = textWidget.getText();
+            }
+        });
 
-			@Override
-			public void modifyText(ModifyEvent e) {
-				Text textWidget = (Text) e.getSource();
-				fImportRenamed = textWidget.getText();
-			}
-		});
+        Label lSaveLocation = new Label(shell, SWT.NONE);
+        lSaveLocation.setText("Import to Project:");
+        GridData gridDataLabel2 = new GridData();
+        gridDataLabel2.horizontalAlignment = SWT.CENTER;
+        gridDataLabel2.horizontalSpan = 2;
+        lSaveLocation.setLayoutData(gridDataLabel2);
 
-		Label lSaveLocation = new Label(shell, SWT.NONE);
-		lSaveLocation.setText("Import to:");
-		GridData gridDataLabel2 = new GridData();
-		gridDataLabel2.horizontalAlignment = SWT.CENTER;
-		gridDataLabel2.horizontalSpan = 2;
-		lSaveLocation.setLayoutData(gridDataLabel2);
+        Text tSaveLocation = new Text(shell, SWT.BORDER | SWT.SINGLE);
+        tSaveLocation.setText(fSaveLocation);
+        tSaveLocation.setLayoutData(gridDataWidgets);
+        tSaveLocation.addModifyListener(new ModifyListener() {
 
-		Text tSaveLocation = new Text(shell, SWT.BORDER | SWT.SINGLE);
-		tSaveLocation.setText(fSaveLocation);
-		tSaveLocation.setLayoutData(gridDataWidgets);
-		tSaveLocation.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                Text textWidget = (Text) e.getSource();
+                fSaveLocation = textWidget.getText();
+            }
+        });
 
-			@Override
-			public void modifyText(ModifyEvent e) {
-				Text textWidget = (Text) e.getSource();
-				fSaveLocation = textWidget.getText();
-			}
-		});
+        Button bSaveLocation = new Button(shell, SWT.PUSH);
+        bSaveLocation.setText("Browse");
+        bSaveLocation.setLayoutData(gridDataButtons);
+        bSaveLocation.addSelectionListener(new SelectionAdapter() {
 
-		Button bSaveLocation = new Button(shell, SWT.PUSH);
-		bSaveLocation.setText("Browse");
-		bSaveLocation.setLayoutData(gridDataButtons);
-		bSaveLocation.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                DirectoryDialog directoryDialog = new DirectoryDialog(shell);
+                directoryDialog.setFilterPath(workspaceDirectory.getAbsolutePath());
+                String fSaveLocation = directoryDialog.open();
+                if (fSaveLocation != null) {
+                    tSaveLocation.setText(fSaveLocation);
+                }
+            }
+        });
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog directoryDialog = new DirectoryDialog(shell);
-				directoryDialog.setFilterPath(workspaceDirectory.getAbsolutePath());
-				String fSaveLocation = directoryDialog.open();
-				if (fSaveLocation != null) {
-					tSaveLocation.setText(fSaveLocation);
-				}
-			}
-		});
+        Label emptyCell1 = new Label(shell, SWT.NONE);
+        emptyCell1.setText("");
+        emptyCell1.setLayoutData(new GridData());
 
-		Label emptyCell1 = new Label(shell, SWT.NONE);
-		emptyCell1.setText("");
-		emptyCell1.setLayoutData(new GridData());
+        // Creates OK Button.
+        Button OK = new Button(shell, SWT.PUSH);
 
-		// Creates OK Button.
-		Button OK = new Button(shell, SWT.PUSH);
+        OK.setLayoutData(gridDataButtons);
+        OK.setText("OK");
+        OK.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                System.out.println("OK clicked!");
 
-		OK.setLayoutData(gridDataButtons);
-		OK.setText("OK");
-		OK.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
+                File fCheckSelectTool = new File(tSelectTool.getText());
+                File fCheckImportLocation = new File(tSaveLocation.getText());
 
-				// String fCheckIfProjectSelected = tSelectTool.getText()
-				// .substring(tSelectTool.getText().lastIndexOf(workspaceDirectory.getAbsolutePath())
-				// + 1);
-				// System.out.println("fCheckIfProjectSelected: " +
-				// fCheckIfProjectSelected);
-				// if (fCheckIfProjectSelected.endsWith(File.separator)) {
-				// fCheckIfProjectSelected =
-				// fCheckIfProjectSelected.substring(0,
-				// fCheckIfProjectSelected.lastIndexOf(File.separator) - 1);
-				// }
-				// int count = fCheckIfProjectSelected.length()
-				// - fCheckIfProjectSelected.replace(File.separator,
-				// "").length();
-				// System.out.println("count: " + count);
+                int fWorkspaceLength = workspaceDirectory.getAbsolutePath().length();
 
-				File fCheckIfProjectSelected = new File(tSelectTool.getText());
-				String fCheckIfParentIsWorkspace = fCheckIfProjectSelected.getParent();
+                String fCheckIfProjectSelected = tSaveLocation.getText().substring(fWorkspaceLength + 1);
+                System.out.println("fCheckIfProjectSelected: " + fCheckIfProjectSelected);
+                if (fCheckIfProjectSelected.endsWith(File.separator)) {
+                    fCheckIfProjectSelected = fCheckIfProjectSelected.substring(0,
+                            fCheckIfProjectSelected.lastIndexOf(File.separator) - 1);
+                }
+                int count = fCheckIfProjectSelected.length() - fCheckIfProjectSelected.replace(File.separator, "").length();
+                System.out.println("count: " + count);
 
-				String fCheckEmptyImportRename = fImportRenamed.replace("/s+", "");
-				// Use tool file name as imported file name if rename field is
-				// empty
-				if (fCheckEmptyImportRename.length() == 0) {
-					fToolName = fSelectedTool.substring(fSelectedTool.lastIndexOf(File.separator) + 1,
-							fSelectedTool.indexOf(".skill"));
-				} else {
-					fToolName = tImportRename.getText();
-				}
-				File fCheckImportLocation = new File(tSaveLocation.getText());
-				fToolFilePath = tSaveLocation.getText() + File.separator + fToolName + ".skill";
-				fTempFileForCombining = tSaveLocation.getText() + File.separator + "TempFileBySKilLEd.skill";
-				File fCheckDuplicate = new File(fToolFilePath);
-				String fRename = fSaveLocation + File.separator + fToolName + "_RenamedBySKilLEd.skill";
-				File fRenamedFile = new File(fRename);
-				fStartDirectoryForChecker = tSaveLocation.getText();
-				File makeDirectory = new File(fStartDirectoryForChecker);
-				if (!makeDirectory.exists()) {
-					makeDirectory.mkdirs();
-				}
+                if (tSelectTool.getText() == null || tSelectTool.getText() == "") {
+                    ShowMessage("Path for tool to import missing!", "No File to Import");
+                    return;
+                } else if (tSaveLocation.getText() == null || tSaveLocation.getText() == "") {
+                    ShowMessage("Import location missing!", "Missing Import Location");
+                    return;
+                } else if (!fCheckSelectTool.isFile() || !tSelectTool.getText().endsWith(".skill")) {
+                    ShowMessage("Invalid tool file!", "Invalid File Type");
+                    return;
+                } else if (!fCheckImportLocation.isDirectory()) {
+                    ShowMessage("Import location is not in the workspace or a project folder!", "Invalid Import Location");
+                    return;
+                } else if (count > 0 || fCheckIfProjectSelected.length() == 0) {
+                    ShowMessage("Import location is not a project folder!", "Invalid Import location");
+                    return;
+                }
+                fProjectName = fCheckIfProjectSelected;
+                fSelectedToolPath = tSelectTool.getText();
+                fImportCombine.run();
+                shell.dispose();
+                fSaveLocation = "";
+                fSelectedTool = "";
 
-				// error if save location is not a directory
-				if (!fCheckImportLocation.isDirectory()) {
-					JOptionPane.showMessageDialog(null, "Import location is not a folder!", "Invalid Import Location",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				// error if selected file to import does not end with .skill
-				else if (!tSelectTool.getText().endsWith(".skill")) {
-					JOptionPane.showMessageDialog(null, "Invalid tool file!", "Invalid File Type",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				} else if (!tSelectTool.getText().contains(workspaceDirectory.getAbsolutePath())
-						|| fCheckIfParentIsWorkspace != workspaceDirectory.getAbsolutePath()) {
-					JOptionPane.showMessageDialog(null, "Import location is not in the workspace or a project folder!",
-							"Invalid Import Location", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				// Check if import location is in a .tool folder in the
-				// workspace
-				// else if (!tSaveLocation.getText().contains(".skillt")
-				// ||
-				// !tSaveLocation.getText().contains(workspaceDirectory.getAbsolutePath()))
-				// {
-				// JOptionPane.showMessageDialog(null,
-				// "Import location is not in the workspace or a child of the
-				// .skillts folder!",
-				// "Invalid Import Location", JOptionPane.ERROR_MESSAGE);
-				// return;
-				// }
-				// Check if file to import already exists
-				else if (fCheckDuplicate.exists()) {
-					int overwrite = JOptionPane.showOptionDialog(null,
-							fToolName + ".skill already exists!"
-									+ " Do you want to merge them? (Clicking \"No\" will overwrite the new file with the existing file.)",
-							"Existing File", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null,
-							null);
-					// Deletes existing duplicate tool file if the user clicks
-					// "no"
-					if (overwrite == JOptionPane.NO_OPTION) {
-						fCheckDuplicate.delete();
-					}
-					// Renames existing duplicate tool file so that it can be
-					// merged with the imported file if the user clicks "yes"
-					else if (overwrite == JOptionPane.YES_OPTION) {
-						fCheckDuplicate.renameTo(fRenamedFile);
-					}
-					// Converts string filepaths to paths
-					Path fSelectedToolPath = Paths.get(tSelectTool.getText());
-					Path fImportLocationPath = Paths.get(fToolFilePath);
-					File fChangeName = new File(fToolFilePath);
-					String fChangedName = tSaveLocation.getText() + File.separator + "ToBeMergedBySKilLEd.skill";
-					File fChangedNameFile = new File(fChangedName);
+            }
 
-					// Moves to-be-imported tool from original location to its
-					// import location and renames so it can be merged
-					try {
-						Files.move(fSelectedToolPath, fImportLocationPath, REPLACE_EXISTING);
-						fChangeName.renameTo(fChangedNameFile);
+        });
 
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+        Label emptyCell2 = new Label(shell, SWT.NONE);
+        emptyCell2.setText("                                           ");
+        emptyCell2.setLayoutData(new GridData());
 
-					try {
-						checkForDuplicateTypes(fToolFilePath);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					listFiles(fSaveLocation, fListofFiles);
-					fImportCombine.run();
-					fSaveLocation = "";
-					fSelectedTool = "";
-					shell.dispose();
-				}
-				// Create tool file
-				else {
-					// Creates a file with the name of the tool if \.skillt
-					// folder is selected
-					if (fSaveLocation.endsWith(".skillt")) {
-						fToolFilePath = fSaveLocation + File.separator + fToolName + File.separator + fToolName
-								+ ".skill";
-						fTempFileForCombining = tSaveLocation.getText() + File.separator + fToolName + File.separator
-								+ "TempFileBySKilLEd.skill";
-						fStartDirectoryForChecker = fSaveLocation + File.separator + fToolName;
-						File makeDirectory2 = new File(fStartDirectoryForChecker);
-						if (!makeDirectory2.exists()) {
-							makeDirectory2.mkdirs();
-						}
-					} else if (fSaveLocation.endsWith(".skillt" + File.separator)) {
-						fToolFilePath = fSaveLocation + fToolName + File.separator + fToolName + ".skill";
-						fTempFileForCombining = tSaveLocation.getText() + fToolName + File.separator
-								+ "TempFileBySKilLEd.skill";
-						fStartDirectoryForChecker = fSaveLocation + fToolName;
-						File makeDirectory2 = new File(fStartDirectoryForChecker);
-						if (!makeDirectory2.exists()) {
-							makeDirectory2.mkdirs();
-						}
-					}
-					System.out.println(fToolFilePath);
-					// Converts string filepaths to paths
-					Path fSelectedToolPath = Paths.get(tSelectTool.getText());
-					Path fImportLocationPath = Paths.get(fToolFilePath);
-					// Moves to-be-imported tool from original location to its
-					// import location
-					try {
-						Files.move(fSelectedToolPath, fImportLocationPath, REPLACE_EXISTING);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+        // Cancel button. Closes dialog window.
+        Button Cancel = new Button(shell, SWT.PUSH);
+        Cancel.setLayoutData(gridDataButtons);
+        Cancel.setText("Cancel");
+        Cancel.addSelectionListener(new SelectionAdapter() {
 
-					try {
-						checkForDuplicateTypes(fToolFilePath);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					listFiles(fSaveLocation, fListofFiles);
-					fImportCombine.run();
-					fSaveLocation = "";
-					fSelectedTool = "";
-					shell.dispose();
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                shell.dispose();
+                fSaveLocation = "";
+                fSelectedTool = "";
+            }
 
-				}
+        });
+    }
 
-			}
-		});
+    public static String getProjectName() {
+        return fProjectName;
+    }
 
-		Label emptyCell2 = new Label(shell, SWT.NONE);
-		emptyCell2.setText("                                           ");
-		emptyCell2.setLayoutData(new GridData());
+    public static String getSelectedToolPath() {
+        return fSelectedToolPath;
+    }
 
-		// Cancel button. Closes dialog window.
-		Button Cancel = new Button(shell, SWT.PUSH);
-		Cancel.setLayoutData(gridDataButtons);
-		Cancel.setText("Cancel");
-		Cancel.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				shell.dispose();
-				fSaveLocation = "";
-				fSelectedTool = "";
-			}
-
-		});
-	}
-
-	public void checkForDuplicateTypes(String importLocation) throws IOException {
-		Set<String> duplicateType = new HashSet<>();
-		fListofFiles = new ArrayList<>();
-
-		listFiles(fSaveLocation, fListofFiles);
-
-		if (fListofFiles != null) {
-			for (File f : fListofFiles) {
-				FileInputStream fis;
-				try {
-
-					fis = new FileInputStream(f);
-					BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-					String line;
-					while ((line = br.readLine()) != null) {
-						if (line.contains("{")) {
-							if (!duplicateType.contains(line)) {
-								duplicateType.add(line);
-							}
-						}
-					}
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			FileInputStream fis = new FileInputStream(importLocation);
-			@SuppressWarnings("resource")
-			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-			String line;
-			int counter = 0;
-			while ((line = br.readLine()) != null) {
-				if (counter < 2) {
-					if (duplicateType.contains(line)) {
-						counter += 1;
-
-					}
-				} else {
-					JOptionPane.showMessageDialog(null,
-							"At least 2 types in " + fToolName + ".skill already exist in Tool " + fToolName + "!",
-							"Duplicate Types", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-			}
-			br.close();
-		}
-	}
-
-	/**
-	 * Finds all .skill files in the project folder and its subdirectories
-	 * 
-	 * @param directoryName
-	 * @param checkFiles
-	 */
-	public void listFiles(String directoryName, ArrayList<File> checkFiles) {
-		System.out.println(directoryName);
-		File fProjectDirectory = new File(directoryName);
-		File[] listofFiles = fProjectDirectory.listFiles();
-		for (File file : listofFiles) {
-			if (file.isFile() && file.getName().endsWith(".skill") && !file.getName().startsWith(".")) {
-				checkFiles.add(file);
-			} else if (file.isDirectory() && !file.getName().startsWith(".")) {
-				listFiles(file.getAbsolutePath(), checkFiles);
-			}
-		}
-	}
-
-	// /**
-	// * Combines all files found by method listFiles
-	// *
-	// */
-	// public void combineFiles() {
-	//
-	// listFiles(fSaveLocation, fListofFiles);
-	//
-	// if (fListofFiles != null) {
-	// for (File f : fListofFiles) {
-	// FileInputStream fis;
-	// try {
-	// FileWriter fw = new FileWriter(fTempFileForCombining, true);
-	// fis = new FileInputStream(f);
-	// BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-	// String line;
-	//
-	// while ((line = br.readLine()) != null) {
-	// // Ignore all other head comments
-	// if (!line.startsWith("#")) {
-	// if (line.startsWith("include") || line.startsWith("with")) {
-	// fImports += line + "\n";
-	// } else {
-	// fBody += line + "\n";
-	// }
-	// }
-	// }
-	// br.close();
-	// System.out.println("Check");
-	// // Head comment that says which tool the merged files are
-	// fw.write("# Tool " + fToolName);
-	// if (fImports != null) {
-	// fw.write(fImports);
-	// }
-	// if (fBody != null) {
-	// fw.write(fBody);
-	// }
-	// fw.close();
-	// File fRenameFile = new File(fTempFileForCombining);
-	// File fRenameToFile= new File(fToolFilePath);
-	// fRenameFile.renameTo(fRenameToFile);
-	//
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	//
-	// }
-	//
-	// }
-	// }
-	public static ArrayList<File> getListofFiles() {
-		return fListofFiles;
-	}
-
-	public static String getImportLocation() {
-		return fTempFileForCombining;
-	}
+    private void ShowMessage(String string, String string2) {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(null, string, string2, JOptionPane.ERROR_MESSAGE);
+            }
+        });
+    }
 }
