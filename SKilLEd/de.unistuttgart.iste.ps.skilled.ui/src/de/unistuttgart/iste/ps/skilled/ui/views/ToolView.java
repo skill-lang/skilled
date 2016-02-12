@@ -88,13 +88,13 @@ public class ToolView extends ViewPart {
         fileChangeAction.imp0rt();
         shell = parent.getShell();
 
-        buildToolContextMenu(buildToollist(parent));
+        buildToolContextMenu(buildToollist());
         setFocus();
         makeActions();
         contributeToActionBars();
 
         ToolViewListener tvl = new ToolViewListener(this);
-        tvl.initPartListener(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService());
+        tvl.initPartListener(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage());
     }
 
     @Override
@@ -108,7 +108,7 @@ public class ToolView extends ViewPart {
             toolTabItem.dispose();
             typeTabItem.dispose();
             fieldTabItem.dispose();
-            buildToolContextMenu(buildToollist(parent));
+            buildToolContextMenu(buildToollist());
             tabFolder.setSelection(toolTabItem);
         }
     }
@@ -160,16 +160,18 @@ public class ToolView extends ViewPart {
         }
 
         if (skillFile.Tools() != null) {
-            skillFile.Tools().forEach(t -> allToolList.add(t));
+            skillFile.Tools().forEach(tool -> allToolList.add(tool));
             skillFile.Tools().forEach(t -> pathList.add(path));
-            // fExport.setPaths(pathList);
         }
 
-        if (skillFile.Types() != null) {
-            skillFile.Types().forEach(t -> allTypeList.add(t));
+        if (skillFile.Types() != null)
+            for (Type type : skillFile.Types()) {
+                if (allToolList.stream().anyMatch(tool -> tool.getTypes().contains(type)))
+                    break;
+                allTypeList.add(type);
+            }
 
-        }
-
+        // fExport.setPaths(pathList);
     }
 
     /**
@@ -179,13 +181,13 @@ public class ToolView extends ViewPart {
      *            - {@link Composite}
      * @return {@link List}
      */
-    private List buildToollist(Composite parent) {
+    private List buildToollist() {
         readToolBinaryFile();
 
         if (tabFolder.isDisposed())
             tabFolder = new CTabFolder(parent, SWT.BORDER);
 
-        List toolViewList = new List(tabFolder, SWT.SINGLE);
+        List toolViewList = new List(tabFolder, SWT.SINGLE | SWT.V_SCROLL);
 
         if (toolTabItem.isDisposed())
             toolTabItem = new CTabItem(tabFolder, 0, 0);
@@ -195,6 +197,7 @@ public class ToolView extends ViewPart {
         } catch (NullPointerException e) {
             toolTabItem.setText("Tools");
         }
+
         toolTabItem.setControl(toolViewList);
 
         if (null != skillFile)
@@ -226,16 +229,10 @@ public class ToolView extends ViewPart {
             typeTabItem = new CTabItem(tabFolder, 0, 1);
 
         typeTabItem.setText("Types - " + activeTool.getName());
-        ArrayList<Type> typeList = new ArrayList<>();
 
         if (null != skillFile) {
-            for (Type t : allTypeList) {
-                if (allToolList.stream().noneMatch(to -> to.getTypes().contains(t)))
-                    typeList.add(t);
-            }
-
             // add all types to the tree
-            for (Type type : typeList) {
+            for (Type type : allTypeList) {
                 TreeItem typeTreeItem = new TreeItem(typeTree, 0);
                 typeTreeItem.setText(type.getName().replaceAll(" %s ", " "));
                 typeTreeItem.setData(type);

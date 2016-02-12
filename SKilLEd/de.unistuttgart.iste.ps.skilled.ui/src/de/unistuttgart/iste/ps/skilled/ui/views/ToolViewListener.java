@@ -1,13 +1,16 @@
 package de.unistuttgart.iste.ps.skilled.ui.views;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 
 import de.unistuttgart.iste.ps.skilled.ui.tools.EditorUtil;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
@@ -82,7 +85,12 @@ public class ToolViewListener {
 
             @Override
             public void partOpened(IWorkbenchPart part) {
-                toolview.refresh();
+                IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                        .getActivePage().getActiveEditor().getEditorInput();
+                IProject newActiveProject = file.getFile().getProject();
+
+                if (!toolview.getActiveProject().equals(newActiveProject))
+                    toolview.refresh();
             }
 
             @Override
@@ -93,12 +101,22 @@ public class ToolViewListener {
 
             @Override
             public void partClosed(IWorkbenchPart part) {
-                toolview.refresh();
+                IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                        .getActivePage().getActiveEditor().getEditorInput();
+                IProject newActiveProject = file.getFile().getProject();
+
+                if (!toolview.getActiveProject().equals(newActiveProject))
+                    toolview.refresh();
             }
 
             @Override
             public void partBroughtToTop(IWorkbenchPart part) {
-                toolview.refresh();
+                IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                        .getActivePage().getActiveEditor().getEditorInput();
+                IProject newActiveProject = file.getFile().getProject();
+
+                if (!toolview.getActiveProject().equals(newActiveProject))
+                    toolview.refresh();
             }
 
             @Override
