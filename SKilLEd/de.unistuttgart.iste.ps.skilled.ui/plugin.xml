@@ -633,7 +633,12 @@
                 label="SKilL">
              <command
                    commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints"
-                   label="Remove Hints"
+                   label="Remove all hints in this file"
+                   style="push">
+             </command>
+             <command
+                   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removeprojecthints"
+                   label="Remove all hints in this project"
                    style="push">
              </command>
           </menu>
@@ -690,6 +695,11 @@
              id="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints"
              name="Remove Hints">
        </command>
+       <command
+             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.removeprojecthints.SKilLRemoveProjectHintsHandler"
+             id="de.unistuttgart.iste.ps.skilled.ui.refactoring.removeprojecthints"
+             name="Remove Project Hints">
+       </command>
     </extension>
     <extension
           point="org.eclipse.ui.bindings">
@@ -697,6 +707,11 @@
              commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints"
              schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
              sequence="M1+2">
+       </key>
+       <key
+             commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removeprojecthints"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+3">
        </key>
     </extension>
 

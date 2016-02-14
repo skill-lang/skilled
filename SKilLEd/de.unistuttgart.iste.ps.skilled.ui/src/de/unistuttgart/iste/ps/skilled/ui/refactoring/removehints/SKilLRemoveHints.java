@@ -28,6 +28,7 @@ import org.eclipse.ui.part.FileEditorInput;
  * explorer (action started in the popup menu)
  * 
  * @author Leslie
+ * @author Tobias
  *
  */
 public class SKilLRemoveHints {
@@ -42,6 +43,7 @@ public class SKilLRemoveHints {
 		IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 		IEditorPart editor = page.getActiveEditor();
+        
 		// Checks if there is an editor open
 		if (editor != null) {
 			IEditorInput input = editor.getEditorInput();
@@ -60,7 +62,7 @@ public class SKilLRemoveHints {
 					String line;
 					while ((line = br.readLine()) != null) {
 						// Skips all lines starting with "!"
-						if (!line.startsWith("!")) {
+						if (!line.trim().startsWith("!")) {
 							fCurrentContents += line + "\n";
 						}
 					}
@@ -94,9 +96,7 @@ public class SKilLRemoveHints {
 
 			try {
 				FileWriter fw = new FileWriter(f, false);
-				if (fCurrentContents != null) {
-					fw.write(fCurrentContents);
-				}
+				fw.write(fCurrentContents);
 				fw.close();
 				fCurrentContents = "";
 			} catch (IOException e) {
@@ -124,7 +124,7 @@ public class SKilLRemoveHints {
 		} 
 		// Error message if there no editor is open.
 		else {
-			JOptionPane.showMessageDialog(null, "No open file!", "Invald File!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "No open file!", "Invalid File!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

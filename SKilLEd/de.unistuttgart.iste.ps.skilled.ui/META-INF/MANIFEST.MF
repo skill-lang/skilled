@@ -57,6 +57,7 @@ Export-Package: de.unistuttgart.iste.ps.skilled.ui;
  de.unistuttgart.iste.ps.skilled.ui.tools.export,
  de.unistuttgart.iste.ps.skilled.ui.views,
  de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints,
+ de.unistuttgart.iste.ps.skilled.ui.refactoring.removeprojecthints,
  de.unistuttgart.iste.ps.skilled.ui.wizards;
   uses:="org.eclipse.ui,
    org.eclipse.swt.widgets,
