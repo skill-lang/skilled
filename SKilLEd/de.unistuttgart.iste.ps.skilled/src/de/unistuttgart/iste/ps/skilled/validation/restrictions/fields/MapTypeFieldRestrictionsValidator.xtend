@@ -14,23 +14,23 @@ class MapTypeFieldRestrictionsValidator extends AbstractFieldRestrictionsValidat
 		return fieldtype instanceof Maptype
 	}
 
-	override void handleNonNullRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasNonNullUsed) {
+	override void handleNonNullRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.Restriction_On_Map, restriction)
 	}
 
-	override void handleDefaultRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasDefaultUsed) {
+	override void handleDefaultRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.Restriction_On_Map, restriction)
 	}
 
-	override void handleRangeRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasRangeUsed) {
+	override void handleRangeRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.Restriction_On_Map, restriction)
 	}
 
-	override void handleMaxRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasMaxUsed) {
+	override void handleMaxRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.Restriction_On_Map, restriction)
 	}
 
-	override void handleMinRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasMinUsed) {
+	override void handleMinRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.Restriction_On_Map, restriction)
 	}
 
@@ -38,12 +38,11 @@ class MapTypeFieldRestrictionsValidator extends AbstractFieldRestrictionsValidat
 		showError(FieldRestrictionErrorMessages.Restriction_On_Map, restriction)
 	}
 
-	override void handleConstantLengthPointerRestriction(Fieldtype fieldtype, Restriction restriction,
-		boolean wasConstantLenghtPointerUsed) {
+	override void handleConstantLengthPointerRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.Restriction_On_Map, restriction)
 	}
 
-	override void handleOneOfRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasOneOfUsed) {
+	override void handleOneOfRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.Restriction_On_Map, restriction)
 	}
 

@@ -13,7 +13,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
  */
 class FloatTypeFieldRestrictionsValidator extends AbstractNumericFieldRestrictionValidator {
 
-	override void handleRangeRestriction(Fieldtype fieldtype2, Restriction restriction, boolean wasRangeUsed) {
+	override void handleRangeRestriction(Fieldtype fieldtype2, Restriction restriction) {
 		var Fieldtype fieldtype = null
 		if (fieldtype2 instanceof DeclarationReference) {
 			fieldtype = (fieldtype2.type as Typedef).fieldtype
@@ -135,7 +135,7 @@ class FloatTypeFieldRestrictionsValidator extends AbstractNumericFieldRestrictio
 			return false
 		}
 
-		override void handleDefaultRestriction(Fieldtype fieldtype2, Restriction restriction, boolean wasDefaultUsed) {
+		override void handleDefaultRestriction(Fieldtype fieldtype2, Restriction restriction) {
 			var Fieldtype fieldtype = null
 			if (fieldtype2 instanceof DeclarationReference) {
 				fieldtype = (fieldtype2.type as Typedef).fieldtype
@@ -170,7 +170,7 @@ class FloatTypeFieldRestrictionsValidator extends AbstractNumericFieldRestrictio
 			return restriction.restrictionArguments.get(index).valueDouble
 		}
 
-		override void handleMaxRestriction(Fieldtype fieldtype2, Restriction restriction, boolean wasMaxUsed) {
+		override void handleMaxRestriction(Fieldtype fieldtype2, Restriction restriction) {
 			var Fieldtype fieldtype = null
 			if (fieldtype2 instanceof DeclarationReference) {
 				fieldtype = (fieldtype2.type as Typedef).fieldtype
@@ -237,7 +237,7 @@ class FloatTypeFieldRestrictionsValidator extends AbstractNumericFieldRestrictio
 
 		}
 
-		override void handleMinRestriction(Fieldtype fieldtype2, Restriction restriction, boolean wasMinUsed) {
+		override void handleMinRestriction(Fieldtype fieldtype2, Restriction restriction) {
 			var Fieldtype fieldtype = null
 			if (fieldtype2 instanceof DeclarationReference) {
 				fieldtype = (fieldtype2.type as Typedef).fieldtype

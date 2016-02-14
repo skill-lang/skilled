@@ -15,7 +15,7 @@ class BooleanTypeFieldRestrictionsValidator extends AbstractFieldRestrictionsVal
 		return fieldtype instanceof Booleantype
 	}
 	
-	override void handleDefaultRestriction (Fieldtype fieldtype, Restriction restriction, boolean wasDefaultUsed) {
+	override void handleDefaultRestriction (Fieldtype fieldtype, Restriction restriction) {
 		if (restriction.restrictionArguments.size != 1) {
 			showError(FieldRestrictionErrorMessages.Default_Not_One_Arg, restriction)
 			return

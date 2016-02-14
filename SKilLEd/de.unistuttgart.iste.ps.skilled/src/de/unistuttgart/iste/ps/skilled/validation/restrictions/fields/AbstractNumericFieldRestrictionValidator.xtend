@@ -9,7 +9,7 @@ import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestriction
  */
 abstract class AbstractNumericFieldRestrictionValidator extends AbstractFieldRestrictionsValidator {
 
-	override void handleRangeRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasRangeUsed) {
+	override void handleRangeRestriction(Fieldtype fieldtype, Restriction restriction) {
 
 		if (restriction.restrictionArguments.size() == 2) {
 			if (getRestrictionArgumentNumeric(restriction, 0) == null) {
@@ -47,11 +47,11 @@ abstract class AbstractNumericFieldRestrictionValidator extends AbstractFieldRes
 		}
 	}
 
-	override void handleMaxRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasMaxUsed) {
+	override void handleMaxRestriction(Fieldtype fieldtype, Restriction restriction) {
 		handleMinMaxRestriction(restriction, wasMaxUsed)
 	}
 
-	override void handleMinRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasMinUsed) {
+	override void handleMinRestriction(Fieldtype fieldtype, Restriction restriction) {
 		handleMinMaxRestriction(restriction, wasMinUsed)
 	}
 

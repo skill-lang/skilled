@@ -16,7 +16,7 @@ class StringTypeFieldRestrictions extends AbstractFieldRestrictionsValidator {
 		return fieldtype instanceof Stringtype
 	}
 
-	override void handleNonNullRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasNonNullUsed) {
+	override void handleNonNullRestriction(Fieldtype fieldtype, Restriction restriction) {
 		if (restriction.restrictionArguments.size() != 0) {
 			showError(FieldRestrictionErrorMessages.NonNull_Has_Args, restriction)
 		} else if (wasNonNullUsed) {
@@ -24,7 +24,7 @@ class StringTypeFieldRestrictions extends AbstractFieldRestrictionsValidator {
 		}
 	}
 
-	override void handleDefaultRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasDefaultUsed) {
+	override void handleDefaultRestriction(Fieldtype fieldtype, Restriction restriction) {
 		if (wasDefaultUsed) {
 			showError(FieldRestrictionErrorMessages.Default_Already_Used, restriction)
 			return
@@ -49,8 +49,7 @@ class StringTypeFieldRestrictions extends AbstractFieldRestrictionsValidator {
 		showError(FieldRestrictionErrorMessages.Default_Not_One_Arg, restriction)
 	}
 
-	override void handleConstantLengthPointerRestriction(Fieldtype fieldtype, Restriction restriction,
-		boolean wasConstantLenghtPointerUsed) {
+	override void handleConstantLengthPointerRestriction(Fieldtype fieldtype, Restriction restriction) {
 		if (restriction.restrictionArguments.size() != 0) {
 			showError(FieldRestrictionErrorMessages.ConstantLengthPointer_Has_Args, restriction)
 		} else if (wasConstantLenghtPointerUsed) {

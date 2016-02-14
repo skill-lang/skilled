@@ -38,7 +38,7 @@ class AnnotationTypeFieldRestrictionsValidator extends AbstractFieldRestrictions
 		return false
 	}
 
-	override handleDefaultRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasDefaultUsed) {
+	override handleDefaultRestriction(Fieldtype fieldtype, Restriction restriction) {
 		if (wasDefaultUsed) {
 			showError(FieldRestrictionErrorMessages.Default_Already_Used, restriction)
 			return
@@ -72,8 +72,7 @@ class AnnotationTypeFieldRestrictionsValidator extends AbstractFieldRestrictions
 		showError(FieldRestrictionErrorMessages.Default_Arg_Not_Singleton_Or_Enum, r)
 	}
 
-	override handleConstantLengthPointerRestriction(Fieldtype fieldtype, Restriction restriction,
-		boolean wasConstantLenghtPointerUsed) {
+	override handleConstantLengthPointerRestriction(Fieldtype fieldtype, Restriction restriction) {
 		if (restriction.restrictionArguments.size() != 0) {
 			showError(FieldRestrictionErrorMessages.ConstantLengthPointer_Has_Args, restriction)
 		} else if (wasConstantLenghtPointerUsed) {
@@ -81,7 +80,7 @@ class AnnotationTypeFieldRestrictionsValidator extends AbstractFieldRestrictions
 		}
 	}
 
-	override handleOneOfRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasOneOfUsed) {
+	override handleOneOfRestriction(Fieldtype fieldtype, Restriction restriction) {
 		if (wasOneOfUsed) {
 			showError(FieldRestrictionErrorMessages.OneOf_Already_Used, restriction)
 			return

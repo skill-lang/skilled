@@ -42,34 +42,34 @@ abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator
 			for (restriction : field.restrictions) {
 				switch (restriction.restrictionName.toLowerCase) {
 					case 'nonnull': {
-						handleNonNullRestriction(fieldtype, restriction, wasNonNullUsed)
+						handleNonNullRestriction(fieldtype, restriction)
 						wasNonNullUsed = true
 					}
 					case 'default': {
-						handleDefaultRestriction(fieldtype, restriction, wasDefaultUsed)
+						handleDefaultRestriction(fieldtype, restriction)
 						wasDefaultUsed = true
 					}
 					case 'range': {
-						handleRangeRestriction(fieldtype, restriction, wasRangeUsed)
+						handleRangeRestriction(fieldtype, restriction)
 						wasRangeUsed = true
 					}
 					case 'max': {
-						handleMaxRestriction(fieldtype, restriction, wasMaxUsed)
+						handleMaxRestriction(fieldtype, restriction)
 						wasMaxUsed = true
 					}
 					case 'min': {
-						handleMinRestriction(fieldtype, restriction, wasMinUsed)
+						handleMinRestriction(fieldtype, restriction)
 						wasMinUsed = true
 					}
 					case 'coding': {
 						handleCodingRestriction(fieldtype, restriction)
 					}
 					case 'constantlengthpointer': {
-						handleConstantLengthPointerRestriction(fieldtype, restriction, wasConstantLenghtPointerUsed)
+						handleConstantLengthPointerRestriction(fieldtype, restriction)
 						wasConstantLenghtPointerUsed = true
 					}
 					case 'oneof': {
-						handleOneOfRestriction(fieldtype, restriction, wasOneOfUsed)
+						handleOneOfRestriction(fieldtype, restriction)
 						wasOneOfUsed = true
 					}
 					default: {
@@ -82,23 +82,23 @@ abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator
 
 	def abstract boolean handleActivationCondition(Fieldtype fieldtype)
 
-	def void handleNonNullRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasNonNullUsed) {
+	def void handleNonNullRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.NonNull_Usage, restriction)
 	}
 
-	def void handleDefaultRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasDefaultUsed) {
+	def void handleDefaultRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.Default_Usage, restriction)
 	}
 
-	def void handleRangeRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasRangeUsed) {
+	def void handleRangeRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.Range_Usage, restriction)
 	}
 
-	def void handleMaxRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasMaxUsed) {
+	def void handleMaxRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.MinMax_Usage, restriction)
 	}
 
-	def void handleMinRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasMinUsed) {
+	def void handleMinRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.MinMax_Usage, restriction)
 	}
 
@@ -115,12 +115,11 @@ abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator
 		}
 	}
 
-	def void handleConstantLengthPointerRestriction(Fieldtype fieldtype, Restriction restriction,
-		boolean wasConstantLenghtPointerUsed) {
+	def void handleConstantLengthPointerRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.ConstantLengthPointer_Usage, restriction)
 	}
 
-	def void handleOneOfRestriction(Fieldtype fieldtype, Restriction restriction, boolean wasOneOfUsed) {
+	def void handleOneOfRestriction(Fieldtype fieldtype, Restriction restriction) {
 		showError(FieldRestrictionErrorMessages.OneOf_Usage, restriction)
 	}
 
