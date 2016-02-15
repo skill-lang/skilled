@@ -11,7 +11,8 @@ import de.unistuttgart.iste.ps.skillls.tools.Tool;
 /**
  * creates the wizards used in SKilLEd
  * 
- * @@author Ken Singer
+ * @author Nico Rusam
+ * @author Ken Singer
  *
  */
 public class SKilLToolWizard extends Wizard {
@@ -21,6 +22,7 @@ public class SKilLToolWizard extends Wizard {
     protected boolean addAllcheckboxState;
     protected SKilLCloneToolWizardPage cloneTool;
     protected SKilLRenameToolWizardPage pageRenameTool;
+    protected RemoveHintsFromToolWizard removeHints;
     private String name;
     private ArrayList<Tool> toolList;
     private String cloneToolName;
@@ -40,10 +42,16 @@ public class SKilLToolWizard extends Wizard {
         this.name = name;
     }
 
-    public SKilLToolWizard(ArrayList<Tool> toolList) {
-        super();
+    /**
+     * Constructor for <b>clone</b> and <b>remove hints</b>
+     * 
+     * @param option
+     * @param toolList
+     */
+    public SKilLToolWizard(WizardOption option, ArrayList<Tool> toolList) {
+        this();
         this.toolList = toolList;
-        this.wizardOption = WizardOption.CLONE;
+        this.wizardOption = option;
     }
 
     @Override
@@ -66,6 +74,12 @@ public class SKilLToolWizard extends Wizard {
                 cloneTool = new SKilLCloneToolWizardPage(toolList);
                 addPage(cloneTool);
                 break;
+            case REMOVEHINTS:
+                removeHints = new RemoveHintsFromToolWizard(toolList);
+                addPage(removeHints);
+                break;
+            default:
+                break;
         }
     }
 
@@ -82,6 +96,11 @@ public class SKilLToolWizard extends Wizard {
             case CLONE:
                 this.name = cloneTool.getTbNameText();
                 this.cloneToolName = cloneTool.getDropDownText();
+                break;
+            case REMOVEHINTS:
+                this.toolList = removeHints.getSelectedTools();
+                break;
+            default:
                 break;
         }
         return true;
@@ -101,5 +120,9 @@ public class SKilLToolWizard extends Wizard {
 
     public boolean getAddAllCheckboxState() {
         return this.addAllcheckboxState;
+    }
+
+    public ArrayList<Tool> getRemoveHintsFromTools() {
+        return this.toolList;
     }
 }

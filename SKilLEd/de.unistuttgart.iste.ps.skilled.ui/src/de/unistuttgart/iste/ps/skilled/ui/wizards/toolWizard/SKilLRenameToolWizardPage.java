@@ -11,6 +11,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 
+/**
+ * creates a wizardpage for renaming a tool
+ * 
+ * @author Nico Rusam
+ *
+ */
 public class SKilLRenameToolWizardPage extends WizardPage {
 
     private Text tbName;

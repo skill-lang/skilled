@@ -13,8 +13,9 @@ import org.eclipse.swt.widgets.Text;
 
 
 /**
- * creates to wizardpage to create a new tool
+ * creates a wizardpage for creating a new tool
  * 
+ * @author Nico Rusam
  * @author Ken Singer
  *
  */

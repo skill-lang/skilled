@@ -28,6 +28,7 @@ import org.eclipse.ui.part.ViewPart;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 import de.unistuttgart.iste.ps.skilled.ui.tools.export.SaveListofAllTools;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.SKilLToolWizard;
+import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
 import de.unistuttgart.iste.ps.skillls.tools.Field;
 import de.unistuttgart.iste.ps.skillls.tools.Hint;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
@@ -143,13 +144,10 @@ public class ToolView extends ViewPart {
     /**
      * Reload the fieldlist after adding a field or hint to a tooltype
      * 
-     * <<<<<<< 88279dbe4e5d6546a66801fa541eb2d845f65c7c =======
-     * 
      * @category Data Handling
      * @category GUI
      * @param type
-     *            >>>>>>> Add some comments to the toolview and add some console output for an performance issue in the
-     *            toolview #74
+     * 
      */
     void reloadFieldList() {
         reloadTypelist();
@@ -467,7 +465,7 @@ public class ToolView extends ViewPart {
     }
 
     public void cloneToolDialog() {
-        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(allToolList);
+        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.CLONE, allToolList);
         WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
         if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
             String newToolName = skillToolWizard.getToolNewName();
@@ -624,4 +622,29 @@ public class ToolView extends ViewPart {
         return skillFile;
     }
 
+    /**
+     * Open a wizard to select tools where hints should be deleted.
+     * 
+     * @category GUI
+     */
+    void removeHintsFromTools() {
+        if (activeTool != null) {
+            final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.REMOVEHINTS, allToolList);
+            WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
+            if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+                ArrayList<Tool> removeHints = skillToolWizard.getRemoveHintsFromTools();
+                for (Tool tempTool : removeHints) {
+
+                    for (Type tempType : tempTool.getTypes()) {
+                        for (Field tempField : tempType.getFields()) {
+                            if (tempField.getFieldHints().size() > 0)
+                                ToolUtil.removeAllFieldHints(this.activeProject, tempTool, tempType, tempField);
+                        }
+                        if (tempType.getTypeHints().size() > 0)
+                            ToolUtil.removeAllTypeHints(this.activeProject, tempTool, tempType);
+                    }
+                }
+            }
+        }
+    }
 }
