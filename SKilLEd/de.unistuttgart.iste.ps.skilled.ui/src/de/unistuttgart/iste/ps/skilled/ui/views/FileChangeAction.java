@@ -29,7 +29,7 @@ public class FileChangeAction {
      */
     public void save() {
         String commandId = "org.eclipse.ui.file.save";
-        ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+        ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);
         Command command = service.getCommand(commandId);
         command.addExecutionListener(new IExecutionListener() {
 
@@ -62,7 +62,7 @@ public class FileChangeAction {
      */
     public void saveAll() {
         String commandId = "org.eclipse.ui.file.saveAll";
-        ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+        ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);
         Command command = service.getCommand(commandId);
         command.addExecutionListener(new IExecutionListener() {
 
@@ -95,7 +95,7 @@ public class FileChangeAction {
      */
     public void imp0rt() {
         String commandId = "org.eclipse.ui.file.import";
-        ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+        ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);
         Command command = service.getCommand(commandId);
         command.addExecutionListener(new IExecutionListener() {
 
