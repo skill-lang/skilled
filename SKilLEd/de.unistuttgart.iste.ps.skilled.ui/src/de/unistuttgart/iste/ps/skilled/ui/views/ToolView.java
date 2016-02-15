@@ -82,6 +82,8 @@ public class ToolView extends ViewPart {
         this.parent = parent;
         tabFolder = new CTabFolder(parent, SWT.BORDER);
         toolTabItem = new CTabItem(tabFolder, 0, 0);
+        typeTabItem = new CTabItem(tabFolder, 0, 1);
+        fieldTabItem = new CTabItem(tabFolder, 0, 2);
 
         tabFolder.setVisible(true);
         fileChangeAction.save();
@@ -253,7 +255,7 @@ public class ToolView extends ViewPart {
         typeListOfActualTool = activeTool.getTypes();
         TreeItem typeHintItem;
 
-        if (typeTabItem == null || typeTabItem.isDisposed())
+        if (typeTabItem.isDisposed())
             typeTabItem = new CTabItem(tabFolder, 0, 1);
 
         typeTabItem.setText("Types - " + activeTool.getName());
@@ -315,7 +317,7 @@ public class ToolView extends ViewPart {
         Tree fieldTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.FULL_SELECTION);
         Type tooltype;
 
-        if (fieldTabItem == null || fieldTabItem.isDisposed())
+        if (fieldTabItem.isDisposed())
             fieldTabItem = new CTabItem(tabFolder, 0, 2);
 
         try {
