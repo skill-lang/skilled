@@ -439,7 +439,7 @@ public class Editor {
             if (splits.length > 1) {
                 if (splits[1].equals(fieldName)) {
                     type.getFields()
-                            .add(skillFile.Fields().make("", new ArrayList<>(), f.getName(), new ArrayList<>(), type));
+                            .add(skillFile.Fields().make("", new ArrayList<>(), f.getName(), f, new ArrayList<>(), type));
                 }
             }
         }
@@ -536,13 +536,13 @@ public class Editor {
                 // type is not in tool
                 if (tool.getTypes().stream().noneMatch(ty -> ty.getName().equals(typeName))) {
                     type = skillFile.Types().make(t.getComment(), new ArrayList<>(), new ArrayList<>(), t.getFile(),
-                            t.getName(), new ArrayList<>(), new ArrayList<>());
+                            t.getName(), t, new ArrayList<>(), new ArrayList<>());
                 }
                 // type is enum
                 if (t.getFields().stream().anyMatch(f -> f.getName().matches("\\S+")) && type != null) {
                     Field field = t.getFields().stream().filter(f -> f.getName().matches("\\S+")).findFirst().get();
                     type.getFields().add(skillFile.Fields().make(field.getComment(), new ArrayList<>(), field.getName(),
-                            new ArrayList<>(), type));
+                            field, new ArrayList<>(), type));
                 }
                 if (type == null || t.getFile() == null) {
                     System.out.println("null");
@@ -593,7 +593,7 @@ public class Editor {
                     break;
                 }
                 tool.getTypes().add(skillFile.Types().make(candidate.getComment(), candidate.getExtends(), new ArrayList<>(),
-                        candidate.getFile(), candidate.getName(), candidate.getRestrictions(), new ArrayList<>()));
+                        candidate.getFile(), candidate.getName(), candidate, candidate.getRestrictions(), new ArrayList<>()));
                 break;
             }
         }
@@ -636,7 +636,7 @@ public class Editor {
                     continue;
                 }
                 tool.getTypes().add(skillFile.Types().make(t.getComment(), t.getExtends(), new ArrayList<>(), t.getFile(),
-                        t.getName(), t.getRestrictions(), new ArrayList<>()));
+                        t.getName(), t, t.getRestrictions(), new ArrayList<>()));
                 if (t.getExtends().size() > 0) {
                     addExtensions(tool, t);
                 }

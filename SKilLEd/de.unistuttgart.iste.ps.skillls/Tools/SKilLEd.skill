@@ -18,6 +18,7 @@ Type : HintParent {
     Field[] fields;
     Hint[] typeHints;
     string[] extends;
+    Type orig;
 }
 
 Field : HintParent {
@@ -26,6 +27,7 @@ Field : HintParent {
     string name;
     Hint[] fieldHints;
     Type type;
+    Field orig;
 }
 
 Hint {

@@ -91,32 +91,6 @@ class SkillIndexListener extends SKilLParserBaseListener {
      *            the content of the typedeclaration.
      */
     private void processDeclaration(SKilLParser.DeclarationContext declarationContext) {
-        for (Type type : skillFile.Types()) {
-            int occurrence = declarationContext.getText().indexOf(type.getName());
-            int extOccurrence = Integer.MAX_VALUE;
-            String text = declarationContext.getText();
-            int o = text.indexOf(':');
-            if (extOccurrence > o && o != -1) {
-                extOccurrence = o;
-            }
-            o = text.indexOf("with");
-            if (extOccurrence > o && o != -1) {
-                extOccurrence = o;
-            }
-            o = text.indexOf("extends");
-            if (extOccurrence > o && o != -1) {
-                extOccurrence = o;
-            }
-            o = text.indexOf('{');
-            if (extOccurrence > o && o != -1) {
-                extOccurrence = o;
-            }
-            if (declarationContext.typedef() == null && occurrence != -1
-                    && occurrence + type.getName().length() == extOccurrence
-                    || declarationContext.typedef() != null && occurrence == 7) {
-                return;
-            }
-        }
         if (declarationContext.interfacetype() != null) {
             processInterface(declarationContext.interfacetype());
         } else if (declarationContext.usertype() != null) {
@@ -136,6 +110,13 @@ class SkillIndexListener extends SKilLParserBaseListener {
      */
     private void processTypedef(SKilLParser.TypedefContext typedef) {
         String name = "typedef " + typedef.name.getText() + " %s " + typedef.type().getText();
+
+        for (Type type : skillFile.Types()) {
+            if (type.getOrig() == null && type.getName().toLowerCase().equals(name.toLowerCase())) {
+                reindex(typedef, type);
+                return;
+            }
+        }
 
         ArrayList<String> restrictions = new ArrayList<>();
 
@@ -158,10 +139,27 @@ class SkillIndexListener extends SKilLParserBaseListener {
         }
 
         Type type = skillFile.Types().make(typedef.COMMENT() == null ? "" : typedef.COMMENT().getText(), new ArrayList<>(),
-                new ArrayList<>(), file, name, restrictions, hints);
+                new ArrayList<>(), file, name, null, restrictions, hints);
         for (Hint hint : hints) {
             hint.setParent(type);
         }
+    }
+
+    private Hint indexHint(SKilLParser.HintContext hintContext, Type type, ArrayList<Hint> hints) {
+        String newHintName = hintContext.getText();
+        Hint hint = null;
+        for (int i = 0; i < hints.size(); i++) {
+            Hint h = hints.get(i);
+            if (h.getName().toLowerCase().equals(newHintName.toLowerCase())) {
+                hint = h;
+                hints.remove(h);
+            }
+        }
+        if (hint == null) {
+            hint = skillFile.Hints().make(newHintName, type);
+            type.getTypeHints().add(hint);
+        }
+        return hint;
     }
 
     /**
@@ -173,14 +171,21 @@ class SkillIndexListener extends SKilLParserBaseListener {
     private void processEnumtype(SKilLParser.EnumtypeContext enumtype) {
         String name = "enum " + enumtype.name.getText();
 
+        for (Type type : skillFile.Types()) {
+            if (type.getOrig() == null && type.getName().toLowerCase().equals(name.toLowerCase())) {
+                reindex(enumtype, type);
+                return;
+            }
+        }
+
         ArrayList<Field> fields = new ArrayList<>();
 
-        fields.add(skillFile.Fields().make("", new ArrayList<>(), enumtype.enumvalues().getText(), new ArrayList<>(), null));
+        fields.add(skillFile.Fields().make("", new ArrayList<>(), enumtype.enumvalues().getText(), null, new ArrayList<>(), null));
 
         fields.addAll(enumtype.field().stream().map(this::processField).collect(Collectors.toList()));
 
         Type type = skillFile.Types().make(enumtype.COMMENT() == null ? "" : enumtype.COMMENT().getText(), new ArrayList<>(),
-                fields, file, name, new ArrayList<>(), new ArrayList<>());
+                fields, file, name, null, new ArrayList<>(), new ArrayList<>());
         for (Field f : fields) {
             f.setType(type);
         }
@@ -220,7 +225,7 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
         Field field = skillFile.Fields().make(
                 fieldContext.description().COMMENT() == null ? "" : fieldContext.description().COMMENT().getText(), hints,
-                name, restrictions, null);
+                name, null, restrictions, null);
         for (Hint h : hints) {
             h.setParent(field);
         }
@@ -234,6 +239,15 @@ class SkillIndexListener extends SKilLParserBaseListener {
      *            the context of the declaration.
      */
     private void processUsertype(SKilLParser.UsertypeContext usertype) {
+        String name = usertype.name.getText();
+
+        for (Type type : skillFile.Types()) {
+            if (type.getOrig() == null & type.getName().toLowerCase().equals(name.toLowerCase())) {
+                reindex(usertype, type);
+                return;
+            }
+        }
+
         ArrayList<Hint> hints = new ArrayList<>();
 
         // Iterate over all hints
@@ -241,8 +255,6 @@ class SkillIndexListener extends SKilLParserBaseListener {
                 .map(SKilLParser.RestrictionHintContext::hint).collect(Collectors.toList())) {
             hints.add(skillFile.Hints().make(h.getText(), null));
         }
-
-        String name = usertype.name.getText();
 
         ArrayList<String> extensions = new ArrayList<>();
 
@@ -269,7 +281,7 @@ class SkillIndexListener extends SKilLParserBaseListener {
 
         Type type = skillFile.Types().make(
                 usertype.description().COMMENT() == null ? "" : usertype.description().COMMENT().getText(), extensions,
-                fields, file, name, restrictions, hints);
+                fields, file, name, null, restrictions, hints);
 
         for (Field f : fields) {
             f.setType(type);
@@ -287,9 +299,16 @@ class SkillIndexListener extends SKilLParserBaseListener {
      *            the context of the declaration.
      */
     private void processInterface(SKilLParser.InterfacetypeContext interfacetype) {
-        ArrayList<Hint> hints = new ArrayList<>();
-
         String name = "interface " + interfacetype.name.getText();
+
+        for (Type type : skillFile.Types()) {
+            if (type.getName().toLowerCase().equals(name.toLowerCase())) {
+                reindex(interfacetype, type);
+                return;
+            }
+        }
+
+        ArrayList<Hint> hints = new ArrayList<>();
 
         ArrayList<String> extensions = new ArrayList<>();
 
@@ -306,7 +325,7 @@ class SkillIndexListener extends SKilLParserBaseListener {
         }
 
         Type type = skillFile.Types().make(interfacetype.COMMENT() == null ? "" : interfacetype.COMMENT().getText(),
-                extensions, fields, file, name, restrictions, hints);
+                extensions, fields, file, name, null, restrictions, hints);
 
         for (Field f : fields) {
             f.setType(type);
@@ -315,5 +334,277 @@ class SkillIndexListener extends SKilLParserBaseListener {
         for (Hint h : hints) {
             h.setParent(type);
         }
+    }
+
+    private void reindex(SKilLParser.InterfacetypeContext interfacetype, Type type) {
+        for (SKilLParser.FieldContext fieldContext : interfacetype.field()) {
+            Field field;
+            if (fieldContext.constant() != null) {
+                String name = fieldContext.constant().getText();
+                field = findField(type, name);
+                if (field == null) {
+                    field = indexFieldConstant(fieldContext);
+                    field.setType(type);
+                }
+            } else if (fieldContext.data() != null) {
+                String name = fieldContext.data().getText();
+                field = findField(type, name);
+                if (field == null) {
+                    field = indexFieldData(fieldContext);
+                    field.setType(type);
+                }
+            } else {
+                String name = fieldContext.view().getText();
+                field = findField(type, name);
+                if (field == null) {
+                    field = indexField(fieldContext.view(), fieldContext);
+                    field.setType(type);
+                }
+            }
+            if (fieldContext.description().COMMENT() == null) {
+                field.setComment("");
+            } else {
+                field.setComment(fieldContext.description().COMMENT().getText());
+            }
+        }
+        if (interfacetype.COMMENT() != null) {
+            type.setComment(interfacetype.COMMENT().getText());
+        } else {
+            type.setComment("");
+        }
+    }
+
+    private void reindex(SKilLParser.TypedefContext typedef, Type type) {
+        ArrayList<Hint> hints = (ArrayList<Hint>) type.getTypeHints().clone();
+        ArrayList<String> restrictions = (ArrayList<String>) type.getRestrictions().clone();
+
+        for (SKilLParser.RestrictionHintContext restrictionHintContext : typedef.restrictionHint()) {
+            if (restrictionHintContext.restriction() == null) {
+                SKilLParser.HintContext hintContext = restrictionHintContext.hint();
+                indexHint(hintContext, type, hints);
+            } else {
+                boolean found = false;
+                String restriction = restrictionHintContext.restriction().getText();
+                for (int i = 0; i < restrictions.size(); i++) {
+                    if (restrictions.get(i).toLowerCase().equals(restriction.toLowerCase())) {
+                        restrictions.remove(i);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    type.getRestrictions().add(restriction);
+                }
+            }
+        }
+        if (typedef.COMMENT() != null) {
+            type.setComment(typedef.COMMENT().getText());
+        } else {
+            type.setComment("");
+        }
+    }
+
+    private void reindex(SKilLParser.EnumtypeContext enumtype, Type type) {
+        Field enumValues = null;
+        for (Field field : type.getFields()) {
+            if (!field.getName().contains(" ")) {
+                enumValues = field;
+                break;
+            }
+        }
+        if (enumValues == null) {
+            enumValues = skillFile.Fields().make("", new ArrayList<>(), enumtype.enumvalues().getText(), null, new ArrayList<>(), null);
+            type.getFields().add(enumValues);
+        } else {
+            enumValues.setName(enumtype.enumvalues().getText());
+        }
+        for (SKilLParser.FieldContext fieldContext : enumtype.field()) {
+            Field field;
+            if (fieldContext.constant() != null) {
+                String name = fieldContext.constant().getText();
+                field = findField(type, name);
+                if (field == null) {
+                    field = indexFieldConstant(fieldContext);
+                    field.setType(type);
+                }
+            } else if (fieldContext.data() != null) {
+                String name = fieldContext.data().getText();
+                field = findField(type, name);
+                if (field == null) {
+                    field = indexFieldData(fieldContext);
+                    field.setType(type);
+                }
+            } else {
+                String name = fieldContext.view().getText();
+                field = findField(type, name);
+                if (field == null) {
+                    field = indexField(fieldContext.view(), fieldContext);
+                    field.setType(type);
+                }
+            }
+            if (fieldContext.description().COMMENT() == null) {
+                field.setComment("");
+            } else {
+                field.setComment(fieldContext.description().COMMENT().getText());
+            }
+        }
+        if (enumtype.COMMENT() != null) {
+            type.setComment(enumtype.COMMENT().getText());
+        } else {
+            type.setComment("");
+        }
+    }
+
+    private void reindex(SKilLParser.UsertypeContext usertypeContext, Type type) {
+        ArrayList<Hint> hints = (ArrayList<Hint>) type.getTypeHints().clone();
+        ArrayList<String> restrictions = (ArrayList<String>) type.getRestrictions().clone();
+        ArrayList<String> extendList = (ArrayList<String>) type.getExtends().clone();
+
+        for (SKilLParser.RestrictionHintContext restrictionHintContext : usertypeContext.description().restrictionHint()) {
+            if (restrictionHintContext.restriction() == null) {
+                SKilLParser.HintContext hintContext = restrictionHintContext.hint();
+                indexHint(hintContext, type, hints);
+            } else {
+                boolean found = false;
+                String restriction = restrictionHintContext.restriction().getText();
+                for (int i = 0; i < restrictions.size(); i++) {
+                    if (restrictions.get(i).toLowerCase().equals(restriction.toLowerCase())) {
+                        restrictions.remove(i);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    type.getRestrictions().add(restriction);
+                }
+            }
+        }
+
+        for (SKilLParser.ExtensionContext extensionContext : usertypeContext.extension()) {
+            String newExtend = extensionContext.Identifier().getText();
+            for (int i = 0; i < extendList.size(); i++) {
+                if (extendList.get(i).toLowerCase().equals(newExtend.toLowerCase())) {
+                    extendList.remove(i);
+                    break;
+                }
+            }
+            type.getExtends().add(newExtend);
+        }
+
+        for (SKilLParser.FieldContext fieldContext : usertypeContext.field()) {
+            Field field;
+            if (fieldContext.constant() != null) {
+                String name = fieldContext.constant().getText();
+                field = findField(type, name);
+                if (field == null) {
+                    field = indexFieldConstant(fieldContext);
+                    field.setType(type);
+                }
+            } else if (fieldContext.data() != null) {
+                String name = fieldContext.data().getText();
+                field = findField(type, name);
+                if (field == null) {
+                    field = indexFieldData(fieldContext);
+                    field.setType(type);
+                }
+            } else {
+                String name = fieldContext.view().getText();
+                field = findField(type, name);
+                if (field == null) {
+                    field = indexField(fieldContext.view(), fieldContext);
+                    field.setType(type);
+                }
+            }
+            if (fieldContext.description().COMMENT() == null) {
+                field.setComment("");
+            } else {
+                field.setComment(fieldContext.description().COMMENT().getText());
+            }
+        }
+        if (usertypeContext.description().COMMENT() != null) {
+            type.setComment(usertypeContext.description().COMMENT().getText());
+        } else {
+            type.setComment("");
+        }
+    }
+
+    private Field indexFieldConstant(SKilLParser.FieldContext fieldContext) {
+        ArrayList<Hint> hints = new ArrayList<>();
+        ArrayList<String> restrictions = new ArrayList<>();
+
+        for (SKilLParser.RestrictionHintContext restrictionHintContext : fieldContext.description().restrictionHint()) {
+            if (restrictionHintContext.hint() == null) {
+                restrictions.add(restrictionHintContext.restriction().getText());
+            } else {
+                hints.add(skillFile.Hints().make(restrictionHintContext.hint().getText(), null));
+            }
+        }
+
+        String name = fieldContext.constant().getText();
+
+        Field field = skillFile.Fields().make("", hints, name, null, restrictions, null);
+        for (Hint hint : field.getFieldHints()) {
+            hint.setParent(field);
+        }
+        return field;
+    }
+
+    private Field indexFieldData(SKilLParser.FieldContext fieldContext) {
+        ArrayList<Hint> hints = new ArrayList<>();
+        ArrayList<String> restrictions = new ArrayList<>();
+
+        for (SKilLParser.RestrictionHintContext restrictionHintContext : fieldContext.description().restrictionHint()) {
+            if (restrictionHintContext.hint() == null) {
+                restrictions.add(restrictionHintContext.restriction().getText());
+            } else {
+                hints.add(skillFile.Hints().make(restrictionHintContext.hint().getText(), null));
+            }
+        }
+
+        String name = fieldContext.data().getText();
+
+        Field field = skillFile.Fields().make("", hints, name, null, restrictions, null);
+        for (Hint hint : field.getFieldHints()) {
+            hint.setParent(field);
+        }
+        return field;
+    }
+
+    private Field findField(Type type, String name) {
+        for (Field field : type.getFields()) {
+            if (field.getName().toLowerCase().equals(name.toLowerCase())) {
+                return field;
+            }
+        }
+        return null;
+    }
+
+    private Field indexField(SKilLParser.ViewContext viewContext, SKilLParser.FieldContext fieldContext) {
+        ArrayList<Hint> hints = new ArrayList<>();
+        ArrayList<String> restrictions = new ArrayList<>();
+
+        for (SKilLParser.RestrictionHintContext restrictionHintContext : fieldContext.description().restrictionHint()) {
+            if (restrictionHintContext.hint() == null) {
+                restrictions.add(restrictionHintContext.restriction().getText());
+            } else {
+                hints.add(skillFile.Hints().make(restrictionHintContext.hint().getText(), null));
+            }
+        }
+
+        StringBuilder name = new StringBuilder();
+        name.append(" view ");
+        for (SKilLParser.ExtendedIdentiferContext ex : viewContext.extendedIdentifer()) {
+            name.append(ex);
+            name.append('.');
+        }
+        name.setLength(name.length() - 1);
+
+        name.append(" as ");
+        name.append(viewContext.data().getText());
+        Field field = skillFile.Fields().make("", hints, name.toString(), null, restrictions, null);
+        for (Hint hint : field.getFieldHints()) {
+            hint.setParent(field);
+        }
+        return field;
     }
 }
