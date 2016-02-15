@@ -1,108 +1,38 @@
 package de.unistuttgart.iste.ps.skilled.validation.restrictions.types
 
 import com.google.inject.Inject
+import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Booleantype
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
+import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
+import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
 import de.unistuttgart.iste.ps.skilled.sKilL.Maptype
 import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
+import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.util.SubtypesFinder
-import de.unistuttgart.iste.ps.skilled.validation.errormessages.TypeRestrictionsErrorMessages
-import org.eclipse.xtext.validation.Check
-import de.unistuttgart.iste.ps.skilled.sKilL.Booleantype
-import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
-import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
+import de.unistuttgart.iste.ps.skilled.validation.errormessages.TypeRestrictionsErrorMessages
 import de.unistuttgart.iste.ps.skilled.validation.restrictions.fields.AbstractFieldRestrictionsValidator
-import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
 
 /**
  * @author Nikolay Fateev
  * @author Moritz Platzer
  * @author Tobias Heck
+ * @author Daniel Ryan Degutis
  */
 class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 
 	@Inject
 	private SubtypesFinder subtypesFinder
-
-	@Check
-	def validateTypedef(Declaration declaration) {
-		if (declaration instanceof Typedef) {
-			var underlyingUsertype = returnTypedefDeclaration(declaration)
-			var wasUniqueUsed = false
-			var wasSingletonUsed = false
-			var wasMonotoneUsed = false
-			var wasAbstractUsed = false
-			var wasDefaultUsed = false
-			var wasRangeUsed = false
-			var wasMinUsed = false
-			var wasMaxUsed = false
-			var wasOneOfUsed = false
-
-			if (underlyingUsertype != null) {
-				wasUniqueUsed = isUserTypeRestricted(underlyingUsertype, "unique")
-				wasSingletonUsed = isUserTypeRestricted(underlyingUsertype, "singleton")
-				wasMonotoneUsed = isUserTypeRestricted(underlyingUsertype, "monotone")
-				wasAbstractUsed = isUserTypeRestricted(underlyingUsertype, "abstract")
-				wasDefaultUsed = isUserTypeRestricted(underlyingUsertype, "default")
-				wasRangeUsed = isUserTypeRestricted(underlyingUsertype, "range")
-				wasMinUsed = isUserTypeRestricted(underlyingUsertype, "min")
-				wasMaxUsed = isUserTypeRestricted(underlyingUsertype, "max")
-				wasOneOfUsed = isUserTypeRestricted(underlyingUsertype, "oneof")
-			}
-
-			for (restriction : declaration.restrictions) {
-				switch (restriction.restrictionName.toLowerCase) {
-					case 'unique': {
-						handleUniqueRestriction(restriction, underlyingUsertype, wasUniqueUsed)
-						wasUniqueUsed = true
-					}
-					case 'singleton': {
-						handleSingletonRestriction(restriction, underlyingUsertype, wasSingletonUsed)
-						wasSingletonUsed = true
-					}
-					case 'monotone': {
-						handleMonotoneRestriction(restriction, underlyingUsertype, wasMonotoneUsed)
-						wasMonotoneUsed = true
-					}
-					case 'abstract': {
-						handleAbstractRestriction(restriction, underlyingUsertype, wasAbstractUsed, declaration)
-						wasAbstractUsed = true
-					}
-					case 'default': {
-						handleDefaultRestriction(restriction, underlyingUsertype, wasDefaultUsed, declaration)
-						wasDefaultUsed = true
-					}
-					case 'range': {
-						handleRangeRestriction(restriction, underlyingUsertype, wasRangeUsed, wasMinUsed, wasMaxUsed,
-							declaration)
-						wasRangeUsed = true
-					}
-					case 'min': {
-						handleMinRestriction(restriction, underlyingUsertype, wasMinUsed, wasMaxUsed, wasRangeUsed,
-							declaration)
-						wasMinUsed = true
-					}
-					case 'max': {
-						handleMaxRestriction(restriction, underlyingUsertype, wasMaxUsed, wasMinUsed, wasRangeUsed,
-							declaration)
-						wasMaxUsed = true
-					}
-					case 'oneof': {
-						handleOneOfRestriction(restriction, underlyingUsertype, wasOneOfUsed, declaration)
-					}
-					default: {
-						showError(TypeRestrictionsErrorMessages.Unknown_Restriction, restriction)
-					}
-				}
-			}
-		}
+	
+	override handleActivationCondition(Declaration declaration) {
+		return declaration instanceof Typedef
 	}
 
-	def handleOneOfRestriction(Restriction restriction, Usertype usertype, boolean wasOneOfUsed, Typedef typedef) {
-		if (typedef.fieldtype instanceof Annotationtype) {
+	override handleOneOfRestriction(Restriction restriction, Declaration declaration) {
+		if ((declaration as Typedef).fieldtype instanceof Annotationtype) {
 			if (wasOneOfUsed) {
 				showError(FieldRestrictionErrorMessages.OneOf_Already_Used, restriction)
 				return
@@ -121,8 +51,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		}
 	}
 
-	def handleAbstractRestriction(Restriction restriction, Usertype usertype, boolean wasAbstractUsed,
-		Declaration declaration) {
+	override handleAbstractRestriction(Restriction restriction, Declaration declaration) {
 		val typedef = declaration as Typedef
 		if (!(typedef.fieldtype instanceof Maptype)) {
 			if (restriction.restrictionArguments.size != 0) {
@@ -135,7 +64,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		}
 	}
 
-	def handleMonotoneRestriction(Restriction restriction, Usertype underlyingUsertype, boolean wasMonotoneUsed) {
+	override handleMonotoneRestriction(Restriction restriction, Declaration declaration) {
 		if (restriction.restrictionArguments.size == 0) {
 			if (underlyingUsertype != null) {
 				if (underlyingUsertype.supertypes.size != 0) {
@@ -154,7 +83,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		}
 	}
 
-	def handleSingletonRestriction(Restriction restriction, Usertype underlyingUsertype, boolean wasSingletonUsed) {
+	override handleSingletonRestriction(Restriction restriction, Declaration declaration) {
 		if (restriction.restrictionArguments.size == 0) {
 			if (underlyingUsertype != null) {
 				if (subtypesFinder.getSubtypes(underlyingUsertype).size != 0) {
@@ -173,7 +102,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		}
 	}
 
-	def handleUniqueRestriction(Restriction restriction, Usertype underlyingUsertype, boolean wasUniqueUsed) {
+	override handleUniqueRestriction(Restriction restriction, Declaration declaration) {
 		if (restriction.restrictionArguments.size == 0) {
 			if (underlyingUsertype != null) {
 				if (underlyingUsertype.supertypes.size != 0) {
@@ -195,8 +124,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		}
 	}
 
-	def handleDefaultRestriction(Restriction restriction, Usertype underlyingUsertype, boolean wasDefaultUsed,
-		Typedef typedef) {
+	override handleDefaultRestriction(Restriction restriction, Declaration declaration) {
 		if (!wasDefaultUsed) {
 			if (restriction.restrictionArguments.size() == 1) {
 				if (underlyingUsertype != null) {
@@ -218,19 +146,19 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						}
 					}
 				} else {
-					if (typedef.fieldtype instanceof Booleantype) {
+					if ((declaration as Typedef).fieldtype instanceof Booleantype) {
 						if (restriction.restrictionArguments.get(0).valueBoolean == null) {
 							showError(FieldRestrictionErrorMessages.Default_Arg_Not_Boolean, restriction)
 						}
 						return
 					}
-					if (typedef.fieldtype instanceof Stringtype) {
+					if ((declaration as Typedef).fieldtype instanceof Stringtype) {
 						if (restriction.restrictionArguments.get(0).valueString == null) {
 							showError(FieldRestrictionErrorMessages.Default_Arg_Not_String, restriction)
 						}
 						return
 					}
-					if (typedef.fieldtype instanceof Floattype) {
+					if ((declaration as Typedef).fieldtype instanceof Floattype) {
 						if (restriction.restrictionArguments.get(0).valueDouble == null) {
 							showError(FieldRestrictionErrorMessages.Default_Arg_Not_Float, restriction)
 							return
@@ -247,7 +175,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						}
 						return
 					}
-					if (typedef.fieldtype instanceof Integertype) {
+					if ((declaration as Typedef).fieldtype instanceof Integertype) {
 						if (restriction.restrictionArguments.get(0).valueLong == null) {
 							showError(FieldRestrictionErrorMessages.Default_Arg_Not_Integer, restriction)
 							return
@@ -277,9 +205,8 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		}
 	}
 
-	def handleRangeRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasRangeUsed,
-		boolean wasMinUsed, boolean wasMaxUsed, Typedef typedef) {
-		if (typedef.fieldtype instanceof Integertype) {
+	override handleRangeRestriction(Restriction restriction, Declaration declaration) {
+		if ((declaration as Typedef).fieldtype instanceof Integertype) {
 			if (restriction.restrictionArguments.size() == 2) {
 				if (restriction.restrictionArguments.get(0).valueLong == null) {
 					showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
@@ -294,7 +221,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 					showError(FieldRestrictionErrorMessages.Range_Arguments_Switched, restriction)
 				} else {
 					var long maxValue = 0
-					switch ((typedef.fieldtype as Integertype).type) {
+					switch (((declaration as Typedef).fieldtype as Integertype).type) {
 						case I8: maxValue = Byte.MAX_VALUE
 						case I16: maxValue = Short.MAX_VALUE
 						case I32: maxValue = Integer.MAX_VALUE
@@ -358,7 +285,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						return
 					}
 					var long maxValue = 0
-					switch ((typedef.fieldtype as Integertype).type) {
+					switch (((declaration as Typedef).fieldtype as Integertype).type) {
 						case I8: maxValue = Byte.MAX_VALUE
 						case I16: maxValue = Short.MAX_VALUE
 						case I32: maxValue = Integer.MAX_VALUE
@@ -386,7 +313,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 				if (wasRangeUsed || wasMinUsed || wasMaxUsed) {
 					showWarning(FieldRestrictionErrorMessages.Range_Multiple_Used, restriction)
 				}
-			} else if (typedef.fieldtype instanceof Floattype) {
+			} else if ((declaration as Typedef).fieldtype instanceof Floattype) {
 				if (restriction.restrictionArguments.size() == 2) {
 					if (restriction.restrictionArguments.get(0).valueDouble == null) {
 						showError(FieldRestrictionErrorMessages.Range_First_Arg_Not_Integer, restriction)
@@ -401,7 +328,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						showError(FieldRestrictionErrorMessages.Range_Arguments_Switched, restriction)
 					} else {
 						var double maxValue = 0
-						switch ((typedef.fieldtype as Floattype).type) {
+						switch (((declaration as Typedef).fieldtype as Floattype).type) {
 							case F32: maxValue = Float.MAX_VALUE
 							default: maxValue = Double.MAX_VALUE
 						}
@@ -456,7 +383,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 							return
 						}
 						var double maxValue = 0
-						switch ((typedef.fieldtype as Floattype).type) {
+						switch (((declaration as Typedef).fieldtype as Floattype).type) {
 							case F32: maxValue = Float.MAX_VALUE
 							default: maxValue = Double.MAX_VALUE
 						}
@@ -483,16 +410,15 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 				}
 			}
 
-			def handleMinRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasMinUsed,
-				boolean wasMaxUsed, boolean wasRangeUsed, Typedef typedef) {
-				if (typedef.fieldtype instanceof Integertype) {
+			override handleMinRestriction(Restriction restriction, Declaration declaration) {
+				if ((declaration as Typedef).fieldtype instanceof Integertype) {
 					if (restriction.restrictionArguments.size() == 1) {
 						if (restriction.restrictionArguments.get(0).valueLong == null) {
 							showError(FieldRestrictionErrorMessages.MinMax_Arg_Not_Integer, restriction)
 							return
 						}
 						var long maxValue = 0
-						switch ((typedef.fieldtype as Integertype).type) {
+						switch (((declaration as Typedef).fieldtype as Integertype).type) {
 							case I8: maxValue = Byte.MAX_VALUE
 							case I16: maxValue = Short.MAX_VALUE
 							case I32: maxValue = Integer.MAX_VALUE
@@ -524,7 +450,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 							return
 						}
 						var long maxValue = 0
-						switch ((typedef.fieldtype as Integertype).type) {
+						switch (((declaration as Typedef).fieldtype as Integertype).type) {
 							case I8: maxValue = Byte.MAX_VALUE
 							case I16: maxValue = Short.MAX_VALUE
 							case I32: maxValue = Integer.MAX_VALUE
@@ -551,14 +477,14 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						showWarning(FieldRestrictionErrorMessages.MinMax_Multiple_Used, restriction)
 						return
 					}
-				} else if (typedef.fieldtype instanceof Floattype) {
+				} else if ((declaration as Typedef).fieldtype instanceof Floattype) {
 					if (restriction.restrictionArguments.size() == 1) {
 						if (restriction.restrictionArguments.get(0).valueDouble == null) {
 							showError(FieldRestrictionErrorMessages.MinMax_Arg_Not_Float, restriction)
 							return
 						}
 						var double maxValue = 0
-						switch ((typedef.fieldtype as Floattype).type) {
+						switch (((declaration as Typedef).fieldtype as Floattype).type) {
 							case F32: maxValue = Float.MAX_VALUE
 							default: maxValue = Double.MAX_VALUE
 						}
@@ -587,7 +513,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 							return
 						}
 						var double maxValue = 0
-						switch ((typedef.fieldtype as Floattype).type) {
+						switch (((declaration as Typedef).fieldtype as Floattype).type) {
 							case F32: maxValue = Float.MAX_VALUE
 							default: maxValue = Double.MAX_VALUE
 						}
@@ -613,16 +539,15 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 				}
 			}
 
-			def handleMaxRestriction(Restriction restriction, Usertype underlyingUsertape, boolean wasMaxUsed,
-				boolean wasMinUsed, boolean wasRangeUsed, Typedef typedef) {
-				if (typedef.fieldtype instanceof Integertype) {
+			override handleMaxRestriction(Restriction restriction, Declaration declaration) {
+				if ((declaration as Typedef).fieldtype instanceof Integertype) {
 					if (restriction.restrictionArguments.size() == 1) {
 						if (restriction.restrictionArguments.get(0).valueLong == null) {
 							showError(FieldRestrictionErrorMessages.MinMax_Arg_Not_Integer, restriction)
 							return
 						}
 						var long maxValue = 0
-						switch ((typedef.fieldtype as Integertype).type) {
+						switch (((declaration as Typedef).fieldtype as Integertype).type) {
 							case I8: maxValue = Byte.MAX_VALUE
 							case I16: maxValue = Short.MAX_VALUE
 							case I32: maxValue = Integer.MAX_VALUE
@@ -652,7 +577,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 							return
 						}
 						var long maxValue = 0
-						switch ((typedef.fieldtype as Integertype).type) {
+						switch (((declaration as Typedef).fieldtype as Integertype).type) {
 							case I8: maxValue = Byte.MAX_VALUE
 							case I16: maxValue = Short.MAX_VALUE
 							case I32: maxValue = Integer.MAX_VALUE
@@ -678,14 +603,14 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 						showWarning(FieldRestrictionErrorMessages.MinMax_Multiple_Used, restriction)
 						return
 					}
-				} else if (typedef.fieldtype instanceof Floattype) {
+				} else if ((declaration as Typedef).fieldtype instanceof Floattype) {
 					if (restriction.restrictionArguments.size() == 1) {
 						if (restriction.restrictionArguments.get(0).valueDouble == null) {
 							showError(FieldRestrictionErrorMessages.MinMax_Arg_Not_Float, restriction)
 							return
 						}
 						var double maxValue = 0
-						switch ((typedef.fieldtype as Floattype).type) {
+						switch (((declaration as Typedef).fieldtype as Floattype).type) {
 							case F32: maxValue = Float.MAX_VALUE
 							default: maxValue = Double.MAX_VALUE
 						}
@@ -714,7 +639,7 @@ class TypedefRestrictionValidator extends AbstractTypeRestrictionsValidator {
 							return
 						}
 						var double maxValue = 0
-						switch ((typedef.fieldtype as Floattype).type) {
+						switch (((declaration as Typedef).fieldtype as Floattype).type) {
 							case F32: maxValue = Float.MAX_VALUE
 							default: maxValue = Double.MAX_VALUE
 						}

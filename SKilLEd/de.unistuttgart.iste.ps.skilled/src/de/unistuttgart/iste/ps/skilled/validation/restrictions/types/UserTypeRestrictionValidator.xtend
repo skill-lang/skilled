@@ -7,56 +7,22 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.util.SubtypesFinder
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.TypeRestrictionsErrorMessages
-import org.eclipse.xtext.validation.Check
 
 /**
  * @author Nikolay Fateev
  * @author Moritz Platzer
+ * @author Daniel Ryan Degutis
  */
 class UserTypeRestrictionValidator extends AbstractTypeRestrictionsValidator {
 
 	@Inject
 	private SubtypesFinder subtypesFinder
-
-	@Check
-	def validateUsertype(Declaration declaration) {
-		if (declaration instanceof Usertype) {
-			var wasUniqueUsed = false
-			var wasSingletonUsed = false
-			var wasMonotoneUsed = false
-			var wasAbstractUsed = false
-			var wasDefaultUsed = false
-			for (restriction : declaration.restrictions) {
-				switch (restriction.restrictionName.toLowerCase) {
-					case 'unique': {
-						handleUniqueRestriction(restriction, wasUniqueUsed, declaration)
-						wasUniqueUsed = true
-					}
-					case 'singleton': {
-						handleSingletonRestriction(restriction, wasSingletonUsed, declaration)
-						wasSingletonUsed = true
-					}
-					case 'monotone': {
-						handleMonotoneRestriction(restriction, wasMonotoneUsed, declaration)
-						wasMonotoneUsed = true
-					}
-					case 'abstract': {
-						handleAbstractRestriction(restriction, wasAbstractUsed)
-						wasAbstractUsed = true
-					}
-					case 'default': {
-						handleDefaultRestriction(restriction, wasDefaultUsed, declaration)
-						wasDefaultUsed = true
-					}
-					default: {
-						showError(TypeRestrictionsErrorMessages.Unknown_Restriction, restriction)
-					}
-				}
-			}
-		}
+	
+	override handleActivationCondition(Declaration declaration) {
+		return declaration instanceof Usertype
 	}
 
-	def handleAbstractRestriction(Restriction restriction, boolean wasAbstractUsed) {
+	override handleAbstractRestriction(Restriction restriction, Declaration declaration) {
 		if (restriction.restrictionArguments.size != 0) {
 			showError(TypeRestrictionsErrorMessages.Abstract_Has_Args, restriction)
 		} else if (wasAbstractUsed) {
@@ -64,10 +30,10 @@ class UserTypeRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		}
 	}
 
-	def handleMonotoneRestriction(Restriction restriction, boolean wasMonotoneUsed, Usertype declaration) {
+	override handleMonotoneRestriction(Restriction restriction, Declaration declaration) {
 		if (!wasMonotoneUsed) {
 			if (restriction.restrictionArguments.size == 0) {
-				if (declaration.supertypes.size != 0) {
+				if ((declaration as Usertype).supertypes.size != 0) {
 					showError(TypeRestrictionsErrorMessages.Monotone_Usage, restriction)
 				}
 			} else {
@@ -78,7 +44,7 @@ class UserTypeRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		}
 	}
 
-	def handleDefaultRestriction(Restriction restriction, boolean wasDefaultUsed, Usertype declaration) {
+	override handleDefaultRestriction(Restriction restriction, Declaration declaration) {
 		if (!wasDefaultUsed) {
 			if (restriction.restrictionArguments.size() == 1) {
 				val restrictionArgument = restriction.restrictionArguments.get(0)
@@ -87,11 +53,11 @@ class UserTypeRestrictionValidator extends AbstractTypeRestrictionsValidator {
 				} else {
 					val restrictionArgumentType = (restrictionArgument.valueType).type
 					if (restrictionArgumentType instanceof Usertype) {
-						if (!isUsertypeValidDefaultArgument(restrictionArgumentType, declaration)) {
+						if (!isUsertypeValidDefaultArgument(restrictionArgumentType, declaration as Usertype)) {
 							showError(TypeRestrictionsErrorMessages.Default_Arg_Not_Singleton, restriction)
 						}
 					} else if (restrictionArgumentType instanceof Typedef) {
-						if (!isTypedefValidDefaultArgument(restrictionArgumentType, declaration)) {
+						if (!isTypedefValidDefaultArgument(restrictionArgumentType, declaration as Usertype)) {
 							showError(TypeRestrictionsErrorMessages.Default_Arg_Not_Singleton, restriction)
 						}
 					} else {
@@ -106,10 +72,11 @@ class UserTypeRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		}
 	}
 
-	def handleSingletonRestriction(Restriction restriction, boolean wasSingletonUsed, Usertype declaration) {
+	override handleSingletonRestriction(Restriction restriction, Declaration declaration) {
 		if (!wasSingletonUsed) {
 			if (restriction.restrictionArguments.size == 0) {
-				if (subtypesFinder.getSubtypes(declaration).size != 0) {
+				if (subtypesFinder.getSubtypes(declaration as Usertype).size != 0) {
+					System.out.println("AJDLFJLKJFKLDSJ§");
 					showError(TypeRestrictionsErrorMessages.Singleton_Usage, restriction)
 				}
 			} else {
@@ -120,10 +87,11 @@ class UserTypeRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		}
 	}
 
-	def handleUniqueRestriction(Restriction restriction, boolean wasUniqueUsed, Usertype declaration) {
+	override handleUniqueRestriction(Restriction restriction, Declaration declaration) {
 		if (!wasUniqueUsed) {
 			if (restriction.restrictionArguments.size == 0) {
-				if ((declaration.supertypes.size != 0) || (subtypesFinder.getSubtypes(declaration).size != 0)) {
+				if (((declaration as Usertype).supertypes.size != 0) ||
+					(subtypesFinder.getSubtypes(declaration as Usertype).size != 0)) {
 					showError(TypeRestrictionsErrorMessages.Unique_Usage, restriction)
 				}
 			} else {

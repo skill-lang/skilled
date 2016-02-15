@@ -105,7 +105,7 @@ class TypeHintsValidator extends AbstractSKilLValidator {
 		var wasIgnoreUsed = false
 		var wasPragmaUsed = false
 		for (hint : usertype.hints) {
-			switch (hint.hintName) {
+			switch (hint.hintName.toLowerCase) {
 				case 'owner': {
 					if (!wasOwnerUsed) {
 						validateOwnerHint(hint, usertype)
