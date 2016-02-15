@@ -92,12 +92,12 @@ public class ToolView extends ViewPart {
         shell = parent.getShell();
 
         buildToolContextMenu(buildToollist());
-        setFocus();
         makeActions();
         contributeToActionBars();
 
         ToolViewListener tvl = new ToolViewListener(this);
         tvl.initPartListener(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage());
+        setFocus();
     }
 
     @Override
@@ -470,11 +470,19 @@ public class ToolView extends ViewPart {
         WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
         if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
             String newToolName = skillToolWizard.getToolNewName();
-            Tool cloneTool = allToolList.stream().filter(t -> t.getName().equals(skillToolWizard.getCloneToolName()))
-                    .findFirst().get();
+            Tool cloneTool;
+            try {
+                cloneTool = allToolList.stream().filter(t -> t.getName().equals(skillToolWizard.getCloneToolName()))
+                        .findFirst().get();
+            } catch (NoSuchElementException e) {
+                showMessage("Could not create tool.");
+                return;
+            }
             if (newToolName != null) {
-                if (!ToolUtil.cloneTool(activeProject, cloneTool, newToolName, skillFile))
+                if (!ToolUtil.cloneTool(activeProject, cloneTool, newToolName, skillFile)) {
                     showMessage("Could not create tool.");
+                    return;
+                }
                 refresh();
             }
         }

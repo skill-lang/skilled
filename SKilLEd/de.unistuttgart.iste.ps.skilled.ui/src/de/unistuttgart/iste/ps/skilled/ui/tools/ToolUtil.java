@@ -66,7 +66,6 @@ public final class ToolUtil {
             MainClass.start(arguments);
             return true;
         } catch (Throwable t) {
-            t.printStackTrace(System.out);
             return false;
         }
     }
@@ -343,29 +342,21 @@ public final class ToolUtil {
         while (sk.Tools().stream().anyMatch(t -> t.getName().equals(newName + addendum))) {
             addendum = String.valueOf(++counter);
         }
-        String newNameForTool = newName + counter;
+        String newNameForTool = newName + addendum;
         value &= createTool(newNameForTool, project);
-        System.out.println("1 " + value);
         for (Type type : tool.getTypes()) {
             value &= addTypeToTool(newNameForTool, project, getActualName(type.getName()));
-            System.out.println("2 " + value);
             for (Hint h : type.getTypeHints()) {
                 value &= addTypeHint(newNameForTool, project, getActualName(type.getName()), h.getName());
-                System.out.println("2 " + value);
-
             }
             for (Field f : type.getFields()) {
                 value &= addField(newNameForTool, project, getActualName(type.getName()), getActualName(f.getName()));
-                System.out.println("3 " + value);
                 for (Hint h : f.getFieldHints()) {
                     value &= addFieldHint(newNameForTool, project, getActualName(type.getName()), getActualName(f.getName()),
                             h.getName());
-                    System.out.println("4 " + value);
-
                 }
             }
         }
-        System.out.println("5 " + (tool.getGenerator().getExecEnv() == null));
         return value && setDefaults(newNameForTool, project, tool.getGenerator().getExecEnv(), tool.getGenerator().getPath(),
                 tool.getLanguage(), tool.getModule(), tool.getOutPath());
     }
