@@ -50,6 +50,7 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
 public class ToolView extends ViewPart {
 
     private Action createToolAction;
+    private Action cloneToolAction;
     private FileChangeAction fileChangeAction = new FileChangeAction(this);
 
     private String path = "";
@@ -112,8 +113,10 @@ public class ToolView extends ViewPart {
         if (!parent.isDisposed()) {
             clearLists();
             toolTabItem.dispose();
-            typeTabItem.dispose();
-            fieldTabItem.dispose();
+            if (typeTabItem != null)
+                typeTabItem.dispose();
+            if (fieldTabItem != null)
+                fieldTabItem.dispose();
             buildToolContextMenu(buildToollist());
             tabFolder.setSelection(toolTabItem);
         }
@@ -414,6 +417,7 @@ public class ToolView extends ViewPart {
 
     private void fillLocalToolBar(IToolBarManager manager) {
         manager.add(createToolAction);
+        manager.add(cloneToolAction);
     }
 
     private void makeActions() {
@@ -424,7 +428,16 @@ public class ToolView extends ViewPart {
             }
         };
         createToolAction.setText("Create Tool");
-        createToolAction.setToolTipText("Create Tool tooltip");
+        createToolAction.setToolTipText("opens a wizard to create a new tool");
+
+        cloneToolAction = new Action() {
+            @Override
+            public void run() {
+                cloneToolDialog();
+            }
+        };
+        cloneToolAction.setText("Clone Tool");
+        cloneToolAction.setToolTipText("opens a wizard to clone an existing tool.");
     }
 
     /**
@@ -438,10 +451,28 @@ public class ToolView extends ViewPart {
         if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
             String newToolName = sKilLToolWizard.getToolNewName();
             if (newToolName != null) {
-
-                if (!ToolUtil.createTool(newToolName, activeProject)) {
+                if (!ToolUtil.createTool(newToolName, activeProject))
                     showMessage("Could not create tool.");
+                readToolBinaryFile();
+                if (sKilLToolWizard.getAddAllCheckboxState()) {
+                    Tool tool = skillFile.Tools().stream().filter(t -> t.getName().equals(newToolName)).findFirst().get();
+                    ToolUtil.addAllToTool(skillFile, activeProject, tool);
                 }
+                refresh();
+            }
+        }
+    }
+
+    public void cloneToolDialog() {
+        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(allToolList);
+        WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
+        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+            String newToolName = skillToolWizard.getToolNewName();
+            Tool cloneTool = allToolList.stream().filter(t -> t.getName().equals(skillToolWizard.getCloneToolName()))
+                    .findFirst().get();
+            if (newToolName != null) {
+                if (!ToolUtil.cloneTool(activeProject, cloneTool, newToolName, skillFile))
+                    showMessage("Could not create tool.");
                 refresh();
             }
         }

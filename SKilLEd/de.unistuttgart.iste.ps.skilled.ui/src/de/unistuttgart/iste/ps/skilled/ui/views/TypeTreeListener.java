@@ -94,21 +94,14 @@ public class TypeTreeListener {
 
                     if (null != type) {
                         System.out.println(type.getName());
-                        System.out.println("1");
                         if (((TreeItem) event.item).getChecked()) {
                             // if the user checks the checkbox add the selected type and all its fields and hints
                             System.out.println("type added");
-                            System.out.println("...");
                             ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
                                     ToolUtil.getActualName(type.getName()));
-                            System.out.println(",,,");
                             ToolUtil.addAllTypeHints(toolview.getActiveProject(), toolview.getActiveTool(), type);
-                            System.out.println("999");
-                            ToolUtil.AddAllFields(toolview.getActiveProject(), toolview.getActiveTool(), type);
-
-                            System.out.println(3);
+                            ToolUtil.addAllFields(toolview.getActiveProject(), toolview.getActiveTool(), type);
                             toolview.reloadTypelist();
-                            System.out.println("4");
                         } else {
                             // if the user unchecks the checkbox remove the selected type and all its fields and hints
                             System.out.println("type remove");

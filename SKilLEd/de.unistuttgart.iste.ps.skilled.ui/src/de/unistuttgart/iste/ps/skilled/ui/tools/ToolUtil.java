@@ -66,6 +66,7 @@ public final class ToolUtil {
             MainClass.start(arguments);
             return true;
         } catch (Throwable t) {
+            t.printStackTrace(System.out);
             return false;
         }
     }
@@ -334,32 +335,38 @@ public final class ToolUtil {
      *            The skillFile object containing the type definitions.
      * @return true if cloning was successful.
      */
-    public static boolean cloneTool(IProject project, Tool tool, SkillFile sk) {
+    public static boolean cloneTool(IProject project, Tool tool, String newToolName, SkillFile sk) {
         boolean value = true;
-        final String newName = tool.getName() + " - Copy";
+        final String newName = newToolName;
         addendum = "";
         int counter = 0;
         while (sk.Tools().stream().anyMatch(t -> t.getName().equals(newName + addendum))) {
             addendum = String.valueOf(++counter);
         }
-        String newToolName = newName + counter;
-        value &= createTool(newToolName, project);
+        String newNameForTool = newName + counter;
+        value &= createTool(newNameForTool, project);
+        System.out.println("1 " + value);
         for (Type type : tool.getTypes()) {
-            String typename = type.getName().split(" ")[1];
-            value &= addTypeToTool(newToolName, project, typename);
+            value &= addTypeToTool(newNameForTool, project, getActualName(type.getName()));
+            System.out.println("2 " + value);
             for (Hint h : type.getTypeHints()) {
-                value &= addTypeHint(newToolName, project, typename, h.getName());
+                value &= addTypeHint(newNameForTool, project, getActualName(type.getName()), h.getName());
+                System.out.println("2 " + value);
+
             }
             for (Field f : type.getFields()) {
-                String[] splits = f.getName().split(" ");
-                String fieldname = splits.length > 1 ? splits[1] : splits[0];
-                value &= addField(newToolName, project, typename, fieldname);
+                value &= addField(newNameForTool, project, getActualName(type.getName()), getActualName(f.getName()));
+                System.out.println("3 " + value);
                 for (Hint h : f.getFieldHints()) {
-                    value &= addFieldHint(newToolName, project, typename, fieldname, h.getName());
+                    value &= addFieldHint(newNameForTool, project, getActualName(type.getName()), getActualName(f.getName()),
+                            h.getName());
+                    System.out.println("4 " + value);
+
                 }
             }
         }
-        return value && setDefaults(newToolName, project, tool.getGenerator().getExecEnv(), tool.getGenerator().getPath(),
+        System.out.println("5 " + (tool.getGenerator().getExecEnv() == null));
+        return value && setDefaults(newNameForTool, project, tool.getGenerator().getExecEnv(), tool.getGenerator().getPath(),
                 tool.getLanguage(), tool.getModule(), tool.getOutPath());
     }
 
@@ -431,7 +438,7 @@ public final class ToolUtil {
      * @param type
      *            - the type containing the fields
      */
-    public static void AddAllFields(IProject project, Tool tool, Type type) {
+    public static void addAllFields(IProject project, Tool tool, Type type) {
         for (Field toAdd : type.getFields()) {
             addField(tool.getName(), project, getActualName(type.getName()), getActualName(toAdd.getName()));
             addAllFieldHints(project, tool, type, toAdd);
@@ -503,10 +510,7 @@ public final class ToolUtil {
      *            - the type to delete
      */
     public static void removeTypeAndAllSubtypes(IProject project, Tool tool, Type type) {
-        System.out.println(type.getExtends().size());
         for (Type ty : tool.getTypes()) {
-            System.out.println(ty.getName());
-            System.out.println(ty.getExtends().size());
             if (ty.getExtends().size() > 0 && ty.getExtends().contains(type.getName())) {
                 System.out.println("subtypes");
                 removeTypeAndAllSubtypes(project, tool, ty);
@@ -514,6 +518,14 @@ public final class ToolUtil {
             ToolUtil.removeTypeFromTool(tool.getName(), project, type.getName());
         }
 
+    }
+
+    public static void addAllToTool(SkillFile skillFile, IProject project, Tool tool) {
+        for (Type type : skillFile.Types()) {
+            ToolUtil.addTypeToTool(tool.getName(), project, getActualName(type.getName()));
+            ToolUtil.addAllTypeHints(project, tool, type);
+            ToolUtil.addAllFields(project, tool, type);
+        }
     }
 
 }

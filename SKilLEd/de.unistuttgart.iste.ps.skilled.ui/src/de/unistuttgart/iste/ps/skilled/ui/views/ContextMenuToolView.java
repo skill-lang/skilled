@@ -52,7 +52,8 @@ public class ContextMenuToolView {
                 cloneToolItem.addSelectionListener(new SelectionListener() {
                     @Override
                     public void widgetSelected(SelectionEvent arg0) {
-                        ToolUtil.cloneTool(toolView.getActiveProject(), toolView.getActiveTool(), toolView.getSkillFile());
+                        ToolUtil.cloneTool(toolView.getActiveProject(), toolView.getActiveTool(),
+                                toolView.getActiveTool().getName(), toolView.getSkillFile());
                         toolView.refresh();
                     }
 

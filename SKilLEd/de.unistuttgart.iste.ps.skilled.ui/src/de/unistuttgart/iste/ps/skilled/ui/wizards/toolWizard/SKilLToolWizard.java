@@ -1,15 +1,29 @@
 package de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 
+import de.unistuttgart.iste.ps.skillls.tools.Tool;
 
+
+/**
+ * creates the wizards used in SKilLEd
+ * 
+ * @@author Ken Singer
+ *
+ */
 public class SKilLToolWizard extends Wizard {
 
     private WizardOption wizardOption;
     protected SKilLNewToolWizardPage pageNewTool;
+    protected boolean addAllcheckboxState;
+    protected SKilLCloneToolWizardPage cloneTool;
     protected SKilLRenameToolWizardPage pageRenameTool;
     private String name;
+    private ArrayList<Tool> toolList;
+    private String cloneToolName;
 
     /**
      * Default Wizard with create new tool option.
@@ -24,6 +38,12 @@ public class SKilLToolWizard extends Wizard {
         this();
         this.wizardOption = option;
         this.name = name;
+    }
+
+    public SKilLToolWizard(ArrayList<Tool> toolList) {
+        super();
+        this.toolList = toolList;
+        this.wizardOption = WizardOption.CLONE;
     }
 
     @Override
@@ -43,7 +63,8 @@ public class SKilLToolWizard extends Wizard {
                 addPage(pageRenameTool);
                 break;
             case CLONE:
-                // TODO: Clone Tool
+                cloneTool = new SKilLCloneToolWizardPage(toolList);
+                addPage(cloneTool);
                 break;
         }
     }
@@ -53,12 +74,14 @@ public class SKilLToolWizard extends Wizard {
         switch (wizardOption) {
             case CREATE:
                 this.name = pageNewTool.getTbNameText();
-                return true;
+                this.addAllcheckboxState = pageNewTool.getAddAllCheckboxState();
+                break;
             case RENAME:
                 this.name = pageRenameTool.getTbNameText();
                 break;
             case CLONE:
-                // TODO: Clone Tool
+                this.name = cloneTool.getTbNameText();
+                this.cloneToolName = cloneTool.getDropDownText();
                 break;
         }
         return true;
@@ -68,7 +91,15 @@ public class SKilLToolWizard extends Wizard {
         MessageDialog.openInformation(getShell(), "Tool View", message);
     }
 
+    public String getCloneToolName() {
+        return this.cloneToolName;
+    }
+
     public String getToolNewName() {
         return this.name;
+    }
+
+    public boolean getAddAllCheckboxState() {
+        return this.addAllcheckboxState;
     }
 }
