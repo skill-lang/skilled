@@ -52,8 +52,13 @@ public class ContextMenuToolView {
                 cloneToolItem.addSelectionListener(new SelectionListener() {
                     @Override
                     public void widgetSelected(SelectionEvent arg0) {
-                        ToolUtil.cloneTool(toolView.getActiveProject(), toolView.getActiveTool(),
-                                toolView.getActiveTool().getName(), toolView.getSkillFile());
+                        SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.RENAME, toollist.getItem(selected));
+                        WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), newWizard);
+
+                        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+                            ToolUtil.cloneTool(toolView.getActiveProject(), toolView.getActiveTool(),
+                                    newWizard.getToolNewName(), toolView.getSkillFile());
+                        }
                         toolView.refresh();
                     }
 

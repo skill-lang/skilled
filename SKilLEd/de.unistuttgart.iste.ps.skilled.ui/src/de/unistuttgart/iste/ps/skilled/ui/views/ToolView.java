@@ -97,12 +97,13 @@ public class ToolView extends ViewPart {
 
         ToolViewListener tvl = new ToolViewListener(this);
         tvl.initPartListener(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage());
+
         setFocus();
     }
 
     @Override
     public void setFocus() {
-        tabFolder.setFocus();
+        parent.setFocus();
     }
 
     /**
