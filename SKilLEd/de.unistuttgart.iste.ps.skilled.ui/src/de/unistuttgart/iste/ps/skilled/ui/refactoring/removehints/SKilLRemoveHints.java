@@ -12,8 +12,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
@@ -38,17 +43,21 @@ public class SKilLRemoveHints {
 	 */
 	public void runFromMenu() {
 		
+	    final String linebreak = System.lineSeparator();
 		String fCurrentContents = "";
 		IWorkbench wb = PlatformUI.getWorkbench();
 		IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 		IEditorPart editor = page.getActiveEditor();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        IPath basePath = root.getLocation();
         
 		// Checks if there is an editor open
 		if (editor != null) {
 			IEditorInput input = editor.getEditorInput();
 			// Finds path of the active file in the editor
 			IPath path = ((FileEditorInput) input).getPath();
+			String projectName = path.segment(basePath.segmentCount());
 			NullProgressMonitor npm = new NullProgressMonitor();
 			// Saves any un-saved changes
 			editor.doSave(npm);
@@ -63,17 +72,17 @@ public class SKilLRemoveHints {
 					while ((line = br.readLine()) != null) {
 						// Skips all lines starting with "!"
 						if (!line.trim().startsWith("!")) {
-							fCurrentContents += line + "\n";
+							fCurrentContents += line + linebreak;
 						}
 					}
 					br.close();
 				} catch (IOException e) {
 					StringBuilder sb = new StringBuilder("Error: ");
 					sb.append(e.getMessage());
-					sb.append("\n");
+					sb.append(linebreak);
 					for (StackTraceElement ste : e.getStackTrace()) {
 						sb.append(ste.toString());
-						sb.append("\n");
+						sb.append(linebreak);
 					}
 					JTextArea jta = new JTextArea(sb.toString());
 					JScrollPane jsp = new JScrollPane(jta) {
@@ -99,13 +108,14 @@ public class SKilLRemoveHints {
 				fw.write(fCurrentContents);
 				fw.close();
 				fCurrentContents = "";
+				root.getProject(projectName).refreshLocal(IResource.DEPTH_INFINITE, npm);
 			} catch (IOException e) {
 				StringBuilder sb = new StringBuilder("Error: ");
 				sb.append(e.getMessage());
-				sb.append("\n");
+				sb.append(linebreak);
 				for (StackTraceElement ste : e.getStackTrace()) {
 					sb.append(ste.toString());
-					sb.append("\n");
+					sb.append(linebreak);
 				}
 				JTextArea jta = new JTextArea(sb.toString());
 				JScrollPane jsp = new JScrollPane(jta) {
@@ -120,7 +130,9 @@ public class SKilLRemoveHints {
 					}
 				};
 				JOptionPane.showMessageDialog(null, jsp, "Error", JOptionPane.ERROR_MESSAGE);
-			}
+			} catch (CoreException e) {
+                e.printStackTrace();
+            }
 		} 
 		// Error message if there no editor is open.
 		else {

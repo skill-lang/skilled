@@ -14,9 +14,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -40,6 +43,8 @@ public class SKilLRemoveProjectHints {
      * Remove hints from the file in the active editor window.
      */
     public void runFromMenu() {
+
+        final String linebreak = System.lineSeparator();
         String fCurrentContents = "";
         IWorkbench wb = PlatformUI.getWorkbench();
         IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
@@ -53,8 +58,7 @@ public class SKilLRemoveProjectHints {
             IEditorInput input = editor.getEditorInput();
             // Finds path of the active file in the editor
             IPath path = ((FileEditorInput) input).getPath();
-            IPath shortPath = new Path(path.toString().substring(basePath.toString().length()));
-            String projectName = shortPath.segment(0);
+            String projectName = path.segment(basePath.segmentCount());
             LinkedList<java.io.File> fileList = new LinkedList<java.io.File>();
             fileList.add(new File(basePath.append(projectName).toString()));
             int index = 0;
@@ -67,7 +71,7 @@ public class SKilLRemoveProjectHints {
                 index++;
             }
             for (File file : fileList) {
-                if (!file.getPath().endsWith(".skill"))
+                if (!file.getName().endsWith(".skill"))
                     continue;
                 if (file.exists()) {
                     try {
@@ -77,17 +81,17 @@ public class SKilLRemoveProjectHints {
                         while ((line = br.readLine()) != null) {
                             // Skips all lines starting with "!"
                             if (!line.trim().startsWith("!")) {
-                                fCurrentContents += line + "\n";
+                                fCurrentContents += line + linebreak;
                             }
                         }
                         br.close();
                     } catch (IOException e) {
                         StringBuilder sb = new StringBuilder("Error: ");
                         sb.append(e.getMessage());
-                        sb.append("\n");
+                        sb.append(linebreak);
                         for (StackTraceElement ste : e.getStackTrace()) {
                             sb.append(ste.toString());
-                            sb.append("\n");
+                            sb.append(linebreak);
                         }
                         JTextArea jta = new JTextArea(sb.toString());
                         JScrollPane jsp = new JScrollPane(jta) {
@@ -112,13 +116,15 @@ public class SKilLRemoveProjectHints {
                     fw.write(fCurrentContents);
                     fw.close();
                     fCurrentContents = "";
+                    root.getProject(projectName).refreshLocal(IResource.DEPTH_INFINITE,
+                            new NullProgressMonitor());
                 } catch (IOException e) {
                     StringBuilder sb = new StringBuilder("Error: ");
                     sb.append(e.getMessage());
-                    sb.append("\n");
+                    sb.append(linebreak);
                     for (StackTraceElement ste : e.getStackTrace()) {
                         sb.append(ste.toString());
-                        sb.append("\n");
+                        sb.append(linebreak);
                     }
                     JTextArea jta = new JTextArea(sb.toString());
                     JScrollPane jsp = new JScrollPane(jta) {
@@ -133,6 +139,8 @@ public class SKilLRemoveProjectHints {
                         }
                     };
                     JOptionPane.showMessageDialog(null, jsp, "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (CoreException e) {
+                    e.printStackTrace();
                 }
             }
             // Error message if there no editor is open.
