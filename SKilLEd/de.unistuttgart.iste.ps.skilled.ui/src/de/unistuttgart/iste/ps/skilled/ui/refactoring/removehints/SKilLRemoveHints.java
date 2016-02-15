@@ -49,6 +49,7 @@ public class SKilLRemoveHints {
 		IWorkbenchWindow window = wb.getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 		IEditorPart editor = page.getActiveEditor();
+		page.saveAllEditors(false);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         IPath basePath = root.getLocation();
         
@@ -59,8 +60,6 @@ public class SKilLRemoveHints {
 			IPath path = ((FileEditorInput) input).getPath();
 			String projectName = path.segment(basePath.segmentCount());
 			NullProgressMonitor npm = new NullProgressMonitor();
-			// Saves any un-saved changes
-			editor.doSave(npm);
 			File f = path.toFile();
 			// Double checks that the file has not been moved or deleted in the meantime.
 			if (f.exists()) {
@@ -109,6 +108,7 @@ public class SKilLRemoveHints {
 				fw.close();
 				fCurrentContents = "";
 				root.getProject(projectName).refreshLocal(IResource.DEPTH_INFINITE, npm);
+				page.saveAllEditors(false);
 			} catch (IOException e) {
 				StringBuilder sb = new StringBuilder("Error: ");
 				sb.append(e.getMessage());

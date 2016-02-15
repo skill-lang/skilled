@@ -118,6 +118,7 @@ public class SKilLRemoveProjectHints {
                     fCurrentContents = "";
                     root.getProject(projectName).refreshLocal(IResource.DEPTH_INFINITE,
                             new NullProgressMonitor());
+                    page.saveAllEditors(false);
                 } catch (IOException e) {
                     StringBuilder sb = new StringBuilder("Error: ");
                     sb.append(e.getMessage());
