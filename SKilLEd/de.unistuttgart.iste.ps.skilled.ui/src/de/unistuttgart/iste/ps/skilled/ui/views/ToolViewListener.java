@@ -20,7 +20,7 @@ import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
  * This class is used to initialize listeners for the toolview
  * 
  * @author Ken Singer
- *
+ * @category GUI
  */
 public class ToolViewListener {
     private ToolView toolview;

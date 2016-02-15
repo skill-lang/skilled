@@ -17,6 +17,13 @@ import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.SKilLToolWizard;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
 
 
+/**
+ * Extracted class to create the context menu for the toolview.
+ * 
+ * @category GUI
+ * @author Nico Rusam
+ *
+ */
 public class ContextMenuToolView {
 
     ToolView toolView = null;

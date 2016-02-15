@@ -39,6 +39,8 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
 /**
  * Class to create the SKilL-Tool-Overview.
  * 
+ * @category GUI
+ * 
  * @author Ken Singer
  * @author Nico Russam
  * @author Marco Link
@@ -72,7 +74,7 @@ public class ToolView extends ViewPart {
     private Composite parent = null;
     private Shell shell;
 
-    SaveListofAllTools fSave;
+    private SaveListofAllTools fSave;
 
     @Override
     public void createPartControl(Composite parent) {
@@ -102,6 +104,12 @@ public class ToolView extends ViewPart {
         tabFolder.setFocus();
     }
 
+    /**
+     * Dispose and null <b>tabfolder</b>, <b>tabitem</b>, <b>typeTabItem</b>, <b>fieldTabItem</b>. Create a new contextmenu
+     * for the toolview.
+     * 
+     * @category Data Handling
+     */
     void refresh() {
         if (!parent.isDisposed()) {
             clearLists();
@@ -115,6 +123,8 @@ public class ToolView extends ViewPart {
 
     /**
      * reload the typelist after adding a type or hint to a tool
+     * 
+     * @category Data Handling
      */
     void reloadTypelist() {
         refresh();
@@ -127,8 +137,15 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * reload the fieldlist after adding a field or hint to a tooltype
+     * Reload the fieldlist after adding a field or hint to a tooltype
      * 
+     * <<<<<<< 88279dbe4e5d6546a66801fa541eb2d845f65c7c =======
+     * 
+     * @category Data Handling
+     * @category GUI
+     * @param type
+     *            >>>>>>> Add some comments to the toolview and add some console output for an performance issue in the
+     *            toolview #74
      */
     void reloadFieldList() {
         reloadTypelist();
@@ -136,6 +153,12 @@ public class ToolView extends ViewPart {
         tabFolder.setSelection(fieldTabItem);
     }
 
+    /**
+     * Clear the lists <b>allToolList</b>, <b>pathList</b>, <b>allTypeList</b> and null <b>typeListOfActualTool</b> and
+     * <b>typeHintListOfActualTool</b>.
+     * 
+     * @category Data Handling
+     */
     private void clearLists() {
         allToolList.clear();
         pathList.clear();
@@ -146,6 +169,8 @@ public class ToolView extends ViewPart {
 
     /**
      * Read the binary file of all tools.
+     * 
+     * @category Data Handling
      */
     private void readToolBinaryFile() {
         try {
@@ -180,6 +205,7 @@ public class ToolView extends ViewPart {
      * @param parent
      *            - {@link Composite}
      * @return {@link List}
+     * @category Data Handling
      */
     private List buildToollist() {
         readToolBinaryFile();
@@ -219,6 +245,7 @@ public class ToolView extends ViewPart {
      * 
      * @param activeTool
      *            - {@link Tool}
+     * @category GUI
      */
     void buildTypeTree() {
         Tree typeTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.SINGLE);
@@ -281,6 +308,7 @@ public class ToolView extends ViewPart {
      * 
      * @param tooltype
      *            - {@link Type}
+     * @category GUI
      */
     void buildFieldTree() {
         Tree fieldTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.FULL_SELECTION);
@@ -351,6 +379,7 @@ public class ToolView extends ViewPart {
      * 
      * @param toollist
      *            - {@link List}
+     * @category GUI
      */
     private void buildToolContextMenu(List toollist) {
         if (null != menu)
@@ -365,6 +394,7 @@ public class ToolView extends ViewPart {
      * 
      * @param directoryToDelete
      *            - the directory to delete
+     * @category Data Handling
      * @throws IOException
      */
     static void deleteDirectoryRecursivly(File directoryToDelete) {
@@ -399,6 +429,11 @@ public class ToolView extends ViewPart {
         createToolAction.setToolTipText("Create Tool tooltip");
     }
 
+    /**
+     * Creates a new tool.
+     * 
+     * @category Dialog
+     */
     private void createToolDialog() {
         final SKilLToolWizard sKilLToolWizard = new SKilLToolWizard();
         WizardDialog wizardDialog = new WizardDialog(shell, sKilLToolWizard);
@@ -414,54 +449,137 @@ public class ToolView extends ViewPart {
         }
     }
 
+    /**
+     * Show a message with the parameter string.
+     * 
+     * @category Dialog
+     * @param message
+     *            - Message which should be printed.
+     */
     private void showMessage(String message) {
         MessageDialog.openInformation(shell, "Tool View", message);
     }
 
+    /**
+     * Return the selected field.
+     * 
+     * @category Getter
+     * @return the selected {@link de.unistuttgart.iste.ps.skillls.tools.Field field}.
+     */
     Field getSelectedField() {
         return selectedField;
     }
 
+    /**
+     * Set the selected field.
+     * 
+     * @category Setter
+     * @param selectedField
+     *            the selected {@link de.unistuttgart.iste.ps.skillls.tools.Field field}.
+     */
     void setSelectedField(Field selectedField) {
         this.selectedField = selectedField;
     }
 
+    /**
+     * Get the selected type.
+     * 
+     * @category Getter
+     * @return the selected {@link de.unistuttgart.iste.ps.skillls.tools.Type type}
+     */
     Type getSelectedType() {
         return selectedType;
     }
 
+    /**
+     * Set the selected type.
+     * 
+     * @category Setter
+     * @param selectedType
+     *            the selected {@link de.unistuttgart.iste.ps.skillls.tools.Type type}.
+     */
     void setSelectedType(Type selectedType) {
         this.selectedType = selectedType;
     }
 
+    /**
+     * Get the active tool.
+     * 
+     * @category Getter
+     * @return the active {@link de.unistuttgart.iste.ps.skillls.tools.Tool tool}.
+     */
     Tool getActiveTool() {
         return activeTool;
     }
 
+    /**
+     * Set the active tool.
+     * 
+     * @category Setter
+     * @param activeTool
+     *            the active {@link de.unistuttgart.iste.ps.skillls.tools.Tool tool}.
+     */
     void setActiveTool(Tool activeTool) {
         this.activeTool = activeTool;
     }
 
+    /**
+     * Get the active project.
+     * 
+     * @category Getter
+     * @return the active {@link org.eclipse.core.resources.IProject project}.
+     */
     IProject getActiveProject() {
         return activeProject;
     }
 
+    /**
+     * Get a list of all tools.
+     * 
+     * @category Getter
+     * @return {@link java.util.ArrayList ArrayList} from type tool with all tools.
+     */
     ArrayList<Tool> getAllToolList() {
         return allToolList;
     }
 
+    /**
+     * Get the {@link org.eclipse.swt.custom.CTabItem CTabItem} for the fields.
+     * 
+     * @category Getter
+     * @return {@link org.eclipse.swt.custom.CTabItemt CTabItem}
+     */
     CTabItem getFieldTabItem() {
         return fieldTabItem;
     }
 
+    /**
+     * Set the {@link org.eclipse.swt.custom.CTabItem CTabItem} for the fields.
+     * 
+     * @category Setter
+     * @param fieldTabItem
+     *            the CTabItem for the fields.
+     */
     void setFieldTabItem(CTabItem fieldTabItem) {
         this.fieldTabItem = fieldTabItem;
     }
 
+    /**
+     * Get the shell.
+     * 
+     * @category Getter
+     * @return {@link org.eclipse.swt.widgets.Shell shell}
+     */
     public Shell getShell() {
         return shell;
     }
 
+    /**
+     * Get skill file.
+     * 
+     * @category Getter
+     * @return {@link de.unistuttgart.iste.ps.skillls.tools.api.SkillFile skillfile}
+     */
     public SkillFile getSkillFile() {
         return skillFile;
     }

@@ -21,7 +21,7 @@ import de.unistuttgart.iste.ps.skillls.tools.Type;
  * This class is used to initialize the Listeners for the fieldtree used in the toolview
  * 
  * @author Ken Singer
- *
+ * @category GUI
  */
 public class FieldTreeListener {
 
