@@ -38,22 +38,6 @@ public class TypeTreeListener {
      * @param typeTree
      */
     public void initTypeTreeListener(Tree typeTree) {
-        // add a selection listener to the typetree to determine the selected type
-        typeTree.addSelectionListener(new SelectionListener() {
-
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                if (((TreeItem) e.item).getData() instanceof Type)
-                    toolview.setSelectedType((Type) (((TreeItem) e.item).getData()));
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // no default
-
-            }
-        });
-
         // add a mouse listener to the typetree
         typeTree.addMouseListener(new MouseListener() {
 
@@ -67,11 +51,12 @@ public class TypeTreeListener {
                 // on mouseclick select type at selection index and build the fieldtree
                 typeTree.addSelectionListener(new SelectionListener() {
                     @Override
-                    public void widgetSelected(SelectionEvent arg0) {
+                    public void widgetSelected(SelectionEvent e) {
                         try {
+                            toolview.setSelectedType((Type) (((TreeItem) e.item).getData()));
                             toolview.buildFieldTree();
-                        } catch (ClassCastException e) {
-                            // hint was selected
+                        } catch (ClassCastException ex) {
+                            ex.getMessage();
                         }
                     }
 
@@ -129,8 +114,7 @@ public class TypeTreeListener {
                             System.out.println("type remove");
                             ToolUtil.removeAllFields(toolview.getActiveProject(), toolview.getActiveTool(), type);
                             ToolUtil.removeAllTypeHints(toolview.getActiveProject(), toolview.getActiveTool(), type);
-                            ToolUtil.removeTypeFromTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                    ToolUtil.getActualName(type.getName()));
+                            ToolUtil.removeTypeAndAllSubtypes(toolview.getActiveProject(), toolview.getActiveTool(), type);
                             toolview.reloadTypelist();
                         }
                     }

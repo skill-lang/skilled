@@ -492,4 +492,28 @@ public final class ToolUtil {
         }
     }
 
+    /**
+     * removes a type and all the types that inherit from it
+     * 
+     * @param project
+     *            - the project, where the tool originates in
+     * @param tool
+     *            - the tool, which contains the type
+     * @param type
+     *            - the type to delete
+     */
+    public static void removeTypeAndAllSubtypes(IProject project, Tool tool, Type type) {
+        System.out.println(type.getExtends().size());
+        for (Type ty : tool.getTypes()) {
+            System.out.println(ty.getName());
+            System.out.println(ty.getExtends().size());
+            if (ty.getExtends().size() > 0 && ty.getExtends().contains(type.getName())) {
+                System.out.println("subtypes");
+                removeTypeAndAllSubtypes(project, tool, ty);
+            }
+            ToolUtil.removeTypeFromTool(tool.getName(), project, type.getName());
+        }
+
+    }
+
 }

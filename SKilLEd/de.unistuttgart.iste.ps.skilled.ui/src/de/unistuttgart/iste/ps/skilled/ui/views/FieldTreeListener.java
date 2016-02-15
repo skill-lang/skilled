@@ -43,8 +43,12 @@ public class FieldTreeListener {
         fieldTree.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if (((TreeItem) e.item).getData() instanceof Field)
+                try {
                     toolview.setSelectedField((Field) (((TreeItem) e.item).getData()));
+                } catch (ClassCastException ex) {
+                    ex.getMessage();
+                    // item was a hint
+                }
             }
 
             @Override

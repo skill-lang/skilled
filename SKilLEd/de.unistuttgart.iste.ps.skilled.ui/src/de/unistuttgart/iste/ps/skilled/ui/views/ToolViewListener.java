@@ -101,12 +101,14 @@ public class ToolViewListener {
 
             @Override
             public void partClosed(IWorkbenchPart part) {
-                IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                        .getActivePage().getActiveEditor().getEditorInput();
-                IProject newActiveProject = file.getFile().getProject();
+                if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor() != null) {
+                    IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                            .getActivePage().getActiveEditor().getEditorInput();
+                    IProject newActiveProject = file.getFile().getProject();
 
-                if (!toolview.getActiveProject().equals(newActiveProject))
-                    toolview.refresh();
+                    if (!toolview.getActiveProject().equals(newActiveProject))
+                        toolview.refresh();
+                }
             }
 
             @Override
