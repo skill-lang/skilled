@@ -535,7 +535,7 @@ public class Editor {
                 Type type = null;
                 // type is not in tool
                 if (tool.getTypes().stream().noneMatch(ty -> ty.getName().equals(typeName))) {
-                    type = skillFile.Types().make(t.getComment(), new ArrayList<>(), new ArrayList<>(), t.getFile(),
+                    type = skillFile.Types().make(t.getComment(), (ArrayList<String>) t.getExtends().clone(), new ArrayList<>(), t.getFile(),
                             t.getName(), t, new ArrayList<>(), new ArrayList<>());
                 }
                 // type is enum
@@ -592,7 +592,7 @@ public class Editor {
                 if (tool.getTypes().stream().filter(t -> t.getName().equals(candidate.getName())).count() > 0) {
                     break;
                 }
-                tool.getTypes().add(skillFile.Types().make(candidate.getComment(), candidate.getExtends(), new ArrayList<>(),
+                tool.getTypes().add(skillFile.Types().make(candidate.getComment(), (ArrayList<String>) candidate.getExtends().clone(), new ArrayList<>(),
                         candidate.getFile(), candidate.getName(), candidate, candidate.getRestrictions(), new ArrayList<>()));
                 break;
             }
@@ -616,7 +616,8 @@ public class Editor {
             }
         }
         List<String> types = tool.getTypes().stream().map(Type::getName).collect(Collectors.toList());
-        for (String extension : type.getExtends()) {
+        for (int j = 0; j < type.getExtends().size(); j++) {
+            String extension = type.getExtends().get(j);
             if (types.contains(extension)) {
                 continue;
             }
@@ -635,7 +636,7 @@ public class Editor {
                 if (tool.getTypes().stream().map(Type::getName).collect(Collectors.toList()).contains(t.getName())) {
                     continue;
                 }
-                tool.getTypes().add(skillFile.Types().make(t.getComment(), t.getExtends(), new ArrayList<>(), t.getFile(),
+                tool.getTypes().add(skillFile.Types().make(t.getComment(), (ArrayList<String>) t.getExtends().clone(), new ArrayList<>(), t.getFile(),
                         t.getName(), t, t.getRestrictions(), new ArrayList<>()));
                 if (t.getExtends().size() > 0) {
                     addExtensions(tool, t);
