@@ -49,34 +49,32 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
  * @author Leslie Tso
  */
 public class ToolView extends ViewPart {
-
+    // Actions
     private Action createToolAction;
     private Action cloneToolAction;
     private Action removeHintAction;
-    private FileChangeAction fileChangeAction = new FileChangeAction(this);
-
-    private String path = "";
-
-    private ArrayList<Tool> allToolList = new ArrayList<Tool>();
-    private ArrayList<Type> allTypeList = new ArrayList<Type>();
-    private ArrayList<Type> typeListOfActualTool = new ArrayList<Type>();
-    private ArrayList<Hint> typeHintListOfActualTool = new ArrayList<Hint>();
-    private ArrayList<String> pathList = new ArrayList<String>();
-
-    private Composite parent = null;
-    private Shell shell;
+    private final FileChangeAction fileChangeAction = new FileChangeAction(this);
+    // SWT
     private CTabFolder tabFolder;
     private CTabItem toolTabItem = null;
     private CTabItem typeTabItem = null;
     private CTabItem fieldTabItem = null;
-
+    private Composite parent = null;
+    private Shell shell;
+    // Memory
     private SkillFile skillFile = null;
-    private IProject activeProject = null;
     private Tool activeTool = null;
     private Type selectedType = null;
     private Field selectedField = null;
-
+    private IProject activeProject = null;
+    private String path = "";
     private SaveListofAllTools fSave;
+    // Lists
+    private final ArrayList<Tool> allToolList = new ArrayList<Tool>();
+    private final ArrayList<Type> allTypeList = new ArrayList<Type>();
+    private final ArrayList<String> pathList = new ArrayList<String>();
+    private ArrayList<Type> typeListOfActualTool = new ArrayList<Type>();
+    private ArrayList<Hint> typeHintListOfActualTool = new ArrayList<Hint>();
 
     @Override
     public void createPartControl(Composite parent) {
@@ -92,7 +90,7 @@ public class ToolView extends ViewPart {
 
         buildToolContextMenu(buildToollist());
         makeActions();
-        contributeToActionBars();
+        fillLocalToolBar();
 
         ToolViewListener tvl = new ToolViewListener(this);
         tvl.initPartListener(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage());
@@ -446,17 +444,25 @@ public class ToolView extends ViewPart {
         }
     }
 
-    private void contributeToActionBars() {
+    /**
+     * Add the buttons to the toolview.
+     * 
+     * @category GUI
+     * @param manager
+     */
+    private void fillLocalToolBar() {
         IActionBars bars = getViewSite().getActionBars();
-        fillLocalToolBar(bars.getToolBarManager());
-    }
-
-    private void fillLocalToolBar(IToolBarManager manager) {
+        IToolBarManager manager = bars.getToolBarManager();
         manager.add(createToolAction);
         manager.add(cloneToolAction);
         manager.add(removeHintAction);
     }
 
+    /**
+     * Actions for the buttons in the toolview.
+     * 
+     * @category GUI
+     */
     private void makeActions() {
         createToolAction = new Action() {
             @Override
