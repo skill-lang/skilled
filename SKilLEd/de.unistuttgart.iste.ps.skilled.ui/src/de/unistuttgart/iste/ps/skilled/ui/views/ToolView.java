@@ -7,10 +7,7 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -20,15 +17,11 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 import de.unistuttgart.iste.ps.skilled.ui.tools.export.SaveListofAllTools;
-import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.SKilLToolWizard;
-import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
 import de.unistuttgart.iste.ps.skillls.tools.Field;
 import de.unistuttgart.iste.ps.skillls.tools.Hint;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
@@ -50,9 +43,6 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
  */
 public class ToolView extends ViewPart {
     // Actions
-    private Action createToolAction;
-    private Action cloneToolAction;
-    private Action removeHintAction;
     private final FileChangeAction fileChangeAction = new FileChangeAction(this);
     // SWT
     private CTabFolder tabFolder;
@@ -89,8 +79,9 @@ public class ToolView extends ViewPart {
         shell = parent.getShell();
 
         buildToolContextMenu(buildToollist());
-        makeActions();
-        fillLocalToolBar();
+
+        ToolViewButtonInitializer tvbi = new ToolViewButtonInitializer(this);
+        tvbi.initialize();
 
         ToolViewListener tvl = new ToolViewListener(this);
         tvl.initPartListener(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage());
@@ -170,7 +161,7 @@ public class ToolView extends ViewPart {
      * 
      * @category Data Handling
      */
-    private void readToolBinaryFile() {
+    void readToolBinaryFile() {
         try {
             IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                     .getActiveEditor().getEditorInput();
@@ -445,139 +436,13 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Add the buttons to the toolview.
-     * 
-     * @category GUI
-     * @param manager
-     */
-    private void fillLocalToolBar() {
-        IActionBars bars = getViewSite().getActionBars();
-        IToolBarManager manager = bars.getToolBarManager();
-        manager.add(createToolAction);
-        manager.add(cloneToolAction);
-        manager.add(removeHintAction);
-    }
-
-    /**
-     * Actions for the buttons in the toolview.
-     * 
-     * @category GUI
-     */
-    private void makeActions() {
-        createToolAction = new Action() {
-            @Override
-            public void run() {
-                createToolDialog();
-            }
-        };
-        createToolAction.setText("Create Tool");
-        createToolAction.setToolTipText("opens a wizard to create a new tool");
-
-        cloneToolAction = new Action() {
-            @Override
-            public void run() {
-                cloneToolDialog();
-            }
-        };
-        cloneToolAction.setText("Clone Tool");
-        cloneToolAction.setToolTipText("opens a wizard to clone an existing tool.");
-
-        removeHintAction = new Action() {
-            @Override
-            public void run() {
-                removeHintsFromTools();
-            }
-        };
-        removeHintAction.setText("Remove Hints");
-        removeHintAction.setToolTipText("opens a wizard to remove hint from tools.");
-
-    }
-
-    /**
-     * Creates a new tool.
-     * 
-     * @category Dialog
-     */
-    private void createToolDialog() {
-        final SKilLToolWizard sKilLToolWizard = new SKilLToolWizard();
-        WizardDialog wizardDialog = new WizardDialog(shell, sKilLToolWizard);
-        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
-            String newToolName = sKilLToolWizard.getToolNewName();
-            if (newToolName != null) {
-                if (!ToolUtil.createTool(newToolName, activeProject))
-                    showMessage("Could not create tool.");
-                readToolBinaryFile();
-                if (sKilLToolWizard.getAddAllCheckboxState()) {
-                    Tool tool = skillFile.Tools().stream().filter(t -> t.getName().equals(newToolName)).findFirst().get();
-                    ToolUtil.addAllToTool(skillFile, activeProject, tool);
-                }
-                refresh();
-            }
-        }
-    }
-
-    /**
-     * opens the dialog to clone a existing tool
-     */
-    private void cloneToolDialog() {
-        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.CLONE, allToolList);
-        WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
-        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
-            String newToolName = skillToolWizard.getToolNewName();
-            Tool cloneTool;
-            try {
-                cloneTool = allToolList.stream().filter(t -> t.getName().equals(skillToolWizard.getCloneToolName()))
-                        .findFirst().get();
-            } catch (NoSuchElementException e) {
-                showMessage("Could not create tool.");
-                return;
-            }
-            if (newToolName != null) {
-                if (!ToolUtil.cloneTool(activeProject, cloneTool, newToolName, skillFile)) {
-                    showMessage("Could not create tool.");
-                    return;
-                }
-                refresh();
-            }
-        }
-    }
-
-    /**
-     * Open a wizard to select tools where hints should be deleted.
-     * 
-     * @category GUI
-     */
-    private void removeHintsFromTools() {
-        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.REMOVEHINTS, allToolList);
-        WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
-        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
-            ArrayList<Tool> removeHints = skillToolWizard.getRemoveHintsFromTools();
-            for (Tool tempTool : removeHints) {
-                System.out.println(tempTool.getName());
-                for (Type tempType : tempTool.getTypes()) {
-                    System.out.println(tempType.getName());
-                    for (Field tempField : tempType.getFields()) {
-                        System.out.println(tempField.getName());
-                        if (tempField.getFieldHints().size() > 0)
-                            System.out.println(
-                                    ToolUtil.removeAllFieldHints(this.activeProject, tempTool, tempType, tempField));
-                    }
-                    if (tempType.getTypeHints().size() > 0)
-                        System.out.println(ToolUtil.removeAllTypeHints(this.activeProject, tempTool, tempType));
-                }
-            }
-            this.refresh();
-        }
-    }
-
-    /**
      * Show a message with the parameter string.
      * 
      * @category Dialog
      * @param message
      *            - Message which should be printed.
      */
-    private void showMessage(String message) {
+    void showMessage(String message) {
         MessageDialog.openInformation(shell, "Tool View", message);
     }
 
