@@ -191,61 +191,6 @@ public class MainClassTest {
                 "generated" + File.separator + "java" + File.separator + "lib" + File.separator + "skill.jvm.common.jar")));
     }
 
-    @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
-    @Test
-    public void testListingOfAlteredTools() {
-        outStream = new ByteArrayOutputStream();
-        errStream = new ByteArrayOutputStream();
-        out = new PrintStream(outStream);
-        err = new PrintStream(errStream);
-
-        System.setOut(out);
-        System.setErr(err);
-
-        // Add random type so that the file is changed.
-        SecureRandom random = new SecureRandom();
-        String type = "a" + new BigInteger(130, random).toString(32);
-
-        try {
-            Files.write(Paths.get("resources" + File.separator + "Furniture.skill"), (type + " {}").getBytes(),
-                    StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            fail();
-        }
-
-        String[] args = new String[] { "-lsp", "resources", "twoTypeTool" };
-        MainClass.main(args);
-
-        String[] got = outStream.toString().trim().split("\n");
-        System.setOut(origOut);
-        System.setErr(origErr);
-        assertTrue("First line does not contain file.", got[1].trim().startsWith("resources" + File.separator));
-        assertTrue("SecondLine is not a type", got[2].trim().equals("Bathtub"));
-        assertTrue("Third line is not a empty", got[3].trim().isEmpty());
-        assertTrue("fourth line does not contain file.", got[4].trim().startsWith("resources" + File.separator));
-        assertEquals("fifth line is not a type", got[5].trim(), "Window");
-        int i = 6;
-        String line = "";
-        do {
-            if (i >= got.length || line == null) {
-                break;
-            }
-            line = got[i];
-            assertTrue("more output", line == null || line.trim().isEmpty());
-            i++;
-        } while (true);
-
-        try {
-            RandomAccessFile raf = new RandomAccessFile("resources" + File.separator + "Furniture.skill", "rw");
-            FileChannel channel = raf.getChannel();
-            channel = channel.truncate(channel.size() - type.length() - 3);
-            channel.close();
-            raf.close();
-        } catch (IOException e) {
-            fail();
-        }
-    }
-
     @Test
     public void testGenerateAll() {
         String builder = "lib" +
