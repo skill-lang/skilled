@@ -168,8 +168,13 @@ class TestBuiltInTypes {
   	
   	@Test
   	def void testIllegalConstants() {
-  		val issueCount = testIllegalConstants.parse.validate.size;
-  		
-  		Assert::assertTrue(issueCount == 3);
+  		var issueCount = 0
+  		for (i : testIllegalConstants.parse.validate) {
+  			if (i.message.contains("Only an Integer can be constant")) {
+  				issueCount++
+  				println(i)
+  			}
+  		}
+  		Assert::assertTrue(issueCount >= 3);
   	}
 }
