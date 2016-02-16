@@ -111,7 +111,7 @@ class TestDefaultFieldRestriction {
 	
 	@Test
 	def void testDefaultI8HexArg() {
-		assertTrue("A {@default(0x123B) i8 a;}".parse.validate.isNullOrEmpty)
+		assertTrue("A {@default(0x1B) i8 a;}".parse.validate.isNullOrEmpty)
 	}
 	
 	@Test

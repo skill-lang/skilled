@@ -157,7 +157,7 @@ class TestMaxFieldRestriction {
 	def void testMaxI8HexAndStringArgs() {
 		assertTrue('''
 			TypeA {
-				@max(0x123B, "inclusive") 
+				@max(0x1B, "inclusive") 
 				i8 a;
 			}   
 		'''.parse.validate.isNullOrEmpty)

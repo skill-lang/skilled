@@ -157,7 +157,7 @@ class TestMinFieldRestriction {
 	def void testMinI8HexAndStringArgs() {
 		assertTrue('''
 			TypeA {
-				@min(0x123B, "inclusive") 
+				@min(0x1B, "inclusive") 
 				i8 a;
 			}   
 		'''.parse.validate.isNullOrEmpty)
