@@ -6,6 +6,7 @@ package de.unistuttgart.iste.ps.skilled.ui.labeling
 import com.google.inject.Inject
 
 /**
+ * TODO Remove Me ?
  * Provides labels for EObjects.
  * 
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#label-provider

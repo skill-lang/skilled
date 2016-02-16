@@ -6,6 +6,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import org.eclipse.xtext.validation.Check
 
 /**
+ * Contains validation rules to check if reserved key words in SKilL are used as an identifier
  * @author Armin Hühneburg
  */
 class ReservedSKilLKeywordValidator extends AbstractSKilLValidator {

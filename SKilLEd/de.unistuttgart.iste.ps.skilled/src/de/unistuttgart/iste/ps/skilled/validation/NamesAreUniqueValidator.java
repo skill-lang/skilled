@@ -40,7 +40,7 @@ public class NamesAreUniqueValidator extends org.eclipse.xtext.validation.NamesA
 
 	@Override
 	protected List<EPackage> getEPackages() {
-		List<EPackage> result = new ArrayList<EPackage>();
+		List<EPackage> result = new ArrayList<>();
 		result.add(SKilLPackage.eINSTANCE);
 		return result;
 	}
@@ -91,7 +91,7 @@ public class NamesAreUniqueValidator extends org.eclipse.xtext.validation.NamesA
 	 * @return
 	 */
 	public Iterable<IEObjectDescription> getAllDeclarationDescriptions(Declaration declaration) {
-		List<IEObjectDescription> allDescriptions = new ArrayList<IEObjectDescription>();
+		List<IEObjectDescription> allDescriptions = new ArrayList<>();
 		IResourceDescriptions resourceDescriptions = resourceDescriptionsProvider
 				.getResourceDescriptions(declaration.eResource());
 		IResourceDescription resourceDescription = resourceDescriptions

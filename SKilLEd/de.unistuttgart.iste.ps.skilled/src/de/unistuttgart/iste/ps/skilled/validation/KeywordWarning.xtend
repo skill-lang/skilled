@@ -34,13 +34,13 @@ class KeywordWarning extends AbstractDeclarativeValidator {
 
 	/**
 	 * Checks a fieldname for keywords.
-	 * @param f The Field to check.
+	 * @param field The Field to check.
 	 */
 	@Check
-	def void fieldCheck(Field f) {
-		val ArrayList<String> requiresEscaping = KeywordCheckEscaping.requiresEscaping(f.fieldcontent.name);
+	def void fieldCheck(Field field) {
+		val ArrayList<String> requiresEscaping = KeywordCheckEscaping.requiresEscaping(field.fieldcontent.name);
 		if (!requiresEscaping.isNullOrEmpty) {
-			warning(errorMessage(requiresEscaping), f.fieldcontent, SKilLPackage.Literals.FIELDCONTENT__NAME)
+			warning(errorMessage(requiresEscaping), field.fieldcontent, SKilLPackage.Literals.FIELDCONTENT__NAME)
 		}
 		
 	}

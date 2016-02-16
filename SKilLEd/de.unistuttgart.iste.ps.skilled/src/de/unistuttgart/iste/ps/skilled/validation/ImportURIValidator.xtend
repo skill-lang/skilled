@@ -22,21 +22,21 @@ class ImportURIValidator extends AbstractDeclarativeValidator {
 	override register(EValidatorRegistrar registar) {}
 
 	/**
-	 * Checks wheter the included uri is not in the eclipse platform format.
+	 * Checks whether the included URI is not in the eclipse platform format.
 	 */
 	@Check
 	def checkPlatformURI(IncludeFile includeFile) {
 		var URI includeURI = URI.createURI(includeFile.importURI)
 		if (includeURI.isPlatform()) {
 			error("Platform uris aren't allowed", includeFile, SKilLPackage.Literals.INCLUDE_FILE__IMPORT_URI,
-				INVALID_IMPORT_URI_PLATFORM);
+				INVALID_IMPORT_URI_PLATFORM)
 		}
 	}
 
 	/**
-	 * Checks wheter the included file is a valid target. 
+	 * Checks whether the included file is a valid target. 
 	 * This means that if the including file is from the main specification, it cannot include files from tools. 
-	 * And if it is a tool file, it cann only include files inside its tool folder.
+	 * And if it is a tool file, it can only include files inside its tool folder.
 	 */
 	@Check
 	def checkIncludeOutsideScoping(IncludeFile includeFile) {
@@ -46,24 +46,12 @@ class ImportURIValidator extends AbstractDeclarativeValidator {
 		}
 		var URI fileURI = file?.eResource?.URI;
 		if (fileURI != null) {
-			var URI includeURI = URI.createURI(includeFile.importURI).resolve(fileURI);
-			var fileURISegments = fileURI.segments;
-			var includeURISegements = includeURI.segments;
+			var URI includeURI = URI.createURI(includeFile.importURI).resolve(fileURI)
+			var fileURISegments = fileURI.segments
+			var includeURISegements = includeURI.segments
 
-			var boolean isFileInTools = false;
-			var boolean isIncludeFileInTools = false;
-
-			if (fileURISegments.size() > 2) {
-				if (fileURISegments.get(2).equals(TOOLSFOLDER)) {
-					isFileInTools = true;
-				}
-			}
-
-			if (includeURISegements.size() > 2) {
-				if (includeURISegements.get(2).equals(TOOLSFOLDER)) {
-					isIncludeFileInTools = true;
-				}
-			}
+			var boolean isFileInTools = (fileURISegments.size() > 2) && fileURISegments.get(2).equals(TOOLSFOLDER)
+			var boolean isIncludeFileInTools = (includeURISegements.size() > 2) && (includeURISegements.get(2).equals(TOOLSFOLDER))
 
 			if (!isFileInTools && !isIncludeFileInTools) {
 				// Everything is fine.

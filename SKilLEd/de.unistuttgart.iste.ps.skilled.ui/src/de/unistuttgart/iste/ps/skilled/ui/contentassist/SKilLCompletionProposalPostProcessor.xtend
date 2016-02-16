@@ -9,7 +9,7 @@ import org.eclipse.xtext.ui.editor.contentassist.DefaultCompletionProposalPostPr
 import org.eclipse.xtext.ui.editor.hover.html.XtextBrowserInformationControlInput
 
 /**
- * 
+ * TODO Kommentieren!!!!!
  * @author Tobias Heck
  * @author Marco Link
  */
@@ -26,15 +26,15 @@ class SKilLCompletionProposalPostProcessor extends DefaultCompletionProposalPost
 			}
 		}
 
-		for (ICompletionProposal p : proposals) {
-			if (p instanceof ConfigurableCompletionProposal) {
-				var Object additionalProposalInfo = p.getAdditionalProposalInfo(new NullProgressMonitor);
+		for (proposal : proposals) {
+			if (proposal instanceof ConfigurableCompletionProposal) {
+				var Object additionalProposalInfo = proposal.getAdditionalProposalInfo(new NullProgressMonitor);
 				if (additionalProposalInfo != null) {
 					if (additionalProposalInfo instanceof XtextBrowserInformationControlInput) {
 						if (additionalProposalInfo?.element instanceof Declaration) {
 							var Declaration dec = additionalProposalInfo.element as Declaration;
-							p.displayString = dec?.name;
-							p.replacementString = dec?.name;
+							proposal.displayString = dec?.name;
+							proposal.replacementString = dec?.name;
 						}
 
 						if (additionalProposalInfo?.element instanceof Fieldcontent) {
@@ -42,8 +42,8 @@ class SKilLCompletionProposalPostProcessor extends DefaultCompletionProposalPost
 							var String replacementString = (content.eContainer.eContainer as Declaration).name + "." +
 								content.name;
 							var String displayString = content.name + " - " + replacementString;
-							p.displayString = displayString;
-							p.replacementString = replacementString;
+							proposal.displayString = displayString;
+							proposal.replacementString = replacementString;
 						}
 
 					}

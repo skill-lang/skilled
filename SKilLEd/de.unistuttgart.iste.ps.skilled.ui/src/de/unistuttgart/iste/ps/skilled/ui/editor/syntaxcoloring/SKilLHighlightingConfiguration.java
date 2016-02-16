@@ -71,8 +71,7 @@ public class SKilLHighlightingConfiguration implements IHighlightingConfiguratio
      * @return
      */
     public static TextStyle defaultTextStyle() {
-        TextStyle textStyle = new TextStyle();
-        return textStyle;
+        return new TextStyle();
     }
 
     /**

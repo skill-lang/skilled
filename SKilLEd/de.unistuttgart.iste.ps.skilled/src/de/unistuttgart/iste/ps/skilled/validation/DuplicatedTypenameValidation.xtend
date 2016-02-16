@@ -1,15 +1,13 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
+import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.sKilL.View
+import java.util.ArrayList
+import java.util.List
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.Check
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
-import de.unistuttgart.iste.ps.skilled.sKilL.Field
-import java.util.List
-import java.util.ArrayList
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import de.unistuttgart.iste.ps.skilled.sKilL.View
 
 /**
  * @author Jan Berberich
@@ -19,42 +17,44 @@ import de.unistuttgart.iste.ps.skilled.sKilL.View
  * 
  */
 class DuplicatedTypenameValidation extends AbstractDeclarativeValidator {
-	private var List<String> fieldNames
-	private var List<TypeDeclaration> declarations
+	
+	private val List<String> fieldNames = new ArrayList
+	private val List<TypeDeclaration> declarations = new ArrayList
+	
 	private TypeDeclaration validate
-	public static var FIELDNAME_ALREADY_EXISTS = "alreadyExists"
+	
+	public static val FIELDNAME_ALREADY_EXISTS = "alreadyExists"
 
 	override register(EValidatorRegistrar registar) {}
 
 	@Check
-	def searchDuplicatedDeclaration(TypeDeclaration dec) {
-		validate = dec
-		fieldNames = new ArrayList<String>
-		declarations = new ArrayList<TypeDeclaration>
-		for (Field f : dec.fields) {
-			fieldNames.add(f.fieldcontent.name)
+	def searchDuplicatedDeclaration(TypeDeclaration declaration) {
+		validate = declaration
+		fieldNames.clear
+		declarations.clear
+		for (field : declaration.fields) {
+			fieldNames.add(field.fieldcontent.name)
 		}
-		declarations.add(dec)
-		for(TypeDeclarationReference d : dec.supertypes){
-			searchSupertypes(d.type)
+		declarations.add(declaration)
+		for (declarationReference : declaration.supertypes) {
+			searchSupertypes(declarationReference.type)
 		}
 	}
 
 	/**
-	 * Search dec and gives an error if there is a fieldname in a that is also fieldname in validate, 
-	 * calls searchSupertypes for all supertypes of dec that are not in declarations
-	 * @param dec The TypeDeclaration
+	 * Searches supertypes of declaration that are not in declarations and contain a field with
+	 * @param declaration The TypeDeclaration
 	 */
-	def void searchSupertypes(TypeDeclaration dec) {
-		if (!declarations.contains(dec)) {
-			declarations.add(dec)
-			for (Field f : dec.fields) {
-				if (fieldNames.contains(f.fieldcontent.name)) {
-					error(f.fieldcontent.name)
+	def void searchSupertypes(TypeDeclaration declaration) {
+		if (!declarations.contains(declaration)) {
+			declarations.add(declaration)
+			for (field : declaration.fields) {
+				if (fieldNames.contains(field.fieldcontent.name)) {
+					error(field.fieldcontent.name)
 				}
 			}
-			for (TypeDeclarationReference d : dec.supertypes) {
-				searchSupertypes(d.type)
+			for (declarationReference : declaration.supertypes) {
+				searchSupertypes(declarationReference.type)
 			}
 		}
 	}
@@ -64,13 +64,12 @@ class DuplicatedTypenameValidation extends AbstractDeclarativeValidator {
 	 * @param name The name of the field
 	 */
 	def void error(String name) {
-		for (Field f : validate.fields) {
-			if (f.fieldcontent.name.equals(name)) {
-				if(!(f.fieldcontent instanceof View)){
-					error("Error: Fieldname already exists in a supertype!", f.fieldcontent,
-					SKilLPackage.Literals.FIELDCONTENT__NAME, FIELDNAME_ALREADY_EXISTS, f.fieldcontent.name)
-				}
+		for (field : validate.fields) {
+			if (field.fieldcontent.name.equals(name) &&  !(field.fieldcontent instanceof View)) {
+				error("Error: Fieldname already exists in a supertype!", field.fieldcontent,
+					SKilLPackage.Literals.FIELDCONTENT__NAME, FIELDNAME_ALREADY_EXISTS, field.fieldcontent.name)
 			}
 		}
 	}
+
 }
