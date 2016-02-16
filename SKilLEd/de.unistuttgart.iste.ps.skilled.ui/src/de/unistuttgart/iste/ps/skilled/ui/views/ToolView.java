@@ -59,6 +59,7 @@ public class ToolView extends ViewPart {
     private IProject activeProject = null;
     private String path = "";
     private SaveListofAllTools fSave;
+    private Menu menu;
     // Lists
     private final ArrayList<Tool> allToolList = new ArrayList<Tool>();
     private final ArrayList<Type> allTypeList = new ArrayList<Type>();
@@ -387,18 +388,16 @@ public class ToolView extends ViewPart {
             fieldHintItem.setData(hint);
 
             // check all the hints used by the tool
-            if (null != toolField) {
-                for (Hint h : toolField.getFieldHints()) {
-                    if (hint.getName().equals(h.getName())) {
-                        fieldHintItem.setChecked(true);
-                        break;
-                    }
+            if (null == toolField)
+                continue;
+            for (Hint h : toolField.getFieldHints()) {
+                if (hint.getName().equals(h.getName())) {
+                    fieldHintItem.setChecked(true);
+                    break;
                 }
             }
         }
     }
-
-    private Menu menu;
 
     /**
      * Creates the contextmenu for the toolview.
