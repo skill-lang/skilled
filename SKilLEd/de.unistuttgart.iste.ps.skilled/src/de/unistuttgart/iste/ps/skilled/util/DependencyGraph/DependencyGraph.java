@@ -9,8 +9,11 @@ import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.EcoreUtil2;
 
+import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference;
 import de.unistuttgart.iste.ps.skilled.sKilL.File;
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference;
 import de.unistuttgart.iste.ps.skilled.util.Tarjan.StronglyConnectedComponent;
 import de.unistuttgart.iste.ps.skilled.util.Tarjan.TarjanAlgorithm;
 import de.unistuttgart.iste.ps.skilled.util.Tarjan.Vertex;
@@ -64,6 +67,37 @@ public class DependencyGraph {
         return true;
     }
 
+    public boolean generateIgnoreOrigin(File origin, Set<File> files) {
+        dependencyGraphNodes = new HashMap<>();
+        List<Vertex> dependencyNodes = new ArrayList<>();
+
+        for (File file : files) {
+            if (file.eResource() == null) {
+                return false;
+            }
+            DependencyGraphNode dgn = new DependencyGraphNode(file);
+            dependencyNodes.add(dgn);
+            dependencyGraphNodes.put(dgn.getName(), dgn);
+        }
+
+        for (Vertex v : dependencyNodes) {
+            DependencyGraphNode dgn = (DependencyGraphNode) v;
+            for (URI uri : dgn.getIncludedURIs()) {
+                DependencyGraphNode inc = dependencyGraphNodes.get(uri.path());
+                if (inc != null) {
+                    if (inc != dependencyGraphNodes.get(origin.eResource().getURI().path())) {
+                        dgn.addEdge(inc);
+                    }
+                }
+            }
+        }
+
+        tarjan = new TarjanAlgorithm(dependencyNodes);
+        tarjan.runAlgorithm();
+        computeTransitiveComponents();
+        return true;
+    }
+
     public void computeTransitiveComponents() {
         for (StronglyConnectedComponent scc : tarjan.getConnectedComponentsList()) {
             scc.addReferencedComponent(scc);
@@ -97,6 +131,105 @@ public class DependencyGraph {
             for (Vertex v : scc.getContainedVertices()) {
                 DependencyGraphNode dgn = (DependencyGraphNode) v;
                 uris.add(dgn.getFileURI());
+            }
+        }
+        return uris;
+    }
+
+    public Set<URI> getIncludedURIsFromURI(URI uri) {
+        Set<URI> uris = new HashSet<>();
+        if (uri == null) {
+            return null;
+        }
+        DependencyGraphNode depGraph = dependencyGraphNodes.get(uri.path());
+        if (depGraph == null || depGraph.getRootContainer() == null) {
+            return null;
+        }
+        for (Vertex v : depGraph.getRootContainer().getContainedVertices()) {
+            DependencyGraphNode dgn = (DependencyGraphNode) v;
+            uris.add(dgn.getFileURI());
+        }
+
+        for (StronglyConnectedComponent scc : depGraph.getRootContainer().getReferencedComponents()) {
+            for (Vertex v : scc.getContainedVertices()) {
+                DependencyGraphNode dgn = (DependencyGraphNode) v;
+                uris.add(dgn.getFileURI());
+            }
+        }
+        return uris;
+
+    }
+
+    // public Set<URI> getIncludedURIsFromURIWithoutSomething(URI origin, URI uri) {
+    // StronglyConnectedComponent originScc = dependencyGraphNodes.get(origin.path()).getRootContainer();
+    // Set<StronglyConnectedComponent> originreferenced = originScc.getReferencedComponents();
+    // Set<String> names = new HashSet<String>();
+    //
+    // for (Vertex v : originScc.getContainedVertices()) {
+    // DependencyGraphNode dgn = (DependencyGraphNode) v;
+    // names.add(dgn.getName());
+    // }
+    //
+    // Set<URI> uris = new HashSet<>();
+    // if (uri == null) {
+    // return null;
+    // }
+    // DependencyGraphNode depGraph = dependencyGraphNodes.get(uri.path());
+    // if (depGraph == null || depGraph.getRootContainer() == null) {
+    // return null;
+    // }
+    // for (Vertex v : depGraph.getRootContainer().getContainedVertices()) {
+    // DependencyGraphNode dgn = (DependencyGraphNode) v;
+    // if (!dgn.getFileURI().path().equals(origin.path())) {
+    // uris.add(dgn.getFileURI());
+    // }
+    // }
+    //
+    // for (StronglyConnectedComponent scc : depGraph.getRootContainer().getReferencedComponents()) {
+    //
+    // for (Vertex v : scc.getContainedVertices()) {
+    // DependencyGraphNode dgn = (DependencyGraphNode) v;
+    // if (!dgn.getFileURI().path().equals(origin.path())) {
+    // uris.add(dgn.getFileURI());
+    // }
+    // }
+    // }
+    // return uris;
+    //
+    // }
+
+    public Set<URI> getNeededIncludes(Resource resource) {
+        if (resource == null) {
+            return null;
+        }
+        Set<URI> uris = new HashSet<URI>();
+        DependencyGraphNode depGraph = dependencyGraphNodes.get(resource.getURI().path());
+        if (depGraph == null || depGraph.getRootContainer() == null) {
+            return null;
+        }
+        File f = depGraph.getFile();
+        List<TypeDeclarationReference> dec2 = EcoreUtil2.getAllContentsOfType(f, TypeDeclarationReference.class);
+
+        List<DeclarationReference> dec = EcoreUtil2.getAllContentsOfType(f, DeclarationReference.class);
+
+        for (TypeDeclarationReference ref : dec2) {
+            uris.add(EcoreUtil2.getNormalizedResourceURI(ref.getType()));
+        }
+        for (DeclarationReference ref : dec) {
+            uris.add(EcoreUtil2.getNormalizedResourceURI(ref.getType()));
+        }
+        uris.remove(resource.getURI());
+        return uris;
+    }
+
+    public Set<URI> getMissingIncludes(Resource resource) {
+        Set<URI> uris = new HashSet<URI>();
+        Set<URI> included = getIncludedURIs(resource);
+        Set<URI> needed = getNeededIncludes(resource);
+
+        for (URI uri : needed) {
+            if (!included.contains(uri)) {
+                uris.add(uri);
             }
         }
         return uris;
