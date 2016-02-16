@@ -413,10 +413,13 @@ public final class ToolUtil {
      * @param type
      *            - the type to delete
      */
-    public static void removeAllTypeHints(IProject project, Tool tool, Type type) {
+    public static boolean removeAllTypeHints(IProject project, Tool tool, Type type) {
+        boolean failure = false;
         for (Hint toDelete : type.getTypeHints()) {
-            removeTypeHint(tool.getName(), project, getActualName(type.getName()), getActualName(toDelete.getName()));
+            if (!removeTypeHint(tool.getName(), project, getActualName(type.getName()), getActualName(toDelete.getName())))
+                failure = true;
         }
+        return failure;
     }
 
     /**
@@ -483,11 +486,15 @@ public final class ToolUtil {
      * @param field
      *            - the field to delete
      */
-    public static void removeAllFieldHints(IProject project, Tool tool, Type type, Field field) {
+    public static boolean removeAllFieldHints(IProject project, Tool tool, Type type, Field field) {
+        boolean failure = false;
         for (Hint toDelete : field.getFieldHints()) {
-            removeFieldHint(tool.getName(), project, getActualName(type.getName()), getActualName(field.getName()),
-                    getActualName(toDelete.getName()));
+            if (!removeFieldHint(tool.getName(), project, getActualName(type.getName()), getActualName(field.getName()),
+                    getActualName(toDelete.getName())))
+                failure = true;
+
         }
+        return failure;
     }
 
     /**

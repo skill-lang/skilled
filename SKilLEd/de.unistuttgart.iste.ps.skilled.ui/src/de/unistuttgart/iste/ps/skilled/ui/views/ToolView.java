@@ -465,26 +465,27 @@ public class ToolView extends ViewPart {
     }
 
     public void cloneToolDialog() {
-        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.CLONE, allToolList);
-        WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
-        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
-            String newToolName = skillToolWizard.getToolNewName();
-            Tool cloneTool;
-            try {
-                cloneTool = allToolList.stream().filter(t -> t.getName().equals(skillToolWizard.getCloneToolName()))
-                        .findFirst().get();
-            } catch (NoSuchElementException e) {
-                showMessage("Could not create tool.");
-                return;
-            }
-            if (newToolName != null) {
-                if (!ToolUtil.cloneTool(activeProject, cloneTool, newToolName, skillFile)) {
-                    showMessage("Could not create tool.");
-                    return;
-                }
-                refresh();
-            }
-        }
+        removeHintsFromTools();
+        // final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.CLONE, allToolList);
+        // WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
+        // if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+        // String newToolName = skillToolWizard.getToolNewName();
+        // Tool cloneTool;
+        // try {
+        // cloneTool = allToolList.stream().filter(t -> t.getName().equals(skillToolWizard.getCloneToolName()))
+        // .findFirst().get();
+        // } catch (NoSuchElementException e) {
+        // showMessage("Could not create tool.");
+        // return;
+        // }
+        // if (newToolName != null) {
+        // if (!ToolUtil.cloneTool(activeProject, cloneTool, newToolName, skillFile)) {
+        // showMessage("Could not create tool.");
+        // return;
+        // }
+        // refresh();
+        // }
+        // }
     }
 
     /**
@@ -628,23 +629,25 @@ public class ToolView extends ViewPart {
      * @category GUI
      */
     void removeHintsFromTools() {
-        if (activeTool != null) {
-            final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.REMOVEHINTS, allToolList);
-            WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
-            if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
-                ArrayList<Tool> removeHints = skillToolWizard.getRemoveHintsFromTools();
-                for (Tool tempTool : removeHints) {
-
-                    for (Type tempType : tempTool.getTypes()) {
-                        for (Field tempField : tempType.getFields()) {
-                            if (tempField.getFieldHints().size() > 0)
-                                ToolUtil.removeAllFieldHints(this.activeProject, tempTool, tempType, tempField);
-                        }
-                        if (tempType.getTypeHints().size() > 0)
-                            ToolUtil.removeAllTypeHints(this.activeProject, tempTool, tempType);
+        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.REMOVEHINTS, allToolList);
+        WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
+        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+            ArrayList<Tool> removeHints = skillToolWizard.getRemoveHintsFromTools();
+            for (Tool tempTool : removeHints) {
+                System.out.println(tempTool.getName());
+                for (Type tempType : tempTool.getTypes()) {
+                    System.out.println(tempType.getName());
+                    for (Field tempField : tempType.getFields()) {
+                        System.out.println(tempField.getName());
+                        if (tempField.getFieldHints().size() > 0)
+                            System.out.println(
+                                    ToolUtil.removeAllFieldHints(this.activeProject, tempTool, tempType, tempField));
                     }
+                    if (tempType.getTypeHints().size() > 0)
+                        System.out.println(ToolUtil.removeAllTypeHints(this.activeProject, tempTool, tempType));
                 }
             }
+            this.refresh();
         }
     }
 }
