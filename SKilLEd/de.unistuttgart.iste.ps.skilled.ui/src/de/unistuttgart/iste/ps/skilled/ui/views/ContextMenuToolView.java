@@ -79,7 +79,7 @@ public class ContextMenuToolView {
                         ToolUtil.removeTool(toolView.getActiveProject(), toolView.getActiveTool().getName());
                         File toDelete = new File(toolView.getActiveProject().getLocationURI().getPath().toString()
                                 + File.separator + ".skillt" + File.separator + toolView.getActiveTool().getName());
-                        ToolView.deleteDirectoryRecursivly(toDelete);
+                        toolView.deleteDirectoryRecursivly(toDelete);
                         toolView.refresh();
                     }
 

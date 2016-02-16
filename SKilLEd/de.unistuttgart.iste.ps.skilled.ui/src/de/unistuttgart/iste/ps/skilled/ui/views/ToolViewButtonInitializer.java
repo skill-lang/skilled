@@ -34,6 +34,7 @@ public class ToolViewButtonInitializer {
      * @category GUI
      */
     public void makeActions() {
+        // Action for create tool button
         createToolAction = new Action() {
             @Override
             public void run() {
@@ -42,7 +43,7 @@ public class ToolViewButtonInitializer {
         };
         createToolAction.setText("Create Tool");
         createToolAction.setToolTipText("opens a wizard to create a new tool");
-
+        // Action for clone tool button
         cloneToolAction = new Action() {
             @Override
             public void run() {
@@ -51,7 +52,7 @@ public class ToolViewButtonInitializer {
         };
         cloneToolAction.setText("Clone Tool");
         cloneToolAction.setToolTipText("opens a wizard to clone an existing tool.");
-
+        // Action for remove hints in tools button
         removeHintAction = new Action() {
             @Override
             public void run() {
@@ -60,7 +61,6 @@ public class ToolViewButtonInitializer {
         };
         removeHintAction.setText("Remove Hints");
         removeHintAction.setToolTipText("opens a wizard to remove hint from tools.");
-
     }
 
     /**
@@ -73,17 +73,17 @@ public class ToolViewButtonInitializer {
         WizardDialog wizardDialog = new WizardDialog(toolview.getShell(), sKilLToolWizard);
         if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
             String newToolName = sKilLToolWizard.getToolNewName();
-            if (newToolName != null) {
-                if (!ToolUtil.createTool(newToolName, toolview.getActiveProject()))
-                    toolview.showMessage("Could not create tool.");
-                toolview.readToolBinaryFile();
-                if (sKilLToolWizard.getAddAllCheckboxState()) {
-                    Tool tool = toolview.getSkillFile().Tools().stream().filter(t -> t.getName().equals(newToolName))
-                            .findFirst().get();
-                    ToolUtil.addAllToTool(toolview.getSkillFile(), toolview.getActiveProject(), tool);
-                }
-                toolview.refresh();
+            if (newToolName == null)
+                return;
+            if (!ToolUtil.createTool(newToolName, toolview.getActiveProject()))
+                toolview.showMessage("Could not create tool.");
+            toolview.readToolBinaryFile();
+            if (sKilLToolWizard.getAddAllCheckboxState()) {
+                Tool tool = toolview.getSkillFile().Tools().stream().filter(t -> t.getName().equals(newToolName)).findFirst()
+                        .get();
+                ToolUtil.addAllToTool(toolview.getSkillFile(), toolview.getActiveProject(), tool);
             }
+            toolview.refresh();
         }
     }
 
@@ -103,13 +103,13 @@ public class ToolViewButtonInitializer {
                 toolview.showMessage("Could not create tool.");
                 return;
             }
-            if (newToolName != null) {
-                if (!ToolUtil.cloneTool(toolview.getActiveProject(), cloneTool, newToolName, toolview.getSkillFile())) {
-                    toolview.showMessage("Could not create tool.");
-                    return;
-                }
-                toolview.refresh();
+            if (newToolName == null)
+                return;
+            if (!ToolUtil.cloneTool(toolview.getActiveProject(), cloneTool, newToolName, toolview.getSkillFile())) {
+                toolview.showMessage("Could not create tool.");
+                return;
             }
+            toolview.refresh();
         }
     }
 
@@ -124,18 +124,13 @@ public class ToolViewButtonInitializer {
         if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
             ArrayList<Tool> removeHints = skillToolWizard.getRemoveHintsFromTools();
             for (Tool tempTool : removeHints) {
-                System.out.println(tempTool.getName());
                 for (Type tempType : tempTool.getTypes()) {
-                    System.out.println(tempType.getName());
                     for (Field tempField : tempType.getFields()) {
-                        System.out.println(tempField.getName());
                         if (tempField.getFieldHints().size() > 0)
-                            System.out.println(ToolUtil.removeAllFieldHints(this.toolview.getActiveProject(), tempTool,
-                                    tempType, tempField));
+                            ToolUtil.removeAllFieldHints(this.toolview.getActiveProject(), tempTool, tempType, tempField);
                     }
                     if (tempType.getTypeHints().size() > 0)
-                        System.out
-                                .println(ToolUtil.removeAllTypeHints(this.toolview.getActiveProject(), tempTool, tempType));
+                        ToolUtil.removeAllTypeHints(this.toolview.getActiveProject(), tempTool, tempType);
                 }
             }
             toolview.refresh();

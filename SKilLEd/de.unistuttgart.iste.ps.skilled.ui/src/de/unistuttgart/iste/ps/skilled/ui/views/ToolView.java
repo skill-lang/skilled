@@ -105,9 +105,9 @@ public class ToolView extends ViewPart {
         if (!parent.isDisposed()) {
             clearLists();
             toolTabItem.dispose();
-            if (typeTabItem != null)
+            if (null != typeTabItem)
                 typeTabItem.dispose();
-            if (fieldTabItem != null)
+            if (null != fieldTabItem)
                 fieldTabItem.dispose();
             buildToolContextMenu(buildToollist());
             tabFolder.setSelection(toolTabItem);
@@ -121,12 +121,11 @@ public class ToolView extends ViewPart {
      */
     void reloadTypelist() {
         refresh();
-        for (Tool t : skillFile.Tools()) {
-            if (t.getName().equals(activeTool.getName()))
-                activeTool = t;
-        }
+        activeTool = skillFile.Tools().parallelStream().filter(tool -> tool.getName().equals(activeTool.getName()))
+                .findFirst().get();
         buildTypeTree();
         tabFolder.setSelection(typeTabItem);
+
     }
 
     /**
@@ -170,16 +169,17 @@ public class ToolView extends ViewPart {
             path = activeProject.getLocation().toOSString() + File.separator + ".skills";
             skillFile = SkillFile.open(path, Mode.ReadOnly);
         } catch (Exception e) {
+            this.showMessage("Did not read .skills-File");
             System.err.println("Did not read .skills-File");
             return;
         }
 
-        if (skillFile.Tools() != null) {
+        if (null != skillFile.Tools()) {
             skillFile.Tools().forEach(tool -> allToolList.add(tool));
             skillFile.Tools().forEach(t -> pathList.add(path));
         }
 
-        if (skillFile.Types() != null)
+        if (null != skillFile.Types())
             for (Type type : skillFile.Types()) {
                 if (allToolList.stream().anyMatch(tool -> tool.getTypes().contains(type)))
                     break;
@@ -241,7 +241,7 @@ public class ToolView extends ViewPart {
         Tree typeTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.SINGLE);
         typeListOfActualTool = activeTool.getTypes();
 
-        if (typeTabItem == null || typeTabItem.isDisposed())
+        if (null == typeTabItem || typeTabItem.isDisposed())
             typeTabItem = new CTabItem(tabFolder, 0, 1);
 
         typeTabItem.setText("Types - " + activeTool.getName());
@@ -297,15 +297,13 @@ public class ToolView extends ViewPart {
             typeHintItem.setData(hint);
 
             // set all toolspecific typeHints as checked
-            if (null != tooltype) {
-                typeHintListOfActualTool = tooltype.getTypeHints();
-                if (typeHintListOfActualTool != null) {
-                    for (Hint toolhint : typeHintListOfActualTool) {
-                        if (hint.getName().equals(toolhint.getName())) {
-                            typeHintItem.setChecked(true);
-                            break;
-                        }
-                    }
+            if (null == tooltype || null == tooltype.getTypeHints())
+                continue;
+            typeHintListOfActualTool = tooltype.getTypeHints();
+            for (Hint toolhint : typeHintListOfActualTool) {
+                if (hint.getName().equals(toolhint.getName())) {
+                    typeHintItem.setChecked(true);
+                    break;
                 }
             }
         }
@@ -322,9 +320,8 @@ public class ToolView extends ViewPart {
         Tree fieldTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.FULL_SELECTION);
         Type tooltype;
 
-        if (fieldTabItem == null || fieldTabItem.isDisposed())
+        if (null == fieldTabItem || fieldTabItem.isDisposed())
             fieldTabItem = new CTabItem(tabFolder, 0, 2);
-
         try {
             tooltype = typeListOfActualTool.stream().filter(t -> selectedType.getName().equals(t.getName())).findFirst()
                     .get();
@@ -334,7 +331,7 @@ public class ToolView extends ViewPart {
 
         fieldTabItem.setText("Fields - " + selectedType.getName());
 
-        if (null != skillFile && selectedType != null)
+        if (null != skillFile && null != selectedType)
             // add all fields to the tree
             iterateFieldsAndFieldHints(fieldTree, tooltype);
 
@@ -422,14 +419,14 @@ public class ToolView extends ViewPart {
      * @category Data Handling
      * @throws IOException
      */
-    static void deleteDirectoryRecursivly(File directoryToDelete) {
+    void deleteDirectoryRecursivly(File directoryToDelete) {
         if (directoryToDelete.isDirectory()) {
             try {
                 for (File toDelete : directoryToDelete.listFiles())
                     Files.deleteIfExists(toDelete.toPath());
                 Files.deleteIfExists(directoryToDelete.toPath());
             } catch (IOException e) {
-                // TODO: handling
+                this.showMessage(e.getMessage());
             }
         }
     }

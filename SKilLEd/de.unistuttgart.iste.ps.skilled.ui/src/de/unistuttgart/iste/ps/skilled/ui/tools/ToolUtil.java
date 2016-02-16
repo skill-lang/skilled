@@ -526,4 +526,15 @@ public final class ToolUtil {
         }
     }
 
+    public static boolean indexing(IProject project) {
+        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(), "" };
+        try {
+            MainClass.start(Indexing.JUST_INDEXING, arguments);
+            return true;
+        } catch (Throwable t) {
+            t.printStackTrace();
+            return false;
+        }
+    }
+
 }
