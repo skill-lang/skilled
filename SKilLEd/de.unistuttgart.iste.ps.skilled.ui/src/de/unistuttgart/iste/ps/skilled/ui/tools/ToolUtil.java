@@ -32,7 +32,7 @@ public final class ToolUtil {
     public static boolean createTool(String name, IProject project) {
         String[] arguments = { "-e", project.getLocation().toPortableString(), "&n:" + name };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable e) {
             return false;
@@ -63,7 +63,7 @@ public final class ToolUtil {
         String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
                 toolName + ":10:" + execEnv + ":" + generator + ":" + language + ":" + module + ":" + outPath };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable t) {
             return false;
@@ -83,7 +83,7 @@ public final class ToolUtil {
         String[] arguments = { "--no-cleanup", "-aplomx", project.getLocation().toPortableString(), "Java",
                 project.getLocation().toString(), "scala", toolname };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable e) {
             return false;
@@ -104,7 +104,7 @@ public final class ToolUtil {
     public static boolean addTypeToTool(String toolName, IProject project, String typeName) {
         String[] arguments = new String[] { "-e", project.getLocation().toPortableString(), toolName + ":2:" + typeName };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable t) {
             return false;
@@ -125,7 +125,7 @@ public final class ToolUtil {
     public static boolean removeTypeFromTool(String toolName, IProject project, String typeName) {
         String[] arguments = new String[] { "-e", project.getLocation().toPortableString(), toolName + ":3:" + typeName };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable t) {
             return false;
@@ -149,7 +149,7 @@ public final class ToolUtil {
         String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
                 toolName + ":4:" + typeName + ":" + fieldName };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable t) {
             return false;
@@ -173,7 +173,7 @@ public final class ToolUtil {
         String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
                 toolName + ":5:" + typeName + ":" + fieldName };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable t) {
             return false;
@@ -197,7 +197,7 @@ public final class ToolUtil {
         String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
                 toolName + ":8:" + typeName + ":" + hintName };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable t) {
             return false;
@@ -221,7 +221,7 @@ public final class ToolUtil {
         String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
                 toolName + ":9:" + typeName + ":" + hintName };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable t) {
             return false;
@@ -248,7 +248,7 @@ public final class ToolUtil {
         String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
                 toolName + ":6:" + typeName + ":" + fieldName + ":" + hintName };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable t) {
             return false;
@@ -275,7 +275,7 @@ public final class ToolUtil {
         String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
                 toolName + ":7:" + typeName + ":" + fieldName + ":" + hintName };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable t) {
             return false;
@@ -297,7 +297,7 @@ public final class ToolUtil {
         String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
                 oldToolName + ":1:" + newToolName };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable t) {
             return false;
@@ -316,7 +316,7 @@ public final class ToolUtil {
     public static boolean removeTool(IProject project, String name) {
         String[] arguments = new String[] { "-e", project.getLocation().toPortableString(), name + ":0" };
         try {
-            MainClass.start(arguments);
+            MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (Throwable t) {
             return false;
@@ -532,7 +532,6 @@ public final class ToolUtil {
             MainClass.start(Indexing.JUST_INDEXING, arguments);
             return true;
         } catch (Throwable t) {
-            t.printStackTrace();
             return false;
         }
     }

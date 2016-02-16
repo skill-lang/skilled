@@ -71,6 +71,9 @@ public class TypeTreeListener {
             public void mouseDoubleClick(MouseEvent arg0) {
                 // open the temporary file of the selected type
                 ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(), toolview.getActiveProject());
+                System.out.println(toolview.getActiveTool() == null);
+                System.out.println(toolview.getSelectedType() == null);
+                System.out.println(toolview.getActiveProject() == null);
                 editorUtil.openTypeInEditor(toolview.getActiveTool(), toolview.getSelectedType(),
                         toolview.getActiveProject());
             }

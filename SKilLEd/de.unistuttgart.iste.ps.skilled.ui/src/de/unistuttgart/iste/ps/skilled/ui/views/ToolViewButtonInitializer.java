@@ -69,7 +69,7 @@ public class ToolViewButtonInitializer {
      * @category Dialog
      */
     private void createToolDialog() {
-        final SKilLToolWizard sKilLToolWizard = new SKilLToolWizard();
+        final SKilLToolWizard sKilLToolWizard = new SKilLToolWizard(WizardOption.CREATE, toolview.getAllToolList());
         WizardDialog wizardDialog = new WizardDialog(toolview.getShell(), sKilLToolWizard);
         if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
             String newToolName = sKilLToolWizard.getToolNewName();

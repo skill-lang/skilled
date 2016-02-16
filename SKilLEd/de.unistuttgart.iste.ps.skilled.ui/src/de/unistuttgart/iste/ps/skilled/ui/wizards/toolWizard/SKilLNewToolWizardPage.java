@@ -1,5 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -10,6 +12,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import de.unistuttgart.iste.ps.skillls.tools.Tool;
 
 
 /**
@@ -24,11 +28,13 @@ public class SKilLNewToolWizardPage extends WizardPage {
     private Text tbName;
     private Composite container;
     private Button checkbox;
+    private ArrayList<Tool> allToolList;
 
-    public SKilLNewToolWizardPage() {
+    public SKilLNewToolWizardPage(ArrayList<Tool> allToolList) {
         super("Create a new tool");
         setTitle("Create a new tool");
         setDescription("In this page you can insert a name for the new tool.");
+        this.allToolList = allToolList;
     }
 
     @Override
@@ -50,7 +56,9 @@ public class SKilLNewToolWizardPage extends WizardPage {
 
             @Override
             public void keyReleased(KeyEvent e) {
-                if (!tbName.getText().isEmpty())
+                setPageComplete(false);
+                if (!tbName.getText().isEmpty() && allToolList.stream()
+                        .noneMatch(t -> t.getName().toLowerCase().equals(tbName.getText().toLowerCase())))
                     setPageComplete(true);
             }
         });

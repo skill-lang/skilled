@@ -63,7 +63,7 @@ public class SKilLToolWizard extends Wizard {
     public void addPages() {
         switch (wizardOption) {
             case CREATE:
-                pageNewTool = new SKilLNewToolWizardPage();
+                pageNewTool = new SKilLNewToolWizardPage(toolList);
                 addPage(pageNewTool);
                 break;
             case RENAME:

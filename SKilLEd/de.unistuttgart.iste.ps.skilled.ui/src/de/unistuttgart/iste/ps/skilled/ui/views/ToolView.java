@@ -21,6 +21,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 import de.unistuttgart.iste.ps.skilled.ui.tools.export.SaveListofAllTools;
 import de.unistuttgart.iste.ps.skillls.tools.Field;
 import de.unistuttgart.iste.ps.skillls.tools.Hint;
@@ -174,18 +175,15 @@ public class ToolView extends ViewPart {
             return;
         }
 
-        if (null != skillFile.Tools()) {
+        ToolUtil.indexing(activeProject);
+
+        if (skillFile.Tools() != null) {
             skillFile.Tools().forEach(tool -> allToolList.add(tool));
             skillFile.Tools().forEach(t -> pathList.add(path));
         }
 
-        if (null != skillFile.Types())
-            for (Type type : skillFile.Types()) {
-                if (allToolList.stream().anyMatch(tool -> tool.getTypes().contains(type)))
-                    break;
-                allTypeList.add(type);
-            }
-
+        if (skillFile.Types() != null)
+            skillFile.Types().stream().filter(t -> t.getOrig() == null).forEach(t -> allTypeList.add(t));
         // fExport.setPaths(pathList);
     }
 
