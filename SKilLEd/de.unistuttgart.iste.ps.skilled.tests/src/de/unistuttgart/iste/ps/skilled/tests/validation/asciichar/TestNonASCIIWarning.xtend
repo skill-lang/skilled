@@ -33,12 +33,12 @@ class TestNonASCIIWarning {
 
 	@Test
 	def void testErrorNonASCIIFieldname() {
-		assertFalse("C{i8 ☢}".parse.validate.isNullOrEmpty)
+		assertFalse("C{i8 ☢;}".parse.validate.isNullOrEmpty)
 	}
 
 	@Test
 	def void testMultipleWrongTypenames() {
-		assertTrue("interface IÄ{} Ü{} Ö{}".parse.validate.size==3)
+		assertTrue("interface IÄ{} Ü{} Ö{}".parse.validate.size>=3)
 	}
 	
 	@Test
