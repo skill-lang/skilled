@@ -2,6 +2,7 @@ package de.unistuttgart.iste.ps.skilled.ui.tools;
 
 import org.eclipse.core.resources.IProject;
 
+import de.unistuttgart.iste.ps.skillls.main.Indexing;
 import de.unistuttgart.iste.ps.skillls.main.MainClass;
 import de.unistuttgart.iste.ps.skillls.tools.Field;
 import de.unistuttgart.iste.ps.skillls.tools.Hint;
