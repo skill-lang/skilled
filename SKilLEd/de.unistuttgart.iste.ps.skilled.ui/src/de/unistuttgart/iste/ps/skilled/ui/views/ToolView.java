@@ -52,6 +52,7 @@ public class ToolView extends ViewPart {
 
     private Action createToolAction;
     private Action cloneToolAction;
+    private Action removeHintAction;
     private FileChangeAction fileChangeAction = new FileChangeAction(this);
 
     private String path = "";
@@ -83,8 +84,6 @@ public class ToolView extends ViewPart {
         this.parent = parent;
         tabFolder = new CTabFolder(parent, SWT.BORDER);
         toolTabItem = new CTabItem(tabFolder, 0, 0);
-        typeTabItem = new CTabItem(tabFolder, 0, 1);
-        fieldTabItem = new CTabItem(tabFolder, 0, 2);
 
         tabFolder.setVisible(true);
         fileChangeAction.save();
@@ -254,7 +253,7 @@ public class ToolView extends ViewPart {
         typeListOfActualTool = activeTool.getTypes();
         TreeItem typeHintItem;
 
-        if (typeTabItem.isDisposed())
+        if (typeTabItem == null || typeTabItem.isDisposed())
             typeTabItem = new CTabItem(tabFolder, 0, 1);
 
         typeTabItem.setText("Types - " + activeTool.getName());
@@ -316,7 +315,7 @@ public class ToolView extends ViewPart {
         Tree fieldTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.FULL_SELECTION);
         Type tooltype;
 
-        if (fieldTabItem.isDisposed())
+        if (fieldTabItem == null || fieldTabItem.isDisposed())
             fieldTabItem = new CTabItem(tabFolder, 0, 2);
 
         try {
@@ -419,6 +418,7 @@ public class ToolView extends ViewPart {
     private void fillLocalToolBar(IToolBarManager manager) {
         manager.add(createToolAction);
         manager.add(cloneToolAction);
+        manager.add(removeHintAction);
     }
 
     private void makeActions() {
@@ -439,6 +439,16 @@ public class ToolView extends ViewPart {
         };
         cloneToolAction.setText("Clone Tool");
         cloneToolAction.setToolTipText("opens a wizard to clone an existing tool.");
+
+        removeHintAction = new Action() {
+            @Override
+            public void run() {
+                removeHintsFromTools();
+            }
+        };
+        removeHintAction.setText("Remove Hints");
+        removeHintAction.setToolTipText("opens a wizard to remove hint from tools.");
+
     }
 
     /**
@@ -464,28 +474,30 @@ public class ToolView extends ViewPart {
         }
     }
 
+    /**
+     * opens the dialog to clone a existing tool
+     */
     public void cloneToolDialog() {
-        removeHintsFromTools();
-        // final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.CLONE, allToolList);
-        // WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
-        // if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
-        // String newToolName = skillToolWizard.getToolNewName();
-        // Tool cloneTool;
-        // try {
-        // cloneTool = allToolList.stream().filter(t -> t.getName().equals(skillToolWizard.getCloneToolName()))
-        // .findFirst().get();
-        // } catch (NoSuchElementException e) {
-        // showMessage("Could not create tool.");
-        // return;
-        // }
-        // if (newToolName != null) {
-        // if (!ToolUtil.cloneTool(activeProject, cloneTool, newToolName, skillFile)) {
-        // showMessage("Could not create tool.");
-        // return;
-        // }
-        // refresh();
-        // }
-        // }
+        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.CLONE, allToolList);
+        WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
+        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+            String newToolName = skillToolWizard.getToolNewName();
+            Tool cloneTool;
+            try {
+                cloneTool = allToolList.stream().filter(t -> t.getName().equals(skillToolWizard.getCloneToolName()))
+                        .findFirst().get();
+            } catch (NoSuchElementException e) {
+                showMessage("Could not create tool.");
+                return;
+            }
+            if (newToolName != null) {
+                if (!ToolUtil.cloneTool(activeProject, cloneTool, newToolName, skillFile)) {
+                    showMessage("Could not create tool.");
+                    return;
+                }
+                refresh();
+            }
+        }
     }
 
     /**
