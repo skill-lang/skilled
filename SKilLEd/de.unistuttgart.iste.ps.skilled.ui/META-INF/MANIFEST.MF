@@ -19,7 +19,8 @@ Require-Bundle: de.unistuttgart.iste.ps.skilled;visibility:=reexport,
  org.antlr.runtime,
  org.eclipse.xtext.util,
  org.eclipse.xtext
- de.unistuttgart.iste.ps.skillls;bundle-version="1.0.0"
+ de.unistuttgart.iste.ps.skillls;bundle-version="1.0.0",
+ org.apache.commons.io;bundle-version="2.2.0"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.unistuttgart.iste.ps.skilled.ui;

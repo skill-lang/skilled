@@ -39,9 +39,16 @@ public class ImportTools {
     String fSelectedTool = "";
     String fImportRenamed = "";
 
+    String fToolName = "";
+
     ImportCombine fImportCombine = new ImportCombine();
     static String fProjectName = "";
     static String fSelectedToolPath = "";
+    static String fSaveDestination;
+    static String fFileName;
+
+    String fDuplicateToolNameChecker = "";
+    String fNameChecker = "";
 
     // Location of the workspace the user is using
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -192,7 +199,6 @@ public class ImportTools {
         OK.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                System.out.println("OK clicked!");
 
                 File fCheckSelectTool = new File(tSelectTool.getText());
                 File fCheckImportLocation = new File(tSaveLocation.getText());
@@ -200,13 +206,23 @@ public class ImportTools {
                 int fWorkspaceLength = workspaceDirectory.getAbsolutePath().length();
 
                 String fCheckIfProjectSelected = tSaveLocation.getText().substring(fWorkspaceLength + 1);
-                System.out.println("fCheckIfProjectSelected: " + fCheckIfProjectSelected);
                 if (fCheckIfProjectSelected.endsWith(File.separator)) {
                     fCheckIfProjectSelected = fCheckIfProjectSelected.substring(0,
                             fCheckIfProjectSelected.lastIndexOf(File.separator) - 1);
                 }
                 int count = fCheckIfProjectSelected.length() - fCheckIfProjectSelected.replace(File.separator, "").length();
-                System.out.println("count: " + count);
+
+                String fToolName = tSelectTool.getText().substring(tSelectTool.getText().lastIndexOf(File.separator) + 1);
+
+                if (tImportRename.getText() == null || tImportRename.getText() == "" || tImportRename.getText().isEmpty()) {
+                    fNameChecker = fToolName.substring(0, fToolName.length() - 6);
+                } else {
+                    if (!tImportRename.getText().endsWith(".skill")) {
+                        fNameChecker = tImportRename.getText();
+                    } else {
+                        fNameChecker = tImportRename.getText().substring(0, tImportRename.getText().length() - 6);
+                    }
+                }
 
                 if (tSelectTool.getText() == null || tSelectTool.getText() == "") {
                     ShowMessage("Path for tool to import missing!", "No File to Import");
@@ -224,12 +240,28 @@ public class ImportTools {
                     ShowMessage("Import location is not a project folder!", "Invalid Import location");
                     return;
                 }
+
+                // File fFolderToCheck = new File(tSaveLocation.getText());
+                // File[] listOfFiles = fFolderToCheck.listFiles();
+                //
+                // for (int i = 0; i < listOfFiles.length; i++) {
+                // if (listOfFiles[i].isFile()) {
+                // System.out.println("File " + listOfFiles[i].getName());
+                //
+                // if (listOfFiles[i].getName() == fToolName || listOfFiles[i].getName() == tImportRename.getText()) {
+                // // TODO
+                // }
+                // }
+                // }
+                fFileName = fNameChecker;
                 fProjectName = fCheckIfProjectSelected;
                 fSelectedToolPath = tSelectTool.getText();
-                fImportCombine.run();
+                fSaveDestination = tSaveLocation.getText();
+                fImportCombine.start();
                 shell.dispose();
                 fSaveLocation = "";
                 fSelectedTool = "";
+                fFileName = "";
 
             }
 
@@ -263,6 +295,15 @@ public class ImportTools {
         return fSelectedToolPath;
     }
 
+    public static String getSaveDestination() {
+        return fSaveDestination;
+    }
+
+    public static String getFileName() {
+        return fFileName;
+    }
+
+    @SuppressWarnings("static-method")
     private void ShowMessage(String string, String string2) {
         EventQueue.invokeLater(new Runnable() {
             @Override
