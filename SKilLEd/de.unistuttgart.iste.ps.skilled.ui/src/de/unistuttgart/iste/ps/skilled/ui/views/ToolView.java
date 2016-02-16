@@ -56,26 +56,25 @@ public class ToolView extends ViewPart {
     private FileChangeAction fileChangeAction = new FileChangeAction(this);
 
     private String path = "";
-    private CTabFolder tabFolder;
 
     private ArrayList<Tool> allToolList = new ArrayList<Tool>();
     private ArrayList<Type> allTypeList = new ArrayList<Type>();
     private ArrayList<Type> typeListOfActualTool = new ArrayList<Type>();
     private ArrayList<Hint> typeHintListOfActualTool = new ArrayList<Hint>();
-
     private ArrayList<String> pathList = new ArrayList<String>();
-
-    private CTabItem toolTabItem = null;
-    private CTabItem typeTabItem = null;
-    private CTabItem fieldTabItem = null;
-    private SkillFile skillFile = null;
-    private Tool activeTool = null;
-    private IProject activeProject = null;
-    private Type selectedType = null;
-    private Field selectedField = null;
 
     private Composite parent = null;
     private Shell shell;
+    private CTabFolder tabFolder;
+    private CTabItem toolTabItem = null;
+    private CTabItem typeTabItem = null;
+    private CTabItem fieldTabItem = null;
+
+    private SkillFile skillFile = null;
+    private IProject activeProject = null;
+    private Tool activeTool = null;
+    private Type selectedType = null;
+    private Field selectedField = null;
 
     private SaveListofAllTools fSave;
 
@@ -164,8 +163,8 @@ public class ToolView extends ViewPart {
         allToolList.clear();
         pathList.clear();
         allTypeList.clear();
-        typeListOfActualTool = null;
-        typeHintListOfActualTool = null;
+        typeListOfActualTool.clear();
+        typeHintListOfActualTool.clear();
     }
 
     /**
@@ -214,7 +213,7 @@ public class ToolView extends ViewPart {
         if (tabFolder.isDisposed())
             tabFolder = new CTabFolder(parent, SWT.BORDER);
 
-        List toolViewList = new List(tabFolder, SWT.SINGLE | SWT.V_SCROLL);
+        List toolViewList = new List(tabFolder, SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
 
         if (toolTabItem.isDisposed())
             toolTabItem = new CTabItem(tabFolder, 0, 0);
@@ -251,57 +250,75 @@ public class ToolView extends ViewPart {
     void buildTypeTree() {
         Tree typeTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.SINGLE);
         typeListOfActualTool = activeTool.getTypes();
-        TreeItem typeHintItem;
 
         if (typeTabItem == null || typeTabItem.isDisposed())
             typeTabItem = new CTabItem(tabFolder, 0, 1);
 
         typeTabItem.setText("Types - " + activeTool.getName());
 
-        if (null != skillFile) {
+        if (null != skillFile)
             // add all types to the tree
-            for (Type type : allTypeList) {
-                TreeItem typeTreeItem = new TreeItem(typeTree, 0);
-                typeTreeItem.setText(type.getName().replaceAll(" %s ", " "));
-                typeTreeItem.setData(type);
-                Type tooltype = null;
+            iterateTypesAndHints(typeTree);
 
-                // set all the toolspecific types as checked
-                if (null != typeListOfActualTool) {
-                    for (Type t : typeListOfActualTool) {
-                        if (t.getName().equals(type.getName())) {
-                            typeTreeItem.setChecked(true);
-                            tooltype = type;
-                        }
+        typeTabItem.setControl(typeTree);
+        TypeTreeListener tvl = new TypeTreeListener(this);
+        tvl.initTypeTreeListener(typeTree);
+    }
+
+    /**
+     * iterate over all the types and their hints
+     * 
+     * @param typeTree
+     */
+    private void iterateTypesAndHints(Tree typeTree) {
+        for (Type type : allTypeList) {
+            TreeItem typeTreeItem = new TreeItem(typeTree, 0);
+            typeTreeItem.setText(type.getName().replaceAll(" %s ", " "));
+            typeTreeItem.setData(type);
+            Type tooltype = null;
+
+            // set all the toolspecific types as checked
+            if (null != typeListOfActualTool) {
+                for (Type t : typeListOfActualTool) {
+                    if (t.getName().equals(type.getName())) {
+                        typeTreeItem.setChecked(true);
+                        tooltype = type;
                     }
                 }
+            }
+            interateTypeHints(typeTreeItem, type, tooltype);
+        }
+    }
 
-                // add all typeHints to the Tree
-                for (Hint hint : type.getTypeHints()) {
-                    typeHintItem = new TreeItem(typeTreeItem, 0);
-                    typeHintItem.setText(hint.getName());
-                    typeHintItem.setChecked(false);
-                    typeHintItem.setExpanded(true);
-                    typeHintItem.setData(hint);
+    /**
+     * iterate over all typehints
+     * 
+     * @param typeTreeItem
+     * @param type
+     * @param tooltype
+     */
+    private void interateTypeHints(TreeItem typeTreeItem, Type type, Type tooltype) {
+        // add all typeHints to the Tree
+        for (Hint hint : type.getTypeHints()) {
+            TreeItem typeHintItem = new TreeItem(typeTreeItem, 0);
+            typeHintItem.setText(hint.getName());
+            typeHintItem.setChecked(false);
+            typeHintItem.setExpanded(true);
+            typeHintItem.setData(hint);
 
-                    // set all toolspecific typeHints as checked
-                    if (null != tooltype) {
-                        typeHintListOfActualTool = tooltype.getTypeHints();
-                        if (typeHintListOfActualTool != null) {
-                            for (Hint toolhint : typeHintListOfActualTool) {
-                                if (hint.getName().equals(toolhint.getName())) {
-                                    typeHintItem.setChecked(true);
-                                    break;
-                                }
-                            }
+            // set all toolspecific typeHints as checked
+            if (null != tooltype) {
+                typeHintListOfActualTool = tooltype.getTypeHints();
+                if (typeHintListOfActualTool != null) {
+                    for (Hint toolhint : typeHintListOfActualTool) {
+                        if (hint.getName().equals(toolhint.getName())) {
+                            typeHintItem.setChecked(true);
+                            break;
                         }
                     }
                 }
             }
         }
-        typeTabItem.setControl(typeTree);
-        TypeTreeListener tvl = new TypeTreeListener(this);
-        tvl.initTypeTreeListener(typeTree);
     }
 
     /**
@@ -327,50 +344,69 @@ public class ToolView extends ViewPart {
 
         fieldTabItem.setText("Fields - " + selectedType.getName());
 
-        if (null != skillFile && selectedType != null) {
+        if (null != skillFile && selectedType != null)
             // add all fields to the tree
-            for (Field field : selectedType.getFields()) {
-                TreeItem fieldTreeItem = new TreeItem(fieldTree, 0);
-                fieldTreeItem.setText(field.getName());
-                fieldTreeItem.setChecked(false);
-                fieldTreeItem.setData(field);
-                Field toolField = null;
-
-                // check all the fields used by the actual tool
-                if (null != tooltype) {
-                    for (Field f : tooltype.getFields()) {
-                        if (field.getName().equals(f.getName())) {
-                            fieldTreeItem.setChecked(true);
-                            toolField = f;
-                            break;
-                        }
-                    }
-                }
-
-                // add all the fieldhints to the tree
-                for (Hint hint : field.getFieldHints()) {
-                    TreeItem fieldHintItem = new TreeItem(fieldTreeItem, 0);
-                    fieldHintItem.setText(hint.getName());
-                    fieldHintItem.setChecked(false);
-                    fieldTreeItem.setExpanded(true);
-                    fieldHintItem.setData(hint);
-
-                    // check all the hints used by the tool
-                    if (null != toolField) {
-                        for (Hint h : toolField.getFieldHints()) {
-                            if (hint.getName().equals(h.getName())) {
-                                fieldHintItem.setChecked(true);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+            iterateFieldsAndFieldHints(fieldTree, tooltype);
 
         fieldTabItem.setControl(fieldTree);
         FieldTreeListener ftl = new FieldTreeListener(this);
         ftl.initFieldTreeListener(fieldTree, tooltype);
+    }
+
+    /**
+     * iterate over all the fields and their hints
+     * 
+     * @param fieldTree
+     * @param tooltype
+     */
+    private void iterateFieldsAndFieldHints(Tree fieldTree, Type tooltype) {
+        for (Field field : selectedType.getFields()) {
+            TreeItem fieldTreeItem = new TreeItem(fieldTree, 0);
+            fieldTreeItem.setText(field.getName());
+            fieldTreeItem.setChecked(false);
+            fieldTreeItem.setData(field);
+            Field toolField = null;
+
+            // check all the fields used by the actual tool
+            if (null != tooltype) {
+                for (Field f : tooltype.getFields()) {
+                    if (field.getName().equals(f.getName())) {
+                        fieldTreeItem.setChecked(true);
+                        toolField = f;
+                        break;
+                    }
+                }
+            }
+            iterateFieldHints(field, toolField, fieldTreeItem);
+        }
+    }
+
+    /**
+     * iterate over all the hints of a field
+     * 
+     * @param field
+     * @param toolField
+     * @param fieldTreeItem
+     */
+    private static void iterateFieldHints(Field field, Field toolField, TreeItem fieldTreeItem) {
+
+        for (Hint hint : field.getFieldHints()) {
+            TreeItem fieldHintItem = new TreeItem(fieldTreeItem, 0);
+            fieldHintItem.setText(hint.getName());
+            fieldHintItem.setChecked(false);
+            fieldTreeItem.setExpanded(true);
+            fieldHintItem.setData(hint);
+
+            // check all the hints used by the tool
+            if (null != toolField) {
+                for (Hint h : toolField.getFieldHints()) {
+                    if (hint.getName().equals(h.getName())) {
+                        fieldHintItem.setChecked(true);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     private Menu menu;
@@ -477,7 +513,7 @@ public class ToolView extends ViewPart {
     /**
      * opens the dialog to clone a existing tool
      */
-    public void cloneToolDialog() {
+    private void cloneToolDialog() {
         final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.CLONE, allToolList);
         WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
         if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
@@ -497,6 +533,34 @@ public class ToolView extends ViewPart {
                 }
                 refresh();
             }
+        }
+    }
+
+    /**
+     * Open a wizard to select tools where hints should be deleted.
+     * 
+     * @category GUI
+     */
+    private void removeHintsFromTools() {
+        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.REMOVEHINTS, allToolList);
+        WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
+        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+            ArrayList<Tool> removeHints = skillToolWizard.getRemoveHintsFromTools();
+            for (Tool tempTool : removeHints) {
+                System.out.println(tempTool.getName());
+                for (Type tempType : tempTool.getTypes()) {
+                    System.out.println(tempType.getName());
+                    for (Field tempField : tempType.getFields()) {
+                        System.out.println(tempField.getName());
+                        if (tempField.getFieldHints().size() > 0)
+                            System.out.println(
+                                    ToolUtil.removeAllFieldHints(this.activeProject, tempTool, tempType, tempField));
+                    }
+                    if (tempType.getTypeHints().size() > 0)
+                        System.out.println(ToolUtil.removeAllTypeHints(this.activeProject, tempTool, tempType));
+                }
+            }
+            this.refresh();
         }
     }
 
@@ -633,33 +697,5 @@ public class ToolView extends ViewPart {
      */
     public SkillFile getSkillFile() {
         return skillFile;
-    }
-
-    /**
-     * Open a wizard to select tools where hints should be deleted.
-     * 
-     * @category GUI
-     */
-    void removeHintsFromTools() {
-        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.REMOVEHINTS, allToolList);
-        WizardDialog wizardDialog = new WizardDialog(shell, skillToolWizard);
-        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
-            ArrayList<Tool> removeHints = skillToolWizard.getRemoveHintsFromTools();
-            for (Tool tempTool : removeHints) {
-                System.out.println(tempTool.getName());
-                for (Type tempType : tempTool.getTypes()) {
-                    System.out.println(tempType.getName());
-                    for (Field tempField : tempType.getFields()) {
-                        System.out.println(tempField.getName());
-                        if (tempField.getFieldHints().size() > 0)
-                            System.out.println(
-                                    ToolUtil.removeAllFieldHints(this.activeProject, tempTool, tempType, tempField));
-                    }
-                    if (tempType.getTypeHints().size() > 0)
-                        System.out.println(ToolUtil.removeAllTypeHints(this.activeProject, tempTool, tempType));
-                }
-            }
-            this.refresh();
-        }
     }
 }

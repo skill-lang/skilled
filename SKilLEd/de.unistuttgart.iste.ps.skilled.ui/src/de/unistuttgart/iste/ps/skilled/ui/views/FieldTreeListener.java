@@ -46,7 +46,7 @@ public class FieldTreeListener {
                 try {
                     toolview.setSelectedField((Field) (((TreeItem) e.item).getData()));
                 } catch (ClassCastException ex) {
-                    ex.getMessage();
+                    return;
                     // item was a hint
                 }
             }
@@ -99,7 +99,6 @@ public class FieldTreeListener {
                     if (null != field) {
                         // if the user checks the checkbox add the selected field and all its hints
                         if (((TreeItem) event.item).getChecked()) {
-                            System.out.println(field.getName() + "added");
                             final String fieldName = field.getType().getName();
                             if (toolview.getActiveTool().getTypes().stream().noneMatch(t -> t.getName().equals(fieldName)))
                                 ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
@@ -112,7 +111,6 @@ public class FieldTreeListener {
                             toolview.reloadFieldList();
                         } else {
                             // if the user checks the checkbox add the selected field and all its hints
-                            System.out.println(field.getName() + "remove");
                             ToolUtil.removeAllFieldHints(toolview.getActiveProject(), toolview.getActiveTool(),
                                     field.getType(), field);
                             ToolUtil.removeField(toolview.getActiveTool().getName(), toolview.getActiveProject(),
@@ -125,7 +123,6 @@ public class FieldTreeListener {
                     if (hint != null) {
                         // if the user checks the checkbox add the selected hint
                         if (((TreeItem) event.item).getChecked()) {
-                            System.out.println(hint.getName() + " added");
                             final String hintParentName = ((Field) hint.getParent()).getName();
                             final String typeName = ((Field) hint.getParent()).getType().getName();
 
@@ -143,7 +140,6 @@ public class FieldTreeListener {
                             toolview.reloadFieldList();
                         } else {
                             // if the user unchecks the checkbox remove the selected hint
-                            System.out.println("hint removed");
                             ToolUtil.removeFieldHint(toolview.getActiveTool().getName(), toolview.getActiveProject(),
                                     ToolUtil.getActualName(((Field) hint.getParent()).getType().getName()),
                                     ToolUtil.getActualName(((Field) hint.getParent()).getName()), hint.getName());
@@ -153,6 +149,5 @@ public class FieldTreeListener {
                 }
             }
         });
-
     }
 }

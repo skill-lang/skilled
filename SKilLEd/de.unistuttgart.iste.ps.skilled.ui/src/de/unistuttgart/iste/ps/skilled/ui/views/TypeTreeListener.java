@@ -81,7 +81,6 @@ public class TypeTreeListener {
 
             @Override
             public void handleEvent(Event event) {
-                System.out.println("Start");
                 if (event.detail == SWT.CHECK) {
                     Type type = null;
                     Hint hint = null;
@@ -93,10 +92,8 @@ public class TypeTreeListener {
                         hint = (Hint) ((TreeItem) event.item).getData();
 
                     if (null != type) {
-                        System.out.println(type.getName());
                         if (((TreeItem) event.item).getChecked()) {
                             // if the user checks the checkbox add the selected type and all its fields and hints
-                            System.out.println("type added");
                             ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
                                     ToolUtil.getActualName(type.getName()));
                             ToolUtil.addAllTypeHints(toolview.getActiveProject(), toolview.getActiveTool(), type);
@@ -104,7 +101,6 @@ public class TypeTreeListener {
                             toolview.reloadTypelist();
                         } else {
                             // if the user unchecks the checkbox remove the selected type and all its fields and hints
-                            System.out.println("type remove");
                             ToolUtil.removeAllFields(toolview.getActiveProject(), toolview.getActiveTool(), type);
                             ToolUtil.removeAllTypeHints(toolview.getActiveProject(), toolview.getActiveTool(), type);
                             ToolUtil.removeTypeAndAllSubtypes(toolview.getActiveProject(), toolview.getActiveTool(), type);
@@ -115,7 +111,6 @@ public class TypeTreeListener {
                     if (hint != null) {
                         // if the user checks the checkbox add the selected hint
                         if (((TreeItem) event.item).getChecked()) {
-                            System.out.println(hint.getName() + "added");
                             final String typeName = ((Type) hint.getParent()).getName();
                             if (toolview.getActiveTool().getTypes().stream().noneMatch(t -> t.getName().equals(typeName)))
                                 ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
@@ -125,7 +120,6 @@ public class TypeTreeListener {
                             toolview.reloadTypelist();
                         } else {
                             // if the user unchecks the checkbox remove the selected hint
-                            System.out.println(hint.getName() + "removed");
                             ToolUtil.removeTypeHint(toolview.getActiveTool().getName(), toolview.getActiveProject(),
                                     ToolUtil.getActualName(((Type) hint.getParent()).getName()), hint.getName());
                             toolview.reloadTypelist();
