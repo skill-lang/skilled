@@ -479,7 +479,7 @@ public class MainClass {
                 }
             }
         }
-        runGeneration(toolToFile, new File(project.getAbsolutePath() + File.separator + ".skillt"));
+        runGeneration(toolToFile, project.getAbsoluteFile());
     }
 
     /**
@@ -487,10 +487,8 @@ public class MainClass {
      *
      * @param toolToFile
      *            Map for mapping tools to their corresponding temporary files.
-     * @param tempDir
-     *            Directory which contains the tool specific files.
      */
-    private static void runGeneration(HashMap<Tool, ArrayList<File>> toolToFile, File tempDir) {
+    private static void runGeneration(HashMap<Tool, ArrayList<File>> toolToFile, java.io.File project) {
         ArrayList<Thread> commands = new ArrayList<>();
         for (de.unistuttgart.iste.ps.skillls.tools.Tool t : toolToFile.keySet()) {
             StringBuilder builder = new StringBuilder();
@@ -508,10 +506,8 @@ public class MainClass {
             builder.append(" %s ");
             builder.append(output.getAbsolutePath());
             // noinspection Convert2streamapi
-            for (File f : toolToFile.get(t)) {
-                commands.add(new GenerationThread(String.format(builder.toString(), f.getAbsolutePath()),
-                        new File(generator == null ? t.getGenerator().getPath() : generator.getPath())));
-            }
+            commands.add(new Thread(new de.unistuttgart.iste.ps.skillls.main.Generator(t, project.getAbsolutePath(),
+                    cleanUp, builder.toString(), new File(generator == null ? t.getGenerator().getPath() : generator.getPath()))));
         }
         commands.forEach(java.lang.Thread::start);
         commands.forEach((thread) -> {
@@ -521,9 +517,6 @@ public class MainClass {
                 ExceptionHandler.handle(e);
             }
         });
-        if (cleanUp) {
-            cleanUp(tempDir);
-        }
     }
 
     /**
@@ -533,6 +526,8 @@ public class MainClass {
      *            The tool the file should be generated for.
      * @param file
      *            The file that should be optimized for the tool.
+     * @param project
+     *            The file containing the project.
      * @return The file object of the temporary file.
      * @throws IOException
      *             Thrown if there is a problem with creating temporary files.
@@ -599,39 +594,6 @@ public class MainClass {
             sb.append(String.format("%02X", b));
         }
         return sb.toString();
-    }
-
-    /**
-     * Deletes the directory with the temporary files.
-     *
-     * @param projectRoot
-     *            The root directory of the project.
-     */
-    private static void cleanUp(File projectRoot) {
-        // noinspection SpellCheckingInspection
-        File f = new File(projectRoot.getAbsolutePath());
-        deleteDir(f);
-    }
-
-    /**
-     * Deletes all children and the directory itself.
-     *
-     * @param dir
-     *            The directory to delete.
-     * @return true if successful, false if not.
-     */
-    private static boolean deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            for (String aChildren : children) {
-                boolean success = deleteDir(new File(dir, aChildren));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-        // The directory is now empty or this is a file so delete it
-        return dir.delete();
     }
 
     /**

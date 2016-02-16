@@ -218,7 +218,7 @@ public class SkillExtractListener extends SKilLParserBaseListener {
     private void processUsertype(SKilLParser.UsertypeContext ctx) throws IOException {
         Type type = null;
         for (Type t : tool.getTypes()) {
-            if (t.getName().toLowerCase().equals(ctx.name.getText().toLowerCase())) {
+            if (t.getName().toLowerCase().equals(ctx.name.getText().toLowerCase()) && t.getFile().getPath().equals(inFile.getPath())) {
                 type = t;
                 break;
             }
