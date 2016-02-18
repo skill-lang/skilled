@@ -167,12 +167,12 @@ class TestRangeFieldRestriction {
 	def void testRangeI8With2HexArgs() {
 		assertTrue('''
 			TypeA {
-				@range(0x1B, 0x123F) 
+				@range(0x1A, 0x56) 
 				i8 a;
 			}   
 		'''.parse.validate.isNullOrEmpty)
 	}
-	
+
 	@Test
 	def void testRangeI8With2HexAnd1StringArgs() {
 		assertFalse('''
