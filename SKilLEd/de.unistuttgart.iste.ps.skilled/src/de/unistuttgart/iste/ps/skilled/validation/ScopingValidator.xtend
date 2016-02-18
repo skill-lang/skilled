@@ -37,13 +37,19 @@ class ScopingValidator extends AbstractSKilLComposedValidatorPart {
    */
   @Check
   def checkFileDependencies(File file) {
-    var Set<File> files = services.getAll(file);
-    dependencyGraph = new DependencyGraph();
-    dependencyGraph.generateIgnoreOrigin(file, files);
+    if (services.getProject(file) != null) {
+      var Set<File> files = services.getAll(file);
+      dependencyGraph = new DependencyGraph();
+      dependencyGraph.generateIgnoreOrigin(file, files);
+    }
   }
 
   @Check
   def checkForUnsuedAndDuplicateIncludes(File file) {
+    if (dependencyGraph == null) {
+      return;
+    }
+
     if (services.isToolFile(EcoreUtil2.getURI(file))) {
       return;
     }
@@ -53,8 +59,12 @@ class ScopingValidator extends AbstractSKilLComposedValidatorPart {
         return
       }
     }
+
     var imp = new SKilLImportOrganizer(dependencyGraph);
-    var String mainFileRelative = EcoreUtil2.getURI(mainFile).deresolve(EcoreUtil2.getURI(file)).path;
+    var String mainFileRelative = null;
+    if (mainFile != null) {
+      mainFileRelative = EcoreUtil2.getURI(mainFile).deresolve(EcoreUtil2.getURI(file)).path;
+    }
 
     var duplicate = SKilLImportOrganizer.getDuplicateIncludes(file);
     for (IncludeFile f : duplicate) {
@@ -85,6 +95,10 @@ class ScopingValidator extends AbstractSKilLComposedValidatorPart {
    * Else it will show a warning for the use.
    */
   def validReferences(EObject object, EObject linkedObject) {
+    if (dependencyGraph == null) {
+      return;
+    }
+    
     var fileObject = object.eContainer;
     var fileLinkedObject = linkedObject.eContainer;
     while (fileObject.eContainer != null) {
@@ -103,17 +117,15 @@ class ScopingValidator extends AbstractSKilLComposedValidatorPart {
 
     var URI linkedObjectURI = EcoreUtil2.getNormalizedResourceURI(linkedObject);
 
-    if (dependencyGraph != null) {
+    if (dependencyGraph.getIncludedURIs(fileObject.eResource).contains(linkedObjectURI)) {
+      // Everything is fine - Do nothing.
+    } else {
+      if (reference != null) {
+        var fileLinkedObjectURI = EcoreUtil2.getURI(fileLinkedObject);
+        if (fileLinkedObjectURI != null) {
+          var String missingFile = fileLinkedObjectURI.segments.last;
+          warning("Required file isn't included.", object, reference, NOT_INCLUDED_FILE, missingFile);
 
-      if (dependencyGraph.getIncludedURIs(fileObject.eResource).contains(linkedObjectURI)) {
-        // Everything is fine - Do nothing.
-      } else {
-        if (reference != null) {
-          var fileLinkedObjectURI = EcoreUtil2.getURI(fileLinkedObject);
-          if (fileLinkedObjectURI != null) {
-            var String missingFile = fileLinkedObjectURI.segments.last;
-            warning("Required file isn't included.", object, reference, NOT_INCLUDED_FILE, missingFile);
-          }
         }
       }
     }

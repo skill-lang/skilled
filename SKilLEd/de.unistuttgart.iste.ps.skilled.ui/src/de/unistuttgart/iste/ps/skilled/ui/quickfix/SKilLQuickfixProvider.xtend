@@ -6,6 +6,7 @@ package de.unistuttgart.iste.ps.skilled.ui.quickfix
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.google.inject.Inject
+import de.unistuttgart.iste.ps.skilled.formatting2.SKilLImportOrganizer
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
 import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
 import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
@@ -21,10 +22,12 @@ import de.unistuttgart.iste.ps.skilled.util.SKilLServices
 import de.unistuttgart.iste.ps.skilled.validation.InheritenceValidator
 import de.unistuttgart.iste.ps.skilled.validation.ScopingValidator
 import java.util.ArrayList
+import java.util.Iterator
 import java.util.LinkedList
 import java.util.List
 import java.util.Set
 import org.apache.log4j.Logger
+
 import org.eclipse.core.resources.IWorkspaceRoot
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.Path
@@ -533,21 +536,57 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
     org.organizeImportsWholeProject(file as File);
   }
   
+  
   def organizeImports(EObject element) {
-    var dependencyGraph = new DependencyGraph();
-    
+        var dependencyGraph = new DependencyGraph();
+
     // The file in which the element is located.
     var file = EcoreUtil2.getRootContainer(element, true);
     if(!(file instanceof File)) {
       return;
     }
     
-     if(services.isToolFile(EcoreUtil2.getURI(file))) {
+    if(services.isToolFile(EcoreUtil2.getURI(file))) {
       return;
     }
-   
+
     dependencyGraph.generateIgnoreOrigin((file as File), services.getAll(file as File));
-    var org = new SKilLOrganizeImportsHandler(dependencyGraph);
-    org.b(file as File);
+    var org = new SKilLImportOrganizer(dependencyGraph);  
+    var missing = dependencyGraph.getMissingIncludes((file as File).eResource);
+
+   for (URI u : missing) {
+      var URI referencedURI = u.deresolve(file.eResource.URI);
+      if (referencedURI != null) {
+        // Create new include.
+        var Include include = SKilLFactory.eINSTANCE.createInclude;
+        var IncludeFile includeFile = SKilLFactory.eINSTANCE.createIncludeFile;
+        includeFile.importURI = referencedURI?.path;
+        include.includeFiles.add(includeFile);
+        if (file instanceof File) {
+          file.includes.add(include);
+        }
+        (file as File).includes.add(include);
+      }
+    }
+
+    var test = org.getUnusedImports(file as File);
+    test.addAll(SKilLImportOrganizer.getDuplicateIncludes(file as File));
+
+    for (IncludeFile delete : test) {
+      var Iterator<Include> iit = (file as File).includes.iterator;
+      while (iit.hasNext) {
+        var aaa = iit.next;
+        var Iterator<IncludeFile> ifit = aaa.includeFiles.iterator;
+        while (ifit.hasNext) {         
+           if (ifit.next.equals(delete)) {
+            if (aaa.includeFiles.size > 1) {
+              ifit.remove;
+            } else {
+              iit.remove;
+            }
+          }
+        }
+      }
+    }
   }
 }
