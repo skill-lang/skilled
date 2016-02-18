@@ -15,6 +15,9 @@ import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLFactory
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
+import de.unistuttgart.iste.ps.skilled.ui.quickfix.organize.SKilLOrganizeImportsHandler
+import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph
+import de.unistuttgart.iste.ps.skilled.util.SKilLServices
 import de.unistuttgart.iste.ps.skilled.validation.InheritenceValidator
 import de.unistuttgart.iste.ps.skilled.validation.ScopingValidator
 import java.util.ArrayList
@@ -41,6 +44,7 @@ import org.eclipse.swt.widgets.Shell
 import org.eclipse.swt.widgets.Text
 import org.eclipse.xtext.AbstractElement
 import org.eclipse.xtext.CrossReference
+import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.RuleCall
 import org.eclipse.xtext.nodemodel.ICompositeNode
@@ -64,13 +68,6 @@ import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork
 import org.eclipse.xtext.validation.Issue
 
 import static de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider.*
-import de.unistuttgart.iste.ps.skilled.ui.quickfix.organize.Organize
-import de.unistuttgart.iste.ps.skilled.formatting2.SKilLImportOrganizer
-import org.eclipse.xtext.EcoreUtil2
-import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph
-import de.unistuttgart.iste.ps.skilled.util.SKilLServices
-import java.util.Iterator
-import de.unistuttgart.iste.ps.skilled.ui.quickfix.organize.SKilLOrganizeImportsHandler
 
 /**
  * Custom quickfixes.
@@ -82,6 +79,9 @@ import de.unistuttgart.iste.ps.skilled.ui.quickfix.organize.SKilLOrganizeImports
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#quick-fixes
  */
 public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
+
+    @Inject private SKilLServices services;
+  
 
   @Fix("Imported resource could not be found.")
   def fixImport(Issue issue, IssueResolutionAcceptor acceptor) {
@@ -434,7 +434,7 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       "upcase.png",
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
-          b(element);
+          organizeImports(element);
         }
       }
     );
@@ -449,7 +449,7 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       "upcase.png",
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
-          b(element);
+          organizeImports(element);
         }
       }
     );
@@ -464,108 +464,90 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       "upcase.png",
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
-          b(element);
+          organizeImports(element);
         }
       }
     );
   }
   
   @Fix(ScopingValidator::NOT_INCLUDED_FILE)
-  def fixMissingFileInclude5(Issue issue, IssueResolutionAcceptor acceptor) {
+  def fixMissingFileWithOrganizeImportsProjectWide(Issue issue, IssueResolutionAcceptor acceptor) {
     acceptor.accept(
       issue,
-      "Organize imports33333",
-      "Organize imports333333",
+      "Organize imports project-wide",
+      "Organize imports project-wide",
       "upcase.png",
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
-         var dg = new DependencyGraph();
-    var services = new SKilLServices();
-
-    // The file in which the element is located.
-    element.eResource;
-    var file = element.eContainer;
-    while (file.eContainer != null) {
-      file = file.eContainer;
-    }
-//          var file2 = EcoreUtil2.getRootContainer(element, true) as File;
-//          System.out.println(file2.eResource);
-    dg.generateIgnoreOrigin((file as File), services.getAll(file as File));
-    var org = new SKilLOrganizeImportsHandler(dg);
-    org.organizeImportsWholeProject(file as File);
+         organizeImportsProjectWide(element);
         }
       }
     );
   }
   
-  def b (EObject element) {
-    var dg = new DependencyGraph();
-    var services = new SKilLServices();
-
-    // The file in which the element is located.
-    element.eResource;
-    var file = element.eContainer;
-    while (file.eContainer != null) {
-      file = file.eContainer;
-    }
-//          var file2 = EcoreUtil2.getRootContainer(element, true) as File;
-//          System.out.println(file2.eResource);
-    dg.generateIgnoreOrigin((file as File), services.getAll(file as File));
-    var org = new SKilLOrganizeImportsHandler(dg);
-    org.b(file as File);
+  @Fix(ScopingValidator::DUPLICATED_INCLUDED_FILE)
+  def fixDuplicatedIncludeWithOrganizeImportsProjectWide(Issue issue, IssueResolutionAcceptor acceptor) {
+    acceptor.accept(
+      issue,
+      "Organize imports project-wide",
+      "Organize imports project-wide",
+      "upcase.png",
+      new ISemanticModification() {
+        override void apply(EObject element, IModificationContext context) {
+         organizeImportsProjectWide(element);
+        }
+      }
+    );
   }
   
+  @Fix(ScopingValidator::UNUSED_INCLUDED_FILE)
+  def fixUnusedIncludeWithOrganizeImportsProjectWide(Issue issue, IssueResolutionAcceptor acceptor) {
+    acceptor.accept(
+      issue,
+      "Organize imports project-wide",
+      "Organize imports project-wide",
+      "upcase.png",
+      new ISemanticModification() {
+        override void apply(EObject element, IModificationContext context) {
+         organizeImportsProjectWide(element);
+        }
+      }
+    );
+  }
   
-
-  def a(EObject element) {
-    var dg = new DependencyGraph();
-    var services = new SKilLServices();
-
+  def organizeImportsProjectWide(EObject element) {
+    var dependencyGraph = new DependencyGraph();
+    
     // The file in which the element is located.
-    element.eResource;
-    var file = element.eContainer;
-    while (file.eContainer != null) {
-      file = file.eContainer;
+    var file = EcoreUtil2.getRootContainer(element, true);
+    if(!(file instanceof File)) {
+      return;
     }
-//          var file2 = EcoreUtil2.getRootContainer(element, true) as File;
-//          System.out.println(file2.eResource);
-    dg.generateIgnoreOrigin((file as File), services.getAll(file as File));
-    var org = new SKilLImportOrganizer(dg);
-
-    var test = org.getUnusedImports2(file as File);
-    var missing = dg.getMissingIncludes((file as File).eResource);
-    test.addAll(org.a(file as File));
-//          var allIncludeFiles = new ArrayList<IncludeFile>();
-    for (IncludeFile delete : test) {
-      var Iterator<Include> iit = (file as File).includes.iterator;
-      while (iit.hasNext) {
-        var aaa = iit.next;
-        var Iterator<IncludeFile> ifit = aaa.includeFiles.iterator;
-        while (ifit.hasNext) {
-          if (ifit.next.equals(delete)) {
-            if (aaa.includeFiles.size > 1) {
-              ifit.remove;
-            } else {
-              iit.remove;
-            }
-          }
-        }
-      }
+    
+    if(services.isToolFile(EcoreUtil2.getURI(file))) {
+      return;
     }
-    for (URI u : missing) {
-      var URI referencedURI = u.deresolve(file.eResource.URI);
-      if (referencedURI != null) {
-        // Create new include.
-        var Include include = SKilLFactory.eINSTANCE.createInclude;
-        var IncludeFile includeFile = SKilLFactory.eINSTANCE.createIncludeFile;
-        includeFile.importURI = referencedURI?.path;
-        include.includeFiles.add(includeFile);
-        if (file instanceof File) {
-          file.includes.add(include);
-        }
-        (file as File).includes.add(include);
-      }
-
+    dependencyGraph.generateIgnoreOrigin((file as File), services.getAll(file as File));
+    
+    var org = new SKilLOrganizeImportsHandler(dependencyGraph);
+    org.organizeImportsWholeProject(file as File);
+  }
+  
+  def organizeImports(EObject element) {
+    var dependencyGraph = new DependencyGraph();
+    
+    // The file in which the element is located.
+    var file = EcoreUtil2.getRootContainer(element, true);
+    if(!(file instanceof File)) {
+      return;
     }
+    
+     if(services.isToolFile(EcoreUtil2.getURI(file))) {
+      return;
+    }
+   
+    dependencyGraph.generateIgnoreOrigin((file as File), services.getAll(file as File));
+    var org = new SKilLOrganizeImportsHandler(dependencyGraph);
+    org.b(file as File);
   }
 }

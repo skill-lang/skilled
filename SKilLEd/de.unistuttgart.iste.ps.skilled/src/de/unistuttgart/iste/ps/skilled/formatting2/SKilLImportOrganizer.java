@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
+import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.util.TextRegion;
 import org.eclipse.xtext.util.Triple;
@@ -18,6 +19,7 @@ import org.eclipse.xtext.util.Tuples;
 import de.unistuttgart.iste.ps.skilled.sKilL.File;
 import de.unistuttgart.iste.ps.skilled.sKilL.Include;
 import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile;
+import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage;
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
 import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph;
 
@@ -36,11 +38,9 @@ public class SKilLImportOrganizer {
 
     public String getOrganizedImportSection(File file) {
         StringBuilder includes = new StringBuilder();
-        List<IncludeFile> test = getUnusedImports2(file);
+        List<IncludeFile> test = getUnusedImports(file);
         Set<URI> missing = dependencyGraph.getMissingIncludes(file.eResource());
-        test.addAll(a(file));
-        // var allIncludeFiles = new ArrayList<IncludeFile>();
-
+        test.addAll(getDuplicateIncludes(file));
         for (Include inc : file.getIncludes()) {
             for (IncludeFile incF : inc.getIncludeFiles()) {
                 if (!test.contains(incF)) {
@@ -59,7 +59,7 @@ public class SKilLImportOrganizer {
         return includes.toString();
     }
 
-    public List<IncludeFile> a(File file) {
+    public static List<IncludeFile> getDuplicateIncludes(File file) {
         if (file == null) {
             return null;
         }
@@ -77,7 +77,7 @@ public class SKilLImportOrganizer {
         return duplicates;
     }
 
-    public List<Integer> getIndexOfDuplicateImports(List<URI> uris) {
+    public static List<Integer> getIndexOfDuplicateImports(List<URI> uris) {
         List<Integer> index = new ArrayList<Integer>();
         Set<URI> visited = new HashSet<URI>();
         for (int i = 0; i < uris.size(); i++) {
@@ -90,7 +90,7 @@ public class SKilLImportOrganizer {
         return index;
     }
 
-    public List<IncludeFile> getUnusedImports2(File file) {
+    public List<IncludeFile> getUnusedImports(File file) {
         Map<URI, IncludeFile> map = new HashMap<URI, IncludeFile>();
         List<Triple<URI, Integer, List<URI>>> list = new ArrayList<Triple<URI, Integer, List<URI>>>();
 
@@ -135,40 +135,6 @@ public class SKilLImportOrganizer {
         return unusedURIs;
     }
 
-    public Set<URI> getUnusedImports(Set<URI> includedURIs, Set<URI> neededURIs) {
-        List<Triple<URI, Integer, List<URI>>> list = new ArrayList<Triple<URI, Integer, List<URI>>>();
-
-        for (URI uri : includedURIs) {
-            Triple<URI, Integer, List<URI>> triple = getCount(uri, neededURIs);
-            list.add(triple);
-        }
-
-        list.sort(new Comparator<Triple<URI, Integer, List<URI>>>() {
-            @Override
-            public int compare(Triple<URI, Integer, List<URI>> o1, Triple<URI, Integer, List<URI>> o2) {
-                if (o1.getSecond() < o2.getSecond()) {
-                    return 1;
-                } else if (o1.getSecond() == o2.getSecond()) {
-                    return 0;
-                }
-                return -1;
-            }
-        });
-
-        Set<URI> unusedURIs = new HashSet<URI>();
-        for (Triple<URI, Integer, List<URI>> triple : list) {
-            if (neededURIs.size() > 0) {
-                if (!neededURIs.removeAll(triple.getThird())) {
-                    unusedURIs.add(triple.getFirst());
-                }
-            } else {
-                unusedURIs.add(triple.getFirst());
-            }
-        }
-
-        return unusedURIs;
-    }
-
     public Triple<URI, Integer, List<URI>> getCount(URI includeURI, Set<URI> neededURIs) {
         int count = 0;
         List<URI> uris = new ArrayList<URI>();
@@ -189,7 +155,7 @@ public class SKilLImportOrganizer {
         this.dependencyGraph = dependencyGraph;
     }
 
-    public TextRegion getImportRegion(File file) {
+    public static TextRegion getIncludeImportRegion(File file) {
         if (file != null) {
             if (file.getIncludes().size() > 0) {
                 List<Include> inc = file.getIncludes();
@@ -201,8 +167,15 @@ public class SKilLImportOrganizer {
                 ICompositeNode node = NodeModelUtils.getNode(file.getDeclarations().get(0));
                 int off = node.getTotalOffset();
                 return new TextRegion(off, 0);
+            } else if (file.getHeadComments().size() > 0) {
+                List<INode> nodes = NodeModelUtils.findNodesForFeature(file, SKilLPackage.Literals.FILE__HEAD_COMMENTS);
+                if (nodes != null) {
+                    int off = nodes.get(nodes.size() - 1).getTotalEndOffset();
+                    return new TextRegion(off, 0);
+                }
+            } else {
+                return new TextRegion(0, 0);
             }
-            // TODO Other scenarios
         }
         return null;
     }

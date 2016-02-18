@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -18,7 +15,9 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Region;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -40,19 +39,13 @@ import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
 import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph;
 
 
-public class SKilLOrganizeImportsHandler extends AbstractHandler {
+public class SKilLOrganizeImportsHandler {
 
     private SKilLServices services = new SKilLServices();
-    private SKilLImportOrganizer skilLImportOrganizer;
+    private SKilLImportOrganizer sKilLImportOrganizer;
 
     public SKilLOrganizeImportsHandler(DependencyGraph dg) {
-        skilLImportOrganizer = new SKilLImportOrganizer(dg);
-    }
-
-    @Override
-    public Object execute(ExecutionEvent event) throws ExecutionException {
-        // TODO Auto-generated method stub
-        return null;
+        sKilLImportOrganizer = new SKilLImportOrganizer(dg);
     }
 
     private static String A(Set<File> files, URI mainFileURI) {
@@ -62,7 +55,9 @@ public class SKilLOrganizeImportsHandler extends AbstractHandler {
         List<String> includes = new ArrayList<String>();
         StringBuilder sb = new StringBuilder();
         for (File f : files) {
-            includes.add(EcoreUtil2.getNormalizedResourceURI(f).deresolve(mainFileURI).path());
+            if (!f.eResource().getURI().path().equals(mainFileURI.path())) {
+                includes.add(EcoreUtil2.getNormalizedResourceURI(f).deresolve(mainFileURI).path());
+            }
         }
         for (String include : includes) {
             sb.append("include " + "\"" + include + "\"" + "\n");
@@ -76,6 +71,10 @@ public class SKilLOrganizeImportsHandler extends AbstractHandler {
         Set<File> files = services.getAll(file);
         StringBuilder sb = new StringBuilder();
 
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IEditorPart activeEditor = page.getActiveEditor();
+        IFile activeFile = ((IFileEditorInput) activeEditor.getEditorInput()).getFile();
+
         if (main == null) {
             String mainFileName = project.getName() + "-all" + ".skill";
             IFile mainFile = project.getFile(mainFileName);
@@ -85,6 +84,11 @@ public class SKilLOrganizeImportsHandler extends AbstractHandler {
 
             byte[] bytes = sb.toString().getBytes();
             InputStream source = new ByteArrayInputStream(bytes);
+            try {
+                mainFile.delete(true, new NullProgressMonitor());
+            } catch (CoreException e1) {
+                e1.printStackTrace();
+            }
             if (!mainFile.exists()) {
                 try {
                     mainFile.create(source, true, new NullProgressMonitor());
@@ -98,15 +102,26 @@ public class SKilLOrganizeImportsHandler extends AbstractHandler {
                     }
                 }
             }
-
-            for (File f2 : files) {
-                final String organizedImportSection = "include " + "\""
-                        + mainFileURI.deresolve(f2.eResource().getURI()).path() + "\"" + "\n";
-                BLUB(f2, organizedImportSection);
-
-            }
         }
 
+        main = services.getMainFile(file);
+        sb.append(A(files, EcoreUtil2.getURI(main)));
+        for (File f2 : files) {
+            if (EcoreUtil2.equals(f2, main)) {
+
+                BLUB(f2, sb.toString());
+                continue;
+            }
+            final String organizedImportSection = "include " + "\""
+                    + main.eResource().getURI().deresolve(f2.eResource().getURI()).path() + "\"" + "\n";
+            BLUB(f2, organizedImportSection);
+        }
+
+        try {
+            IDE.openEditor(page, activeFile, true);
+        } catch (PartInitException e) {
+            e.printStackTrace();
+        }
     }
 
     public void b(File file) {
@@ -126,7 +141,6 @@ public class SKilLOrganizeImportsHandler extends AbstractHandler {
         try {
             editor = (XtextEditor) IDE.openEditor(page, iFile, true);
         } catch (PartInitException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -141,13 +155,13 @@ public class SKilLOrganizeImportsHandler extends AbstractHandler {
                             type = (File) o;
                         }
                     }
-                    TextRegion importRegion = skilLImportOrganizer.getImportRegion(type);
+                    TextRegion importRegion = SKilLImportOrganizer.getIncludeImportRegion(type);
                     if (importRegion != null) {
                         if (ups != null) {
                             return Tuples.create(new Region(importRegion.getOffset(), importRegion.getLength()), ups);
                         }
 
-                        final String organizedImportSection = skilLImportOrganizer.getOrganizedImportSection(type);
+                        final String organizedImportSection = sKilLImportOrganizer.getOrganizedImportSection(type);
                         if (organizedImportSection != null) {
                             return Tuples.create(new Region(importRegion.getOffset(), importRegion.getLength()),
                                     organizedImportSection);

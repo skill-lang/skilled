@@ -110,7 +110,7 @@ class SKilLServices {
     for (File file1 : files) {
       for (String headcomment : file1.headComments) {
         if (headcomment.toLowerCase.contains("@main")) {
-          return file;
+          return file1;
         }
       }
     }
@@ -118,8 +118,7 @@ class SKilLServices {
     var mainFileName = project.getName() + "-all" + ".skill";
     var f = project.getFile(mainFileName);
     if (f.exists) {
-      // TODO
-      return null;
+      return getFile(f.getFullPath().toPortableString());
     }
     return null;
   }
@@ -177,7 +176,7 @@ class SKilLServices {
 
   def dispatch File getFile(String absolutePath) {
 
-    return getFile(URI.createFileURI(absolutePath));
+    return getFile(URI.createPlatformResourceURI(absolutePath, true));
 
   }
 

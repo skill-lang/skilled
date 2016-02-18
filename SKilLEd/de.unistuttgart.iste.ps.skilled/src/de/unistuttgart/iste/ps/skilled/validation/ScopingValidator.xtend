@@ -4,30 +4,24 @@ import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.formatting2.SKilLImportOrganizer
 import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
 import de.unistuttgart.iste.ps.skilled.sKilL.File
-import de.unistuttgart.iste.ps.skilled.sKilL.Include
 import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
 import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.Map
 import java.util.Set
-import org.eclipse.core.resources.IProject
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
+import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
-import org.eclipse.xtext.validation.EValidatorRegistrar
-import java.util.HashSet
 
 /**
  * Validation for the correct usage of linked declaration. It checks whether the needed skill file is included.
  * 
  * @author Marco Link
  */
-class ScopingValidator extends AbstractSKilLValidator {
+class ScopingValidator extends AbstractSKilLComposedValidatorPart {
 
   @Inject private SKilLServices services;
 
@@ -36,84 +30,44 @@ class ScopingValidator extends AbstractSKilLValidator {
   public static val UNUSED_INCLUDED_FILE = "unusedIncludedFile";
 
   // Represents the dependency graph for the active editor.
-  private DependencyGraph dependencyGraphInUse;
-
-  // Saves all dependency graphs for the projects.
-  private Map<IProject, DependencyGraph> dependencyGraphs;
-
-  override register(EValidatorRegistrar registar) {
-    dependencyGraphs = new HashMap<IProject, DependencyGraph>;
-  }
+  private DependencyGraph dependencyGraph;
 
   /**
    * Creates dependency graphs for the given file when the file will be validated.
    */
   @Check
   def checkFileDependencies(File file) {
-    // Get the project in which the file is located.
-    var IProject fileProject = services.getProject(file);
-
-    if (fileProject != null) {
-      if (dependencyGraphs.get(fileProject) != null) {
-        dependencyGraphInUse = dependencyGraphs.get(fileProject);
-      } else {
-        dependencyGraphInUse = new DependencyGraph();
-        dependencyGraphs.put(fileProject, dependencyGraphInUse);
-      }
-
-      var Set<File> files = services.getAll(file);
-
-      dependencyGraphInUse.generateIgnoreOrigin(file, files);
-    }
+    var Set<File> files = services.getAll(file);
+    dependencyGraph = new DependencyGraph();
+    dependencyGraph.generateIgnoreOrigin(file, files);
   }
 
   @Check
-  def TEST(File file) {
+  def checkForUnsuedAndDuplicateIncludes(File file) {
+    if (services.isToolFile(EcoreUtil2.getURI(file))) {
+      return;
+    }
     var mainFile = services.getMainFile(file);
     if (mainFile != null) {
-      if (mainFile.equals(file)) {
+      if (EcoreUtil2.equals(file, mainFile)) {
         return
       }
     }
-    var imp = new SKilLImportOrganizer(dependencyGraphInUse);
-//    var map = new HashMap<Integer, IncludeFile>();
-//    var map2 = new HashMap<URI, IncludeFile>();
-//    var uris = new ArrayList<URI>();
-//
-//    var uris2 = new HashSet<URI>();
-//
-//    var includes = file.includes;
-//    var count = 0;
-//    for (Include inc : includes) {
-//      for (IncludeFile i : inc.includeFiles) {
-//        uris.add(services.createAbsoluteURIFromRelative(i.importURI, file.eResource.URI));
-//        uris2.add(services.createAbsoluteURIFromRelative(i.importURI, file.eResource.URI));
-//        map2.put(services.createAbsoluteURIFromRelative(i.importURI, file.eResource.URI), i);
-//        map.put(count, i);
-//        count++;
-//      }
-//    }
-//    var index = imp.getIndexOfDuplicateImports(uris);
-//
-//    for (var i = 0; i < index.size(); i++) {
-//      warning("Duplicate include.", map.get(index.get(i)), SKilLPackage.Literals.INCLUDE_FILE__IMPORT_URI, DUPLICATED_INCLUDED_FILE);
-//    }
-//
-//    var unused = imp.getUnusedImports(file.eResource.getURI(), uris2, dependencyGraphInUse.getNeededIncludes(file.eResource));
-//    for (URI u : unused) {
-//      if (map2.get(u) != null) {
-//        warning("Unused include.", map2.get(u), SKilLPackage.Literals.INCLUDE_FILE__IMPORT_URI, UNUSED_INCLUDED_FILE);
-//      }
-//    }
-    var duplicate = imp.a(file);
-    for (IncludeFile f : duplicate) {
-      warning("Duplicate include.", f, SKilLPackage.Literals.INCLUDE_FILE__IMPORT_URI, DUPLICATED_INCLUDED_FILE);
-    }
-    var unused = imp.getUnusedImports2(file);
-    for (IncludeFile f : unused) {
-      warning("Unused include.", f, SKilLPackage.Literals.INCLUDE_FILE__IMPORT_URI, UNUSED_INCLUDED_FILE);
-    }
+    var imp = new SKilLImportOrganizer(dependencyGraph);
+    var String mainFileRelative = EcoreUtil2.getURI(mainFile).deresolve(EcoreUtil2.getURI(file)).path;
 
+    var duplicate = SKilLImportOrganizer.getDuplicateIncludes(file);
+    for (IncludeFile f : duplicate) {
+      if (!f.importURI.equals(mainFileRelative)) {
+        warning("Duplicate include.", f, SKilLPackage.Literals.INCLUDE_FILE__IMPORT_URI, DUPLICATED_INCLUDED_FILE);
+      }
+    }
+    var unused = imp.getUnusedImports(file);
+    for (IncludeFile f : unused) {
+      if (!f.importURI.equals(mainFileRelative)) {
+        warning("Unused include.", f, SKilLPackage.Literals.INCLUDE_FILE__IMPORT_URI, UNUSED_INCLUDED_FILE);
+      }
+    }
   }
 
   @Check
@@ -147,16 +101,19 @@ class ScopingValidator extends AbstractSKilLValidator {
       reference = SKilLPackage.Literals.TYPE_DECLARATION_REFERENCE__TYPE;
     }
 
-    var URI linkedObjectURI = linkedObject.eResource.URI;
+    var URI linkedObjectURI = EcoreUtil2.getNormalizedResourceURI(linkedObject);
 
-    if (dependencyGraphInUse != null) {
+    if (dependencyGraph != null) {
 
-      if (dependencyGraphInUse.getIncludedURIs(fileObject.eResource).contains(linkedObjectURI)) {
+      if (dependencyGraph.getIncludedURIs(fileObject.eResource).contains(linkedObjectURI)) {
         // Everything is fine - Do nothing.
       } else {
         if (reference != null) {
-          var String missingFile = fileLinkedObject?.eResource?.URI?.segments.last;
-          warning("Required file isn't included.", object, reference, NOT_INCLUDED_FILE, missingFile);
+          var fileLinkedObjectURI = EcoreUtil2.getURI(fileLinkedObject);
+          if (fileLinkedObjectURI != null) {
+            var String missingFile = fileLinkedObjectURI.segments.last;
+            warning("Required file isn't included.", object, reference, NOT_INCLUDED_FILE, missingFile);
+          }
         }
       }
     }

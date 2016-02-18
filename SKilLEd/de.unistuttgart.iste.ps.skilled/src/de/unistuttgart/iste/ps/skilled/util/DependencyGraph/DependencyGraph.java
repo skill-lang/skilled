@@ -160,44 +160,6 @@ public class DependencyGraph {
 
     }
 
-    // public Set<URI> getIncludedURIsFromURIWithoutSomething(URI origin, URI uri) {
-    // StronglyConnectedComponent originScc = dependencyGraphNodes.get(origin.path()).getRootContainer();
-    // Set<StronglyConnectedComponent> originreferenced = originScc.getReferencedComponents();
-    // Set<String> names = new HashSet<String>();
-    //
-    // for (Vertex v : originScc.getContainedVertices()) {
-    // DependencyGraphNode dgn = (DependencyGraphNode) v;
-    // names.add(dgn.getName());
-    // }
-    //
-    // Set<URI> uris = new HashSet<>();
-    // if (uri == null) {
-    // return null;
-    // }
-    // DependencyGraphNode depGraph = dependencyGraphNodes.get(uri.path());
-    // if (depGraph == null || depGraph.getRootContainer() == null) {
-    // return null;
-    // }
-    // for (Vertex v : depGraph.getRootContainer().getContainedVertices()) {
-    // DependencyGraphNode dgn = (DependencyGraphNode) v;
-    // if (!dgn.getFileURI().path().equals(origin.path())) {
-    // uris.add(dgn.getFileURI());
-    // }
-    // }
-    //
-    // for (StronglyConnectedComponent scc : depGraph.getRootContainer().getReferencedComponents()) {
-    //
-    // for (Vertex v : scc.getContainedVertices()) {
-    // DependencyGraphNode dgn = (DependencyGraphNode) v;
-    // if (!dgn.getFileURI().path().equals(origin.path())) {
-    // uris.add(dgn.getFileURI());
-    // }
-    // }
-    // }
-    // return uris;
-    //
-    // }
-
     public Set<URI> getNeededIncludes(Resource resource) {
         if (resource == null) {
             return null;
