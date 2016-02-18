@@ -9,6 +9,7 @@ import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile
 import java.io.File
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.Path
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
@@ -29,7 +30,6 @@ class UnusedDeclarationValidator extends AbstractDeclarativeValidator {
    */
   @Check
   def checkType(Declaration declaration) {
-    System.out.println("CheckType")
     val platformString = declaration.eResource.URI.toPlatformString(true);
     val myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString))
     val project = myFile.project
@@ -52,7 +52,11 @@ class UnusedDeclarationValidator extends AbstractDeclarativeValidator {
       }
     }
     if (!found) {
-      warning("Type is not used in Tool", declaration, SKilLPackage.Literals.DECLARATION__NAME, UNUSED_TYPE)
+      var node = NodeModelUtils.getNode(declaration);
+      var offset = node.totalOffset;
+      var length = node.totalLength;
+      warning("Type is not used in Tool", declaration, SKilLPackage.Literals.DECLARATION__NAME, UNUSED_TYPE,
+        #[offset.toString, length.toString]);
     }
   }
 
@@ -86,7 +90,11 @@ class UnusedDeclarationValidator extends AbstractDeclarativeValidator {
       }
     }
     if (!found) {
-      warning("Field is not used in Tool", field.fieldcontent, SKilLPackage.Literals.FIELDCONTENT__NAME, UNUSED_FIELD)
+      var node = NodeModelUtils.getNode(field);
+      var offset = node.totalOffset;
+      var length = node.totalLength;
+      warning("Field is not used in Tool", field.fieldcontent, SKilLPackage.Literals.FIELDCONTENT__NAME, UNUSED_FIELD,
+        #[offset.toString, length.toString])
     }
   }
 
