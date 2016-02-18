@@ -7,13 +7,23 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 
 
 /**
@@ -81,15 +91,11 @@ public class SKilLCombineRefactoring {
         for (int i = 0; i < numberSelected; i++) {
             files[i] = new File(fCombines[i]);
 
-            System.out.println("0 is " + fWorkspaceLength);
             fPreCombinedWithFolderPath[i] = fCombines[i].substring(fWorkspaceLength + 1);
-            System.out.println("1 is " + fPreCombinedWithFolderPath[i]);
             fPreCombinedWithoutProjectFolderPath[i] = fPreCombinedWithFolderPath[i]
                     .substring(fPreCombinedWithFolderPath[i].indexOf(File.separator) + 1);
-            System.out.println("2 is " + fPreCombinedWithoutProjectFolderPath[i]);
             fPreCombinedWithoutProjectFolderPathAndForwardSlash[i] = fPreCombinedWithoutProjectFolderPath[i].replace("\\",
                     "/");
-            System.out.println("3 is " + fPreCombinedWithoutProjectFolderPathAndForwardSlash[i]);
         }
         organize(files);
     }
@@ -120,7 +126,7 @@ public class SKilLCombineRefactoring {
                     // write everything that is not include, with or head
                     // comment to fBody
                     if (!line.startsWith("include") && !line.startsWith("with") && !line.startsWith("#")) {
-                        fBody += line + "\n";
+                        fBody += line + System.lineSeparator();
                     }
                     // All includes and withs saved in fHead
                     else if (line.startsWith("include") || line.startsWith("with")) {
@@ -139,16 +145,17 @@ public class SKilLCombineRefactoring {
                         int firstDifference;
                         for (firstDifference = 0; firstDifference < newFilePath.length()
                                 && firstDifference < line.length(); firstDifference++) {
-                            if (newFilePath.charAt(firstDifference) != line.charAt(firstDifference)) break;
+                            if (newFilePath.charAt(firstDifference) != line.charAt(firstDifference))
+                                break;
                         }
                         line = line.substring(firstDifference);
-                        int goUp = newFilePath.substring(firstDifference).length() - newFilePath.substring(firstDifference).replace("/", "").length();
+                        int goUp = newFilePath.substring(firstDifference).length()
+                                - newFilePath.substring(firstDifference).replace("/", "").length();
                         for (int i = 0; i < goUp; i++) {
                             line = "../" + line;
                         }
-                        line = include + " \"" + line + "\"";
                         if (!fHead.contains(line))
-                            fHead += line + System.lineSeparator();
+                            fHead += include + " \"" + line + "\"" + System.lineSeparator();
                     }
                     // All head comments save in fComment
                     else if (line.startsWith("#")) {
@@ -162,7 +169,7 @@ public class SKilLCombineRefactoring {
                                 // One of the pre-combined files has a head
                                 // comment
                                 aFileHasHeadCommentCheck = 1;
-                                fComment += line + "\n";
+                                fComment += line + System.lineSeparator();
                                 duplicateComment.add(line);
                             }
                         }
@@ -170,17 +177,18 @@ public class SKilLCombineRefactoring {
                 }
                 // Adds # after the head comment(s) of a file
                 if (thisFileHasHeadCommentCheck == 1) {
-                    fComment += "#\n";
+                    fComment += "#" + System.lineSeparator();
                     thisFileHasHeadCommentCheck = 0;
                 }
                 br1.close();
+                fBody += System.lineSeparator();
             } catch (IOException e) {
                 StringBuilder sb = new StringBuilder("Error: ");
                 sb.append(e.getMessage());
-                sb.append("\n");
+                sb.append(System.lineSeparator());
                 for (StackTraceElement ste : e.getStackTrace()) {
                     sb.append(ste.toString());
-                    sb.append("\n");
+                    sb.append(System.lineSeparator());
                 }
                 JTextArea jta = new JTextArea(sb.toString());
                 JScrollPane jsp = new JScrollPane(jta) {
@@ -230,7 +238,6 @@ public class SKilLCombineRefactoring {
         lines[0] = lines[0] + "/" + lines[1];
         if (lines[0].startsWith("/"))
             lines[0] = lines[0].substring(1);
-        System.out.println(lines[0]);
         return lines[0];
     }
 
@@ -247,19 +254,16 @@ public class SKilLCombineRefactoring {
 
             if (fComment != null) {
                 fw.write(fComment);
+                if (!fComment.equals("")) fw.write(System.lineSeparator());
             }
             if (fHead != null) {
                 fw.write(fHead);
+                if (!fHead.equals("")) fw.write(System.lineSeparator());
             }
             if (fBody != null) {
                 fw.write(fBody);
             }
             fw.close();
-
-            for (int x = 0; x < numberSelected; x++) {
-                fPreCombinedLocation = fCombines[x].substring(0, fCombines[x].lastIndexOf(File.separator));
-                checkSiblings();
-            }
 
             // Empty strings to remove append errors
             fComment = "";
@@ -271,13 +275,28 @@ public class SKilLCombineRefactoring {
             for (int i = 0; i < numberSelected; i++) {
                 files[i].delete();
             }
+
+            // refresh workspace
+            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+            String projectName = fPreCombinedWithFolderPath[0].split("\\" + File.separator)[0];
+            root.getProject(projectName).refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+
+            // open new file
+            String shortPath = combinedFile.getAbsolutePath().split(root.getLocation().lastSegment())[1];
+            IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor("a.skill");
+            Constructor<org.eclipse.core.internal.resources.File> constructor = (Constructor<org.eclipse.core.internal.resources.File>) org.eclipse.core.internal.resources.File.class
+                    .getDeclaredConstructors()[0];
+            constructor.setAccessible(true);
+            org.eclipse.core.internal.resources.File file = constructor
+                    .newInstance(new org.eclipse.core.runtime.Path(shortPath), ResourcesPlugin.getWorkspace());
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(file), desc.getId());
         } catch (IOException e) {
             StringBuilder sb = new StringBuilder("Error: ");
             sb.append(e.getMessage());
-            sb.append("\n");
+            sb.append(System.lineSeparator());
             for (StackTraceElement ste : e.getStackTrace()) {
                 sb.append(ste.toString());
-                sb.append("\n");
+                sb.append(System.lineSeparator());
             }
             JTextArea jta = new JTextArea(sb.toString());
             JScrollPane jsp = new JScrollPane(jta) {
@@ -290,79 +309,16 @@ public class SKilLCombineRefactoring {
                 }
             };
             JOptionPane.showMessageDialog(null, jsp, "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    /**
-     * Replace with and includes that require the precombined files with the combined file.
-     *
-     */
-    public void checkSiblings() {
-        // Returns the name of the combined file (i.e. combined_file.skill)
-        String fSaveName = fCombinedSave.substring(fCombinedSave.lastIndexOf(File.separator) + 1);
-        // Returns path of the combined file without the name (i.e.
-        // C:\Workspace\Project\Folder instead of
-        // C:\Workspace\Project\Folder\Save.skill)
-        String fSavePath = fCombinedSave.substring(0, fCombinedSave.lastIndexOf(File.separator));
-        // Returns path of the combined file starting from the project folder
-        // (i.e. Project\Folder\Save.skill)
-        String fSaveNameWithFolderPath = fCombinedSave.substring(fWorkspaceLength + 1);
-        // Returns path of the combined file starting from its subfolder (i.e.
-        // Save.skill if it is in the project folder, else Folder\Save.skill)
-        String fSaveNameWithFolderPathWithoutProjectFolder = fSaveNameWithFolderPath
-                .substring(fSaveNameWithFolderPath.indexOf(File.separator) + 1);
-        // Replaces all backslashes with forward slashes (for Windows computers)
-        String fSaveNameWithForwardSlash = fSaveNameWithFolderPathWithoutProjectFolder.replace("\\", "/");
-
-        // Length of the combined file path
-        int fSaveTotalLength = fCombinedSave.length();
-        // Length of the path starting from its subfolder
-        int fFolderLength = fSaveNameWithForwardSlash.length();
-        // Length of the project name
-        int ProjectPathLength = fSaveTotalLength - fFolderLength;
-        // Returns path of the project folder (i.e. C:\Workspace\Project)
-        String fFullProjectPath = fCombinedSave.substring(0, ProjectPathLength);
-        System.out.println(fFullProjectPath);
-
-        ArrayList<File> listofFiles = new ArrayList<File>();
-        listFiles(fFullProjectPath, listofFiles);
-        for (File f : listofFiles) {
-            FileInputStream fis;
-            try {
-                fis = new FileInputStream(f);
-                BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-                String line;
-                boolean alreadyReplacedWith = false;
-                boolean alreadyReplacedInclude = false;
-                while ((line = br.readLine()) != null) {
-                    if (line.startsWith("include") || line.startsWith("with")) {
-
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-    /**
-     * Finds all .skill files in the project folder and its subdirectories
-     * 
-     * @param directoryName
-     * @param checkFiles
-     */
-    public void listFiles(String directoryName, ArrayList<File> checkFiles) {
-        File fProjectDirectory = new File(directoryName);
-        File[] listofFiles = fProjectDirectory.listFiles();
-        for (File file : listofFiles) {
-            if (file.isFile() && file.getName().endsWith(".skill")) {
-                checkFiles.add(file);
-                System.out.println("File: " + file.getAbsolutePath());
-            } else if (file.isDirectory() && !file.getName().startsWith(".")) {
-                System.out.println("Directory: " + file.getAbsolutePath());
-                listFiles(file.getAbsolutePath(), checkFiles);
-            }
+        } catch (CoreException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
 }
