@@ -22,6 +22,6 @@ import org.eclipse.xtext.validation.NamesAreUniqueValidator
 	ContainerTypeFieldRestrictionsValidator, MapTypeFieldRestrictionsValidator, DuplicatedTypenameValidation,
 	KeywordWarning, ASCIICharValidator, ViewValidator, ScopingValidator, UserTypeRestrictionValidator,
 	TypedefRestrictionValidator, ImportURIValidator, ImportValidator, FieldHintsValidator, ConstantValidator,
-	NestingValidator, NamesAreUniqueValidator, TypeHintsValidator, ReservedSKilLKeywordValidator])
+	NestingValidator, NamesAreUniqueValidator, TypeHintsValidator, ReservedSKilLKeywordValidator, UnusedDeclarationValidator])
 class SKilLValidator extends AbstractSKilLValidator {
 }

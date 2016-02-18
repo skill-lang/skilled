@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
  org.antlr.runtime,
- org.eclipse.xtext.ui
+ org.eclipse.xtext.ui,
  org.eclipse.core.resources,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -54,4 +54,6 @@ Export-Package: de.unistuttgart.iste.ps.skilled;uses:="com.google.inject,org.ecl
 Import-Package: org.apache.log4j
 Bundle-ClassPath: .,
  lib/scala-library.jar,
- lib/skill_2.11-0.3.jar
+ lib/skill_2.11-0.3.jar,
+ lib/deps/skill.java.common.jar,
+ lib/deps/skill.jvm.common.jar
