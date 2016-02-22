@@ -153,7 +153,7 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	 *  Checks if there is a supertype with the name name that can be reached starting with dec
 	 * 	visited contains all visited supertypes to avoid cycles
 	 */
-	def boolean searchSupertype(String name, TypeDeclaration declaration, Set<TypeDeclaration> visited) {
+	def public static boolean searchSupertype(String name, TypeDeclaration declaration, Set<TypeDeclaration> visited) {
 		var boolean found = false
 		for (declarationReference : declaration.supertypes) {
 			if (!visited.contains(declarationReference.type)) {
