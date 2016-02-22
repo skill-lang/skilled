@@ -6,5 +6,4 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: 
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Require-Bundle: org.eclipse.swtbot.go,
- de.unistuttgart.iste.ps.skilled.tests
+Require-Bundle: org.eclipse.swtbot.go

@@ -11,7 +11,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.unistuttgart.iste.ps.skilled.tests.utils.FileLoader;
+import de.unistuttgart.iste.ps.skilled.SWTbotTest.util.LoadTestfile;
+
 
 /**
  * @author Jan Berberich
@@ -22,7 +23,7 @@ public class TestSKilLEd {
 
 	private static SWTWorkbenchBot bot;
 	private String workspacePath = null;
-
+	private final String testProject = "TestProject"; //Name of the test project created by the test
 	@BeforeClass
 	public static void beforeClass() throws Exception {
 		bot = new SWTWorkbenchBot();
@@ -31,13 +32,12 @@ public class TestSKilLEd {
 	}
 
 	/**
-	 * Basic test: Create a new SKilL-Project and a SKilL-File in the project and write some content in it
+	 * Basic test: Create a new SKilL-Project and a SKilL-File in the project and write some content in it.
 	 * 
 	 */
 	@Test
 	public void testCreateSkillProject() {
-		String testProject = "TestProject";
-		// getWorkspacePath();
+		getWorkspacePath();
 		// Create a new SKilL Project
 		bot.menu("File").menu("New").menu("Project...").click();
 		SWTBotShell shell = bot.shell("New Project");
@@ -61,7 +61,7 @@ public class TestSKilLEd {
 		bot.styledText().setText("A");
 		bot.styledText().setText("A{ i8 a	}");
 		bot.styledText().setText("A{i8 a; }");
-		bot.styledText().setText("A{i8 a; \n	i16 b	}");
+		bot.styledText().setText("A{i8 a; \n	i16 b;	}");
 		bot.toolbarButtonWithTooltip("Save (Ctrl+S)").click();
 		File workspace = new File(workspacePath);
 		if (workspace.exists() && workspace.isDirectory()) {
@@ -69,49 +69,45 @@ public class TestSKilLEd {
 				System.out.println("File: " + f.getName());
 			}
 		}
-		try {
-			setEditorText("TestFile", "A{}");
-		} catch (Exception e) {
-			throw new AssertionError();
-		}
 	}
 
 	/**
 	 * This test opens a SKilL-File specified in the specification (2.3) and
 	 * checks if it is opened in the specified time.
+	 * File is specified to be opened in a maximum of 50 ms.
 	 * 
 	 */
 	@Test
 	public void openFileTimeSpecified() {
 		//First generate a File with the specified Filecontent
-		//String fileContent = FileLoader.loadFile("TestFileSpecification");
-		//System.out.println("Content: "+fileContent);
-		
+		String fileContent = LoadTestfile.loadTestfile();
+		createSKilLFile("timeTestSpecification", testProject);
+		//Focus on Project Explorer, open testFile, save content
+		bot.viewByTitle("Project Explorer").show();
+		bot.tree().getTreeItem(testProject).expand();
+		bot.tree().getTreeItem(testProject).getNode("timeTestSpecification.skill").select();
+		bot.editorByTitle("timeTestSpecification.skill").show();
+		bot.styledText().setText(fileContent);
+		bot.toolbarButtonWithTooltip("Save (Ctrl+S)").click();
+		bot.editorByTitle("timeTestSpecification.skill").close();		
+		System.out.println("Open Testfile: ");
+		final long endTime;
+		bot.viewByTitle("Project Explorer").show();
 		final long timeStart = System.currentTimeMillis();
-
-		final long timeDiff = System.currentTimeMillis() - timeStart;
+		bot.tree().getTreeItem(testProject).getNode("timeTestSpecification.skill").select();
+		bot.editorByTitle("timeTestSpecification.skill").show();
+		endTime = System.currentTimeMillis();
+		final long timeDiff = endTime - timeStart;
 		System.out.println("File opened in " + timeDiff + " ms.");
 	}
 
-	public void setEditorText(String fileName, String text) {
-		// SWTBotEclipseEditor editor =
-		// bot.editorByTitle(fileName).toTextEditor();
-		bot.editorByTitle(fileName).toTextEditor().setText(text);
-		bot.editorByTitle(fileName).toTextEditor().save();
-
-		// editor.setText(text);
-		// editor.save();
-
-	}
 
 	private String getWorkspacePath() {
 		if (workspacePath == null) {
 			bot.menu("File").menu("Switch Workspace").menu("Other...").click();
 			SWTBotShell shell = bot.shell("Workspace Launcher");
 			shell.activate();
-
-			workspacePath = bot.browserWithLabel("Workspace:").getText();
-
+			workspacePath = bot.comboBox().getText();
 			System.out.println("Label: " + workspacePath);
 			bot.button("Cancel").click();
 		}
