@@ -33,7 +33,7 @@ public class SortTypes {
 
                 // sort types
                 EList<Declaration> declarationList = file.getDeclarations();
-                ECollections.sort(declarationList, new DeclarationComparator());
+                customSort(declarationList, new DeclarationComparator());
 
                 for (Declaration decl : declarationList) {
                     EList<Field> fieldList = null;
@@ -60,6 +60,24 @@ public class SortTypes {
 
                 }
                 return null;
+            }
+
+            private void customSort(EList<Declaration> declarationList, DeclarationComparator declarationComparator) {
+                int size = declarationList.size();
+                for (int i = 0; i < size; i++) {
+                    for (int j = 0; j < size; j++) {
+                        if (i != j && declarationComparator.compare(declarationList.get(i), declarationList.get(j))
+                                * (i - j) < 0) {
+                            if (i < j) {
+                                declarationList.move(j, i);
+                                declarationList.move(i, j - 1);
+                            } else {
+                                declarationList.move(i, j);
+                                declarationList.move(j, i - 1);
+                            }
+                        }
+                    }
+                }
             }
         });
     }
