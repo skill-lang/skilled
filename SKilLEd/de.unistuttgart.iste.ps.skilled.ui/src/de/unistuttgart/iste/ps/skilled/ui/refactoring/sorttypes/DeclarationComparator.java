@@ -9,6 +9,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration;
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef;
 import de.unistuttgart.iste.ps.skilled.validation.InheritenceValidator;
 
+
 /**
  * sorts declarations in the following oder: <br>
  * (1) Enums <br>
@@ -25,33 +26,33 @@ public class DeclarationComparator implements Comparator<Declaration> {
 
     @Override
     public int compare(Declaration arg0, Declaration arg1) {
-        
-        //put enums first
+
+        // put enums first
         if (arg0 instanceof Enumtype && !(arg1 instanceof Enumtype)) {
             return -1;
         }
         if (arg1 instanceof Enumtype && !(arg0 instanceof Enumtype)) {
             return 1;
         }
-        
-        //put typedefs second
+
+        // put typedefs second
         if (arg0 instanceof Typedef && !(arg1 instanceof Typedef)) {
             return -1;
         }
         if (arg1 instanceof Typedef && !(arg0 instanceof Typedef)) {
             return 1;
         }
-        
-        //sort type declarations by inheritance hierarchy
+
+        // sort type declarations by inheritance hierarchy
         if (arg0 instanceof TypeDeclaration) {
             if (isParent((TypeDeclaration) arg0, (TypeDeclaration) arg1)) {
                 return -1;
-            } else if (isParent((TypeDeclaration) arg0, (TypeDeclaration) arg1)) {
+            } else if (isParent((TypeDeclaration) arg1, (TypeDeclaration) arg0)) {
                 return 1;
             }
         }
-        
-        //sort enums, typedefs and independant types by name
+
+        // sort enums, typedefs and independant types by name
         return arg0.getName().compareTo(arg1.getName());
     }
 
