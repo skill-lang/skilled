@@ -1,7 +1,12 @@
 package de.unistuttgart.iste.ps.skillls.test;
 
+import de.unistuttgart.iste.ps.skillls.main.BreakageException;
 import de.unistuttgart.iste.ps.skillls.main.CleanUpAssistant;
+import de.unistuttgart.iste.ps.skillls.main.Indexing;
 import de.unistuttgart.iste.ps.skillls.main.MainClass;
+import de.unistuttgart.iste.ps.skillls.tools.Tool;
+import de.unistuttgart.iste.ps.skillls.tools.Type;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 import org.junit.*;
 
 import java.io.ByteArrayOutputStream;
@@ -157,7 +162,7 @@ public class MainClassTest {
         }
         String[] args = new String[] { "--all", "--generator", builder, "--lang", "Java", "--output", "generated",
                 "--exec", "scala", "--module", "twotypetool", "--path", "resources", "twoTypeTool" };
-        MainClass.main(args);
+        MainClass.start(Indexing.NO_INDEXING, args);
         assertTrue("not generated", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "src"
                 + File.separator + "main" + File.separator + "java" + File.separator + "twotypetool")));
         assertTrue("Bathtub not generated",
@@ -253,6 +258,41 @@ public class MainClassTest {
         System.setOut(origOut);
         System.setErr(origErr);
         assertTrue("No Output", got.length != 0);
+    }
+
+    @Test
+    public void testBreakage() {
+        CleanUpAssistant.renewInstance();
+        System.setErr(origErr);
+        System.setOut(origOut);
+        try {
+            Files.move(Paths.get("resources" + File.separator + "Furniture.skill"), Paths.get("testFiles" + File.separator + "Furniture.skill"));
+            if (Files.exists(Paths.get(skillFilePath))) {
+                Files.delete(Paths.get(skillFilePath));
+            }
+            Files.copy(Paths.get("testFiles" + File.separator + "CorrectInput" + File.separator + "AddField.sf"), Paths.get(skillFilePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail();
+        }
+        String[] args = new String[] { "-e", "resources", "" };
+        boolean failed = false;
+        try {
+            MainClass.start(Indexing.JUST_INDEXING, args);
+            failed = true;
+        } catch (Throwable t) {
+            assertTrue("not a BreakageException", t instanceof BreakageException);
+        }
+        try {
+            Files.move(Paths.get("testFiles" + File.separator + "Furniture.skill"), Paths.get("resources" + File.separator + "Furniture.skill"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.setErr(err);
+        System.setOut(out);
+        if (failed) {
+            fail("exception not thrown");
+        }
     }
 
     public static void deleteDirectory(File file) {

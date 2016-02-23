@@ -125,6 +125,11 @@ public class Generator implements Runnable {
         createDirectories(Paths.get(path));
     }
 
+    /**
+     * Creates the complete path for a directory and the directory itself.
+     * @param path the path to the directory, that should be created.
+     * @throws IOException thrown when access was denied.
+     */
     private void createDirectories(Path path) throws IOException {
         if (!(Files.exists(path) && Files.isDirectory(path))) {
             createDirectories(path.getParent());

@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 public class Editor {
     private final String COMMAND_STRING;
     private de.unistuttgart.iste.ps.skillls.tools.api.SkillFile skillFile;
-    private Tool test;
 
     /**
      * @param commandString

@@ -50,6 +50,32 @@ class ExceptionHandler {
         e.printStackTrace();
     }
 
+    /**
+     * Handles tool breaking exceptions.
+     * @param e the tool breaking exception
+     * @param message the message to print
+     */
+    public static void handle(BreakageException e, String message) {
+        System.out.println(message + "\n" + e.getMessage());
+        if (rethrow) {
+            throw e;
+        }
+    }
+
+    /**
+     * Handles tool breaking exceptions.
+     * @param e the tool breaking exception
+     */
+    public static void handle(BreakageException e) {
+        if (rethrow) {
+            throw e;
+        }
+    }
+
+    /**
+     * decides whether exceptions should be rethrown.
+     * @param rethrow
+     */
     public static void setRethrow(boolean rethrow) {
         ExceptionHandler.rethrow = rethrow;
     }

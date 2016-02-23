@@ -185,6 +185,11 @@ public class SkillExtractListener extends SKilLParserBaseListener {
         outFile.write(builder.toString().getBytes());
     }
 
+    /**
+     * Adds all fields of a type to a string
+     * @param type the type whose fields should be added
+     * @param builder builder containing the string
+     */
     private static void getCompleteFieldString(Type type, StringBuilder builder) {
         for (Field field : type.getFields()) {
             builder.append("  ");
@@ -242,6 +247,11 @@ public class SkillExtractListener extends SKilLParserBaseListener {
         outFile.write(builder.toString().getBytes());
     }
 
+    /**
+     * adds all fields of a type to a string
+     * @param type the type whose hints should be added
+     * @param builder builder containing the string
+     */
     private static void getHintString(Type type, StringBuilder builder) {
         for (Hint hint : type.getHints()) {
             builder.append(hint.getName());
@@ -284,6 +294,11 @@ public class SkillExtractListener extends SKilLParserBaseListener {
         outFile.write(builder.toString().getBytes());
     }
 
+    /**
+     * adds all restrictions of a type to a string
+     * @param type the type whose restrictions should be added
+     * @param builder builder containing the string
+     */
     private static void getRestrictionString(Type type, StringBuilder builder) {
         for (String restriction : type.getRestrictions()) {
             builder.append(restriction);

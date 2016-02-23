@@ -90,7 +90,7 @@ public class MainClass {
                 indexFiles(projectDirectory, skillFile, indexing);
                 CleanUpAssistant.getInstance(skillFile).cleanUp();
                 if (indexing == Indexing.JUST_INDEXING) {
-                    return;
+                    break;
                 }
                 editor.setSkillFile(skillFile);
                 editor.start();
@@ -132,7 +132,7 @@ public class MainClass {
                             SkillFile.Mode.Write, SkillFile.Mode.Read);
                 } catch (IOException e) {
                     ExceptionHandler.handle(e);
-                    return;
+                    break;
                 }
                 buildDependencies(sf);
                 ArrayList<String> tools = new ArrayList<>();
@@ -173,7 +173,7 @@ public class MainClass {
                 indexFiles(new File(path), sf, indexing);
                 CleanUpAssistant.getInstance(sf).cleanUp();
                 if (indexing == Indexing.JUST_INDEXING) {
-                    return;
+                    break;
                 }
 
                 try {
@@ -183,8 +183,17 @@ public class MainClass {
                 }
                 break;
         }
+        if (indexing == Indexing.JUST_INDEXING || indexing == Indexing.NORMAL) {
+            CleanUpAssistant.getInstance(skillFile).breakageAnalysis();
+        }
     }
 
+    /**
+     * Method for parsing all arguments.
+     * @param args the arguments to parse
+     * @param index the starting index
+     * @return Returns the array of evaluations of the arguments.
+     */
     private static ArgumentEvaluation[] evaluateArgument(String[] args, int index) {
         // decide what type of argument was passed. Long form (led by --) or short form (led by -).
         if (args[index].startsWith("--")) {
@@ -746,6 +755,11 @@ public class MainClass {
         }
     }
 
+    /**
+     * File for opening a new skillFile
+     * @param path the path to the skillFile
+     * @return returns the new skillFile.
+     */
     public static SkillFile openSkillFile(Path path) {
         try {
             skillFile = SkillFile.open(path, de.ust.skill.common.java.api.SkillFile.Mode.Read, de.ust.skill.common.java.api.SkillFile.Mode.Write);

@@ -108,6 +108,11 @@ class SkillIndexListener extends SKilLParserBaseListener {
         }
     }
 
+    /**
+     * reindexes an interface
+     * @param interfacetype the context of the interface
+     * @param type the old type if one exists
+     */
     private void reindex(SKilLParser.InterfacetypeContext interfacetype, Type type) {
         ArrayList<Hint> hints = new ArrayList<>();
         ArrayList<String> restrictions = new ArrayList<>();
@@ -146,6 +151,11 @@ class SkillIndexListener extends SKilLParserBaseListener {
         cleanUpAssistant.foundType(type, newType);
     }
 
+    /**
+     * reindexes an typedef
+     * @param typedef the context of the typedef
+     * @param type the old type if one exists
+     */
     private void reindex(SKilLParser.TypedefContext typedef, Type type) {
         ArrayList<Hint> hints = new ArrayList<>();
         ArrayList<String> restrictions = new ArrayList<>();
@@ -183,6 +193,11 @@ class SkillIndexListener extends SKilLParserBaseListener {
         cleanUpAssistant.foundType(type, newType);
     }
 
+    /**
+     * reindexes an enum
+     * @param enumtype the context of the enum
+     * @param type the old type if one exists
+     */
     private void reindex(SKilLParser.EnumtypeContext enumtype, Type type) {
         ArrayList<Hint> hints = new ArrayList<>();
         ArrayList<String> restrictions = new ArrayList<>();
@@ -220,6 +235,11 @@ class SkillIndexListener extends SKilLParserBaseListener {
         cleanUpAssistant.foundType(type, newType);
     }
 
+    /**
+     * reindexes an usertype
+     * @param usertypeContext the context of the usertype
+     * @param type the old type if one exists
+     */
     private void reindex(SKilLParser.UsertypeContext usertypeContext, Type type) {
         ArrayList<Hint> hints = new ArrayList<>();
         ArrayList<String> restrictions = new ArrayList<>();
@@ -267,6 +287,11 @@ class SkillIndexListener extends SKilLParserBaseListener {
         cleanUpAssistant.foundType(type, newType);
     }
 
+    /**
+     * indexes a field, that is a constant
+     * @param fieldContext the field context containing the constant
+     * @return returns the new field object
+     */
     private Field indexFieldConstant(SKilLParser.FieldContext fieldContext) {
         ArrayList<Hint> hints = new ArrayList<>();
         ArrayList<String> restrictions = new ArrayList<>();
@@ -279,14 +304,12 @@ class SkillIndexListener extends SKilLParserBaseListener {
             }
         }
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("const ");
-        builder.append(fieldContext.constant().type().getText());
-        builder.append(' ');
-        builder.append(fieldContext.constant().extendedIdentifer());
-        builder.append(" = ");
-        builder.append(fieldContext.constant().IntegerConstant().getText());
-        String name = builder.toString();
+        String name = "const " +
+                fieldContext.constant().type().getText() +
+                ' ' +
+                fieldContext.constant().extendedIdentifer() +
+                " = " +
+                fieldContext.constant().IntegerConstant().getText();
 
         Field field = skillFile.Fields().make("", name, null, restrictions, null, hints);
         for (Hint hint : field.getHints()) {
@@ -295,6 +318,11 @@ class SkillIndexListener extends SKilLParserBaseListener {
         return field;
     }
 
+    /**
+     * indexes a field, that is a normal field
+     * @param fieldContext the field context containing the normal field
+     * @return returns the new field object
+     */
     private Field indexFieldData(SKilLParser.FieldContext fieldContext) {
         ArrayList<Hint> hints = new ArrayList<>();
         ArrayList<String> restrictions = new ArrayList<>();
@@ -307,12 +335,10 @@ class SkillIndexListener extends SKilLParserBaseListener {
             }
         }
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(fieldContext.data().AUTO() == null ? "" : (fieldContext.data().AUTO() + " "));
-        builder.append(fieldContext.data().type().getText());
-        builder.append(' ');
-        builder.append(fieldContext.data().extendedIdentifer().getText());
-        String name = builder.toString();
+        String name = (fieldContext.data().AUTO() == null ? "" : (fieldContext.data().AUTO() + " ")) +
+                fieldContext.data().type().getText() +
+                ' ' +
+                fieldContext.data().extendedIdentifer().getText();
 
         Field field = skillFile.Fields().make("", name, null, restrictions, null, hints);
         for (Hint hint : field.getHints()) {
@@ -321,6 +347,12 @@ class SkillIndexListener extends SKilLParserBaseListener {
         return field;
     }
 
+    /**
+     * indexes a field, that is a view
+     * @param viewContext the context containing the view
+     * @param fieldContext the context containing the field
+     * @return returns the new field object
+     */
     private Field indexField(SKilLParser.ViewContext viewContext, SKilLParser.FieldContext fieldContext) {
         ArrayList<Hint> hints = new ArrayList<>();
         ArrayList<String> restrictions = new ArrayList<>();
