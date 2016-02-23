@@ -39,7 +39,7 @@ public class DependencyBuilder implements Runnable {
     @Override
     public void run() {
         for (de.unistuttgart.iste.ps.skillls.tools.File file : tool.getFiles()) {
-            ArrayList<Type> types = tool.getTypes().stream().filter(type -> type.getFile().getPath().equals(file.getPath()))
+            ArrayList<Type> types = tool.getTypes().stream().filter(type -> type != null && type.getFile().getPath().equals(file.getPath()))
                     .collect(Collectors.toCollection(ArrayList::new));
             for (Type type : types) {
                 ArrayList<String> deps = new ArrayList<>();

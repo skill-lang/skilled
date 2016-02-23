@@ -1,18 +1,15 @@
 package de.unistuttgart.iste.ps.skillls.test;
 
+import de.unistuttgart.iste.ps.skillls.main.CleanUpAssistant;
 import de.unistuttgart.iste.ps.skillls.main.MainClass;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
-import java.io.*;
-import java.math.BigInteger;
-import java.nio.channels.FileChannel;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.security.SecureRandom;
 
 import static org.junit.Assert.*;
 
@@ -24,7 +21,7 @@ import static org.junit.Assert.*;
  *        Tests functionalities that are unique to the main class.
  */
 public class MainClassTest {
-    private static String skillFilePath = "resources/.skills";
+    private static final String skillFilePath = "resources/.skills";
     private static ByteArrayOutputStream outStream = new ByteArrayOutputStream();
     private static ByteArrayOutputStream errStream = new ByteArrayOutputStream();
     private static PrintStream out = new PrintStream(outStream);
@@ -55,8 +52,13 @@ public class MainClassTest {
     }
 
     @AfterClass
-    public static void cleanup() {
+    public static void afterClass() {
         deleteDirectory(new File("resources" + File.separator + ".skills"));
+    }
+
+    @After
+    public void cleanup() {
+        CleanUpAssistant.renewInstance();
     }
 
     /**
@@ -122,7 +124,11 @@ public class MainClassTest {
         }
         String[] args = new String[] { "-agloxmp", builder, "Java", "generated", "scala", "twotypetool",
                 "resources", "twoTypeTool" };
+        System.setErr(origErr);
+        System.setOut(origOut);
         MainClass.main(args);
+        System.setErr(err);
+        System.setOut(out);
         assertTrue("not generated", Files.exists(Paths.get("generated" + File.separator + "java" + File.separator + "src"
                 + File.separator + "main" + File.separator + "java" + File.separator + "twotypetool")));
         assertTrue("Bathtub not generated",
@@ -251,8 +257,11 @@ public class MainClassTest {
 
     public static void deleteDirectory(File file) {
         if (file.isDirectory()) {
-            for (File f : file.listFiles()) {
-                deleteDirectory(f);
+            File[] children = file.listFiles();
+            if (children != null) {
+                for (File f : children) {
+                    deleteDirectory(f);
+                }
             }
         }
         file.delete();

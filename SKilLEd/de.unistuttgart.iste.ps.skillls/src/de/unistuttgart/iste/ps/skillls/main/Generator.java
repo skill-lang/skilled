@@ -122,7 +122,16 @@ public class Generator implements Runnable {
      * @throws IOException {@link Files#createDirectories(Path, FileAttribute[])}
      */
     private void makeStructure() throws IOException {
-        Files.createDirectories(Paths.get(path));
+        createDirectories(Paths.get(path));
+    }
+
+    private void createDirectories(Path path) throws IOException {
+        if (!(Files.exists(path) && Files.isDirectory(path))) {
+            createDirectories(path.getParent());
+            Files.createDirectory(path);
+        } else if (!Files.exists(path)) {
+            Files.createDirectory(path);
+        }
     }
 
     /**

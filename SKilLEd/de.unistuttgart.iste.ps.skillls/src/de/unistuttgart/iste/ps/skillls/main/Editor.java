@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class Editor {
     private final String COMMAND_STRING;
     private de.unistuttgart.iste.ps.skillls.tools.api.SkillFile skillFile;
+    private Tool test;
 
     /**
      * @param commandString
@@ -66,59 +67,61 @@ public class Editor {
             tool = newTool(subCommands[index]);
             index++;
         }
-        if (index < subCommands.length) { // TODO: umkehren
-            Command cmd = getCommand(subCommands[index]); // TODO: mehr checks für indizes
-            index++;
+        if (index >= subCommands.length) {
+            return;
+        }
+        Command cmd = getCommand(subCommands[index]);
+        index++;
 
-            try {
-                switch (cmd) {
-                    case delete:
-                        delete(tool);
-                        break;
+        try {
+            switch (cmd) {
+                case delete:
+                    delete(tool);
+                    break;
 
-                    case rename:
-                        rename(tool, subCommands, index);
-                        break;
+                case rename:
+                    rename(tool, subCommands, index);
+                    break;
 
-                    case addType:
-                        addType(tool, subCommands, index);
-                        break;
+                case addType:
+                    addType(tool, subCommands, index);
+                    break;
 
-                    case removeType:
-                        removeType(tool, subCommands, index);
-                        break;
+                case removeType:
+                    removeType(tool, subCommands, index);
+                    break;
 
-                    case addField:
-                        addField(tool, subCommands, index);
-                        break;
+                case addField:
+                    addField(tool, subCommands, index);
+                    break;
 
-                    case removeField:
-                        removeField(tool, subCommands, index);
-                        break;
+                case removeField:
+                    removeField(tool, subCommands, index);
+                    break;
 
-                    case addFieldHint:
-                        addFieldHint(tool, subCommands, index);
-                        break;
+                case addFieldHint:
+                    addFieldHint(tool, subCommands, index);
+                    break;
 
-                    case removeFieldHint:
-                        removeFieldHint(tool, subCommands, index);
-                        break;
+                case removeFieldHint:
+                    removeFieldHint(tool, subCommands, index);
+                    break;
 
-                    case addTypeHint:
-                        addTypeHint(tool, subCommands, index);
-                        break;
+                case addTypeHint:
+                    addTypeHint(tool, subCommands, index);
+                    break;
 
-                    case removeTypeHint:
-                        removeTypeHint(tool, subCommands, index);
-                        break;
+                case removeTypeHint:
+                    removeTypeHint(tool, subCommands, index);
+                    break;
 
-                    case setDefaults:
-                        setDefaults(tool, subCommands, index);
-                        break;
-                }
-            } catch (Error e) {
-                ExceptionHandler.handle(e);
+                case setDefaults:
+                    setDefaults(tool, subCommands, index);
+                    break;
             }
+        } catch (Error e) {
+            e.printStackTrace();
+            ExceptionHandler.handle(e);
         }
     }
 
@@ -177,7 +180,7 @@ public class Editor {
             if (hint.getName().equals(hintName) && hint.getParent() instanceof Type) {
                 Type parent = (Type) hint.getParent();
                 if (parent.getName().equals(typeName)) {
-                    parent.getTypeHints().remove(hint);
+                    parent.getHints().remove(hint);
                     skillFile.delete(hint);
                     break;
                 }
@@ -204,7 +207,7 @@ public class Editor {
         Type toolType = null;
         Type skType = null;
         for (Type t : tool.getTypes()) {
-            if (t.getName().equals(typeName)) {
+            if (t != null && t.getName().equals(typeName)) {
                 toolType = t;
                 break;
             }
@@ -224,7 +227,7 @@ public class Editor {
         }
 
         Hint hint = null;
-        for (Hint h : skType.getTypeHints()) {
+        for (Hint h : skType.getHints()) {
             if (h.getName().equals(hintName)) {
                 hint = h;
                 break;
@@ -235,8 +238,8 @@ public class Editor {
             throw new Error("Hint not found");
         }
 
-        if (toolType.getTypeHints().stream().noneMatch(h -> h.getName().equals(hintName))) {
-            toolType.getTypeHints().add(skillFile.Hints().make(hint.getName(), toolType));
+        if (toolType.getHints().stream().noneMatch(h -> h.getName().equals(hintName))) {
+            toolType.getHints().add(skillFile.Hints().make(hint.getName(), toolType));
         }
 
     }
@@ -260,7 +263,7 @@ public class Editor {
         String hintName = subCommands[index];
 
         Type type = null; // TODO: auslagern auch andere stellen und klone; nicht mit strings in den methoden, sondern
-                          // vorlagern
+        // vorlagern
         for (Type t : tool.getTypes()) {
             if (t.getName().equals(typeName)) {
                 type = t;
@@ -284,7 +287,7 @@ public class Editor {
         }
 
         Hint hint = null;
-        for (Hint h : field.getFieldHints()) {
+        for (Hint h : field.getHints()) {
             if (h.getName().equals(hintName)) {
                 hint = h;
                 break;
@@ -294,7 +297,7 @@ public class Editor {
         if (hint == null) {
             throw new Error("Hint not found");
         }
-        field.getFieldHints().remove(hint);
+        field.getHints().remove(hint);
         skillFile.delete(hint);
 
     }
@@ -353,7 +356,7 @@ public class Editor {
             }
         }
         if (found) {
-            field.getFieldHints().add(skillFile.Hints().make(hintName, field));
+            field.getHints().add(skillFile.Hints().make(hintName, field));
         }
     }
 
@@ -429,18 +432,16 @@ public class Editor {
 
         for (Field f : type.getFields()) {
             String[] splits = f.getName().split(" ");
-            if (splits[1].equals(fieldName)) {
+            if (splits[splits.length - 1].equals(fieldName)) {
                 return;
             }
         }
 
-        for (Field f : skillFile.Fields()) {
+        for (Field f : type.getOrig().getFields()) {
             String[] splits = f.getName().split(" ");
-            if (splits.length > 1) {
-                if (splits[1].equals(fieldName)) {
-                    type.getFields()
-                            .add(skillFile.Fields().make("", new ArrayList<>(), f.getName(), f, new ArrayList<>(), type));
-                }
+            if (splits[splits.length - 1].equals(fieldName)) {
+                type.getFields()
+                        .add(skillFile.Fields().make("", f.getName(), f, new ArrayList<>(), type, new ArrayList<>()));
             }
         }
     }
@@ -496,7 +497,10 @@ public class Editor {
      * @param type type that is deleted
      */
     private void removeTypeContent(Type type) {
-        for (Hint hint : type.getTypeHints()) {
+        if (type == null) {
+            return;
+        }
+        for (Hint hint : type.getHints()) {
             skillFile.delete(hint);
         }
         for (Field f : type.getFields()) {
@@ -510,7 +514,7 @@ public class Editor {
      * @param field field that is deleted
      */
     private void removeFieldContent(Field field) {
-        for (Hint h : field.getFieldHints()) {
+        for (Hint h : field.getHints()) {
             skillFile.delete(h);
         }
     }
@@ -527,34 +531,34 @@ public class Editor {
      */
     private void addType(Tool tool, String[] subCommands, int index) {
         String typeName = subCommands[index];
-        for (Type t : skillFile.Types()) {
+        for (Type origType : skillFile.Types().stream().filter(ty -> ty.getOrig() == null).collect(Collectors.toList())) {
             // check if type or enum or interface or typed with the name exists
-            if (typeName.equals(t.getName()) || t.getName().toLowerCase().equals("enum " + typeName.toLowerCase())
-                    || t.getName().toLowerCase().equals("interface " + typeName.toLowerCase())
-                    || t.getName().toLowerCase().startsWith("typedef " + typeName.toLowerCase())) {
+            if (typeName.equals(origType.getName()) || origType.getName().toLowerCase().equals("enum " + typeName.toLowerCase())
+                    || origType.getName().toLowerCase().equals("interface " + typeName.toLowerCase())
+                    || origType.getName().toLowerCase().startsWith("typedef " + typeName.toLowerCase())) {
                 Type type = null;
                 // type is not in tool
-                if (tool.getTypes().stream().noneMatch(ty -> ty.getName().equals(typeName))) {
-                    type = skillFile.Types().make(t.getComment(), (ArrayList<String>) t.getExtends().clone(), new ArrayList<>(), t.getFile(),
-                            t.getName(), t, new ArrayList<>(), new ArrayList<>());
+                if (tool.getTypes().stream().noneMatch(ty -> ty != null && ty.getName().equals(typeName))) {
+                    //noinspection unchecked
+                    type = skillFile.Types().make(origType.getComment(), (ArrayList<String>) origType.getExtends().clone(), new ArrayList<>(), origType.getFile(),
+                            origType.getName(), origType, new ArrayList<>(), new ArrayList<>());
                 }
                 // type is enum
-                if (t.getFields().stream().anyMatch(f -> f.getName().matches("\\S+")) && type != null) {
-                    Field field = t.getFields().stream().filter(f -> f.getName().matches("\\S+")).findFirst().get();
-                    type.getFields().add(skillFile.Fields().make(field.getComment(), new ArrayList<>(), field.getName(),
-                            field, new ArrayList<>(), type));
+                if (origType.getFields().stream().anyMatch(f -> f.getName().matches("\\S+")) && type != null) {
+                    Field field = origType.getFields().stream().filter(f -> f.getName().matches("\\S+")).findFirst().get();
+                    type.getFields().add(skillFile.Fields().make(field.getComment(), field.getName(),
+                            field, new ArrayList<>(), type, new ArrayList<>()));
                 }
-                if (type == null || t.getFile() == null) {
-                    System.out.println("null");
+                if (type == null || origType.getFile() == null) {
                     return;
                 }
                 tool.getTypes().add(type);
                 if (type.getName().toLowerCase().startsWith("typedef ")) {
                     addGroundType(type, tool);
                 }
-                addExtensions(tool, t);
+                addExtensions(tool, origType);
                 for (de.unistuttgart.iste.ps.skillls.tools.File f : skillFile.Files()) {
-                    if (f.getPath().equals(t.getFile().getPath())) {
+                    if (f.getPath().equals(origType.getFile().getPath())) {
                         boolean found = false;
                         for (de.unistuttgart.iste.ps.skillls.tools.File fi : tool.getFiles()) {
                             if (fi.getPath().equals(f.getPath())) {
@@ -575,7 +579,7 @@ public class Editor {
 
     /**
      * Adds the groundtype of typedefs to a tool.
-     * 
+     *
      * @param type
      *            typedef which has a groundtype.
      * @param tool
@@ -592,6 +596,7 @@ public class Editor {
                 if (tool.getTypes().stream().filter(t -> t.getName().equals(candidate.getName())).count() > 0) {
                     break;
                 }
+                //noinspection unchecked
                 tool.getTypes().add(skillFile.Types().make(candidate.getComment(), (ArrayList<String>) candidate.getExtends().clone(), new ArrayList<>(),
                         candidate.getFile(), candidate.getName(), candidate, candidate.getRestrictions(), new ArrayList<>()));
                 break;
@@ -610,12 +615,12 @@ public class Editor {
     private void addExtensions(Tool tool, Type type) {
         Type toolType = null;
         for (Type t : tool.getTypes()) {
-            if (t.getName().equals(type.getName())) {
+            if (t != null && t.getName().equals(type.getName())) {
                 toolType = t;
                 break;
             }
         }
-        List<String> types = tool.getTypes().stream().map(Type::getName).collect(Collectors.toList());
+        List<String> types = tool.getTypes().stream().filter(t -> t != null).map(Type::getName).collect(Collectors.toList());
         for (int j = 0; j < type.getExtends().size(); j++) {
             String extension = type.getExtends().get(j);
             if (types.contains(extension)) {
@@ -636,6 +641,7 @@ public class Editor {
                 if (tool.getTypes().stream().map(Type::getName).collect(Collectors.toList()).contains(t.getName())) {
                     continue;
                 }
+                //noinspection unchecked
                 tool.getTypes().add(skillFile.Types().make(t.getComment(), (ArrayList<String>) t.getExtends().clone(), new ArrayList<>(), t.getFile(),
                         t.getName(), t, t.getRestrictions(), new ArrayList<>()));
                 if (t.getExtends().size() > 0) {
@@ -691,6 +697,11 @@ public class Editor {
      * @return Returns the tool.
      */
     private Tool newTool(String subCommand) {
+        for (Tool t : skillFile.Tools()) {
+            if (t.getName().equals(subCommand)) {
+                return t;
+            }
+        }
         return skillFile.Tools().make(new ArrayList<>(), skillFile.Generators().make("", ""), "", "", subCommand, "",
                 new ArrayList<>());
     }

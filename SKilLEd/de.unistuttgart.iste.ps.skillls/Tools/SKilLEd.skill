@@ -8,7 +8,9 @@ Tool {
     string module;
 }
 
-HintParent {}
+HintParent {
+    Hint[] hints;
+}
 
 Type : HintParent {
     string comment;
@@ -16,7 +18,6 @@ Type : HintParent {
     string name;
     File file;
     Field[] fields;
-    Hint[] typeHints;
     string[] extends;
     Type orig;
 }
@@ -25,7 +26,6 @@ Field : HintParent {
     string comment;
     string[] restrictions; 
     string name;
-    Hint[] fieldHints;
     Type type;
     Field orig;
 }

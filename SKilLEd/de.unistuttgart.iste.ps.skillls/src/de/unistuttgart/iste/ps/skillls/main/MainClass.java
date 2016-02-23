@@ -45,6 +45,7 @@ public class MainClass {
     private static File output;
     private static boolean cleanUp = true;
     private static String path;
+    private static SkillFile skillFile;
 
     /**
      * Entry point. Sets the exception handler to not rethrow exceptions as errors.
@@ -80,7 +81,6 @@ public class MainClass {
                         ExceptionHandler.handle(e1);
                     }
                 }
-                SkillFile skillFile;
                 try {
                     skillFile = SkillFile.open(sfFile.getAbsolutePath(), SkillFile.Mode.Read, SkillFile.Mode.Write);
                 } catch (IOException e1) {
@@ -88,6 +88,7 @@ public class MainClass {
                     return;
                 }
                 indexFiles(projectDirectory, skillFile, indexing);
+                CleanUpAssistant.getInstance(skillFile).cleanUp();
                 if (indexing == Indexing.JUST_INDEXING) {
                     return;
                 }
@@ -165,10 +166,12 @@ public class MainClass {
                         case "all":
                         case "cleanup":
                         case "list":
+                        case "exec":
                             break;
                     }
                 }
                 indexFiles(new File(path), sf, indexing);
+                CleanUpAssistant.getInstance(sf).cleanUp();
                 if (indexing == Indexing.JUST_INDEXING) {
                     return;
                 }
@@ -232,7 +235,6 @@ public class MainClass {
             tools.addAll(sf.Tools());
         }
         for (Tool tool : tools) {
-            System.out.println(tool.getName());
             for (de.unistuttgart.iste.ps.skillls.tools.File file : tool.getFiles()) {
                 listFileContent(tool, file);
             }
@@ -267,14 +269,14 @@ public class MainClass {
      */
     private static void listTypeContent(Type type) {
         // print hints
-        for (Hint hint : type.getTypeHints()) {
+        for (Hint hint : type.getHints()) {
             System.out.println("    " + hint.getName());
         }
         // print type
         System.out.println("    " + type.getName());
         // print fields
         for (Field field : type.getFields()) {
-            for (Hint hint : field.getFieldHints()) {
+            for (Hint hint : field.getHints()) {
                 // print field hints
                 System.out.println("      " + hint.getName());
             }
@@ -450,6 +452,10 @@ public class MainClass {
     private static void generate(File project, ArrayList<String> tools, SkillFile skillFile) throws IOException {
         HashMap<Tool, ArrayList<File>> toolToFile = new HashMap<>();
 
+        if (tools.size() == 0) {
+            skillFile.Tools().forEach(t -> tools.add(t.getName()));
+        }
+
         for (String t : tools) {
             for (Tool tool : skillFile.Tools()) {
                 if (t.equals(tool.getName()) || fileFlag == FileFlag.All) {
@@ -517,6 +523,12 @@ public class MainClass {
                 ExceptionHandler.handle(e);
             }
         });
+        Path skilltPath = Paths.get(project.getAbsolutePath() + File.separator + ".skillt");
+        try {
+            Files.deleteIfExists(skilltPath);
+        } catch (IOException ignored) {
+            // ignored
+        }
     }
 
     /**
@@ -543,8 +555,6 @@ public class MainClass {
                 .normalize();
 
         File newFile = new File(tempDir, relativizedPath.toString());
-
-        System.out.println(newFile.getAbsolutePath());
 
         if (!newFile.getParentFile().exists()) {
             createDirectory(newFile.getParentFile());
@@ -613,7 +623,7 @@ public class MainClass {
         if (project != null && project.listFiles() != null) {
             // noinspection ConstantConditions
             for (File child : project.listFiles()) {
-                if (child.isDirectory()) {
+                if (child.isDirectory() && !child.getName().equals(".skillt")) {
                     indexFiles(child, skillFile, indexing);
                 } else if (child.getAbsolutePath().endsWith(".skill")) {
                     de.unistuttgart.iste.ps.skillls.tools.File f = null;
@@ -700,7 +710,8 @@ public class MainClass {
         }
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         SKilLParser parser = new SKilLParser(tokens);
-        parser.addParseListener(new SkillIndexListener(skillFile, file));
+        CleanUpAssistant cleanUpAssistant = CleanUpAssistant.getInstance(skillFile);
+        parser.addParseListener(new SkillIndexListener(skillFile, file, cleanUpAssistant));
         // Call has side effect: the .skill-file is parsed.
         @SuppressWarnings({ "unused" })
         ParseTree tree = parser.file();
@@ -732,6 +743,15 @@ public class MainClass {
         } catch (IOException e) {
             ExceptionHandler.handle(e);
             return "";
+        }
+    }
+
+    public static SkillFile openSkillFile(Path path) {
+        try {
+            skillFile = SkillFile.open(path, de.ust.skill.common.java.api.SkillFile.Mode.Read, de.ust.skill.common.java.api.SkillFile.Mode.Write);
+            return skillFile;
+        } catch (IOException e) {
+            return openSkillFile(path);
         }
     }
 }

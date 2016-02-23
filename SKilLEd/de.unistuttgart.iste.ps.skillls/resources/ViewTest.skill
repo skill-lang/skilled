@@ -1,0 +1,5 @@
+include "Devices.skill"
+
+ViewType : Microwave {
+  view Microwave.requiredPower as i16 myRequiredPower;
+}

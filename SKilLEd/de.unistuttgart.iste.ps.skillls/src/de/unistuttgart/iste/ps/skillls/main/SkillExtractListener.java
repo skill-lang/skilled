@@ -22,9 +22,9 @@ import de.unistuttgart.iste.ps.skillls.tools.Type;
  * @since 13.10.15
  */
 public class SkillExtractListener extends SKilLParserBaseListener {
-    private FileOutputStream outFile;
-    private File inFile;
-    private Tool tool;
+    private final FileOutputStream outFile;
+    private final File inFile;
+    private final Tool tool;
 
     /**
      * Constructor. Sets the values of the instance attributes.
@@ -143,9 +143,8 @@ public class SkillExtractListener extends SKilLParserBaseListener {
         StringBuilder hintsRestrictions = new StringBuilder(0);
         getHintString(type, hintsRestrictions);
         getRestrictionString(type, hintsRestrictions);
-        for (String extend : type.getExtends()) {
-            builder.append(type.getExtends());
-            builder.append(extend);
+        if (type.getExtends().contains(ctx.type().getText())) {
+            builder.append(ctx.type().getText());
         }
         builder.append(";\n\n");
         outFile.write(String.format(builder.toString(), hintsRestrictions.length() == 0 ? "" : hintsRestrictions.toString())
@@ -191,7 +190,7 @@ public class SkillExtractListener extends SKilLParserBaseListener {
             builder.append("  ");
             builder.append(field.getComment());
             builder.append('\n');
-            for (Hint hint : field.getFieldHints()) {
+            for (Hint hint : field.getHints()) {
                 builder.append("  ");
                 builder.append(hint.getName());
                 builder.append('\n');
@@ -244,7 +243,7 @@ public class SkillExtractListener extends SKilLParserBaseListener {
     }
 
     private static void getHintString(Type type, StringBuilder builder) {
-        for (Hint hint : type.getTypeHints()) {
+        for (Hint hint : type.getHints()) {
             builder.append(hint.getName());
             builder.append('\n');
         }
