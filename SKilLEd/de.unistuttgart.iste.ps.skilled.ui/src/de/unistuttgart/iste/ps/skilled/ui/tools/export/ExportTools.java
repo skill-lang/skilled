@@ -1,5 +1,6 @@
 package de.unistuttgart.iste.ps.skilled.ui.tools.export;
 
+import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,9 +30,13 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.PlatformUI;
 
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
+import de.ust.skill.common.java.api.SkillFile.Mode;
 
 
 /**
@@ -42,7 +47,7 @@ import de.unistuttgart.iste.ps.skillls.tools.Tool;
  *
  */
 public class ExportTools {
-    Display d;
+    Display display;
     String fName = "";
     String fSaveLocation = "";
     String[] fToolName;
@@ -50,9 +55,15 @@ public class ExportTools {
 
     ArrayList<File> fListofFiles = null;
     List<String> fToolNameList = null;
-    SaveListofAllTools fSave;
     ArrayList<Tool> fToolList = null;
     List<String> fToolPathList = null;
+    IProject activeProject;
+    String path;
+    SkillFile skillfile;
+    String fSaveName = "";
+
+    private final ArrayList<Tool> allToolList = new ArrayList<Tool>();
+    private final ArrayList<String> pathList = new ArrayList<String>();
 
     // Location of the workspace the user is using
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -63,17 +74,40 @@ public class ExportTools {
      * 
      */
     public void run() {
-        Shell shell = new Shell(d);
+        Shell shell = new Shell(display);
         shell.setText("Export Tool");
         shell.layout(true, true);
-        // Gets list of tool names and their paths from SaveListofAllTools.java
-        fSave = SaveListofAllTools.getInstance();
-        if (SaveListofAllTools.getToolNameList() != null && SaveListofAllTools.getToolPathList() != null) {
-            fToolNameList = SaveListofAllTools.getToolNameList();
-            fToolPathList = SaveListofAllTools.getToolPathList();
-            System.out.println("fToolNameList.size() is " + fToolNameList.size());
-        } else {
-            System.out.println("run:fToolNameList is null");
+        try {
+            IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                    .getActiveEditor().getEditorInput();
+            activeProject = file.getFile().getProject();
+            path = activeProject.getLocation().toOSString() + File.separator + ".skills";
+            skillfile = SkillFile.open(path, Mode.ReadOnly);
+        } catch (@SuppressWarnings("unused") Exception e) {
+            ShowMessage("Could not read .skills-file!", "File Generation Error");
+            return;
+        }
+
+        ToolUtil.indexing(activeProject);
+
+        if (skillfile.Tools() != null) {
+            skillfile.Tools().forEach(tool -> allToolList.add(tool));
+            skillfile.Tools().forEach(t -> pathList.add(path));
+        }
+
+        if (allToolList.size() > 0) {
+            fToolNameList = new ArrayList<String>();
+            for (int i = 0; i < allToolList.size(); i++) {
+                fToolNameList.add(allToolList.get(i).getName());
+
+            }
+        }
+
+        if (pathList.size() > 0) {
+            fToolPathList = new ArrayList<String>();
+            for (int i = 0; i < pathList.size(); i++) {
+                fToolPathList.add(pathList.get(i));
+            }
         }
 
         createContents(shell);
@@ -113,10 +147,9 @@ public class ExportTools {
         gridDataWidgets.horizontalSpan = 3;
         cSelectTool.setLayoutData(gridDataWidgets);
         if (fToolNameList != null) {
-            System.out.println("fToolNameList is not empty!");
             cSelectTool.setItems(fToolNameList.toArray(new String[fToolNameList.size()]));
+
         } else {
-            System.out.println("fToolNameList is empty!");
             String emptyList[] = {};
             cSelectTool.setItems(emptyList);
         }
@@ -188,13 +221,11 @@ public class ExportTools {
 
                 fCheckSave = new File(fSaveLocation);
                 if (!fSaveLocation.endsWith(".skill") || fCheckSave.isDirectory()) {
-                    JOptionPane.showMessageDialog(null, "Invalid export format!", "Invalid Export Format",
-                            JOptionPane.ERROR_MESSAGE);
+                    ShowMessage("Invalid export format!", "Invalid Export Format");
                     return;
                 } else if (fCheckSave.exists()) {
-                    int overwrite = JOptionPane.showOptionDialog(null,
-                            fName + " already exists!" + " Do you want to overwrite it?", "Existing File",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+                    fSaveName = tSaveLocation.getText().substring(tSaveLocation.getText().lastIndexOf(File.separator) + 1);
+                    int overwrite = ShowMessageOption();
                     if (overwrite == JOptionPane.YES_OPTION) {
                         fCheckSave.delete();
                         combineFiles();
@@ -240,19 +271,15 @@ public class ExportTools {
         File fProjectDirectory = new File(directoryName);
         File[] listofFiles = fProjectDirectory.listFiles();
         if (null == listofFiles) {
-
-            JOptionPane.showMessageDialog(null, "Problem with .skillt files generation!", "File Generation Error",
-                    JOptionPane.ERROR_MESSAGE);
+            ShowMessage("Problem with .skillt files generation!", "File Generation Error");
             return;
 
-        } else {
-            System.out.println("listofFiles is: " + listofFiles.toString());
-            for (File file : listofFiles) {
-                if (file.isFile() && file.getName().endsWith(".skill")) {
-                    checkFiles.add(file);
-                } else if (file.isDirectory()) {
-                    listAllFiles(file.getAbsolutePath(), checkFiles);
-                }
+        }
+        for (File file : listofFiles) {
+            if (file.isFile() && file.getName().endsWith(".skill")) {
+                checkFiles.add(file);
+            } else if (file.isDirectory()) {
+                listAllFiles(file.getAbsolutePath(), checkFiles);
             }
         }
     }
@@ -263,42 +290,35 @@ public class ExportTools {
      */
     public void combineFiles() {
 
-        System.out.println("fName is: " + fName);
         int index = fToolNameList.indexOf(fName);
-        System.out.println("Index is: " + index);
 
         // File path of the .skills file of the tool selected from the dropdown
         // menu (i.e. C:\\...\Workspace\Project\.skills)
         String fToolFilePath = fToolPathList.get(index);
-        System.out.println("fToolFilePath is: " + fToolFilePath);
 
         // File path of the project of the tool (i.e. C:\\...\Workspace\Project)
         String fToolProjectPath = fToolFilePath.substring(0, fToolFilePath.lastIndexOf(File.separator));
-        System.out.println("fToolProjectPath is: " + fToolProjectPath);
-
-        // File path of the tool folder in the .skillt folder (i.e.
-        // C:\\...\Workspace\Project\.skillt\Tool
-        String fToolFolder = fToolProjectPath + File.separator + ".skillt" + File.separator + fName;
-        System.out.println("fToolFolder is: " + fToolFolder);
 
         // Name of the project (i.e. Project)
         String fToolProjectName = fToolProjectPath.substring(fToolProjectPath.lastIndexOf(File.separator) + 1,
                 fToolProjectPath.length());
-        System.out.println("fToolProjectName is: " + fToolProjectName);
 
         // Generate tool folder and files
         IProject project = workspace.getRoot().getProject(fToolProjectName);
         ToolUtil.generateTemporarySKilLFiles(fName, project);
-        System.out.println(".skillt Folder made");
+
+        // File path of the tool folder in the .skillt folder (i.e.
+        // C:\\...\Workspace\Project\.skillt\Tool
+        String fToolFolder = fToolProjectPath + File.separator + ".skillt" + File.separator + fName;
 
         fListofFiles = new ArrayList<>();
         listAllFiles(fToolFolder, fListofFiles);
 
+        String fText = "# Tool " + fName + "\n";
+
         for (File f : fListofFiles) {
             FileInputStream fis;
-            String fText = "";
             try {
-                FileWriter fw = new FileWriter(fCheckSave, true);
                 fis = new FileInputStream(f);
                 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
                 String line;
@@ -309,18 +329,43 @@ public class ExportTools {
                         fText += line + "\n";
                     }
                 }
-
-                // Head comment that says which tool the merged files belong to
-                fw.write("# Tool " + fName + "\n");
-                fw.write(fText);
                 br.close();
-                fw.close();
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         }
+        // Head comment that says which tool the merged files belong to
+        try {
+            FileWriter fw = new FileWriter(fCheckSave, true);
+            fw.write(fText);
+            fw.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
+    }
+
+    @SuppressWarnings("static-method")
+    private void ShowMessage(String string, String string2) {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(null, string, string2, JOptionPane.ERROR_MESSAGE);
+            }
+        });
+    }
+
+    private int ShowMessageOption() {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showOptionDialog(null, fSaveName + " already exists!" + " Do you want to overwrite it?",
+                        "Existing File", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+            }
+        });
+        return JOptionPane.YES_NO_OPTION;
     }
 }

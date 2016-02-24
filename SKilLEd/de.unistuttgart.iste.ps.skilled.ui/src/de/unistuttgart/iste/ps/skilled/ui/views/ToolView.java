@@ -22,7 +22,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
-import de.unistuttgart.iste.ps.skilled.ui.tools.export.SaveListofAllTools;
 import de.unistuttgart.iste.ps.skillls.tools.Field;
 import de.unistuttgart.iste.ps.skillls.tools.Hint;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
@@ -59,7 +58,6 @@ public class ToolView extends ViewPart {
     private Field selectedField = null;
     private IProject activeProject = null;
     private String path = "";
-    private SaveListofAllTools fSave;
     private Menu menu;
     // Lists
     private final ArrayList<Tool> allToolList = new ArrayList<Tool>();
@@ -219,10 +217,6 @@ public class ToolView extends ViewPart {
 
         ToolViewListener tvl = new ToolViewListener(this);
         tvl.initToolListListener(toolViewList);
-
-        fSave = new SaveListofAllTools();
-        fSave.setListofAllTools(allToolList);
-        fSave.setPathofAllTools(pathList);
 
         return toolViewList;
 
