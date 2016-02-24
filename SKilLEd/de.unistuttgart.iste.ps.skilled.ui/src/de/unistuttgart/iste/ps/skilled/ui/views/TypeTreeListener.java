@@ -1,6 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.ui.views;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -70,12 +72,12 @@ public class TypeTreeListener {
             @Override
             public void mouseDoubleClick(MouseEvent arg0) {
                 // open the temporary file of the selected type
-                ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(), toolview.getActiveProject());
-                System.out.println(toolview.getActiveTool() == null);
-                System.out.println(toolview.getSelectedType() == null);
-                System.out.println(toolview.getActiveProject() == null);
-                editorUtil.openTypeInEditor(toolview.getActiveTool(), toolview.getSelectedType(),
-                        toolview.getActiveProject());
+                if (toolview.getActiveProject() != null && toolview.getActiveTool() != null
+                        && toolview.getSelectedType() != null) {
+                    ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(), toolview.getActiveProject());
+                    editorUtil.openTypeInEditor(toolview.getActiveTool(), toolview.getSelectedType(),
+                            toolview.getActiveProject());
+                }
             }
         });
 
@@ -129,6 +131,21 @@ public class TypeTreeListener {
                         }
                     }
                 }
+            }
+        });
+
+        typeTree.addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyReleased(KeyEvent arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent arg0) {
+                if (arg0.keyCode == SWT.F5)
+                    toolview.refresh();
             }
         });
     }

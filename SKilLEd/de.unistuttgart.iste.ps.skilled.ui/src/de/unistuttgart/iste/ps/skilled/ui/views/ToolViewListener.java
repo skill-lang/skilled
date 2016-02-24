@@ -1,6 +1,9 @@
 package de.unistuttgart.iste.ps.skilled.ui.views;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -68,8 +71,26 @@ public class ToolViewListener {
 
             @Override
             public void mouseDoubleClick(MouseEvent arg0) {
-                ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(), toolview.getActiveProject());
-                editorUtil.openToolInEditor(toolview.getActiveTool(), toolview.getActiveProject());
+                if (toolview.getActiveProject() != null && toolview.getActiveTool() != null) {
+                    ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(), toolview.getActiveProject());
+                    editorUtil.openToolInEditor(toolview.getActiveTool(), toolview.getActiveProject());
+                }
+            }
+        });
+
+        toolViewList.addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyReleased(KeyEvent arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent arg0) {
+                if (arg0.keyCode == SWT.F5) {
+                    toolview.refresh();
+                }
             }
         });
     }

@@ -1,6 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.ui.views;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -75,9 +77,12 @@ public class FieldTreeListener {
             @Override
             public void mouseDoubleClick(MouseEvent arg0) {
                 // open the temporary file of the selected type
-                ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(), toolview.getActiveProject());
-                editorUtil.openFieldInEditor(toolview.getActiveTool(), toolview.getSelectedField(),
-                        toolview.getActiveProject());
+                if (toolview.getActiveProject() != null && toolview.getActiveTool() != null
+                        && toolview.getSelectedField() != null) {
+                    ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(), toolview.getActiveProject());
+                    editorUtil.openFieldInEditor(toolview.getActiveTool(), toolview.getSelectedField(),
+                            toolview.getActiveProject());
+                }
             }
         });
 
@@ -147,6 +152,21 @@ public class FieldTreeListener {
                         }
                     }
                 }
+            }
+        });
+
+        fieldTree.addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyReleased(KeyEvent arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent arg0) {
+                if (arg0.keyCode == SWT.F5)
+                    toolview.refresh();
             }
         });
     }
