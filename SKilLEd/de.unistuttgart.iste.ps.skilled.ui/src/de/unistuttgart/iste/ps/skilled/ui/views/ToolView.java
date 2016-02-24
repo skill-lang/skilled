@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -231,7 +232,8 @@ public class ToolView extends ViewPart {
      */
     void buildTypeTree() {
         Tree typeTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.SINGLE);
-        typeListOfActualTool = activeTool.getTypes();
+        typeListOfActualTool = activeTool.getTypes().stream().filter(t -> t != null)
+                .collect(Collectors.toCollection(ArrayList<Type>::new));
 
         if (null == typeTabItem || typeTabItem.isDisposed())
             typeTabItem = new CTabItem(tabFolder, 0, 1);
@@ -262,6 +264,7 @@ public class ToolView extends ViewPart {
             // set all the toolspecific types as checked
             if (null != typeListOfActualTool) {
                 for (Type t : typeListOfActualTool) {
+
                     if (t.getName().equals(type.getName())) {
                         typeTreeItem.setChecked(true);
                         tooltype = type;

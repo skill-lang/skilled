@@ -1,7 +1,14 @@
 package de.unistuttgart.iste.ps.skilled.ui.tools;
 
-import org.eclipse.core.resources.IProject;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+
+import de.unistuttgart.iste.ps.skillls.main.BreakageException;
 import de.unistuttgart.iste.ps.skillls.main.Indexing;
 import de.unistuttgart.iste.ps.skillls.main.MainClass;
 import de.unistuttgart.iste.ps.skillls.tools.Field;
@@ -20,6 +27,7 @@ import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
  */
 public final class ToolUtil {
     static String addendum = "";
+    private static List<IMarker> toolErrorMarker = new ArrayList<IMarker>();
 
     /**
      * Tries to create a new Tool.
@@ -567,6 +575,22 @@ public final class ToolUtil {
         } catch (Throwable t) {
             return false;
         }
+    }
+
+    public static void deleteReportToolErrors(IProject project) throws CoreException {
+        Iterator<IMarker> it = toolErrorMarker.iterator();
+        while (it.hasNext()) {
+            IMarker marker = it.next();
+            marker.delete();
+            it.remove();
+        }
+    }
+
+    public static void reportToolError(final BreakageException breakageException, final IProject project)
+            throws CoreException {
+        IMarker marker = project.createMarker(IMarker.PROBLEM);
+        marker.setAttribute(IMarker.MESSAGE, breakageException.getMessage());
+        toolErrorMarker.add(marker);
     }
 
 }
