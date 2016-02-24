@@ -5,6 +5,7 @@ import java.io.File;
 
 import javax.swing.JOptionPane;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.SWT;
@@ -25,13 +26,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
+import de.ust.skill.common.java.api.SkillFile.Mode;
+
 
 /**
  * This class provides the dialog window for "Export Tools" which allows the user to export a certain tool to a location of
  * his or her choice
  * 
  * @author Leslie
- *
+ * @author Ken Singer
  */
 public class ImportTools {
     Display d;
@@ -301,6 +306,17 @@ public class ImportTools {
 
     public static String getFileName() {
         return fFileName;
+    }
+
+    public static boolean addAllToNewTool(String ProjectPath, IProject project) {
+        SkillFile sk;
+        try {
+            sk = SkillFile.open(ProjectPath + File.separator + ".skills", Mode.ReadOnly);
+        } catch (Exception e) {
+            return false;
+        }
+        ToolUtil.addAllToTool(sk, project, sk.Tools().stream().filter(t -> t.getName().equals(fFileName)).findFirst().get());
+        return true;
     }
 
     @SuppressWarnings("static-method")

@@ -26,6 +26,8 @@ import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.emf.common.util.URI
 import org.eclipse.xtext.EcoreUtil2
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil
+import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile
+import de.ust.skill.common.java.api.SkillFile.Mode
 
 /**
  * This class provides combine function for Import Tools. If there are 2 or more 
@@ -35,6 +37,7 @@ import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil
  * its identical type in one of the files in the project folder. 
  * 
  * @author Leslie
+ * @author Ken Singer
  * 
  */
 class ImportCombine {
@@ -450,6 +453,7 @@ class ImportCombine {
 		}
 		// Create tool
 		ToolUtil.createTool(ImportTools.getFileName(), project);
+		ImportTools.addAllToNewTool(fProjectPath, project);
 	}
 
 	def ShowMessage(
