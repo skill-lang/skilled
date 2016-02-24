@@ -120,7 +120,7 @@ public class ToolView extends ViewPart {
      */
     void reloadTypelist() {
         refresh();
-        activeTool = skillFile.Tools().parallelStream().filter(tool -> tool.getName().equals(activeTool.getName()))
+        activeTool = skillFile.Tools().parallelStream().filter(tool -> tool.getName().equals((activeTool).getName()))
                 .findFirst().get();
         buildTypeTree();
         tabFolder.setSelection(typeTabItem);
@@ -168,7 +168,8 @@ public class ToolView extends ViewPart {
             path = activeProject.getLocation().toOSString() + File.separator + ".skills";
             skillFile = SkillFile.open(path, Mode.ReadOnly);
         } catch (Exception e) {
-            System.err.println("Did not read .skills-File");
+            activeProject = null;
+            e.printStackTrace();
             return;
         }
 
@@ -212,7 +213,7 @@ public class ToolView extends ViewPart {
         toolTabItem.setControl(toolViewList);
 
         if (null != skillFile)
-            allToolList.forEach(t -> toolViewList.add(t.getName()));
+            allToolList.forEach(t -> toolViewList.add((t).getName()));
 
         ToolViewListener tvl = new ToolViewListener(this);
         tvl.initToolListListener(toolViewList);
@@ -280,7 +281,7 @@ public class ToolView extends ViewPart {
      */
     private void interateTypeHints(TreeItem typeTreeItem, Type type, Type tooltype) {
         // add all typeHints to the Tree
-        for (Hint hint : type.getTypeHints()) {
+        for (Hint hint : type.getHints()) {
             TreeItem typeHintItem = new TreeItem(typeTreeItem, 0);
             typeHintItem.setText(hint.getName());
             typeHintItem.setChecked(false);
@@ -288,9 +289,9 @@ public class ToolView extends ViewPart {
             typeHintItem.setData(hint);
 
             // set all toolspecific typeHints as checked
-            if (null == tooltype || null == tooltype.getTypeHints())
+            if (null == tooltype || null == tooltype.getHints())
                 continue;
-            typeHintListOfActualTool = tooltype.getTypeHints();
+            typeHintListOfActualTool = tooltype.getHints();
             for (Hint toolhint : typeHintListOfActualTool) {
                 if (hint.getName().equals(toolhint.getName())) {
                     typeHintItem.setChecked(true);
@@ -368,7 +369,7 @@ public class ToolView extends ViewPart {
      */
     private static void iterateFieldHints(Field field, Field toolField, TreeItem fieldTreeItem) {
 
-        for (Hint hint : field.getFieldHints()) {
+        for (Hint hint : field.getHints()) {
             TreeItem fieldHintItem = new TreeItem(fieldTreeItem, 0);
             fieldHintItem.setText(hint.getName());
             fieldHintItem.setChecked(false);
@@ -378,7 +379,7 @@ public class ToolView extends ViewPart {
             // check all the hints used by the tool
             if (null == toolField)
                 continue;
-            for (Hint h : toolField.getFieldHints()) {
+            for (Hint h : toolField.getHints()) {
                 if (hint.getName().equals(h.getName())) {
                     fieldHintItem.setChecked(true);
                     break;

@@ -29,7 +29,7 @@ public class SortTypes {
         xtextDocument.modify(new IUnitOfWork<Void, XtextResource>() {
             @Override
             public java.lang.Void exec(XtextResource state) throws Exception {
-                File file = (File) new SKilLServices().getAll(state).toArray()[0];
+                File file = (File) new SKilLServices().getAll(state, false).toArray()[0];
 
                 // sort types
                 EList<Declaration> declarationList = file.getDeclarations();

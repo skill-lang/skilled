@@ -31,7 +31,10 @@ public final class ToolUtil {
      * @return true if creation was successful
      */
     public static boolean createTool(String name, IProject project) {
-        String[] arguments = { "-e", project.getLocation().toPortableString(), "&n:" + name };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(), "&n:" + name };
+
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -61,8 +64,11 @@ public final class ToolUtil {
      */
     public static boolean setDefaults(String toolName, IProject project, String execEnv, String generator, String language,
             String module, String outPath) {
-        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
-                toolName + ":10:" + execEnv + ":" + generator + ":" + language + ":" + module + ":" + outPath };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(),
+                    toolName + ":10:" + execEnv + ":" + generator + ":" + language + ":" + module + ":" + outPath };
+
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -81,8 +87,10 @@ public final class ToolUtil {
      * @return true if creation was successful
      */
     public static boolean generateTemporarySKilLFiles(String toolname, IProject project) {
-        String[] arguments = { "--no-cleanup", "-aplomx", project.getLocation().toPortableString(), "Java",
-                project.getLocation().toString(), "scala", toolname };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "--no-cleanup", "-aplomx", project.getLocation().toPortableString(), "Java",
+                    project.getLocation().toString(), "scala", toolname };
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -103,7 +111,9 @@ public final class ToolUtil {
      * @return true if adding was successful
      */
     public static boolean addTypeToTool(String toolName, IProject project, String typeName) {
-        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(), toolName + ":2:" + typeName };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(), toolName + ":2:" + typeName };
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -124,7 +134,9 @@ public final class ToolUtil {
      * @return true if removing was successful
      */
     public static boolean removeTypeFromTool(String toolName, IProject project, String typeName) {
-        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(), toolName + ":3:" + typeName };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(), toolName + ":3:" + typeName };
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -147,8 +159,10 @@ public final class ToolUtil {
      * @return true if adding was successful
      */
     public static boolean addField(String toolName, IProject project, String typeName, String fieldName) {
-        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
-                toolName + ":4:" + typeName + ":" + fieldName };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(),
+                    toolName + ":4:" + typeName + ":" + fieldName };
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -171,8 +185,10 @@ public final class ToolUtil {
      * @return true if removing was successful
      */
     public static boolean removeField(String toolName, IProject project, String typeName, String fieldName) {
-        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
-                toolName + ":5:" + typeName + ":" + fieldName };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(),
+                    toolName + ":5:" + typeName + ":" + fieldName };
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -195,8 +211,10 @@ public final class ToolUtil {
      * @return true if adding was successful
      */
     public static boolean addTypeHint(String toolName, IProject project, String typeName, String hintName) {
-        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
-                toolName + ":8:" + typeName + ":" + hintName };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(),
+                    toolName + ":8:" + typeName + ":" + hintName };
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -219,8 +237,10 @@ public final class ToolUtil {
      * @return true if removing was successful
      */
     public static boolean removeTypeHint(String toolName, IProject project, String typeName, String hintName) {
-        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
-                toolName + ":9:" + typeName + ":" + hintName };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(),
+                    toolName + ":9:" + typeName + ":" + hintName };
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -246,8 +266,10 @@ public final class ToolUtil {
      */
     public static boolean addFieldHint(String toolName, IProject project, String typeName, String fieldName,
             String hintName) {
-        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
-                toolName + ":6:" + typeName + ":" + fieldName + ":" + hintName };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(),
+                    toolName + ":6:" + typeName + ":" + fieldName + ":" + hintName };
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -273,8 +295,10 @@ public final class ToolUtil {
      */
     public static boolean removeFieldHint(String toolName, IProject project, String typeName, String fieldName,
             String hintName) {
-        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
-                toolName + ":7:" + typeName + ":" + fieldName + ":" + hintName };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(),
+                    toolName + ":7:" + typeName + ":" + fieldName + ":" + hintName };
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -295,8 +319,9 @@ public final class ToolUtil {
      * @return true if renaming was successful
      */
     public static boolean renameTool(String oldToolName, String newToolName, IProject project) {
-        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(),
-                oldToolName + ":1:" + newToolName };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(), oldToolName + ":1:" + newToolName };
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -315,7 +340,9 @@ public final class ToolUtil {
      * @return true if deletion was successful
      */
     public static boolean removeTool(IProject project, String name) {
-        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(), name + ":0" };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(), name + ":0" };
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
@@ -336,6 +363,9 @@ public final class ToolUtil {
      * @return true if cloning was successful.
      */
     public static boolean cloneTool(IProject project, Tool tool, String newToolName, SkillFile sk) {
+        if (project == null)
+            return false;
+
         boolean value = true;
         final String newName = newToolName;
         addendum = "";
@@ -347,12 +377,12 @@ public final class ToolUtil {
         value &= createTool(newNameForTool, project);
         for (Type type : tool.getTypes()) {
             value &= addTypeToTool(newNameForTool, project, getActualName(type.getName()));
-            for (Hint h : type.getTypeHints()) {
+            for (Hint h : type.getHints()) {
                 value &= addTypeHint(newNameForTool, project, getActualName(type.getName()), h.getName());
             }
             for (Field f : type.getFields()) {
                 value &= addField(newNameForTool, project, getActualName(type.getName()), getActualName(f.getName()));
-                for (Hint h : f.getFieldHints()) {
+                for (Hint h : f.getHints()) {
                     value &= addFieldHint(newNameForTool, project, getActualName(type.getName()), getActualName(f.getName()),
                             h.getName());
                 }
@@ -400,7 +430,7 @@ public final class ToolUtil {
      *            - the type containing the hints
      */
     public static void addAllTypeHints(IProject project, Tool tool, Type type) {
-        for (Hint toAdd : type.getTypeHints())
+        for (Hint toAdd : type.getHints())
             addTypeHint(tool.getName(), project, getActualName(type.getName()), toAdd.getName());
     }
 
@@ -416,7 +446,7 @@ public final class ToolUtil {
      */
     public static boolean removeAllTypeHints(IProject project, Tool tool, Type type) {
         boolean failure = false;
-        for (Hint toDelete : type.getTypeHints()) {
+        for (Hint toDelete : type.getHints()) {
             if (!removeTypeHint(tool.getName(), project, getActualName(type.getName()), getActualName(toDelete.getName())))
                 failure = true;
         }
@@ -470,7 +500,7 @@ public final class ToolUtil {
      *            - the field containing the fieldhints
      */
     public static void addAllFieldHints(IProject project, Tool tool, Type type, Field field) {
-        for (Hint toAdd : field.getFieldHints())
+        for (Hint toAdd : field.getHints())
             ToolUtil.addFieldHint(tool.getName(), project, getActualName(type.getName()), getActualName(field.getName()),
                     toAdd.getName());
     }
@@ -489,7 +519,7 @@ public final class ToolUtil {
      */
     public static boolean removeAllFieldHints(IProject project, Tool tool, Type type, Field field) {
         boolean failure = false;
-        for (Hint toDelete : field.getFieldHints()) {
+        for (Hint toDelete : field.getHints()) {
             if (!removeFieldHint(tool.getName(), project, getActualName(type.getName()), getActualName(field.getName()),
                     getActualName(toDelete.getName())))
                 failure = true;
@@ -528,7 +558,9 @@ public final class ToolUtil {
     }
 
     public static boolean indexing(IProject project) {
-        String[] arguments = new String[] { "-e", project.getLocation().toPortableString(), "" };
+        String[] arguments = null;
+        if (project != null)
+            arguments = new String[] { "-e", project.getLocation().toPortableString(), "" };
         try {
             MainClass.start(Indexing.JUST_INDEXING, arguments);
             return true;

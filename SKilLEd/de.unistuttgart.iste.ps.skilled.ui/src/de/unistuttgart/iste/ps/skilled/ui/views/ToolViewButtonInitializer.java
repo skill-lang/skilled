@@ -77,11 +77,16 @@ public class ToolViewButtonInitializer {
                 return;
             if (!ToolUtil.createTool(newToolName, toolview.getActiveProject()))
                 toolview.showMessage("Could not create tool.");
+
             toolview.readToolBinaryFile();
             if (sKilLToolWizard.getAddAllCheckboxState()) {
-                Tool tool = toolview.getSkillFile().Tools().stream().filter(t -> t.getName().equals(newToolName)).findFirst()
-                        .get();
-                ToolUtil.addAllToTool(toolview.getSkillFile(), toolview.getActiveProject(), tool);
+                try {
+                    Tool tool = toolview.getSkillFile().Tools().stream().filter(t -> t.getName().equals(newToolName))
+                            .findFirst().get();
+                    ToolUtil.addAllToTool(toolview.getSkillFile(), toolview.getActiveProject(), tool);
+                } catch (NoSuchElementException e) {
+                    //
+                }
             }
             toolview.refresh();
         }
@@ -126,10 +131,10 @@ public class ToolViewButtonInitializer {
             for (Tool tempTool : removeHints) {
                 for (Type tempType : tempTool.getTypes()) {
                     for (Field tempField : tempType.getFields()) {
-                        if (tempField.getFieldHints().size() > 0)
+                        if (tempField.getHints().size() > 0)
                             ToolUtil.removeAllFieldHints(this.toolview.getActiveProject(), tempTool, tempType, tempField);
                     }
-                    if (tempType.getTypeHints().size() > 0)
+                    if (tempType.getHints().size() > 0)
                         ToolUtil.removeAllTypeHints(this.toolview.getActiveProject(), tempTool, tempType);
                 }
             }

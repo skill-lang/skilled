@@ -30,142 +30,141 @@ import org.eclipse.ui.ide.IDE;
 
 import de.unistuttgart.iste.ps.skilled.ui.SKilLPerspectiveFactory;
 
+
 /**
- * This is a new wizard. Its role is to create a new file resource in the
- * provided container. If the container resource (a folder or a project) is
- * selected in the workspace when the wizard is opened, it will accept it as the
- * target container. The wizard creates one file with the extension "skill". If
- * a editor is registered for the same extension, it will be able to open it.
+ * This is a new wizard. Its role is to create a new file resource in the provided container. If the container resource (a
+ * folder or a project) is selected in the workspace when the wizard is opened, it will accept it as the target container.
+ * The wizard creates one file with the extension "skill". If a editor is registered for the same extension, it will be able
+ * to open it.
  * 
  * @author Marco Link (created with a template)
  */
 public class SKilLNewFileWizard extends Wizard implements INewWizard {
-	private SKilLNewFileWizardPage page;
-	private ISelection selection;
+    private SKilLNewFileWizardPage page;
+    private ISelection selection;
 
-	/**
-	 * Constructor for SKilLNewFileWizard.
-	 */
-	public SKilLNewFileWizard() {
-		super();
-		setNeedsProgressMonitor(true);
-	}
+    /**
+     * Constructor for SKilLNewFileWizard.
+     */
+    public SKilLNewFileWizard() {
+        super();
+        setNeedsProgressMonitor(true);
+    }
 
-	/**
-	 * Adding the page to the wizard.
-	 */
-	@Override
-	public void addPages() {
-		page = new SKilLNewFileWizardPage(selection);
-		addPage(page);
-	}
+    /**
+     * Adding the page to the wizard.
+     */
+    @Override
+    public void addPages() {
+        page = new SKilLNewFileWizardPage(selection);
+        addPage(page);
+    }
 
-	/**
-	 * This method is called when 'Finish' button is pressed in the wizard. We
-	 * will create an operation and run it using wizard as execution context.
-	 */
-	@Override
-	public boolean performFinish() {
-		final String containerName = page.getContainerName();
-		final String fileName = page.getFileName();
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					doFinish(containerName, fileName, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-		try {
-			getContainer().run(true, false, op);
-		} catch (@SuppressWarnings("unused") InterruptedException e) {
-			return false;
-		} catch (InvocationTargetException e) {
-			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Error", realException.getMessage());
-			return false;
-		}
-		SKilLPerspectiveFactory.openSKilLPerspective();
-		return true;
-	}
+    /**
+     * This method is called when 'Finish' button is pressed in the wizard. We will create an operation and run it using
+     * wizard as execution context.
+     */
+    @Override
+    public boolean performFinish() {
+        final String containerName = page.getContainerName();
+        final String fileName = page.getFileName();
+        IRunnableWithProgress op = new IRunnableWithProgress() {
+            @Override
+            public void run(IProgressMonitor monitor) throws InvocationTargetException {
+                try {
+                    doFinish(containerName, fileName, monitor);
+                } catch (CoreException e) {
+                    throw new InvocationTargetException(e);
+                } finally {
+                    monitor.done();
+                }
+            }
+        };
+        try {
+            getContainer().run(true, false, op);
+        } catch (@SuppressWarnings("unused") InterruptedException e) {
+            return false;
+        } catch (InvocationTargetException e) {
+            Throwable realException = e.getTargetException();
+            MessageDialog.openError(getShell(), "Error", realException.getMessage());
+            return false;
+        }
+        SKilLPerspectiveFactory.openSKilLPerspective();
+        return true;
+    }
 
-	/**
-	 * The worker method. It will find the container, create the file if missing
-	 * or just replace its contents, and open the editor on the newly created
-	 * file.
-	 */
-	private void doFinish(String containerName, String fileName, IProgressMonitor monitor) throws CoreException {
-		// create a sample file
-		monitor.beginTask("Creating " + fileName, 2);
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IResource resource = root.findMember(new Path(containerName));
-		if (!resource.exists() || !(resource instanceof IContainer)) {
-			throwCoreException("Container \"" + containerName + "\" does not exist.");
-		}
-		IContainer container = (IContainer) resource;
+    /**
+     * The worker method. It will find the container, create the file if missing or just replace its contents, and open the
+     * editor on the newly created file.
+     */
+    private void doFinish(String containerName, String fileName, IProgressMonitor monitor) throws CoreException {
+        // create a sample file
+        String fileNameWithExtention = fileName;
+        monitor.beginTask("Creating " + fileName, 2);
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        IResource resource = root.findMember(new Path(containerName));
+        if (!resource.exists() || !(resource instanceof IContainer)) {
+            throwCoreException("Container \"" + containerName + "\" does not exist.");
+        }
+        IContainer container = (IContainer) resource;
 
-		if (container.getFile(new Path(fileName)).getFileExtension() == null) {
-			fileName += ".skill";
-		}
+        if (container.getFile(new Path(fileName)).getFileExtension() == null) {
+            fileNameWithExtention = fileName + ".skill";
+        }
 
-		final IFile file = container.getFile(new Path(fileName));
+        final IFile file = container.getFile(new Path(fileNameWithExtention));
 
-		if (file.exists()) {
-			throwCoreException("File already exist.");
-		}
+        if (file.exists()) {
+            throwCoreException("File already exist.");
+        }
 
-		try {
-			InputStream stream = openContentStream();
-			if (file.exists()) {
-				file.setContents(stream, true, true, monitor);
-			} else {
-				file.create(stream, true, monitor);
-			}
-			stream.close();
-		} catch (@SuppressWarnings("unused") IOException e) {
-			//
-		}
-		monitor.worked(1);
-		monitor.setTaskName("Opening file for editing...");
-		getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				try {
-					IDE.openEditor(page, file, true);
-				} catch (@SuppressWarnings("unused") PartInitException e) {
-					//
-				}
-			}
-		});
-		monitor.worked(1);
-	}
+        try {
+            InputStream stream = openContentStream();
+            if (file.exists()) {
+                file.setContents(stream, true, true, monitor);
+            } else {
+                file.create(stream, true, monitor);
+            }
+            stream.close();
+        } catch (@SuppressWarnings("unused") IOException e) {
+            //
+        }
+        monitor.worked(1);
+        monitor.setTaskName("Opening file for editing...");
+        getShell().getDisplay().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                try {
+                    IDE.openEditor(page, file, true);
+                } catch (@SuppressWarnings("unused") PartInitException e) {
+                    //
+                }
+            }
+        });
+        monitor.worked(1);
+    }
 
-	/**
-	 * We will not initialize file contents with a sample text.
-	 */
-	private static InputStream openContentStream() {
-		String contents = "";
-		return new ByteArrayInputStream(contents.getBytes());
-	}
+    /**
+     * We will not initialize file contents with a sample text.
+     */
+    private static InputStream openContentStream() {
+        String contents = "";
+        return new ByteArrayInputStream(contents.getBytes());
+    }
 
-	private static void throwCoreException(String message) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, "de.unistuttgart.iste.ps.skilled.ui", IStatus.OK, message, null);
-		throw new CoreException(status);
-	}
+    private static void throwCoreException(String message) throws CoreException {
+        IStatus status = new Status(IStatus.ERROR, "de.unistuttgart.iste.ps.skilled.ui", IStatus.OK, message, null);
+        throw new CoreException(status);
+    }
 
-	/**
-	 * We will accept the selection in the workbench to see if we can initialize
-	 * from it.
-	 * 
-	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
-	 */
-	@Override
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.selection = selection;
-	}
+    /**
+     * We will accept the selection in the workbench to see if we can initialize from it.
+     * 
+     * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
+     */
+    @Override
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        this.selection = selection;
+    }
 }
