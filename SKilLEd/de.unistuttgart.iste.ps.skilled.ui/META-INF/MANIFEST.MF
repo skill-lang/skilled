@@ -20,7 +20,8 @@ Require-Bundle: de.unistuttgart.iste.ps.skilled;visibility:=reexport,
  org.eclipse.xtext.util,
  org.eclipse.xtext,
  org.apache.commons.io;bundle-version="2.2.0",
- de.unistuttgart.iste.ps.skillls
+ de.unistuttgart.iste.ps.skillls,
+ org.eclipse.jdt.annotation
 Import-Package: de.unistuttgart.iste.ps.skillls.tools,
  de.unistuttgart.iste.ps.skillls.tools.api,
  org.apache.log4j
