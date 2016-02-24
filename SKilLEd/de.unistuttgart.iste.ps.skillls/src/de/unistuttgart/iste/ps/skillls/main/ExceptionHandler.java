@@ -6,7 +6,7 @@ package de.unistuttgart.iste.ps.skillls.main;
  * @author Armin Hüneburg
  * @since 25.08.15.
  */
-class ExceptionHandler {
+public class ExceptionHandler {
 
     private static boolean rethrow = true;
 

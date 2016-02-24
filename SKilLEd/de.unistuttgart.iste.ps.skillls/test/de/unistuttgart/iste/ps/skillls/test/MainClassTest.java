@@ -7,6 +7,7 @@ import de.unistuttgart.iste.ps.skillls.main.MainClass;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
 import de.unistuttgart.iste.ps.skillls.tools.Type;
 import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.junit.*;
 
 import java.io.ByteArrayOutputStream;
@@ -281,7 +282,11 @@ public class MainClassTest {
             MainClass.start(Indexing.JUST_INDEXING, args);
             failed = true;
         } catch (Throwable t) {
+            String message = t.getMessage().replace("\n", "").replace("\r", "");
+            boolean correctMessage = message.matches("The following tools are broken: +- (oneTypeTool|twoTypeTool) +- (oneTypeTool|twoTypeTool)");
+            assertTrue("Wrong message", correctMessage);
             assertTrue("not a BreakageException", t instanceof BreakageException);
+            assertEquals("wrong number of tools", 2, ((BreakageException) t).getTools().length);
         }
         try {
             Files.move(Paths.get("testFiles" + File.separator + "Furniture.skill"), Paths.get("resources" + File.separator + "Furniture.skill"));

@@ -216,12 +216,9 @@ public class CleanUpAssistant {
             BreakageException e = new BreakageException();
             HashSet<Tool> tools = new HashSet<>();
             for (Type origType : typesToDelete) {
-                for (Type type : typeMap.get(origType)) {
-                    for (Tool tool : skillFile.Tools()) {
-                        if (tool.getTypes().contains(type)) {
-                            tools.add(tool);
-                            break;
-                        }
+                for (Tool tool : skillFile.Tools()) {
+                    if (tool.getFiles().stream().anyMatch(f -> f.getPath().equals(origType.getFile().getPath()))) {
+                        tools.add(tool);
                     }
                 }
             }

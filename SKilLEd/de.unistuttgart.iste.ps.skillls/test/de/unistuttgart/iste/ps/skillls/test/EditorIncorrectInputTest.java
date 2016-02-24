@@ -102,7 +102,7 @@ public class EditorIncorrectInputTest {
                 System.out.println(tool.getName());
             }
             assertEquals("no tool created.", sk.Tools().size(), orig + 1);
-            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "DeleteToolNotExisting"), StandardCopyOption.REPLACE_EXISTING);
+//            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "DeleteToolNotExisting"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
         }
@@ -144,7 +144,7 @@ public class EditorIncorrectInputTest {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read,
                     de.ust.skill.common.java.api.SkillFile.Mode.Write);
             assertEquals("testTool not deleted. Failing ok, because not yet implemented in SKilL.", orig, sk.Tools().size());
-            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddTypeToNotExistingTool"), StandardCopyOption.REPLACE_EXISTING);
+//            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddTypeToNotExistingTool"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
         }
@@ -177,7 +177,7 @@ public class EditorIncorrectInputTest {
             // check if Color is in Tool
             assertTrue("Color in Tool",
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 0));
-            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddNotExistingType"), StandardCopyOption.REPLACE_EXISTING);
+//            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddNotExistingType"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
         }
@@ -204,7 +204,7 @@ public class EditorIncorrectInputTest {
             // check if testTool has a type
             assertTrue("Color in Tool",
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 0));
-            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "RemoveNotExistingType"), StandardCopyOption.REPLACE_EXISTING);
+//            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "RemoveNotExistingType"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
         }
@@ -230,7 +230,7 @@ public class EditorIncorrectInputTest {
             // check if some kind of error occurred
             assertTrue("Color in Tool",
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 0));
-            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddTypeWithoutExtension"), StandardCopyOption.REPLACE_EXISTING);
+//            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddTypeWithoutExtension"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
         }
@@ -256,7 +256,7 @@ public class EditorIncorrectInputTest {
             // check if color is in testTool
             assertTrue("Color not in Tool",
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 1));
-            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddNotExistingField"), StandardCopyOption.REPLACE_EXISTING);
+//            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddNotExistingField"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
         }
@@ -282,7 +282,7 @@ public class EditorIncorrectInputTest {
             // check if no type has a field in testTool
             assertTrue("red not in Color in testTool", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool")
                     && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 0)));
-            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddNotExistingFieldHint"), StandardCopyOption.REPLACE_EXISTING);
+//            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddNotExistingFieldHint"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
         }
@@ -311,7 +311,7 @@ public class EditorIncorrectInputTest {
                             .anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
                                     .allMatch(ty -> ty.getName().equals("Color") && ty.getFields().stream()
                                             .allMatch(f -> f.getName().endsWith("red") && f.getHints().size() == 0))));
-            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "RemoveNotExistingFieldHint"), StandardCopyOption.REPLACE_EXISTING);
+//            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "RemoveNotExistingFieldHint"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
         }
@@ -340,7 +340,7 @@ public class EditorIncorrectInputTest {
                             .anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
                                     .allMatch(ty -> ty.getName().endsWith("Color") && ty.getFields().stream()
                                             .allMatch(f -> f.getName().endsWith("red") && f.getHints().size() == 0))));
-            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddNotExistingTypeHint"), StandardCopyOption.REPLACE_EXISTING);
+//            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddNotExistingTypeHint"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
         }
@@ -370,7 +370,7 @@ public class EditorIncorrectInputTest {
             // check if color is not !notSingleton
             assertTrue("Color is not singleton in testTool", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool")
                     && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color") && ty.getHints().size() == 0)));
-            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "RemoveNotExistingTypeHint"), StandardCopyOption.REPLACE_EXISTING);
+//            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "RemoveNotExistingTypeHint"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail("IO Exception");
         }
@@ -398,7 +398,7 @@ public class EditorIncorrectInputTest {
                     .anyMatch(t -> t.getName().equals("testTool")
                             && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color")
                                     && ty.getHints().stream().noneMatch(h -> h.getName().equals("!singleton")))));
-            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "RemoveNotExistingField"), StandardCopyOption.REPLACE_EXISTING);
+//            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "RemoveNotExistingField"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
         }
