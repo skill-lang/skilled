@@ -12,11 +12,11 @@ import org.eclipse.core.commands.ExecutionException;
  *
  */
 public class ExportToolsHandler extends AbstractHandler {
-    ExportTools fDialog = new ExportTools();
+    ExportTools dialog = new ExportTools();
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        fDialog.run();
+        dialog.run();
         return null;
     }
 

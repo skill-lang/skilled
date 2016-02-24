@@ -48,19 +48,19 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
  */
 public class ExportTools {
     Display display;
-    String fName = "";
-    String fSaveLocation = "";
-    String[] fToolName;
-    File fCheckSave;
+    String name = "";
+    String saveLocation = "";
+    String[] toolName;
+    File checkSave;
 
-    ArrayList<File> fListofFiles = null;
-    List<String> fToolNameList = null;
-    ArrayList<Tool> fToolList = null;
-    List<String> fToolPathList = null;
+    ArrayList<File> listofFiles = null;
+    List<String> toolNameList = null;
+    ArrayList<Tool> toolList = null;
+    List<String> toolPathList = null;
     IProject activeProject;
     String path;
     SkillFile skillfile;
-    String fSaveName = "";
+    String saveName = "";
 
     private final ArrayList<Tool> allToolList = new ArrayList<Tool>();
     private final ArrayList<String> pathList = new ArrayList<String>();
@@ -96,17 +96,17 @@ public class ExportTools {
         }
 
         if (allToolList.size() > 0) {
-            fToolNameList = new ArrayList<String>();
+            toolNameList = new ArrayList<String>();
             for (int i = 0; i < allToolList.size(); i++) {
-                fToolNameList.add(allToolList.get(i).getName());
+                toolNameList.add(allToolList.get(i).getName());
 
             }
         }
 
         if (pathList.size() > 0) {
-            fToolPathList = new ArrayList<String>();
+            toolPathList = new ArrayList<String>();
             for (int i = 0; i < pathList.size(); i++) {
-                fToolPathList.add(pathList.get(i));
+                toolPathList.add(pathList.get(i));
             }
         }
 
@@ -146,19 +146,18 @@ public class ExportTools {
         gridDataWidgets.grabExcessHorizontalSpace = true;
         gridDataWidgets.horizontalSpan = 3;
         cSelectTool.setLayoutData(gridDataWidgets);
-        if (fToolNameList != null) {
-            cSelectTool.setItems(fToolNameList.toArray(new String[fToolNameList.size()]));
+        if (toolNameList != null) {
+            cSelectTool.setItems(toolNameList.toArray(new String[toolNameList.size()]));
 
         } else {
             String emptyList[] = {};
             cSelectTool.setItems(emptyList);
         }
-        fName = cSelectTool.getText();
+        name = cSelectTool.getText();
         cSelectTool.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                // TODO
-                fName = cSelectTool.getText();
+                name = cSelectTool.getText();
             }
         });
 
@@ -171,7 +170,7 @@ public class ExportTools {
 
         // Export location here
         Text tSaveLocation = new Text(shell, SWT.BORDER | SWT.SINGLE);
-        tSaveLocation.setText(fSaveLocation);
+        tSaveLocation.setText(saveLocation);
         GridData gridDataWidgetsSmall = new GridData();
         gridDataWidgetsSmall.horizontalAlignment = SWT.FILL;
         gridDataWidgetsSmall.grabExcessHorizontalSpace = true;
@@ -182,7 +181,7 @@ public class ExportTools {
             @Override
             public void modifyText(ModifyEvent e) {
                 Text textWidget = (Text) e.getSource();
-                fSaveLocation = textWidget.getText();
+                saveLocation = textWidget.getText();
             }
         });
 
@@ -219,19 +218,19 @@ public class ExportTools {
             @Override
             public void widgetSelected(SelectionEvent event) {
 
-                fCheckSave = new File(fSaveLocation);
-                if (!fSaveLocation.endsWith(".skill") || fCheckSave.isDirectory()) {
+                checkSave = new File(saveLocation);
+                if (!saveLocation.endsWith(".skill") || checkSave.isDirectory()) {
                     ShowMessage("Invalid export format!", "Invalid Export Format");
                     return;
-                } else if (fCheckSave.exists()) {
-                    fSaveName = tSaveLocation.getText().substring(tSaveLocation.getText().lastIndexOf(File.separator) + 1);
+                } else if (checkSave.exists()) {
+                    saveName = tSaveLocation.getText().substring(tSaveLocation.getText().lastIndexOf(File.separator) + 1);
                     int overwrite = ShowMessageOption();
                     if (overwrite == JOptionPane.YES_OPTION) {
-                        fCheckSave.delete();
+                        checkSave.delete();
                         combineFiles();
                         // Reset text fields
-                        fName = "";
-                        fSaveLocation = "";
+                        name = "";
+                        saveLocation = "";
                         shell.dispose();
                     }
                 }
@@ -239,8 +238,8 @@ public class ExportTools {
                 else {
                     combineFiles();
                     shell.dispose();
-                    fName = "";
-                    fSaveLocation = "";
+                    name = "";
+                    saveLocation = "";
 
                 }
 
@@ -255,8 +254,8 @@ public class ExportTools {
             @Override
             public void widgetSelected(SelectionEvent event) {
                 shell.dispose();
-                fName = "";
-                fSaveLocation = "";
+                name = "";
+                saveLocation = "";
             }
         });
     }
@@ -290,11 +289,11 @@ public class ExportTools {
      */
     public void combineFiles() {
 
-        int index = fToolNameList.indexOf(fName);
+        int index = toolNameList.indexOf(name);
 
         // File path of the .skills file of the tool selected from the dropdown
         // menu (i.e. C:\\...\Workspace\Project\.skills)
-        String fToolFilePath = fToolPathList.get(index);
+        String fToolFilePath = toolPathList.get(index);
 
         // File path of the project of the tool (i.e. C:\\...\Workspace\Project)
         String fToolProjectPath = fToolFilePath.substring(0, fToolFilePath.lastIndexOf(File.separator));
@@ -305,18 +304,18 @@ public class ExportTools {
 
         // Generate tool folder and files
         IProject project = workspace.getRoot().getProject(fToolProjectName);
-        ToolUtil.generateTemporarySKilLFiles(fName, project);
+        ToolUtil.generateTemporarySKilLFiles(name, project);
 
         // File path of the tool folder in the .skillt folder (i.e.
         // C:\\...\Workspace\Project\.skillt\Tool
-        String fToolFolder = fToolProjectPath + File.separator + ".skillt" + File.separator + fName;
+        String fToolFolder = fToolProjectPath + File.separator + ".skillt" + File.separator + name;
 
-        fListofFiles = new ArrayList<>();
-        listAllFiles(fToolFolder, fListofFiles);
+        listofFiles = new ArrayList<>();
+        listAllFiles(fToolFolder, listofFiles);
 
-        String fText = "# Tool " + fName + "\n";
+        String fText = "# Tool " + name + "\n";
 
-        for (File f : fListofFiles) {
+        for (File f : listofFiles) {
             FileInputStream fis;
             try {
                 fis = new FileInputStream(f);
@@ -338,11 +337,10 @@ public class ExportTools {
         }
         // Head comment that says which tool the merged files belong to
         try {
-            FileWriter fw = new FileWriter(fCheckSave, true);
+            FileWriter fw = new FileWriter(checkSave, true);
             fw.write(fText);
             fw.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -362,7 +360,7 @@ public class ExportTools {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JOptionPane.showOptionDialog(null, fSaveName + " already exists!" + " Do you want to overwrite it?",
+                JOptionPane.showOptionDialog(null, saveName + " already exists!" + " Do you want to overwrite it?",
                         "Existing File", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
             }
         });
