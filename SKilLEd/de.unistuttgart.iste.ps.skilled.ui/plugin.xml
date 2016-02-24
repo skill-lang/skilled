@@ -498,6 +498,43 @@
      </command>
   </extension>
   <extension
+        point="org.eclipse.ui.menus">
+     <menuContribution
+           allPopups="false"
+           locationURI="menu:org.eclipse.ui.main.menu">
+        <menu
+              id="SKilLMenu"
+              label="SKilL">
+           <command
+                 commandId="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
+                 label="Import Binary File"
+                 style="push">
+           </command>
+           <command
+	   	  	 	   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
+	   	  	 	   label="Sort Usertypes"
+	   	  	 	   style="push">
+	   	   </command>
+	   	   <command
+                   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints"
+                   label="Remove all hints in this file"
+                   style="push">
+             </command>
+             <command
+                   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removeprojecthints"
+                   label="Remove all hints in this project"
+                   style="push">
+             </command>
+             <command
+                   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinedfiles.command"
+                   label="Combine .skill-files"
+                   style="push"
+                   tooltip="Combine multiple .skill-files">
+             </command>
+        </menu>
+     </menuContribution>
+  </extension>
+  <extension
         point="org.eclipse.ui.bindings">
      <key
            commandId="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
@@ -607,44 +644,6 @@
 	  </stylesheet>	
    </extension>
     <extension
-          point="org.eclipse.ui.menus">
-       <menuContribution
-             allPopups="false"
-             locationURI="menu:org.eclipse.ui.main.menu">
-          <menu
-                id="skillMenu"
-                label="SKilL">
-             <command
-                   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinedfiles.command"
-                   label="Combine .skill-files"
-                   style="push"
-                   tooltip="Combine multiple .skill-files">
-             </command>
-          </menu>
-       </menuContribution>
-    </extension>
-    <extension
-          point="org.eclipse.ui.menus">
-       <menuContribution
-             allPopups="false"
-             locationURI="menu:org.eclipse.ui.main.menu">
-          <menu
-                id="SKilLMenu"
-                label="SKilL">
-             <command
-                   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints"
-                   label="Remove all hints in this file"
-                   style="push">
-             </command>
-             <command
-                   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removeprojecthints"
-                   label="Remove all hints in this project"
-                   style="push">
-             </command>
-          </menu>
-       </menuContribution>
-    </extension>
-    <extension
           point="org.eclipse.ui.commands">
        <command
              defaultHandler="de.unistuttgart.iste.ps.skilled.ui.views.ToolViewHandler"
@@ -675,11 +674,23 @@
              style="push"
              tooltip="Combine multiple .skill-files">
        </command>
+<<<<<<< d842db39aebb279188221a8ac8513f61e7758911
        <command
              defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.SortTypesHandler"
              id="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
              name="Sort Usertypes">
        </command>
+=======
+    </extension>
+    <extension
+          point="org.eclipse.ui.bindings">
+       <key
+             commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinedfiles.command"
+             contextId="org.eclipse.ui.contexts.window"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+8">
+       </key>
+>>>>>>> added comments and implemented automatic formatting for quickfixes and refactorings #80
     </extension>
     <extension
           point="org.eclipse.ui.commands">
@@ -706,12 +717,12 @@
        <key
              commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints"
              schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-             sequence="M1+2">
+             sequence="M1+7">
        </key>
        <key
              commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.removeprojecthints"
              schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-             sequence="M1+3">
+             sequence="M1+6">
        </key>
     </extension>
 

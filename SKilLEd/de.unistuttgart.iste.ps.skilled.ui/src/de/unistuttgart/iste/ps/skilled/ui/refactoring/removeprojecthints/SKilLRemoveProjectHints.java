@@ -60,6 +60,8 @@ public class SKilLRemoveProjectHints {
             IPath path = ((FileEditorInput) input).getPath();
             String projectName = path.segment(basePath.segmentCount());
             LinkedList<java.io.File> fileList = new LinkedList<java.io.File>();
+            
+            //add all files in the project to a list
             fileList.add(new File(basePath.append(projectName).toString()));
             int index = 0;
             while (index < fileList.size()) {
@@ -86,6 +88,8 @@ public class SKilLRemoveProjectHints {
                         }
                         br.close();
                     } catch (IOException e) {
+                        
+                        // show error message in a notification window
                         StringBuilder sb = new StringBuilder("Error: ");
                         sb.append(e.getMessage());
                         sb.append(linebreak);
@@ -111,6 +115,8 @@ public class SKilLRemoveProjectHints {
                     JOptionPane.showMessageDialog(null, "Please save the current file before removing hints!",
                             "File not saved!", JOptionPane.ERROR_MESSAGE);
                 }
+                
+                //replace the file with a file where the hints have been removed
                 try {
                     FileWriter fw = new FileWriter(file, false);
                     fw.write(fCurrentContents);
@@ -120,6 +126,8 @@ public class SKilLRemoveProjectHints {
                             new NullProgressMonitor());
                     page.saveAllEditors(false);
                 } catch (IOException e) {
+                    
+                    //show error message in a notification window
                     StringBuilder sb = new StringBuilder("Error: ");
                     sb.append(e.getMessage());
                     sb.append(linebreak);
@@ -141,6 +149,8 @@ public class SKilLRemoveProjectHints {
                     };
                     JOptionPane.showMessageDialog(null, jsp, "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (CoreException e) {
+                    
+                    //very unlikely that this will ever happen
                     e.printStackTrace();
                 }
             }

@@ -6,7 +6,7 @@ import org.eclipse.core.commands.ExecutionException;
 
 
 /**
- * Activates SKIlLCombineRefactoringDialog from the menu
+ * Activates SKilLRemoveProjectHints from the menu
  * 
  * @author Leslie Tso
  * @author Tobias Heck

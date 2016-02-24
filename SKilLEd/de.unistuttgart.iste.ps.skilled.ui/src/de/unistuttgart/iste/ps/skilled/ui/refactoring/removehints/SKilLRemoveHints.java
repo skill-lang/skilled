@@ -18,7 +18,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
@@ -101,7 +100,7 @@ public class SKilLRemoveHints {
 				JOptionPane.showMessageDialog(null, "Please save the current file before removing hints!",
 						"File not saved!", JOptionPane.ERROR_MESSAGE);
 			}
-
+			//replaces the file with a file where the hints have been removed
 			try {
 				FileWriter fw = new FileWriter(f, false);
 				fw.write(fCurrentContents);
@@ -131,6 +130,8 @@ public class SKilLRemoveHints {
 				};
 				JOptionPane.showMessageDialog(null, jsp, "Error", JOptionPane.ERROR_MESSAGE);
 			} catch (CoreException e) {
+			    
+			    //very unlikely that this will ever happen
                 e.printStackTrace();
             }
 		} 

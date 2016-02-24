@@ -1,5 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes;
 
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtext.resource.XtextResource;
@@ -60,6 +63,14 @@ public class SortTypes {
                     }
 
                 }
+                EditorUtils.getActiveXtextEditor().setFocus();
+                Robot robot = new Robot();
+                robot.keyPress(KeyEvent.VK_CONTROL);
+                robot.keyPress(KeyEvent.VK_SHIFT);
+                robot.keyPress(KeyEvent.VK_F);
+                robot.keyRelease(KeyEvent.VK_F);
+                robot.keyRelease(KeyEvent.VK_SHIFT);
+                robot.keyRelease(KeyEvent.VK_CONTROL);
                 return null;
             }
 
