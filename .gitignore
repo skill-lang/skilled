@@ -129,6 +129,9 @@ grammar/
 tools/
 SKilLls/lib/skill.j*
 
+#javadoc
+SKilLEd/javadoc
+
 #runtime eclipse
 runtime-SKilLEd/
 

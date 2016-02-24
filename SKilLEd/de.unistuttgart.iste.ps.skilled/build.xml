@@ -27,6 +27,10 @@
         <ant antfile="build-SKilLEd-tests.xml"/>
     </target>
 
-    <target name="complete-build" depends="build-skillls,build-skilled,build-skilled-ui,build-skilled-tests"/>
+    <target name="create-javadoc">
+        <ant antfile="create-javadoc.xml"/>
+    </target>
+
+    <target name="complete-build" depends="build-skillls,build-skilled,build-skilled-ui,build-skilled-tests,create-javadoc"/>
 
 </project>

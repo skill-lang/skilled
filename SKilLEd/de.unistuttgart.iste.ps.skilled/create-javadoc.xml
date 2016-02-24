@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="de.unistuttgart.iste.ps.skilled" default="create-javadoc">
+
+    <property name="javadoc.dir" value="../javadoc"/>
+
+    <target name="clean">
+        <delete dir="${javadoc.dir}"/>
+        <mkdir dir="${javadoc.dir}"/>
+    </target>
+    <target name="create-javadoc" depends="clean">
+        <javadoc encoding="UTF-8" charset="UTF-8" docencoding="UTF-8" destdir="${javadoc.dir}">
+            <sourcepath>
+                <path location="src"/>
+                <path location="../de.unistuttgart.iste.ps.skilled.ui/src"/>
+                <path location="../de.unistuttgart.iste.ps.skillls/src"/>
+            </sourcepath>
+        </javadoc>
+    </target>
+
+</project>
