@@ -231,6 +231,12 @@ public class ExportTools {
                         // Reset text fields
                         name = "";
                         saveLocation = "";
+                        allToolList.clear();
+                        pathList.clear();
+                        toolNameList = null;
+                        toolPathList = null;
+                        cSelectTool.removeAll();
+                        skillfile = null;
                         shell.dispose();
                     }
                 }
@@ -240,6 +246,12 @@ public class ExportTools {
                     shell.dispose();
                     name = "";
                     saveLocation = "";
+                    allToolList.clear();
+                    pathList.clear();
+                    toolNameList = null;
+                    toolPathList = null;
+                    cSelectTool.removeAll();
+                    skillfile = null;
 
                 }
 
@@ -253,9 +265,15 @@ public class ExportTools {
         Cancel.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                shell.dispose();
                 name = "";
                 saveLocation = "";
+                allToolList.clear();
+                pathList.clear();
+                toolNameList.clear();
+                toolPathList.clear();
+                cSelectTool.removeAll();
+                skillfile = null;
+                shell.dispose();
             }
         });
     }
