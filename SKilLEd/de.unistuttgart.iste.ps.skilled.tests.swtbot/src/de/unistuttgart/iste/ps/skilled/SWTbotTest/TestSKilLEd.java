@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 
 import de.unistuttgart.iste.ps.skilled.SWTbotTest.util.LoadTestfile;
 
-
 /**
  * @author Jan Berberich
  * 
@@ -23,7 +22,11 @@ public class TestSKilLEd {
 
 	private static SWTWorkbenchBot bot;
 	private String workspacePath = null;
-	private final String testProject = "TestProject"; //Name of the test project created by the test
+	private final String testProject = "TestProject"; // Name of the test
+														// project created by
+														// the test
+	private final String projectView = "Project Explorer";//Name of the project explorer view
+
 	@BeforeClass
 	public static void beforeClass() throws Exception {
 		bot = new SWTWorkbenchBot();
@@ -32,7 +35,8 @@ public class TestSKilLEd {
 	}
 
 	/**
-	 * Basic test: Create a new SKilL-Project and a SKilL-File in the project and write some content in it.
+	 * Basic test: Create a new SKilL-Project and a SKilL-File in the project
+	 * and write some content in it.
 	 * 
 	 */
 	@Test
@@ -46,11 +50,12 @@ public class TestSKilLEd {
 		bot.button("Next >").click();
 		bot.textWithLabel("Project name:").setText(testProject);
 		bot.button("Finish").click();
+		// Create Testfiles
 		createSKilLFile("TestFile", testProject);
-		bot.viewByTitle("Project Explorer").show();
+		bot.viewByTitle(projectView).show();
 		try {
 			bot.tree().getTreeItem(testProject).expand();
-			bot.tree().getTreeItem("TestProject").getNode("TestFile.skill");
+			bot.tree().getTreeItem(testProject).getNode("TestFile.skill");
 		} catch (WidgetNotFoundException e) {
 			throw new AssertionError(); // Project and/or File not existing->
 										// Error creating them
@@ -68,40 +73,46 @@ public class TestSKilLEd {
 			for (File f : workspace.listFiles()) {
 				System.out.println("File: " + f.getName());
 			}
-		}
+		}		
 	}
 
 	/**
 	 * This test opens a SKilL-File specified in the specification (2.3) and
-	 * checks if it is opened in the specified time.
-	 * File is specified to be opened in a maximum of 50 ms.
+	 * checks if it is opened in the specified time. File is specified to be
+	 * opened in a maximum of 50 ms.
 	 * 
 	 */
 	@Test
 	public void openFileTimeSpecified() {
-		//First generate a File with the specified Filecontent
+		String testFileName = "timeTestSpecification";
+		String testFileFullName = testFileName + ".skill";
+		// First generate a File with the specified Filecontent
 		String fileContent = LoadTestfile.loadTestfile();
-		createSKilLFile("timeTestSpecification", testProject);
-		//Focus on Project Explorer, open testFile, save content
-		bot.viewByTitle("Project Explorer").show();
+		createSKilLFile(testFileName, testProject);
+		// Focus on Project Explorer, open testFile, save content
+		bot.viewByTitle(projectView).show();
 		bot.tree().getTreeItem(testProject).expand();
-		bot.tree().getTreeItem(testProject).getNode("timeTestSpecification.skill").select();
-		bot.editorByTitle("timeTestSpecification.skill").show();
+		bot.tree().getTreeItem(testProject).getNode(testFileFullName).doubleClick();
+		bot.editorByTitle(testFileFullName).show();
 		bot.styledText().setText(fileContent);
 		bot.toolbarButtonWithTooltip("Save (Ctrl+S)").click();
-		bot.editorByTitle("timeTestSpecification.skill").close();		
-		System.out.println("Open Testfile: ");
+		bot.editorByTitle(testFileFullName).close();
 		final long endTime;
-		bot.viewByTitle("Project Explorer").show();
+		bot.viewByTitle(projectView).show();
+		bot.tree().getTreeItem(testProject).expand();
 		final long timeStart = System.currentTimeMillis();
-		bot.tree().getTreeItem(testProject).getNode("timeTestSpecification.skill").select();
-		bot.editorByTitle("timeTestSpecification.skill").show();
+		bot.tree().getTreeItem(testProject).getNode(testFileFullName).doubleClick();
 		endTime = System.currentTimeMillis();
 		final long timeDiff = endTime - timeStart;
 		System.out.println("File opened in " + timeDiff + " ms.");
 	}
-
-
+	
+	/**
+	 * Get the path of the current workspace.
+	 * 
+	 * @return The workspace path
+	 * 
+	 */
 	private String getWorkspacePath() {
 		if (workspacePath == null) {
 			bot.menu("File").menu("Switch Workspace").menu("Other...").click();
