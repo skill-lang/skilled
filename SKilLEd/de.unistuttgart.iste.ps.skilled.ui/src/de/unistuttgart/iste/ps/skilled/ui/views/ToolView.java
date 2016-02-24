@@ -168,7 +168,6 @@ public class ToolView extends ViewPart {
             path = activeProject.getLocation().toOSString() + File.separator + ".skills";
             skillFile = SkillFile.open(path, Mode.ReadOnly);
         } catch (Exception e) {
-            this.showMessage("Did not read .skills-File");
             System.err.println("Did not read .skills-File");
             return;
         }

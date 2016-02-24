@@ -85,12 +85,14 @@ public class ToolViewListener {
 
             @Override
             public void partOpened(IWorkbenchPart part) {
-                IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                        .getActivePage().getActiveEditor().getEditorInput();
-                IProject newActiveProject = file.getFile().getProject();
+                if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor() != null) {
+                    IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                            .getActivePage().getActiveEditor().getEditorInput();
+                    IProject newActiveProject = file.getFile().getProject();
 
-                if (!toolview.getActiveProject().equals(newActiveProject))
-                    toolview.refresh();
+                    if (toolview.getActiveProject() != null && !toolview.getActiveProject().equals(newActiveProject))
+                        toolview.refresh();
+                }
             }
 
             @Override
@@ -106,19 +108,21 @@ public class ToolViewListener {
                             .getActivePage().getActiveEditor().getEditorInput();
                     IProject newActiveProject = file.getFile().getProject();
 
-                    if (!toolview.getActiveProject().equals(newActiveProject))
+                    if (toolview.getActiveProject() == null || !toolview.getActiveProject().equals(newActiveProject))
                         toolview.refresh();
                 }
             }
 
             @Override
             public void partBroughtToTop(IWorkbenchPart part) {
-                IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                        .getActivePage().getActiveEditor().getEditorInput();
-                IProject newActiveProject = file.getFile().getProject();
+                if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor() != null) {
+                    IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                            .getActivePage().getActiveEditor().getEditorInput();
+                    IProject newActiveProject = file.getFile().getProject();
 
-                if (!toolview.getActiveProject().equals(newActiveProject))
-                    toolview.refresh();
+                    if (toolview.getActiveProject() == null || !toolview.getActiveProject().equals(newActiveProject))
+                        toolview.refresh();
+                }
             }
 
             @Override
