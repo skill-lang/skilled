@@ -290,11 +290,11 @@ class ImportCombine {
 
 		if (counter == 0) {
 			System.out.println("No duplicates found, moving file");
-			// Move to project folder
+			// Copy and paste to project folder
 			if (!fDestination.exists) {
-				FileUtils.moveFile(fSource, fDestination);
+				FileUtils.copyFile(fSource, fDestination);
 			} else {
-				FileUtils.moveFile(fSource, fDestinationRenamed);
+				FileUtils.copyFile(fSource, fDestinationRenamed);
 			}
 		} else {
 			System.out.println("Only 1 duplicate found, starting merge");
@@ -440,12 +440,12 @@ class ImportCombine {
 				fw2.write(fOriginalFileText);
 				fw2.close;
 
-				// Move file to the import location
+				// Copy and paste file to the import location
 				if (!fDestination.exists) {
-					FileUtils.moveFile(fSource, fDestination);
+					FileUtils.copyFile(fSource, fDestination);
 
 				} else {
-					FileUtils.moveFile(fSource, fDestinationRenamed);
+					FileUtils.copyFile(fSource, fDestinationRenamed);
 				}
 
 			}

@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.ps.skilled.tests.exporttools;
+package de.unistuttgart.iste.ps.skilled.SWTbotTest.exportTools;
 
 import java.io.File;
 
