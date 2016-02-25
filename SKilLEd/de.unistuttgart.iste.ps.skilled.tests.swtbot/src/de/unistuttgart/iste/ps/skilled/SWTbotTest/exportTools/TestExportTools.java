@@ -40,7 +40,7 @@ public class TestExportTools {
     @Test
     public void testExportTools() {
         SWTBotPreferences.KEYBOARD_LAYOUT = "EN_US";
-
+        // bot.menu("SKilLEd").menu("Tool View").click();
         bot.menu("Window").menu("Show View").menu("Project Explorer").click();
         // Project Explorer as active window
         bot.viewByTitle("Project Explorer").show();
@@ -54,7 +54,7 @@ public class TestExportTools {
         // Populate "testExport.skill"
         bot.styledText().setText("# Test Export\nA {\n  !ignore\n   i8 Test;\n}");
         bot.menu("File").menu("Save").click();
-        bot.menu("SkilLEd").menu("Tool View").click();
+
         // Toolview window as active window
         bot.viewByTitle("ToolView").show();
         // Create tool "testExport"
@@ -78,7 +78,7 @@ public class TestExportTools {
     @Test
     public void testExportToolsAndOverwrite() {
         SWTBotPreferences.KEYBOARD_LAYOUT = "EN_US";
-
+        bot.menu("SKilLEd").menu("Tool View").click();
         bot.menu("Window").menu("Show View").menu("Project Explorer").click();
         // Project Explorer as active window
         bot.viewByTitle("Project Explorer").show();
