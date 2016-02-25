@@ -176,8 +176,8 @@ public class ToolView extends ViewPart {
 
             path = activeProject.getLocation().toOSString() + File.separator + ".skills";
             skillFile = SkillFile.open(path, Mode.ReadOnly);
-        } catch (Exception e) {
-            // skillfile does not exist or active project
+        } catch (@SuppressWarnings("unused") Exception e) {
+            // skillfile does not exist or no active project
             return;
         }
 
@@ -213,7 +213,7 @@ public class ToolView extends ViewPart {
 
         try {
             toolTabItem.setText("Tools - " + activeProject.getName());
-        } catch (NullPointerException e) {
+        } catch (@SuppressWarnings("unused") NullPointerException e) {
             toolTabItem.setText("Tools");
         }
 
@@ -328,7 +328,7 @@ public class ToolView extends ViewPart {
         try {
             tooltype = typeListOfActualTool.stream().filter(t -> selectedType.getName().equals(t.getName())).findFirst()
                     .get();
-        } catch (NoSuchElementException e) {
+        } catch (@SuppressWarnings("unused") NoSuchElementException e) {
             tooltype = null;
         }
 

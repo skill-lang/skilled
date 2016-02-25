@@ -81,14 +81,15 @@ public class ExportTools {
             IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                     .getActiveEditor().getEditorInput();
             activeProject = file.getFile().getProject();
+
+            ToolUtil.indexing(activeProject);
+
             path = activeProject.getLocation().toOSString() + File.separator + ".skills";
             skillfile = SkillFile.open(path, Mode.ReadOnly);
         } catch (@SuppressWarnings("unused") Exception e) {
             ShowMessage("Could not read .skills-file!", "File Generation Error");
             return;
         }
-
-        ToolUtil.indexing(activeProject);
 
         if (skillfile.Tools() != null) {
             skillfile.Tools().forEach(tool -> allToolList.add(tool));
