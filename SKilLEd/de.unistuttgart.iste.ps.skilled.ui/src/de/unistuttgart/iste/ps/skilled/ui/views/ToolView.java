@@ -96,6 +96,7 @@ public class ToolView extends ViewPart {
     public void setFocus() {
         parent.setFocus();
         shell.setFocus();
+        tabFolder.setFocus();
     }
 
     /**
@@ -153,7 +154,6 @@ public class ToolView extends ViewPart {
      */
     private void clearAll() {
         activeProject = null;
-        activeTool = null;
         allToolList.clear();
         pathList.clear();
         allTypeList.clear();

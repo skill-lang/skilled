@@ -3,7 +3,6 @@ package de.unistuttgart.iste.ps.skilled.ui.views;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 
@@ -20,7 +19,7 @@ public class ToolViewHandler extends AbstractHandler {
         try {
             HandlerUtil.getActiveWorkbenchWindowChecked(event).getActivePage()
                     .showView("de.unistuttgart.iste.ps.skilled.ui.views.ToolView");
-        } catch (PartInitException e) {
+        } catch (Exception e) {
             return null;
         }
         return null;
