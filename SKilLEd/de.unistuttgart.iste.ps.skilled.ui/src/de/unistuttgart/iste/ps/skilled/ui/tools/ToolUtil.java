@@ -1,11 +1,13 @@
 package de.unistuttgart.iste.ps.skilled.ui.tools;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 import de.unistuttgart.iste.ps.skillls.main.BreakageException;
@@ -27,7 +29,7 @@ import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
  */
 public final class ToolUtil {
     static String addendum = "";
-    private static List<IMarker> toolErrorMarker = new ArrayList<IMarker>();
+    private static Map<IProject, List<IMarker>> toolErrorMarker = new HashMap<IProject, List<IMarker>>();
 
     /**
      * Tries to create a new Tool.
@@ -575,25 +577,40 @@ public final class ToolUtil {
         } catch (BreakageException e) {
             deleteReportToolErrors(project);
             reportToolError(e, project);
+            return false;
         } catch (Throwable t) {
             return false;
         }
     }
 
     public static void deleteReportToolErrors(IProject project) throws CoreException {
-        Iterator<IMarker> it = toolErrorMarker.iterator();
-        while (it.hasNext()) {
-            IMarker marker = it.next();
-            marker.delete();
-            it.remove();
-        }
+        // List<IMarker> toolMarkerList = toolErrorMarker.get(project);
+        // if (toolMarkerList != null) {
+        // Iterator<IMarker> it = toolMarkerList.iterator();
+        // while (it.hasNext()) {
+        // IMarker marker = it.next();
+        // marker.delete();
+        // it.remove();
+        // }
+        // }
+
+        project.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
     }
 
     public static void reportToolError(final BreakageException breakageException, final IProject project)
             throws CoreException {
-        IMarker marker = project.createMarker(IMarker.PROBLEM);
-        marker.setAttribute(IMarker.MESSAGE, breakageException.getMessage());
-        toolErrorMarker.add(marker);
+
+        List<IMarker> toolErrorMarkerList = toolErrorMarker.get(project);
+        if (toolErrorMarkerList == null) {
+            toolErrorMarkerList = new ArrayList<IMarker>();
+        }
+
+        for (Tool brokenTool : breakageException.getTools()) {
+            IMarker marker = project.createMarker(IMarker.PROBLEM);
+            marker.setAttribute(IMarker.MESSAGE, "You have succesfully broken the following Tool: " + brokenTool.getName());
+            toolErrorMarkerList.add(marker);
+            toolErrorMarker.put(project, toolErrorMarkerList);
+        }
     }
 
 }

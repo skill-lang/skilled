@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -176,7 +177,12 @@ public class ToolView extends ViewPart {
             return;
         }
 
-        ToolUtil.indexing(activeProject);
+        try {
+            ToolUtil.indexing(activeProject);
+        } catch (CoreException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         if (skillFile.Tools() != null) {
             skillFile.Tools().forEach(tool -> allToolList.add(tool));
