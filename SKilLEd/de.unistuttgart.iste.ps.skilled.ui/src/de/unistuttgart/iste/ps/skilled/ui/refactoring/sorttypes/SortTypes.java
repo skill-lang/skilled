@@ -29,6 +29,7 @@ public class SortTypes {
 
     @SuppressWarnings("static-method")
     public void run() {
+    	if (EditorUtils.getActiveXtextEditor() == null || EditorUtils.getActiveXtextEditor().getDocument() == null) { return; }
         IXtextDocument xtextDocument = EditorUtils.getActiveXtextEditor().getDocument();
         xtextDocument.modify(new IUnitOfWork<Void, XtextResource>() {
             @Override

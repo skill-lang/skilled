@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.xtext.ui.editor.utils.EditorUtils;
 
 /**
  * This class removes hints from either the file in the active editor window
@@ -41,6 +42,8 @@ public class SKilLRemoveHints {
 	 * Remove hints from the file in the active editor window.
 	 */
 	public void runFromMenu() {
+		
+		if (EditorUtils.getActiveXtextEditor() == null || EditorUtils.getActiveXtextEditor().getDocument() == null) { return; }
 		
 	    final String linebreak = System.lineSeparator();
 		String fCurrentContents = "";
