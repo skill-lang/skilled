@@ -3,8 +3,8 @@ package de.unistuttgart.iste.ps.skilled.validation
 import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
 import java.util.ArrayList
+import java.util.EmptyStackException
 import java.util.HashSet
 import java.util.List
 import java.util.Set
@@ -50,7 +50,9 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 
 		// Apply Tarjan's strongly connected components algorithm
 		// For each strongly connected component of the Graph ->CyclicComponent Method
-		for (node : edges) {
+		val nodeIterator = edges.iterator
+		while (nodeIterator.hasNext) {
+			var node = nodeIterator.next
 			if (node.getindex == -1) {
 				strongconnect(node)
 			}
@@ -75,7 +77,9 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 		var boolean error = false // Becomes true if an multipleInheritence Error is found for dec
 		if (dec.supertypes.size > 1) {
 			var Set<TypeDeclaration> inheritedNoninterfaceSupertypes = new HashSet
-			for (declarationReference : dec.supertypes) {
+			val referenceIterator = dec.supertypes.iterator
+			while (referenceIterator.hasNext) {
+				var declarationReference = referenceIterator.next
 				if (declarationReference.type instanceof Interfacetype) {
 					inheritedNoninterfaceSupertypes.addAll(numberOfSupertypes(declarationReference.type))
 				} else {
@@ -85,7 +89,9 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 			if (inheritedNoninterfaceSupertypes.size > 1) {
 				// There are more than 1 non-Interface Supertypes for firstnode -> Check if they have a minimum
 				var boolean minimum = false // Will become true if there is a minimum, else there is an error
-				for (TypeDeclaration declaration : inheritedNoninterfaceSupertypes) {
+				val supertypeIterator = inheritedNoninterfaceSupertypes.iterator
+				while (supertypeIterator.hasNext) {
+					var declaration = supertypeIterator.next
 					if (checkMinimum(declaration, inheritedNoninterfaceSupertypes)) {
 						minimum = true
 					}
@@ -123,7 +129,9 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	def boolean checkSupertypes(TypeDeclaration declaration) {
 		var Set<TypeDeclaration> interfaces = new HashSet
 		var Set<TypeDeclaration> types = new HashSet
-		for (typeDeclarationReference : declaration.supertypes) {
+		val supertypeIterator = declaration.supertypes.iterator
+		while (supertypeIterator.hasNext) {
+			var typeDeclarationReference = supertypeIterator.next
 			if (typeDeclarationReference.type instanceof Interfacetype) {
 				interfaces.add(typeDeclarationReference.type)
 			} else {
@@ -139,7 +147,9 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	 * Checks if dec is a Minimum for the Nodes in declarations
 	 */
 	def boolean checkMinimum(TypeDeclaration declaration, Set<TypeDeclaration> declarations) {
-		for (TypeDeclaration type : declarations) {
+		val typeIterator = declarations.iterator
+		while (typeIterator.hasNext) {
+			var type = typeIterator.next
 			if (!type.name.equals(declaration.name) &&
 				!searchSupertype(type.name, declaration, new HashSet<TypeDeclaration>)) {
 				return false // type is no Supertype for dec -> dec is not a minimum for the Types in declarations
@@ -155,7 +165,9 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	 */
 	def public static boolean searchSupertype(String name, TypeDeclaration declaration, Set<TypeDeclaration> visited) {
 		var boolean found = false
-		for (declarationReference : declaration.supertypes) {
+		val supertypeIterator = declaration.supertypes.iterator
+		while (supertypeIterator.hasNext) {
+			var declarationReference = supertypeIterator.next
 			if (!visited.contains(declarationReference.type)) {
 				visited.add(declarationReference.type)
 				if (declarationReference.type.name.equals(name)) {
@@ -175,12 +187,14 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	 * 
 	 */
 	def List<TypeDeclaration> numberOfSupertypes(TypeDeclaration declaration) {
-		val List<TypeDeclaration> noninterfaceSupertypesOfDeclaration = new ArrayList
+		val noninterfaceSupertypesOfDeclaration = new ArrayList
 		if (declarationsVisited.contains(declaration.name)) {
 			return noninterfaceSupertypesOfDeclaration // Cycle
 		}
 		declarationsVisited.add(declaration.name)
-		for (declarationReference : declaration.supertypes) {
+		val supertypeIterator = declaration.supertypes.iterator
+		while (supertypeIterator.hasNext) {
+			var declarationReference = supertypeIterator.next
 			if (declarationReference.type instanceof Interfacetype) {
 				noninterfaceSupertypesOfDeclaration.addAll(numberOfSupertypes(declarationReference.type))
 			} else {
@@ -200,7 +214,9 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 		index++
 		nodes_stack.push(node)
 		node.setonstack(true)
-		for (CyclicTypesNode successor : node.getsuccessors) {
+		var successorIterator = node.getsuccessors.iterator
+		while (successorIterator.hasNext) {
+			var successor = successorIterator.next
 			if (successor.getindex() == -1) {
 				strongconnect(successor)
 				if (successor.getlowlink() < node.getlowlink()) {
@@ -212,12 +228,16 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 		}
 		if (node.getlowlink() == node.getindex()) {
 			// New Cyclic component
-			val Set<CyclicTypesNode> cyclic = new HashSet
-			var CyclicTypesNode nextnode = nodes_stack.pop
+			val cyclic = new HashSet
+			var nextnode = nodes_stack.pop
 			nextnode.setonstack(false)
 			while ((nextnode != null) && (!nextnode.equals(node))) {
 				cyclic.add(nextnode)
-				nextnode = nodes_stack.pop;
+				try {
+					nextnode = nodes_stack.pop
+				} catch (EmptyStackException e) {
+					nextnode = null
+				}
 				nextnode.setonstack(false)
 			}
 			if (nextnode.equals(node)) {
@@ -236,7 +256,9 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	def void addNode(CyclicTypesNode addednode) {
 		var boolean tested = false // Will be set as true if the node is found in the Set
 		// Checks if there is already a Node for the Supertype.
-		for (TypeDeclarationReference ref : addednode.typeDeclaration.supertypes) {
+		val supertypeIterator = addednode.typeDeclaration.supertypes.iterator
+		while (supertypeIterator.hasNext) {
+			var ref = supertypeIterator.next
 			val String name = ref.type.name; // Name of the Declaration
 			for (node : edges) {
 				// node is the node for the DeclarationReference ref
@@ -268,7 +290,9 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 				// Create Array with the names of the Types of the component for the Quickfix
 				var int counter = 0
 				var String[] array_nodes = newArrayOfSize(nodes.size)
-				for (node : nodes) {
+				val nodeIterator = nodes.iterator
+				while (nodeIterator.hasNext) {
+					var node = nodeIterator.next
 					array_nodes.set(counter, node.typeDeclaration.name)
 					counter++
 				}
