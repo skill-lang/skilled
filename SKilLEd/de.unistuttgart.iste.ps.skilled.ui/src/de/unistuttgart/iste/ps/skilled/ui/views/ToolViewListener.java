@@ -111,6 +111,9 @@ public class ToolViewListener {
                             .getActivePage().getActiveEditor().getEditorInput();
                     IProject newActiveProject = file.getFile().getProject();
 
+                    if (toolview.getActiveProject() == null)
+                        toolview.refresh();
+
                     if (toolview.getActiveProject() != null
                             && !toolview.getActiveProject().getName().equals(newActiveProject.getName()))
                         toolview.refresh();
@@ -129,6 +132,9 @@ public class ToolViewListener {
                             .getActivePage().getActiveEditor().getEditorInput();
                     IProject newActiveProject = file.getFile().getProject();
 
+                    if (toolview.getActiveProject() == null)
+                        toolview.refresh();
+
                     if (toolview.getActiveProject() != null
                             && !toolview.getActiveProject().getName().equals(newActiveProject.getName()))
                         toolview.refresh();
@@ -141,6 +147,9 @@ public class ToolViewListener {
                     IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                             .getActivePage().getActiveEditor().getEditorInput();
                     IProject newActiveProject = file.getFile().getProject();
+
+                    if (toolview.getActiveProject() == null)
+                        toolview.refresh();
 
                     if (toolview.getActiveProject() != null
                             && !toolview.getActiveProject().getName().equals(newActiveProject.getName()))
