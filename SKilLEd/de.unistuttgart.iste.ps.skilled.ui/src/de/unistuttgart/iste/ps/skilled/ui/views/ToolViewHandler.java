@@ -19,7 +19,7 @@ public class ToolViewHandler extends AbstractHandler {
         try {
             HandlerUtil.getActiveWorkbenchWindowChecked(event).getActivePage()
                     .showView("de.unistuttgart.iste.ps.skilled.ui.views.ToolView");
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return null;
         }
         return null;

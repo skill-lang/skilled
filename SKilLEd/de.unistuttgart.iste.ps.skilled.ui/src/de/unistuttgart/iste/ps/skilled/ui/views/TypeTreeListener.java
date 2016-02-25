@@ -58,7 +58,7 @@ public class TypeTreeListener {
                         try {
                             toolview.setSelectedType((Type) (((TreeItem) e.item).getData()));
                             toolview.buildFieldTree();
-                        } catch (ClassCastException ex) {
+                        } catch (@SuppressWarnings("unused") ClassCastException ex) {
                             // selected treeitem was a hint
                         }
                     }

@@ -46,7 +46,7 @@ public class FieldTreeListener {
             public void widgetSelected(SelectionEvent e) {
                 try {
                     toolview.setSelectedField((Field) (((TreeItem) e.item).getData()));
-                } catch (ClassCastException ex) {
+                } catch (@SuppressWarnings("unused") ClassCastException ex) {
                     return;
                     // item was a hint
                 }

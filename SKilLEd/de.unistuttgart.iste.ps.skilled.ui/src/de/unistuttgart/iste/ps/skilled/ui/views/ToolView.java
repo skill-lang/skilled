@@ -119,21 +119,21 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * reload the typelist after adding a type or hint to a tool
+     * reload the typelist after adding a {@link Type type} or {@link Hint hint}to a tool
      * 
      * @category Data Handling
      */
     void reloadTypelist() {
         refresh();
-        activeTool = skillFile.Tools().parallelStream().filter(tool -> tool.getName().equals((activeTool).getName()))
-                .findFirst().get();
+        activeTool = skillFile.Tools().stream()
+                .filter(tool -> tool.getName().toLowerCase().equals(activeTool.getName().toLowerCase())).findFirst().get();
         buildTypeTree();
         tabFolder.setSelection(typeTabItem);
 
     }
 
     /**
-     * Reload the fieldlist after adding a field or hint to a tooltype
+     * Reload the fieldlist after adding a {@link Field field} or {@link Hint hint} to a {@link Tree tooltype}
      * 
      * @category Data Handling
      * @category GUI
@@ -427,14 +427,14 @@ public class ToolView extends ViewPart {
      * @category Data Handling
      */
     void deleteDirectoryRecursivly(File directoryToDelete) {
-        if (directoryToDelete.isDirectory()) {
-            try {
-                for (File toDelete : directoryToDelete.listFiles())
-                    Files.deleteIfExists(toDelete.toPath());
-                Files.deleteIfExists(directoryToDelete.toPath());
-            } catch (IOException e) {
-                this.showMessage(e.getMessage());
-            }
+        if (directoryToDelete.isDirectory())
+            for (File toDelete : directoryToDelete.listFiles())
+                deleteDirectoryRecursivly(toDelete);
+
+        try {
+            Files.deleteIfExists(directoryToDelete.toPath());
+        } catch (IOException e) {
+            showMessage(e.getMessage());
         }
     }
 

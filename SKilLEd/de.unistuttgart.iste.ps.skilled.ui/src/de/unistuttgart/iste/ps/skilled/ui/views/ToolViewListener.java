@@ -44,7 +44,7 @@ public class ToolViewListener {
         toolViewList.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                if (toolViewList.getSelectionCount() != 0) {
+                if (toolViewList.getSelectionCount() != 0 && toolViewList.getItemCount() > 0) {
                     toolview.setActiveTool(toolview.getAllToolList().get(toolViewList.getSelectionIndex()));
                     toolview.buildTypeTree();
                 }
@@ -122,11 +122,6 @@ public class ToolViewListener {
 
             @Override
             public void partDeactivated(IWorkbenchPart part) {
-                // not used
-            }
-
-            @Override
-            public void partClosed(IWorkbenchPart part) {
                 if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor() != null) {
                     IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                             .getActivePage().getActiveEditor().getEditorInput();
@@ -139,6 +134,11 @@ public class ToolViewListener {
                             && !toolview.getActiveProject().getName().equals(newActiveProject.getName()))
                         toolview.refresh();
                 }
+            }
+
+            @Override
+            public void partClosed(IWorkbenchPart part) {
+                toolview.refresh();
             }
 
             @Override
@@ -159,7 +159,18 @@ public class ToolViewListener {
 
             @Override
             public void partActivated(IWorkbenchPart part) {
-                // not used
+                if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor() != null) {
+                    IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                            .getActivePage().getActiveEditor().getEditorInput();
+                    IProject newActiveProject = file.getFile().getProject();
+
+                    if (toolview.getActiveProject() == null)
+                        toolview.refresh();
+
+                    if (toolview.getActiveProject() != null
+                            && !toolview.getActiveProject().getName().equals(newActiveProject.getName()))
+                        toolview.refresh();
+                }
             }
         });
     }

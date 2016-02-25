@@ -93,7 +93,7 @@ public class ToolViewButtonInitializer {
                     Tool tool = toolview.getSkillFile().Tools().stream().filter(t -> t.getName().equals(newToolName))
                             .findFirst().get();
                     ToolUtil.addAllToTool(toolview.getSkillFile(), toolview.getActiveProject(), tool);
-                } catch (NoSuchElementException e) {
+                } catch (@SuppressWarnings("unused") NoSuchElementException e) {
                     // no such tool
                     return;
                 }
@@ -118,7 +118,7 @@ public class ToolViewButtonInitializer {
             try {
                 cloneTool = toolview.getAllToolList().stream()
                         .filter(t -> t.getName().equals(skillToolWizard.getCloneToolName())).findFirst().get();
-            } catch (NoSuchElementException e) {
+            } catch (@SuppressWarnings("unused") NoSuchElementException e) {
                 toolview.showMessage("Could not create tool.");
                 return;
             }
