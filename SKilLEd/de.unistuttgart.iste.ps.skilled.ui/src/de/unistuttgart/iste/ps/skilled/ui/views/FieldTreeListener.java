@@ -16,11 +16,10 @@ import de.unistuttgart.iste.ps.skilled.ui.tools.EditorUtil;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 import de.unistuttgart.iste.ps.skillls.tools.Field;
 import de.unistuttgart.iste.ps.skillls.tools.Hint;
-import de.unistuttgart.iste.ps.skillls.tools.Type;
 
 
 /**
- * This class is used to initialize the Listeners for the fieldtree used in the toolview
+ * This class is used to initialize the Listeners for the {@link Tree fieldTree} used in the {@link ToolView toolview}
  * 
  * @author Ken Singer
  * @category GUI
@@ -36,12 +35,12 @@ public class FieldTreeListener {
     }
 
     /**
-     * initialize the Listeners for the given fieldtree
+     * initialize the Listeners for the given {@link Tree fieldTree}
      * 
      * @param fieldTree
-     * @param tooltype
+     *            - {@link Tree}
      */
-    public void initFieldTreeListener(Tree fieldTree, Type tooltype) {
+    public void initFieldTreeListener(Tree fieldTree) {
         fieldTree.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -111,7 +110,7 @@ public class FieldTreeListener {
                             ToolUtil.addField(toolview.getActiveTool().getName(), toolview.getActiveProject(),
                                     ToolUtil.getActualName(field.getType().getName()),
                                     ToolUtil.getActualName(field.getName()));
-                            ToolUtil.addAllFieldHints(toolview.getActiveProject(), toolview.getActiveTool(), tooltype,
+                            ToolUtil.addAllFieldHints(toolview.getActiveProject(), toolview.getActiveTool(), field.getType(),
                                     field);
                             toolview.reloadFieldList();
                         } else {
@@ -155,6 +154,7 @@ public class FieldTreeListener {
             }
         });
 
+        // enables a refresh on hitting the F5-key
         fieldTree.addKeyListener(new KeyListener() {
 
             @Override

@@ -8,10 +8,10 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 
 /**
- * The handler which is needed to add the toolview to the SKilLEd menu
+ * The handler which is needed to add the {@link ToolView toolview} to the SKilLEd menu
  * 
  * @author Ken Singer
- *
+ * @category GUI
  */
 public class ToolViewHandler extends AbstractHandler {
 

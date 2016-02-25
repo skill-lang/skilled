@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IActionBars;
 
@@ -16,6 +17,12 @@ import de.unistuttgart.iste.ps.skillls.tools.Tool;
 import de.unistuttgart.iste.ps.skillls.tools.Type;
 
 
+/**
+ * this class is used to initialize the buttons displayed in the {@link ToolView toolview}
+ * 
+ * @author Ken Singer
+ * @category GUI
+ */
 public class ToolViewButtonInitializer {
 
     private Action createToolAction;
@@ -29,11 +36,11 @@ public class ToolViewButtonInitializer {
     }
 
     /**
-     * Actions for the buttons in the toolview.
+     * Actions for the buttons in the {@link ToolView toolview}.
      * 
      * @category GUI
      */
-    public void makeActions() {
+    private void makeActions() {
         // Action for create tool button
         createToolAction = new Action() {
             @Override
@@ -64,14 +71,14 @@ public class ToolViewButtonInitializer {
     }
 
     /**
-     * Creates a new tool.
+     * Creates a new {@link Tool tool}.
      * 
      * @category Dialog
      */
     private void createToolDialog() {
         final SKilLToolWizard sKilLToolWizard = new SKilLToolWizard(WizardOption.CREATE, toolview.getAllToolList());
         WizardDialog wizardDialog = new WizardDialog(toolview.getShell(), sKilLToolWizard);
-        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+        if (wizardDialog.open() == Window.OK) {
             String newToolName = sKilLToolWizard.getToolNewName();
             if (newToolName == null)
                 return;
@@ -85,7 +92,7 @@ public class ToolViewButtonInitializer {
                             .findFirst().get();
                     ToolUtil.addAllToTool(toolview.getSkillFile(), toolview.getActiveProject(), tool);
                 } catch (NoSuchElementException e) {
-                    //
+                    return;
                 }
             }
             toolview.refresh();
@@ -93,12 +100,14 @@ public class ToolViewButtonInitializer {
     }
 
     /**
-     * opens the dialog to clone a existing tool
+     * opens the dialog to clone a existing {@link Tool tool}
+     * 
+     * @category Dialog
      */
     private void cloneToolDialog() {
         final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.CLONE, toolview.getAllToolList());
         WizardDialog wizardDialog = new WizardDialog(toolview.getShell(), skillToolWizard);
-        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+        if (wizardDialog.open() == Window.OK) {
             String newToolName = skillToolWizard.getToolNewName();
             Tool cloneTool;
             try {
@@ -126,7 +135,7 @@ public class ToolViewButtonInitializer {
     private void removeHintsFromTools() {
         final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.REMOVEHINTS, toolview.getAllToolList());
         WizardDialog wizardDialog = new WizardDialog(toolview.getShell(), skillToolWizard);
-        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+        if (wizardDialog.open() == Window.OK) {
             ArrayList<Tool> removeHints = skillToolWizard.getRemoveHintsFromTools();
             for (Tool tempTool : removeHints) {
                 for (Type tempType : tempTool.getTypes()) {
@@ -143,12 +152,11 @@ public class ToolViewButtonInitializer {
     }
 
     /**
-     * Add the buttons to the toolview.
+     * Add the buttons to the {@link ToolView}.
      * 
      * @category GUI
-     * @param manager
      */
-    public void fillLocalToolBar() {
+    private void fillLocalToolBar() {
         IActionBars bars = toolview.getViewSite().getActionBars();
         IToolBarManager manager = bars.getToolBarManager();
         manager.add(createToolAction);
@@ -156,6 +164,9 @@ public class ToolViewButtonInitializer {
         manager.add(removeHintAction);
     }
 
+    /**
+     * initializes the buttons
+     */
     public void initialize() {
         makeActions();
         fillLocalToolBar();

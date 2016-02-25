@@ -32,15 +32,17 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
 
 
 /**
- * Class to create the SKilL-Tool-Overview.
+ * This class creates the SKilL-Tool-Overview which enables the user to create and organize {@link Tool tools} within a
+ * SKilLEd-Project.
  * 
- * @category GUI
  * 
  * @author Ken Singer
  * @author Nico Russam
  * @author Marco Link
  * @author Armin Hüneburg
  * @author Leslie Tso
+ * 
+ * @category GUI
  */
 public class ToolView extends ViewPart {
     // Actions
@@ -157,7 +159,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Read the binary file of all tools.
+     * Read the .skills file of the <code>activeProject</code>
      * 
      * @category Data Handling
      */
@@ -187,11 +189,11 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Build up the tooltab, listing all tools.
+     * Build up the tooltab inside the toolview an a list of all tools.
      * 
      * @param parent
      *            - {@link Composite}
-     * @return {@link List}
+     * @return a {@link List} containing all the tools in the .skills file of the <code>activeProject</code>
      * @category Data Handling
      */
     private List buildToollist() {
@@ -224,10 +226,10 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Build up the typetree, listing all types with their specific hints.
+     * Builds up the <code>typeTree</code>, containing all types with their specific hints.
      * 
      * @param activeTool
-     *            - {@link Tool}
+     *            - the selected {@link Tool}
      * @category GUI
      */
     void buildTypeTree() {
@@ -253,6 +255,7 @@ public class ToolView extends ViewPart {
      * iterate over all the types and their hints
      * 
      * @param typeTree
+     *            - {@link Tree}
      */
     private void iterateTypesAndHints(Tree typeTree) {
         for (Type type : allTypeList) {
@@ -264,10 +267,10 @@ public class ToolView extends ViewPart {
             // set all the toolspecific types as checked
             if (null != typeListOfActualTool) {
                 for (Type t : typeListOfActualTool) {
-
                     if (t.getName().equals(type.getName())) {
                         typeTreeItem.setChecked(true);
                         tooltype = type;
+                        break;
                     }
                 }
             }
@@ -279,8 +282,11 @@ public class ToolView extends ViewPart {
      * iterate over all typehints
      * 
      * @param typeTreeItem
+     *            - {@link TreeItem}
      * @param type
+     *            - the original {@link Type}
      * @param tooltype
+     *            - the tool specific {@link Type} or <code>null</code> if not in tool
      */
     private void interateTypeHints(TreeItem typeTreeItem, Type type, Type tooltype) {
         // add all typeHints to the Tree
@@ -305,10 +311,8 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Build the fieldtree, listing all fields with their specific hints.
+     * Build the <code>fieldTree</code>, listing all fields with their specific hints.
      * 
-     * @param tooltype
-     *            - {@link Type}
      * @category GUI
      */
     void buildFieldTree() {
@@ -332,14 +336,16 @@ public class ToolView extends ViewPart {
 
         fieldTabItem.setControl(fieldTree);
         FieldTreeListener ftl = new FieldTreeListener(this);
-        ftl.initFieldTreeListener(fieldTree, tooltype);
+        ftl.initFieldTreeListener(fieldTree);
     }
 
     /**
      * iterate over all the fields and their hints
      * 
      * @param fieldTree
+     *            - {@link Tree}
      * @param tooltype
+     *            - the tool specific {@link Type} or <code>null</code> if not in tool
      */
     private void iterateFieldsAndFieldHints(Tree fieldTree, Type tooltype) {
         for (Field field : selectedType.getFields()) {
@@ -367,8 +373,11 @@ public class ToolView extends ViewPart {
      * iterate over all the hints of a field
      * 
      * @param field
+     *            - the original {@link Field}
      * @param toolField
+     *            - the tool specific {@link Field} or <code>null</code> if not in tool
      * @param fieldTreeItem
+     *            - {@link TreeItem}
      */
     private static void iterateFieldHints(Field field, Field toolField, TreeItem fieldTreeItem) {
 
@@ -395,7 +404,7 @@ public class ToolView extends ViewPart {
      * Creates the contextmenu for the toolview.
      * 
      * @param toollist
-     *            - {@link List}
+     *            - {@link List} containing all the tools
      * @category GUI
      */
     private void buildToolContextMenu(List toollist) {
@@ -410,9 +419,8 @@ public class ToolView extends ViewPart {
      * recursivly deletes a directory
      * 
      * @param directoryToDelete
-     *            - the directory to delete
+     *            - the {@link File directory} to delete
      * @category Data Handling
-     * @throws IOException
      */
     void deleteDirectoryRecursivly(File directoryToDelete) {
         if (directoryToDelete.isDirectory()) {
@@ -429,9 +437,9 @@ public class ToolView extends ViewPart {
     /**
      * Show a message with the parameter string.
      * 
-     * @category Dialog
      * @param message
-     *            - Message which should be printed.
+     *            - {@link String Message} which should be printed.
+     * @category Dialog
      */
     void showMessage(String message) {
         MessageDialog.openInformation(shell, "Tool View", message);
@@ -441,7 +449,7 @@ public class ToolView extends ViewPart {
      * Return the selected field.
      * 
      * @category Getter
-     * @return the selected {@link de.unistuttgart.iste.ps.skillls.tools.Field field}.
+     * @return the selected {@link Field field}.
      */
     Field getSelectedField() {
         return selectedField;
@@ -452,7 +460,7 @@ public class ToolView extends ViewPart {
      * 
      * @category Setter
      * @param selectedField
-     *            the selected {@link de.unistuttgart.iste.ps.skillls.tools.Field field}.
+     *            the selected {@link Field field}.
      */
     void setSelectedField(Field selectedField) {
         this.selectedField = selectedField;
@@ -462,7 +470,7 @@ public class ToolView extends ViewPart {
      * Get the selected type.
      * 
      * @category Getter
-     * @return the selected {@link de.unistuttgart.iste.ps.skillls.tools.Type type}
+     * @return the selected {@link Type type}
      */
     Type getSelectedType() {
         return selectedType;
@@ -473,7 +481,7 @@ public class ToolView extends ViewPart {
      * 
      * @category Setter
      * @param selectedType
-     *            the selected {@link de.unistuttgart.iste.ps.skillls.tools.Type type}.
+     *            the selected {@link Type type}.
      */
     void setSelectedType(Type selectedType) {
         this.selectedType = selectedType;
@@ -483,7 +491,7 @@ public class ToolView extends ViewPart {
      * Get the active tool.
      * 
      * @category Getter
-     * @return the active {@link de.unistuttgart.iste.ps.skillls.tools.Tool tool}.
+     * @return the active {@link Tool tool}.
      */
     Tool getActiveTool() {
         return activeTool;
@@ -494,7 +502,7 @@ public class ToolView extends ViewPart {
      * 
      * @category Setter
      * @param activeTool
-     *            the active {@link de.unistuttgart.iste.ps.skillls.tools.Tool tool}.
+     *            the active {@link Tool tool}.
      */
     void setActiveTool(Tool activeTool) {
         this.activeTool = activeTool;
@@ -504,7 +512,7 @@ public class ToolView extends ViewPart {
      * Get the active project.
      * 
      * @category Getter
-     * @return the active {@link org.eclipse.core.resources.IProject project}.
+     * @return the active {@link IProject project}.
      */
     IProject getActiveProject() {
         return activeProject;
@@ -514,24 +522,24 @@ public class ToolView extends ViewPart {
      * Get a list of all tools.
      * 
      * @category Getter
-     * @return {@link java.util.ArrayList ArrayList} from type tool with all tools.
+     * @return {@link ArrayList ArrayList} from type tool with all tools.
      */
     ArrayList<Tool> getAllToolList() {
         return allToolList;
     }
 
     /**
-     * Get the {@link org.eclipse.swt.custom.CTabItem CTabItem} for the fields.
+     * Get the {@link CTabItem CTabItem} for the fields.
      * 
      * @category Getter
-     * @return {@link org.eclipse.swt.custom.CTabItemt CTabItem}
+     * @return {@link CTabItemt CTabItem}
      */
     CTabItem getFieldTabItem() {
         return fieldTabItem;
     }
 
     /**
-     * Set the {@link org.eclipse.swt.custom.CTabItem CTabItem} for the fields.
+     * Set the {@link CTabItem CTabItem} for the fields.
      * 
      * @category Setter
      * @param fieldTabItem
@@ -545,7 +553,7 @@ public class ToolView extends ViewPart {
      * Get the shell.
      * 
      * @category Getter
-     * @return {@link org.eclipse.swt.widgets.Shell shell}
+     * @return {@link Shell shell}
      */
     public Shell getShell() {
         return shell;
@@ -555,7 +563,7 @@ public class ToolView extends ViewPart {
      * Get skill file.
      * 
      * @category Getter
-     * @return {@link de.unistuttgart.iste.ps.skillls.tools.api.SkillFile skillfile}
+     * @return {@link SkillFile skillfile}
      */
     public SkillFile getSkillFile() {
         return skillFile;

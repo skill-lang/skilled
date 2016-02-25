@@ -20,7 +20,7 @@ import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 
 
 /**
- * This class is used to initialize listeners for the toolview
+ * This class is used to initialize listeners for the {@link ToolView toolview}
  * 
  * @author Ken Singer
  * @category GUI
@@ -35,7 +35,7 @@ public class ToolViewListener {
     }
 
     /**
-     * initialize the listener for the toollist used in the toolview
+     * initialize the listener for the {@link List toollist}used in the {@link ToolView toolview}
      * 
      * @param toolViewList
      */
@@ -52,7 +52,7 @@ public class ToolViewListener {
 
             @Override
             public void widgetDefaultSelected(SelectionEvent arg0) {
-                // no default
+                // not used
             }
         });
 
@@ -78,12 +78,12 @@ public class ToolViewListener {
             }
         });
 
+        // enables a refresh on hitting the F5-key
         toolViewList.addKeyListener(new KeyListener() {
 
             @Override
             public void keyReleased(KeyEvent arg0) {
-                // TODO Auto-generated method stub
-
+                // not used
             }
 
             @Override
@@ -96,7 +96,7 @@ public class ToolViewListener {
     }
 
     /**
-     * Listener to refresh the ToolView
+     * Listener to refresh the {@link ToolView toolview}
      * 
      * @param part
      *            - {@link IPartService}
@@ -119,7 +119,6 @@ public class ToolViewListener {
             @Override
             public void partDeactivated(IWorkbenchPart part) {
                 // not used
-
             }
 
             @Override

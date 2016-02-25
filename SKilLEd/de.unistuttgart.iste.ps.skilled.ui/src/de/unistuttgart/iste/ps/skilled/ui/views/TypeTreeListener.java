@@ -19,7 +19,7 @@ import de.unistuttgart.iste.ps.skillls.tools.Type;
 
 
 /**
- * This class is used to initialize the Listeners for the typetree used in the toolview
+ * This class is used to initialize the Listeners for the {@link Tree typetree} used in the {@link ToolView toolview}
  * 
  * @author Ken Singer
  * @category GUI
@@ -35,9 +35,10 @@ public class TypeTreeListener {
     }
 
     /**
-     * initialize the Listeners for the given typetree
+     * initialize the Listeners for the given {@link Tree typetree}
      * 
      * @param typeTree
+     *            - {@link Tree}
      */
     public void initTypeTreeListener(Tree typeTree) {
         // add a mouse listener to the typetree
@@ -58,7 +59,7 @@ public class TypeTreeListener {
                             toolview.setSelectedType((Type) (((TreeItem) e.item).getData()));
                             toolview.buildFieldTree();
                         } catch (ClassCastException ex) {
-                            ex.getMessage();
+                            // selected treeitem was a hint
                         }
                     }
 
@@ -134,11 +135,12 @@ public class TypeTreeListener {
             }
         });
 
+        // enables to refresh on hitting the F5-key
         typeTree.addKeyListener(new KeyListener() {
 
             @Override
             public void keyReleased(KeyEvent arg0) {
-                // TODO Auto-generated method stub
+                // not used
 
             }
 
