@@ -565,13 +565,16 @@ public final class ToolUtil {
         }
     }
 
-    public static boolean indexing(IProject project) {
+    public static boolean indexing(IProject project) throws CoreException {
         String[] arguments = null;
         if (project != null)
             arguments = new String[] { "-e", project.getLocation().toPortableString(), "" };
         try {
             MainClass.start(Indexing.JUST_INDEXING, arguments);
             return true;
+        } catch (BreakageException e) {
+            deleteReportToolErrors(project);
+            reportToolError(e, project);
         } catch (Throwable t) {
             return false;
         }
