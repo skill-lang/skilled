@@ -79,38 +79,39 @@ import static de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider.
  * @author Marco Link
  * @author Tobias Heck
  * 
- * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#quick-fixes
  */
 public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
+	
+	/** TODO Comment */
 
-    @Inject private SKilLServices services;
+    @Inject private SKilLServices services
   
 
   @Fix("Imported resource could not be found.")
   def fixImport(Issue issue, IssueResolutionAcceptor acceptor) {
-    var URI uri = URI.createURI(issue.data.get(0))
+    var URI uri = URI.createURI(issue.data.head)
     uri = URI.createURI(uri.toString.replace("../", ""))
-    val IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    val IWorkspaceRoot root = ResourcesPlugin.getWorkspace.getRoot
     val URI path = URI.createURI(root.locationURI.rawPath).appendSegments(uri.segmentsList)
     val java.io.File asdf = (new Path(path.toString)).toFile.absoluteFile.parentFile
-    val java.io.File[] files = asdf.listFiles();
-    if(files == null) return
-    val LinkedList<String> fileNames = new LinkedList()
-    for (java.io.File file : files) {
+    val java.io.File[] files = asdf.listFiles
+    if(files == null) { return }
+    val LinkedList<String> fileNames = new LinkedList
+    for (file : files) {
       val distance = getLevenshteinDistance(file.absolutePath.replaceAll("/", "\\\\"),
         path.toString.substring(1).replaceAll("/", "\\\\"))
       if (3 > distance && 0 < distance && file.absolutePath.matches(".*\\.skill")) {
         fileNames.add(file.name)
       }
     }
-    for (String name : fileNames) {
-      acceptor.accept(issue, "Change to " + name, "Change to " + name, "upcase.png", new ISemanticModification() {
+    for (name : fileNames) {
+      acceptor.accept(issue, "Change to " + name, "Change to " + name, "upcase.png", new ISemanticModification {
         override apply(EObject element, IModificationContext context) {
           var IncludeFile include = null
-          if (element instanceof IncludeFile) {
-            include = element
+          if (element instanceof IncludeFile) { 
+          	include = element 
+            include.importURI = include.importURI.replace(URI.createURI(include.importURI).lastSegment, name)
           }
-          include.importURI = include.importURI.replace(URI.createURI(include.importURI).lastSegment, name)
         }
       })
     }
@@ -119,17 +120,18 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
   @Inject
   private ICaseInsensitivityHelper caseInsensitivityHelper;
 
-  private static final Logger logger = Logger.getLogger(DefaultQuickfixProvider.getClass());
+  private static final Logger logger = Logger.getLogger(DefaultQuickfixProvider.getClass)
 
   @Inject
-  private CrossRefResolutionConverter converter;
+  private CrossRefResolutionConverter converter
 
+  /** TODO Hilfsmethoden auslagern */
   def private int getLevenshteinDistance(String s0, String s1) {
     val m = s0.length
     val n = s1.length
-    var LinkedList<LinkedList<Integer>> d = new LinkedList()
+    var LinkedList<LinkedList<Integer>> d = new LinkedList
     for (var i = 0; i <= m; i++) {
-      var LinkedList<Integer> temp = new LinkedList()
+      var LinkedList<Integer> temp = new LinkedList
       for (var j = 0; j <= n; j++) {
         temp.add(0)
       }
@@ -155,171 +157,159 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
   }
 
   def private boolean isSimilar(String s0, String s1) {
-    if (Strings.isEmpty(s0) || Strings.isEmpty(s1)) {
-      return false;
-    }
-    var double levenshteinDistance = getLevenshteinDistance(s0, s1);
-    return levenshteinDistance <= 2;
+    if (Strings.isEmpty(s0) || Strings.isEmpty(s1)) { return false }
+    return getLevenshteinDistance(s0, s1) <= 2
   }
 
   def private CrossReference findCrossReference(EObject context, INode node) {
-    if (node == null || (node.hasDirectSemanticElement() && context.equals(node.getSemanticElement())))
-      return null;
-
-    var EObject grammarElement = node.getGrammarElement();
+    if (node == null || (node.hasDirectSemanticElement && context.equals(node.getSemanticElement))) { return null }
+    var EObject grammarElement = node.getGrammarElement
     if (grammarElement instanceof CrossReference) {
-      return grammarElement;
+      return grammarElement
     } else
-      return findCrossReference(context, node.getParent());
+      return findCrossReference(context, node.getParent)
   }
 
   @Override
   override public void createLinkingIssueResolutions(Issue issue, IssueResolutionAcceptor issueResolutionAcceptor) {
-    val IModificationContext modificationContext = modificationContextFactory.createModificationContext(issue);
-    val IXtextDocument xtextDocument = modificationContext.getXtextDocument();
-    if (xtextDocument == null)
-      return;
+    val IModificationContext modificationContext = modificationContextFactory.createModificationContext(issue)
+    val IXtextDocument xtextDocument = modificationContext.getXtextDocument
+    if (xtextDocument == null) { return }
     xtextDocument.readOnly(
-      new CancelableUnitOfWork<String, XtextResource>() {
+      new CancelableUnitOfWork<String, XtextResource> {
 
-        IssueResolutionAcceptor myAcceptor = null;
+        IssueResolutionAcceptor myAcceptor = null
 
         @Override
         override public String exec(XtextResource state, CancelIndicator cancelIndicator) throws Exception {
-          myAcceptor = getCancelableAcceptor(issueResolutionAcceptor, cancelIndicator);
-          val EObject target = state.getEObject(issue.getUriToProblem().fragment());
-          val EReference reference = getUnresolvedEReference(issue, target);
-          if (reference == null)
-            return null;
-          fixUnresolvedReference(issue, xtextDocument, target, reference);
-          return null;
+          myAcceptor = getCancelableAcceptor(issueResolutionAcceptor, cancelIndicator)
+          val EObject target = state.getEObject(issue.getUriToProblem.fragment)
+          val EReference reference = getUnresolvedEReference(issue, target)
+          if (reference == null) { return null }
+          fixUnresolvedReference(issue, xtextDocument, target, reference)
+          return null
         }
 
         def protected void fixUnresolvedReference(Issue issue, IXtextDocument xtextDocument, EObject target,
           EReference reference) throws BadLocationException {
-          val boolean caseInsensitive = caseInsensitivityHelper.isIgnoreCase(reference);
-          var EObject crossReferenceTerminal = getCrossReference(issue, target);
-          var String ruleName = null;
-          var Keyword keyword = null;
+          val boolean caseInsensitive = caseInsensitivityHelper.isIgnoreCase(reference)
+          var EObject crossReferenceTerminal = getCrossReference(issue, target)
+          var String ruleName = null
+          var Keyword keyword = null
           if (crossReferenceTerminal instanceof RuleCall) {
-            var RuleCall ruleCall = crossReferenceTerminal;
-            ruleName = ruleCall.getRule().getName();
+            ruleName = crossReferenceTerminal.getRule.getName
           } else if (crossReferenceTerminal instanceof Keyword) {
-            keyword = crossReferenceTerminal;
+            keyword = crossReferenceTerminal
           }
-          var String issueString = xtextDocument.get(issue.getOffset(), issue.getLength());
-          var IScope scope = scopeProvider.getScope(target, reference);
-          var List<IEObjectDescription> discardedDescriptions = Lists.newArrayList();
-          var Set<String> qualifiedNames = Sets.newHashSet();
-          var int addedDescriptions = 0;
-          var int checkedDescriptions = 0;
-          for (IEObjectDescription referableElement : queryScope(scope)) {
+          var String issueString = xtextDocument.get(issue.getOffset, issue.getLength)
+          var IScope scope = scopeProvider.getScope(target, reference)
+          val List<IEObjectDescription> discardedDescriptions = Lists.newArrayList
+          val Set<String> qualifiedNames = Sets.newHashSet
+          var int addedDescriptions = 0
+          var int checkedDescriptions = 0
+          for (referableElement : queryScope(scope)) {
             if (checkedDescriptions <= 100) {
               var String referableElementQualifiedName = qualifiedNameConverter.toString(
-                referableElement.getQualifiedName());
-              if (isSimilar(issueString, qualifiedNameConverter.toString(referableElement.getName()))) {
-                addedDescriptions++;
-                createResolution(issueString, referableElement, ruleName, keyword, caseInsensitive);
-                qualifiedNames.add(referableElementQualifiedName);
+                referableElement.getQualifiedName)
+              if (isSimilar(issueString, qualifiedNameConverter.toString(referableElement.getName))) {
+                addedDescriptions++
+                createResolution(issueString, referableElement, ruleName, keyword, caseInsensitive)
+                qualifiedNames.add(referableElementQualifiedName)
               } else {
                 if (qualifiedNames.add(referableElementQualifiedName))
-                  discardedDescriptions.add(referableElement);
+                  discardedDescriptions.add(referableElement)
               }
-              checkedDescriptions++;
+              checkedDescriptions++
             }
           }
-          if (discardedDescriptions.size() + addedDescriptions <= 5) {
-            for (IEObjectDescription referableElement : discardedDescriptions) {
-              createResolution(issueString, referableElement, ruleName, keyword, caseInsensitive);
+          if (discardedDescriptions.size + addedDescriptions <= 5) {
+            for (referableElement : discardedDescriptions) {
+              createResolution(issueString, referableElement, ruleName, keyword, caseInsensitive)
             }
           }
         }
 
         def protected AbstractElement getCrossReference(Issue issue, EObject target) {
-          val ICompositeNode node = NodeModelUtils.getNode(target);
-          if (node == null)
-            throw new IllegalStateException("Cannot happen since we found a reference");
-          var ICompositeNode rootNode = node.getRootNode();
-          var ILeafNode leaf = NodeModelUtils.findLeafNodeAtOffset(rootNode, issue.getOffset());
-          var CrossReference crossReference = findCrossReference(target, leaf);
-          return crossReference.getTerminal();
+          val ICompositeNode node = NodeModelUtils.getNode(target)
+          if (node == null) { throw new IllegalStateException("Cannot happen since we found a reference") }
+          var ICompositeNode rootNode = node.getRootNode
+          var ILeafNode leaf = NodeModelUtils.findLeafNodeAtOffset(rootNode, issue.getOffset)
+          var CrossReference crossReference = findCrossReference(target, leaf)
+          return crossReference.getTerminal
         }
 
         def public void createResolution(String issueString, IEObjectDescription solution, String ruleName,
           Keyword keyword, boolean caseInsensitive) {
-          var String replacement = qualifiedNameConverter.toString(solution.getName());
-          var String replaceLabel = fixCrossReferenceLabel(issueString, replacement);
+          var String replacement = qualifiedNameConverter.toString(solution.getName)
+          var String replaceLabel = fixCrossReferenceLabel(issueString, replacement)
           if (keyword != null) {
-            if (caseInsensitive && !replacement.equalsIgnoreCase(keyword.getValue()))
-              return;
-            if (!caseInsensitive && !replacement.equals(keyword.getValue()))
-              return;
+            if (caseInsensitive && !replacement.equalsIgnoreCase(keyword.getValue)) { return }
+            if (!caseInsensitive && !replacement.equals(keyword.getValue)) { return }
           } else if (ruleName != null) {
-            replacement = converter.convertToString(replacement, ruleName);
-            if (replacement == null) {
-              return;
-            }
+            replacement = converter.convertToString(replacement, ruleName)
+            if (replacement == null) { return }
           } else {
-            logger.error("either keyword or ruleName have to present", new IllegalStateException());
+            logger.error("either keyword or ruleName have to present", new IllegalStateException)
           }
           myAcceptor.accept(issue, replaceLabel, replaceLabel, fixCrossReferenceImage(issueString, replacement),
-            new ReplaceModification(issue, replacement));
+            new ReplaceModification(issue, replacement))
         }
 
       });
   }
 
-  // Quickfix to change name if the Name has non-ASCII Characters
+  /** 
+   * Quickfix to change name if the Name has non-ASCII Characters
+   */
   @Fix("declarationNonASCII")
   def fixDeclarationName(Issue issue, IssueResolutionAcceptor acceptor) {
-    acceptor.accept(issue, "Change name", "Change the name of the Type.", "upcase.png", new ISemanticModification() {
+    acceptor.accept(issue, "Change name", "Change the name of the Type.", "upcase.png", new ISemanticModification {
       override void apply(EObject element, IModificationContext context) {
         var TypeDeclaration td = element as TypeDeclaration
         // Create xtend class with a method to change the name to a new one
-        var SetName name = new SetName(issue, acceptor);
+        var SetName name = new SetName(issue, acceptor)
         // Open name-change Window that will allow the User to enter a new name
-        var ChangeNameField f = new ChangeNameField(name);
+        var ChangeNameField f = new ChangeNameField(name)
         f.oldName = td.name
-        f.open()
+        f.open
       }
-    });
+    })
   }
 
   var String newName;
 
   def public String getNewName(String oldName) {
-    var Display d;
-    var Shell shell = new Shell(d);
-    shell.setText("Extract Type or Interface");
-    shell.setLayout(new GridLayout(2, true));
-    val Text text1 = new Text(shell, SWT.NONE);
+    var Display display
+    var Shell shell = new Shell(display)
+    shell.setText("Extract Type or Interface")
+    shell.setLayout(new GridLayout(2, true))
+    val Text text1 = new Text(shell, SWT.NONE)
     text1.text = oldName
-    var GridData gridData = new GridData();
-    gridData.horizontalAlignment = SWT.CENTER;
-    gridData.horizontalSpan = 2;
+    var GridData gridData = new GridData
+    gridData.horizontalAlignment = SWT.CENTER
+    gridData.horizontalSpan = 2
     text1.layoutData = gridData
-    var GridData gridDataButton = new GridData();
-    gridDataButton.horizontalAlignment = SWT.CENTER;
-    gridDataButton.horizontalSpan = 2;
-    var Button continueButton = new Button(shell, SWT.NONE);
-    continueButton.setText("OK");
-    continueButton.setLayoutData(gridDataButton);
-    continueButton.addListener(SWT.Selection, new Listener() {
+    var GridData gridDataButton = new GridData
+    gridDataButton.horizontalAlignment = SWT.CENTER
+    gridDataButton.horizontalSpan = 2
+    var Button continueButton = new Button(shell, SWT.NONE)
+    continueButton.setText("OK")
+    continueButton.setLayoutData(gridDataButton)
+    continueButton.addListener(SWT.Selection, new Listener {
       override public void handleEvent(Event e) {
-        switch (e.type) {
-          case SWT.Selection:
+        if (e.type == SWT.Selection) {
             newName = text1.text
         }
       }
-    });
-    val Point newSize = shell.computeSize(150, 150, true);
-    shell.setSize(newSize);
-    shell.open();
+    })
+    val Point newSize = shell.computeSize(150, 150, true)
+    shell.setSize(newSize)
+    shell.open()
     while (newName.equals("")) {
       Thread.sleep(5)
     }
     shell.close
-    return newName;
+    return newName
 
   }
 
@@ -329,9 +319,9 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       override void apply(EObject element, IModificationContext context) {
         var Fieldcontent field = element as Fieldcontent
         // Create xtend class with a method to change the name to a new one
-        var SetName name = new SetName(issue, acceptor);
+        var SetName name = new SetName(issue, acceptor)
         // Open name-change Window that will allow the User to enter a new name
-        var ChangeNameField f = new ChangeNameField(name);
+        var ChangeNameField f = new ChangeNameField(name)
         f.oldName = field.name
         f.open()
       }
@@ -345,12 +335,12 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
           var e = element as TypeDeclaration
-          var List<TypeDeclarationReference> remove = new ArrayList<TypeDeclarationReference>
+          var List<TypeDeclarationReference> remove = new ArrayList
           var Supertypes = e.supertypes
           // Remove Reference
-          for (TypeDeclarationReference tdr : Supertypes) {
-            if (tdr.type.equals(e)) {
-              remove.add(tdr)
+          for (typeDeclarationReference : Supertypes) {
+            if (typeDeclarationReference.type.equals(e)) {
+              remove.add(typeDeclarationReference)
             }
           }
           Supertypes.removeAll(remove)
@@ -365,20 +355,20 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
           var e = element as TypeDeclaration
-          var ArrayList<TypeDeclarationReference> remove = new ArrayList<TypeDeclarationReference>
+          var ArrayList<TypeDeclarationReference> remove = new ArrayList
           var Supertypes = e.supertypes
           var names = issue.data // Array with the Names of all Types of the Cyclic Component
           // Search all References that are in the Cyclic Component
-          for (TypeDeclarationReference tdr : Supertypes) {
-            for (String name : names) {
-              if (tdr.type.name.equals(name)) {
-                remove.add(tdr)
+          for (typeDeclarationReference : Supertypes) {
+            for (name : names) {
+              if (typeDeclarationReference.type.name.equals(name)) {
+                remove.add(typeDeclarationReference)
               }
             }
           }
           // Remove the references that were found
-          for (TypeDeclarationReference tdr : remove) {
-            e.supertypes.remove(tdr)
+          for (typeDeclarationReference : remove) {
+            e.supertypes.remove(typeDeclarationReference)
           }
         }
       })
@@ -397,35 +387,35 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
           // The file in which the element is located.
-          var file = element.eContainer;
+          var file = element.eContainer
           while (file.eContainer != null) {
-            file = file.eContainer;
+            file = file.eContainer
           }
 
-          var Declaration referencedType;
+          var Declaration referencedType
 
           if (element instanceof TypeDeclarationReference) {
-            referencedType = element.type;
+            referencedType = element.type
           } else if (element instanceof DeclarationReference) {
-            referencedType = element.type;
+            referencedType = element.type
           }
 
           // The URI which will be added.
-          var URI referencedURI = referencedType?.eResource?.URI.deresolve(file.eResource.URI);
+          var URI referencedURI = referencedType?.eResource?.URI.deresolve(file.eResource.URI)
 
           if (referencedURI != null) {
             // Create new include.
             var Include include = SKilLFactory.eINSTANCE.createInclude;
-            var IncludeFile includeFile = SKilLFactory.eINSTANCE.createIncludeFile;
+            var IncludeFile includeFile = SKilLFactory.eINSTANCE.createIncludeFile
             includeFile.importURI = referencedURI?.path;
             include.includeFiles.add(includeFile);
             if (file instanceof File) {
-              file.includes.add(include);
+              file.includes.add(include)
             }
           }
         }
       }
-    );
+    )
   }
 
   @Fix(ScopingValidator::UNUSED_INCLUDED_FILE)
@@ -437,10 +427,10 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       "upcase.png",
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
-          organizeImports(element);
+          organizeImports(element)
         }
       }
-    );
+    )
   }
 
   @Fix(ScopingValidator::NOT_INCLUDED_FILE)
@@ -452,10 +442,10 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       "upcase.png",
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
-          organizeImports(element);
+          organizeImports(element)
         }
       }
-    );
+    )
   }
 
   @Fix(ScopingValidator::DUPLICATED_INCLUDED_FILE)
@@ -467,10 +457,10 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       "upcase.png",
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
-          organizeImports(element);
+          organizeImports(element)
         }
       }
-    );
+    )
   }
   
   @Fix(ScopingValidator::NOT_INCLUDED_FILE)
@@ -482,10 +472,10 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       "upcase.png",
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
-         organizeImportsProjectWide(element);
+         organizeImportsProjectWide(element)
         }
       }
-    );
+    )
   }
   
   @Fix(ScopingValidator::DUPLICATED_INCLUDED_FILE)
@@ -497,7 +487,7 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       "upcase.png",
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
-         organizeImportsProjectWide(element);
+         organizeImportsProjectWide(element)
         }
       }
     );
@@ -512,77 +502,71 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       "upcase.png",
       new ISemanticModification() {
         override void apply(EObject element, IModificationContext context) {
-         organizeImportsProjectWide(element);
+         organizeImportsProjectWide(element)
         }
       }
-    );
+    )
   }
   
   def organizeImportsProjectWide(EObject element) {
-    var dependencyGraph = new DependencyGraph();
+    var dependencyGraph = new DependencyGraph
     
     // The file in which the element is located.
-    var file = EcoreUtil2.getRootContainer(element, true);
-    if(!(file instanceof File)) {
-      return;
+    var file = EcoreUtil2.getRootContainer(element, true)
+    
+    if(!(file instanceof File) || services.isToolFile(EcoreUtil2.getURI(file))) {
+      return
     }
     
-    if(services.isToolFile(EcoreUtil2.getURI(file))) {
-      return;
-    }
-    dependencyGraph.generateIgnoreOrigin((file as File), services.getAll(file as File));
+    dependencyGraph.generateIgnoreOrigin((file as File), services.getAll(file as File))
     
-    var org = new SKilLOrganizeImportsHandler(dependencyGraph);
-    org.organizeImportsWholeProject(file as File);
+    val org = new SKilLOrganizeImportsHandler(dependencyGraph)
+    org.organizeImportsWholeProject(file as File)
   }
   
   
   def organizeImports(EObject element) {
-        var dependencyGraph = new DependencyGraph();
+        var dependencyGraph = new DependencyGraph()
 
     // The file in which the element is located.
-    var file = EcoreUtil2.getRootContainer(element, true);
-    if(!(file instanceof File)) {
-      return;
-    }
-    
-    if(services.isToolFile(EcoreUtil2.getURI(file))) {
+    var file = EcoreUtil2.getRootContainer(element, true)
+    if(!(file instanceof File) || services.isToolFile(EcoreUtil2.getURI(file))) {
       return;
     }
 
-    dependencyGraph.generateIgnoreOrigin((file as File), services.getAll(file as File));
-    var org = new SKilLImportOrganizer(dependencyGraph);  
-    var missing = dependencyGraph.getMissingIncludes((file as File).eResource);
+    dependencyGraph.generateIgnoreOrigin((file as File), services.getAll(file as File))
+    val org = new SKilLImportOrganizer(dependencyGraph)  
+    val missing = dependencyGraph.getMissingIncludes((file as File).eResource)
 
-   for (URI u : missing) {
-      var URI referencedURI = u.deresolve(file.eResource.URI);
+   for (uri : missing) {
+      val URI referencedURI = uri.deresolve(file.eResource.URI)
       if (referencedURI != null) {
         // Create new include.
-        var Include include = SKilLFactory.eINSTANCE.createInclude;
-        var IncludeFile includeFile = SKilLFactory.eINSTANCE.createIncludeFile;
-        includeFile.importURI = referencedURI?.path;
-        include.includeFiles.add(includeFile);
+        var Include include = SKilLFactory.eINSTANCE.createInclude
+        var IncludeFile includeFile = SKilLFactory.eINSTANCE.createIncludeFile
+        includeFile.importURI = referencedURI?.path
+        include.includeFiles.add(includeFile)
         if (file instanceof File) {
-          file.includes.add(include);
+          file.includes.add(include)
         }
-        (file as File).includes.add(include);
+        (file as File).includes.add(include)
       }
     }
 
-    var test = org.getUnusedImports(file as File);
-    test.addAll(SKilLImportOrganizer.getDuplicateIncludes(file as File));
+    var unusedImports = org.getUnusedImports(file as File)
+    unusedImports.addAll(SKilLImportOrganizer.getDuplicateIncludes(file as File))
 
-    for (IncludeFile delete : test) {
-      var Iterator<Include> iit = (file as File).includes.iterator;
-      while (iit.hasNext) {
-        var aaa = iit.next;
-        var Iterator<IncludeFile> ifit = aaa.includeFiles.iterator;
-        while (ifit.hasNext) {         
-           if (ifit.next.equals(delete)) {
-            if (aaa.includeFiles.size > 1) {
-              ifit.remove;
+    for (delete : unusedImports) {
+      val Iterator<Include> includeIterator = (file as File).includes.iterator;
+      while (includeIterator.hasNext) {
+        val include = includeIterator.next
+        val Iterator<IncludeFile> includeFileIterator = include.includeFiles.iterator
+        while (includeFileIterator.hasNext) {         
+           if (includeFileIterator.next.equals(delete)) {
+            if (include.includeFiles.size > 1) {
+              includeFileIterator.remove
             } else {
-              iit.remove;
+              includeIterator.remove
             }
           }
         }
