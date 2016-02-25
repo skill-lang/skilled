@@ -54,6 +54,7 @@ public class TestExportTools {
         // Populate "testExport.skill"
         bot.styledText().setText("# Test Export\nA {\n  !ignore\n   i8 Test;\n}");
         bot.menu("File").menu("Save").click();
+        bot.menu("SkilLEd").menu("Tool View").click();
         // Toolview window as active window
         bot.viewByTitle("ToolView").show();
         // Create tool "testExport"
@@ -64,7 +65,7 @@ public class TestExportTools {
         // Run Export Tools
         bot.menu("SKilLEd").menu("Export Tools").click();
         bot.comboBoxWithLabel("Select tool to export:").setSelection("testExport");
-        bot.textWithLabel("Export Location:").setText(workspacePath + "/testExport.skill");
+        bot.textWithLabel("Export Location:").setText(workspacePath + File.separator + "testExport.skill");
         bot.button("OK").click();
     }
 
@@ -103,7 +104,7 @@ public class TestExportTools {
         // Run Export Tools
         bot.menu("SKilLEd").menu("Export Tools").click();
         bot.comboBoxWithLabel("Select tool to export:").setSelection("testExport2");
-        bot.textWithLabel("Export Location:").setText(workspacePath + "/testExportOverwrite.skill");
+        bot.textWithLabel("Export Location:").setText(workspacePath + File.separator + "testExportOverwrite.skill");
         bot.button("OK").click();
 
         // Create second SKilL-File
@@ -123,7 +124,7 @@ public class TestExportTools {
         // Run Export Tools
         bot.menu("SKilLEd").menu("Export Tools").click();
         bot.comboBoxWithLabel("Select tool to export:").setSelection("testExport3");
-        bot.textWithLabel("Export Location:").setText(workspacePath + "/testExportOverwrite.skill");
+        bot.textWithLabel("Export Location:").setText(workspacePath + File.separator + "testExportOverwrite.skill");
         bot.button("OK").click();
         bot.shell("Existing File").isActive();
         bot.button("OK");

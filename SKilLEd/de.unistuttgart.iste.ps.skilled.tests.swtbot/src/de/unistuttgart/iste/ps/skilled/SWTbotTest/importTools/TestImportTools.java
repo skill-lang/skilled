@@ -54,19 +54,50 @@ public class TestImportTools {
         // Run Import Tools
         bot.menu("SKilLEd").menu("Import Tools").click();
 
-        // TODO - IMPORT LOCATION
-        bot.comboBoxWithLabel("Select tool to import:").setSelection(IMPORTLOCATION);
-        bot.textWithLabel("Import to Project:").setText(workspacePath + "/TestImportTools");
+        bot.comboBoxWithLabel("Select tool to import:")
+                .setSelection("resources" + File.separator + "FileToBeImported.skill");
+        bot.textWithLabel("Import to Project:").setText(workspacePath + File.separator + "TestImportTools");
         bot.button("OK").click();
     }
 
     /**
      * Create a new SKilL-Project and a SKilL-File in the project and write some content in it. Afterwards, import a tool to
-     * the project and merge duplicate types.
+     * the project and merge duplicate type.
      * 
      */
     @Test
-    public void testImportToolsAndMergeDuplicateTypes() {
+    public void testImportToolsAndOneDuplicateType() {
+        SWTBotPreferences.KEYBOARD_LAYOUT = "EN_US";
+
+        bot.menu("Window").menu("Show View").menu("Project Explorer").click();
+        // Project Explorer as active window
+        bot.viewByTitle("Project Explorer").show();
+        // Create new project "TestImportTools2"
+        bot.menu("File").menu("New").menu("SKilL Project").click();
+        bot.textWithLabel("&Project name:").setText("TestImportTools2");
+        bot.button("Finish").click();
+        testExportTools.createSKilLFile("testImport2", "TestImportTools2");
+        // Editor for "testImport2.skill" as active window
+        bot.editorByTitle("testImport2.skill").show();
+        // Populate "testImport2.skill"
+        bot.styledText().setText("# Test Import\nA {\n  !ignore\n   i8 Test;\n}");
+        bot.menu("File").menu("Save").click();
+
+        // Run Import Tools
+        bot.menu("SKilLEd").menu("Import Tools").click();
+        bot.comboBoxWithLabel("Select tool to import:")
+                .setSelection("resources" + File.separator + "FileToBeImported.skill");
+        bot.textWithLabel("Import to Project:").setText(workspacePath + File.separator + "TestImportTools2");
+        bot.button("OK").click();
+    }
+
+    /**
+     * Create a new SKilL-Project and a SKilL-File in the project and write some content in it. Afterwards, import a tool to
+     * the project. As the number of duplicate types > 1, an error dialog should appear and the import is canceled.
+     * 
+     */
+    @Test
+    public void testImportToolsWithMoreThanOneDuplicateType() {
         SWTBotPreferences.KEYBOARD_LAYOUT = "EN_US";
 
         bot.menu("Window").menu("Show View").menu("Project Explorer").click();
@@ -74,27 +105,20 @@ public class TestImportTools {
         bot.viewByTitle("Project Explorer").show();
         // Create new project "TestImportTools"
         bot.menu("File").menu("New").menu("SKilL Project").click();
-        bot.textWithLabel("&Project name:").setText("TestImportTools");
+        bot.textWithLabel("&Project name:").setText("TestImportTools3");
         bot.button("Finish").click();
-        testExportTools.createSKilLFile("testImport", "TestImportTools");
+        testExportTools.createSKilLFile("testImport3", "TestImportTools3");
         // Editor for "testExport.skill" as active window
-        bot.editorByTitle("testExport.skill").show();
+        bot.editorByTitle("testImport3.skill").show();
         // Populate "testExport.skill"
-        bot.styledText().setText("# Test Export\nA {\n  !ignore\n   i8 Test;\n}");
+        bot.styledText().setText("# Test Import\nA {\n   i8 Test;\n   i8 Test2;\n}");
         bot.menu("File").menu("Save").click();
-        // Toolview window as active window
-        bot.viewByTitle("ToolView").show();
-        // Create tool "testExport"
-        bot.toolbarButton("Create Tool").click();
-        bot.textWithLabel("Put a value here.").typeText("testExport");
-        bot.checkBox("Add all Types to Tool:").click();
-        bot.button("Finish").click();
+
         // Run Import Tools
         bot.menu("SKilLEd").menu("Import Tools").click();
-
-        // TODO - IMPORT LOCATION
-        bot.comboBoxWithLabel("Select tool to import:").setSelection(IMPORTLOCATION);
-        bot.textWithLabel("Import to Project:").setText(workspacePath + "/TestImportTools");
+        bot.comboBoxWithLabel("Select tool to import:")
+                .setSelection("resources" + File.separator + "FileToBeImportedMultiple.skill");
+        bot.textWithLabel("Import to Project:").setText(workspacePath + File.separator + "TestImportTools3");
         bot.button("OK").click();
     }
 
