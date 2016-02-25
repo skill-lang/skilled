@@ -48,12 +48,14 @@ public class SKilLObjectDocumentationProvider implements IEObjectDocumentationPr
 				}
 				boolean firstSupertype = true;
 				for (TypeDeclarationReference typeDeclarationReference : usertype.getSupertypes()) {
-					if (!firstSupertype) {
-						returnString = returnString + ", ";
-					} else {
-						firstSupertype = false;
+					if (typeDeclarationReference.getType() != null) {
+						if (!firstSupertype) {
+							returnString = returnString + ", ";
+						} else {
+							firstSupertype = false;
+						}
+						returnString = returnString + typeDeclarationReference.getType().getName();
 					}
-					returnString = returnString + typeDeclarationReference.getType().getName();
 				}
 
 			}
