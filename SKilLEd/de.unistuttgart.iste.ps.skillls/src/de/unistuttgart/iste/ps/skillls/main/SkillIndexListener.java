@@ -335,12 +335,14 @@ class SkillIndexListener extends SKilLParserBaseListener {
             }
         }
 
+        String comment = fieldContext.description().COMMENT() == null ? "" : fieldContext.description().COMMENT().getText();
+
         String name = (fieldContext.data().AUTO() == null ? "" : (fieldContext.data().AUTO() + " ")) +
                 fieldContext.data().type().getText() +
                 ' ' +
                 fieldContext.data().extendedIdentifer().getText();
 
-        Field field = skillFile.Fields().make("", name, null, restrictions, null, hints);
+        Field field = skillFile.Fields().make(comment, name, null, restrictions, null, hints);
         for (Hint hint : field.getHints()) {
             hint.setParent(field);
         }

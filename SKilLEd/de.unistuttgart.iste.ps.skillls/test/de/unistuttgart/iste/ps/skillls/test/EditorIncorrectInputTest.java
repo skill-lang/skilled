@@ -3,7 +3,10 @@ package de.unistuttgart.iste.ps.skillls.test;
 import de.unistuttgart.iste.ps.skillls.main.CleanUpAssistant;
 import de.unistuttgart.iste.ps.skillls.main.Editor;
 import de.unistuttgart.iste.ps.skillls.main.MainClass;
+import de.unistuttgart.iste.ps.skillls.tools.Field;
+import de.unistuttgart.iste.ps.skillls.tools.Hint;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
+import de.unistuttgart.iste.ps.skillls.tools.Type;
 import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 import org.junit.*;
 
@@ -70,10 +73,6 @@ public class EditorIncorrectInputTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @After
-    public void cleanup() {
         CleanUpAssistant.renewInstance();
     }
 
@@ -280,8 +279,24 @@ public class EditorIncorrectInputTest {
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
             // check if no type has a field in testTool
-            assertTrue("red not in Color in testTool", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool")
-                    && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 0)));
+            boolean nonRed = false;
+
+            for (Tool tool : sk.Tools()) {
+                if (!tool.getName().equals("testName")) {
+                    continue;
+                }
+                for (Type type : tool.getTypes()) {
+                    if (!type.getName().equals("Color")) {
+                        continue;
+                    }
+                    for (Field field : type.getFields()) {
+                        if (field.getName().equals("notRed")) {
+                            nonRed = true;
+                        }
+                    }
+                }
+            }
+            assertFalse("red not in Color in testTool", nonRed);
 //            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddNotExistingFieldHint"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
@@ -305,12 +320,26 @@ public class EditorIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            boolean wrongHint = false;
+
+            for (Tool tool : sk.Tools()) {
+                if (!tool.getName().equals("testTool")) {
+                    continue;
+                }
+                for (Type type : tool.getTypes()) {
+                    if (!type.getName().equals("Color")) {
+                        continue;
+                    }
+                    for (Hint hint : type.getHints()) {
+                        if (hint.getName().equals("!ignore")) {
+                            wrongHint = true;
+                        }
+                    }
+                }
+            }
+
             // check if color has a wrong hint
-            assertTrue("red has a wrong hint",
-                    sk.Tools().stream()
-                            .anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
-                                    .allMatch(ty -> ty.getName().equals("Color") && ty.getFields().stream()
-                                            .allMatch(f -> f.getName().endsWith("red") && f.getHints().size() == 0))));
+            assertFalse("red has a wrong hint", wrongHint);
 //            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "RemoveNotExistingFieldHint"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
@@ -327,6 +356,22 @@ public class EditorIncorrectInputTest {
                 Files.delete(Paths.get(skillFilePath));
             }
             Files.copy(Paths.get(String.format(skillsPath, "RemoveNotExistingFieldHint")), Paths.get(skillFilePath));
+            SkillFile sk = SkillFile.open(Paths.get(skillFilePath));
+            for (Tool tool : sk.Tools()) {
+                System.out.println(tool.getName());
+                for (Type type : tool.getTypes()) {
+                    System.out.println("  " + type.getName());
+                    for (Field field : type.getFields()) {
+                        for (Hint hint : field.getHints()) {
+                            System.out.println("    " + hint.getName());
+                        }
+                        System.out.println("    " + field.getName());
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println();
+            System.out.println();
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -334,12 +379,25 @@ public class EditorIncorrectInputTest {
         MainClass.main(args);
         try {
             SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            boolean nonNull = false;
+            for (Tool tool : sk.Tools()) {
+                if (!tool.getName().equals("testTool")) {
+                    continue;
+                }
+                for (Type type : tool.getTypes()) {
+                    if (!type.getName().equals("Color")) {
+                        continue;
+                    }
+                    for (Hint hint : type.getHints()) {
+                        if (hint.getName().equals("!nonNull")) {
+                            nonNull = true;
+                        }
+                    }
+                }
+            }
+
             // check if some error occurred
-            assertTrue("red is nonNull in Color in testTool.",
-                    sk.Tools().stream()
-                            .anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
-                                    .allMatch(ty -> ty.getName().endsWith("Color") && ty.getFields().stream()
-                                            .allMatch(f -> f.getName().endsWith("red") && f.getHints().size() == 0))));
+            assertFalse("red is nonNull in Color in testTool.", nonNull);
 //            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "AddNotExistingTypeHint"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
@@ -366,10 +424,37 @@ public class EditorIncorrectInputTest {
             assertTrue(true);
         }
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
+            for (Tool tool : sk.Tools()) {
+                System.out.println(tool.getName());
+                for (Type type : tool.getTypes()) {
+                    for (Hint hint : type.getHints()) {
+                        System.out.println("  " + hint.getName());
+                    }
+                    System.out.println("  " + type.getName());
+                }
+                System.out.println();
+            }
+
+            boolean colorIsSingleton = false;
+
             // check if color is not !notSingleton
-            assertTrue("Color is not singleton in testTool", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool")
-                    && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color") && ty.getHints().size() == 0)));
+            for (Tool tool : sk.Tools()) {
+                if (!tool.getName().equals("testTool")) {
+                    continue;
+                }
+                for (Type type : tool.getTypes()) {
+                    if (!type.getName().equals("Color")) {
+                        continue;
+                    }
+                    for (Hint hint : type.getHints()) {
+                        if (hint.getName().equals("!notSingleton")) {
+                            colorIsSingleton = true;
+                        }
+                    }
+                }
+            }
+            assertFalse("Color is not singleton in testTool", colorIsSingleton);
 //            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "RemoveNotExistingTypeHint"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail("IO Exception");
@@ -392,12 +477,27 @@ public class EditorIncorrectInputTest {
         String[] args = new String[] { "-e", "resources", "testTool:9:Color:!singleton;" };
         MainClass.main(args);
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
             // check if some error occurred
-            assertTrue("Color is not singleton in testTool", sk.Tools().stream()
-                    .anyMatch(t -> t.getName().equals("testTool")
-                            && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color")
-                                    && ty.getHints().stream().noneMatch(h -> h.getName().equals("!singleton")))));
+            boolean singleton = false;
+
+            for (Tool tool : sk.Tools()) {
+                if (!tool.getName().equals("testTool")) {
+                    continue;
+                }
+                for (Type type : tool.getTypes()) {
+                    if (!type.getName().equals("Color")) {
+                        continue;
+                    }
+                    for (Hint hint : type.getHints()) {
+                        if (hint.getName().equals("!singleton")) {
+                            singleton = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            assertFalse("Color is not singleton in testTool", singleton);
 //            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "IncorrectInput" + File.separator + "RemoveNotExistingField"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
@@ -420,11 +520,45 @@ public class EditorIncorrectInputTest {
         String[] args = new String[] { "-e", "resources", "testTool:5:Color:notRed;" };
         MainClass.main(args);
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
+
+            for (Tool tool : sk.Tools()) {
+                System.out.println(tool.getName());
+                for (Type type : tool.getTypes()) {
+                    for (Hint hint : type.getHints()) {
+                        System.out.println("  " + hint.getName());
+                    }
+                    System.out.println("  " + type.getName());
+                }
+                System.out.println();
+            }
+
             // check if some error occurred.
-            assertTrue("red still in Color in testTool. Failing ok, because not yet implemented in SKilL.",
-                    sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
-                            .anyMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 0)));
+            boolean notRed = false;
+
+            for (Tool tool : sk.Tools()) {
+                if (!tool.getName().equals("testTool")) {
+                    continue;
+                }
+                for (Type type : tool.getTypes()) {
+                    if (!type.getName().equals("Color")) {
+                        continue;
+                    }
+                    for (Field field : type.getFields()) {
+                        if (field.getName().contains("notRed")) {
+                            notRed = true;
+                            break;
+                        }
+                    }
+                    if (notRed) {
+                        break;
+                    }
+                }
+                if (notRed) {
+                    break;
+                }
+            }
+            assertFalse("red still in Color in testTool.", notRed);
         } catch (IOException e) {
             fail();
         }

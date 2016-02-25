@@ -62,7 +62,7 @@ public class MainClassTest {
         deleteDirectory(new File("resources" + File.separator + ".skills"));
     }
 
-    @After
+    @Before
     public void cleanup() {
         CleanUpAssistant.renewInstance();
     }
@@ -310,5 +310,56 @@ public class MainClassTest {
             }
         }
         file.delete();
+    }
+
+    @Test
+    public void testReindexing() {
+        System.setErr(origErr);
+        System.setOut(origOut);
+
+        boolean nullFound = false, failed = false;
+        int types = -1;
+        try {
+            Files.deleteIfExists(Paths.get(skillFilePath));
+            Files.createFile(Paths.get(skillFilePath));
+            MainClass.start(Indexing.JUST_INDEXING, new String[]{"-e", "resources", ""});
+        } catch (BreakageException e) {
+            // ignored
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        CleanUpAssistant.renewInstance();
+
+        try {
+            SkillFile sk = SkillFile.open(Paths.get(skillFilePath), de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
+            types = sk.Types().size();
+        } catch (IOException e) {
+            e.printStackTrace();
+            failed = true;
+        }
+
+        MainClass.start(Indexing.JUST_INDEXING, new String[] { "-e", "resources", "" });
+
+        System.setErr(err);
+        System.setOut(out);
+
+        try {
+            SkillFile sk = SkillFile.open(Paths.get(skillFilePath), de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
+            for (Tool tool : sk.Tools()) {
+                for (Type type : tool.getTypes()) {
+                    nullFound |= type == null;
+                }
+            }
+            assertFalse("Null found", nullFound);
+            assertTrue("Too many Types " + sk.Types().size() + " > " + types, types >= sk.Types().size());
+        } catch (IOException e) {
+            e.printStackTrace();
+            failed = true;
+        }
+
+
+        if (failed) {
+            fail();
+        }
     }
 }

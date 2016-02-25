@@ -88,8 +88,9 @@ public class MainClass {
                     return;
                 }
                 indexFiles(projectDirectory, skillFile, indexing);
-                CleanUpAssistant.getInstance(skillFile).cleanUp();
+                CleanUpAssistant.getInstance(skillFile).cleanUp(indexing);
                 if (indexing == Indexing.JUST_INDEXING) {
+                    skillFile.close();
                     break;
                 }
                 editor.setSkillFile(skillFile);
@@ -171,7 +172,7 @@ public class MainClass {
                     }
                 }
                 indexFiles(new File(path), sf, indexing);
-                CleanUpAssistant.getInstance(sf).cleanUp();
+                CleanUpAssistant.getInstance(sf).cleanUp(indexing);
                 if (indexing == Indexing.JUST_INDEXING) {
                     break;
                 }

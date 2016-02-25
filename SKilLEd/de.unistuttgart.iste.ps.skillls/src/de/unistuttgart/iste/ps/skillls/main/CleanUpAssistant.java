@@ -1,8 +1,10 @@
 package de.unistuttgart.iste.ps.skillls.main;
 
-import de.unistuttgart.iste.ps.skillls.tools.*;
+import de.unistuttgart.iste.ps.skillls.tools.Field;
+import de.unistuttgart.iste.ps.skillls.tools.Hint;
+import de.unistuttgart.iste.ps.skillls.tools.Tool;
+import de.unistuttgart.iste.ps.skillls.tools.Type;
 import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
-import de.ust.skill.common.java.api.SkillException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,93 +82,100 @@ public class CleanUpAssistant {
      * @param newType the type that should replace the old one
      */
     private void renewType(Type oldType, Type newType) {
-        delete(oldType);
-        List<Tool> tools = skillFile.Tools().stream().filter(t -> t.getTypes().stream().anyMatch(ty -> ty != null &&
-                ty.getOrig() == oldType)).collect(Collectors.toList());
-        for (Tool tool : tools) {
+        if (newType == null) {
+            return;
+        }
+        for (Tool tool : skillFile.Tools()) {
             for (int i = 0; i < tool.getTypes().size(); i++) {
                 Type type = tool.getTypes().get(i);
-                if (type != null && type.getOrig() == oldType) {
-                    ArrayList<Hint> hints = getHints(type, newType);
-                    ArrayList<Field> fields = getFields(type, newType);
-
-                    Type nt = skillFile.Types().make(newType.getComment(), newType.getExtends(), fields, newType.getFile(),
-                            newType.getName(), newType, newType.getRestrictions(), hints);
-
-                    for (Field field : fields) {
-                        field.setType(nt);
-                    }
-                    for (Hint hint : hints) {
-                        hint.setParent(nt);
-                    }
-                    tool.getTypes().add(nt);
-                    tool.getTypes().remove(type);
+                if (type.getOrig() != oldType) {
+                    continue;
                 }
-            }
-        }
-    }
+                ArrayList<String> restrictions = new ArrayList<>();
+                ArrayList<Hint> hints = new ArrayList<>();
+                ArrayList<Field> fields = new ArrayList<>();
+                ArrayList<String> extensions = new ArrayList<>();
+                Type toolType = skillFile.Types().make(newType.getComment(), extensions, fields, newType.getFile(),
+                        newType.getName(), newType, restrictions, hints);
 
-    /**
-     *
-     * @param oldType the old type, that should be replaced
-     * @param newType the new type, that should replace the old one
-     * @return returns a list of not deprecated fields.
-     */
-    private ArrayList<Field> getFields(Type oldType, Type newType) {
-        ArrayList<Field> fields = new ArrayList<>();
-        HashMap<String, Field> fieldNames = new HashMap<>();
-        newType.getFields().forEach(f -> fieldNames.put(f.getName().toLowerCase(), f));
-        for (Field field : oldType.getFields()) {
-            if (fieldNames.containsKey(field.getName().toLowerCase())) {
-                Field f = fieldNames.get(field.getName().toLowerCase());
-                ArrayList<Hint> hints = getHints(field, f);
-                Field nf = skillFile.Fields().make(f.getComment(), f.getName(), f, f.getRestrictions(), null, hints);
-                fields.add(nf);
-                for (Hint hint : hints) {
-                    hint.setParent(nf);
+                restrictions.addAll(type.getRestrictions().stream().filter(res -> newType.getRestrictions().contains(res))
+                        .collect(Collectors.toList()));
+
+                for (Hint hint : type.getHints()) {
+                    for (Hint newHint : newType.getHints()) {
+                        if (newHint.getName().toLowerCase().equals(hint.getName().toLowerCase())) {
+                            toolType.getHints().add(skillFile.Hints().make(newHint.getName(), toolType));
+                            break;
+                        }
+                    }
                 }
+
+                for (Field field : type.getFields()) {
+                    for (Field newField : newType.getFields()) {
+                        if (newField.getName().toLowerCase().equals(field.getName().toLowerCase())) {
+                            Field toolField = copyField(field, newField, toolType);
+                            toolType.getFields().add(toolField);
+                            break;
+                        }
+                    }
+                }
+
+                for (String ex : type.getExtends()) {
+                    for (String newEx : newType.getExtends()) {
+                        if (ex.toLowerCase().equals(newEx.toLowerCase())) {
+                            toolType.getExtends().add(ex);
+                            break;
+                        }
+                    }
+                }
+
+                tool.getTypes().remove(type);
+                deleteType(type);
+                tool.getTypes().add(toolType);
             }
         }
-        return fields;
+        deleteType(oldType);
     }
 
-    /**
-     *
-     * @param parent the old type, that should be replaced
-     * @param newParent the new type, that should replace the old one.
-     * @return returns a list of not deprecated hints.
-     */
-    private ArrayList<Hint> getHints(HintParent parent, HintParent newParent) {
-        ArrayList<Hint> hints = new ArrayList<>();
-        HashMap<String, Hint> hintNames = new HashMap<>();
-        newParent.getHints().forEach(h -> hintNames.put(h.getName().toLowerCase(), h));
-        for (Hint hint : parent.getHints()) {
-            if (hintNames.containsKey(hint.getName().toLowerCase())) {
-                hints.add(skillFile.Hints().make(hint.getName(), null));
+    private void deleteType(Type type) {
+        for (Field field : type.getFields()) {
+            for (Hint hint : field.getHints()) {
+                skillFile.delete(hint);
             }
-        }
-        return hints;
-    }
-
-    /**
-     * deletes the type and all content and all derived types.
-     * @param oldType type that should be deleted.
-     */
-    private void delete(Type oldType) {
-        skillFile.delete(oldType);
-        for (Field field : oldType.getFields()) {
             skillFile.delete(field);
-            field.getHints().forEach(skillFile::delete);
         }
-        oldType.getHints().forEach(skillFile::delete);
-        for (Type type : typeMap.get(oldType)) {
-            skillFile.delete(type);
-            for (Field field : type.getFields()) {
-                skillFile.delete(field);
-                field.getHints().forEach(skillFile::delete);
+        for (Hint hint : type.getHints()) {
+            skillFile.delete(hint);
+        }
+        skillFile.delete(type);
+    }
+
+    private Field copyField(Field toolField, Field newField, Type parent) {
+        ArrayList<String> restrictions = new ArrayList<>();
+        ArrayList<Hint> hints = new ArrayList<>();
+
+        Field field = skillFile.Fields().make(newField.getComment(), newField.getName(), newField, restrictions, parent, hints);
+
+        for (String res : toolField.getRestrictions()) {
+            for (String newRes : newField.getRestrictions()) {
+                if (res.toLowerCase().equals(newRes.toLowerCase())) {
+                    field.getRestrictions().add(res);
+                    break;
+                }
             }
-            type.getHints().forEach(skillFile::delete);
         }
+
+        for (Hint hint : toolField.getHints()) {
+            for (Hint newHint : newField.getHints()) {
+                if (hint.getName().toLowerCase().equals(newHint.getName().toLowerCase())) {
+                    Hint fieldHint = skillFile.Hints().make(newHint.getName(), field);
+                    field.getHints().add(fieldHint);
+                    break;
+                }
+            }
+        }
+
+        return field;
     }
 
     /**
@@ -187,25 +196,27 @@ public class CleanUpAssistant {
     /**
      * deletes all unneeded types in the skillfile.
      */
-    public void cleanUp() {
-        if (typesToDelete.size() > 0 && typesToDelete.stream().anyMatch(t -> typeMap.get(t).size() > 0)) {
-            broken = true;
+    public void cleanUp(Indexing indexing) {
+        if (indexing == Indexing.NO_INDEXING) {
+            return;
         }
-        typesToDelete.forEach(this::delete);
-        try {
-            skillFile.close();
-        } catch (SkillException ignored) {
-            // opened in read only mode
-        }
-        for (Tool tool : skillFile.Tools()) {
-            for (int i = 0; i < tool.getTypes().size(); i++) {
-                if (tool.getTypes().get(i) == null) {
-                    tool.getTypes().remove(i);
-                    i--;
+        for (Type type : typesToDelete) {
+            int counter = 0;
+            for (Type fileType : skillFile.Types()) {
+                counter++;
+                if (fileType == type || fileType.getOrig() == type) {
+                    deleteType(fileType);
+                    for (Tool tool : skillFile.Tools()) {
+                        if (tool.getTypes().contains(fileType)) {
+                            tool.getTypes().remove(fileType);
+                            break;
+                        }
+                    }
                 }
             }
+            broken |= counter >= 2;
+            deleteType(type);
         }
-        skillFile = MainClass.openSkillFile(skillFile.currentPath());
     }
 
     /**

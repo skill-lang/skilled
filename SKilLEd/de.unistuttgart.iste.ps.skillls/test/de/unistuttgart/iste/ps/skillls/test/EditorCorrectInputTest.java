@@ -9,8 +9,8 @@ import de.unistuttgart.iste.ps.skillls.tools.Hint;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
 import de.unistuttgart.iste.ps.skillls.tools.Type;
 import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
-import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -44,7 +44,7 @@ public class EditorCorrectInputTest {
         }
     }
 
-    @After
+    @Before
     public void cleanup() {
         CleanUpAssistant.renewInstance();
     }
@@ -306,14 +306,7 @@ public class EditorCorrectInputTest {
         String[] args = new String[] { "-e", "resources", "testTool:2:TransparentColor;" };
         MainClass.main(args);
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            for (Tool tool : sk.Tools()) {
-                System.out.println(tool.getName());
-                for (Type type : tool.getTypes()) {
-                    System.out.println("  " + (type == null));
-                }
-                System.out.println();
-            }
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
             assertTrue("Color or TransparentColor not in Tool",
                     // find "testTool" and check amount of types.
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().size() == 2));
@@ -351,7 +344,7 @@ public class EditorCorrectInputTest {
             }
             // find "testTool" and check if "color" is in it.
             assertTrue("red not in Color in testTool", sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool")
-                    && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 1)));
+                    && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color") && ty.getFields().stream().anyMatch(f -> f.getName().equals("i16 red")))));
 //            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "CorrectInput" + File.separator + "AddFieldHint.sf"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
@@ -374,13 +367,30 @@ public class EditorCorrectInputTest {
         String[] args = new String[] { "-e", "resources", "testTool:6:Color:red:!nonNull;" };
         MainClass.main(args);
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
             // find "testTool" and check if "Color" is in it and check if it contains "red" and check if it is "!nonNull"
-            assertTrue("red not nonNull in Color in testTool",
-                    sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
-                            .anyMatch(ty -> ty.getName().equals("Color")
-                                    && ty.getFields().stream().anyMatch(f -> f.getName().endsWith("red")
-                                    && f.getHints().stream().anyMatch(h -> h.getName().equals("!nonNull"))))));
+            boolean red = false;
+            for (Tool tool : sk.Tools()) {
+                if (!tool.getName().equals("testTool")) {
+                    continue;
+                }
+                for (Type type : tool.getTypes()) {
+                    if (!type.getName().equals("Color")) {
+                        continue;
+                    }
+                    for (Field field : type.getFields()) {
+                        if (!field.getName().contains("red")) {
+                            continue;
+                        }
+                        for (Hint hint : field.getHints()) {
+                            if (hint.getName().equals("!nonNull")) {
+                                red = true;
+                            }
+                        }
+                    }
+                }
+            }
+            assertTrue("red not nonNull in Color in testTool", red);
 //            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "CorrectInput" + File.separator + "RemoveFieldHint.sf"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
@@ -403,7 +413,7 @@ public class EditorCorrectInputTest {
         String[] args = new String[] { "-e", "resources", "testTool:7:Color:red:!nonNull;" };
         MainClass.main(args);
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
             // find "testTool" and find "color" and check if it is still "!nonNull"
             assertTrue("red is nonNull in Color in testTool. Failing ok, not yet implemented in SKilL.",
                     sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
@@ -432,7 +442,7 @@ public class EditorCorrectInputTest {
         String[] args = new String[] { "-e", "resources", "testTool:8:Color:!unique;" };
         MainClass.main(args);
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
             // check if "Color" is in "testTool"
             assertTrue("Color is not unique in testTool",
                     sk.Tools().stream()
@@ -461,12 +471,26 @@ public class EditorCorrectInputTest {
         String[] args = new String[] { "-e", "resources", "testTool:9:Color:!singleton;" };
         MainClass.main(args);
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
             // check if "Color" in "testTool" is still "!singleton"
-            assertTrue("Color is not singleton in testTool", sk.Tools().stream()
-                    .anyMatch(t -> t.getName().equals("testTool")
-                            && t.getTypes().stream().anyMatch(ty -> ty.getName().equals("Color")
-                            && ty.getHints().stream().noneMatch(h -> h.getName().equals("!singleton")))));
+            boolean unique = false;
+
+            for (Tool tool : sk.Tools()) {
+                if (!tool.getName().equals("testTool")) {
+                    continue;
+                }
+                for (Type type : tool.getTypes()) {
+                    if (!type.getName().equals("Color")) {
+                        continue;
+                    }
+                    for (Hint hint : type.getHints()) {
+                        if (hint.getName().equals("!unique")) {
+                            unique = true;
+                        }
+                    }
+                }
+            }
+            assertTrue("Color is not unique in testTool", unique);
 //            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "CorrectInput" + File.separator + "AddingEnum.sf"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
@@ -489,7 +513,7 @@ public class EditorCorrectInputTest {
         String[] args = new String[] { "-e", "resources", "testTool:2:Picture" };
         MainClass.main(args);
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
             // Check if "Picture" contains all enum values
             assertTrue("does not contain all enum values", sk.Tools().stream()
                     .anyMatch(t -> t.getName().equals("testTool")
@@ -517,11 +541,27 @@ public class EditorCorrectInputTest {
         String[] args = new String[] { "-e", "resources", "testTool:5:Color:red;" };
         MainClass.main(args);
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
+            boolean redInColorInTestTool = false;
+
             // check if "Color" in "testTool" still contains any fields.
-            assertTrue("red still in Color in testTool. Failing ok, because not yet implemented in SKilL.",
-                    sk.Tools().stream().anyMatch(t -> t.getName().equals("testTool") && t.getTypes().stream()
-                            .anyMatch(ty -> ty.getName().equals("Color") && ty.getFields().size() == 0)));
+            for (Tool tool : sk.Tools()) {
+                if (!tool.getName().equals("testTool")) {
+                    continue;
+                }
+                for (Type type : tool.getTypes()) {
+                    if (!type.getName().equals("Color")) {
+                        continue;
+                    }
+                    for (Field field : type.getFields()) {
+                        if (field.getName().equals("i16 red")) {
+                            redInColorInTestTool = true;
+                        }
+                    }
+                }
+            }
+
+            assertFalse("red still in Color in testTool.", redInColorInTestTool);
 //            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "CorrectInput" + File.separator + "AddingTypedef.sf"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             fail();
@@ -541,7 +581,7 @@ public class EditorCorrectInputTest {
         String[] args = new String[] { "-e", "resources", "testTool:2:MainRefridgerator" };
         MainClass.main(args);
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
             // check if MainRefridgerator is indexed.
             assertTrue("MainFridge not indexed",
                     sk.Types().stream().anyMatch(type -> type.getName().contains("MainRefridgerator")));
@@ -568,7 +608,7 @@ public class EditorCorrectInputTest {
         String[] args = new String[] { "-e", "resources", "testTool:2:I1" };
         MainClass.main(args);
         try {
-            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            SkillFile sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
             // check if i1 is in "testTool"
             assertTrue("does not contain I1", sk.Tools().stream().anyMatch(tool -> tool.getName().equals("testTool")
                     && tool.getTypes().stream().anyMatch(type -> type.getName().toLowerCase().startsWith("interface i1"))));
@@ -663,7 +703,7 @@ public class EditorCorrectInputTest {
         MainClass.main(args);
         SkillFile sk = null;
         try {
-            sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
+            sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
             // check if PowerStrip is in oneTypeTool and if it is !readOnly
             assertTrue("PowerStrip does not have hint", sk.Tools().stream().anyMatch(tool -> tool.getName().equals("oneTypeTool") &&
                     tool.getTypes().stream().anyMatch(type -> type != null && type.getName().equals("PowerStrip") &&
@@ -671,62 +711,6 @@ public class EditorCorrectInputTest {
 //            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "CorrectInput" + File.separator + "RemovingTypeHint.sf"), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (sk != null) {
-                sk.close();
-            }
-        }
-    }
-
-    @Test
-    public void testRemovingTypeHint() {
-        try {
-            if (Files.exists(Paths.get(skillFilePath))) {
-                Files.delete(Paths.get(skillFilePath));
-            }
-            Files.copy(Paths.get("testFiles" + File.separator + "CorrectInput" + File.separator + "RemovingTypeHint.sf"), Paths.get(skillFilePath));
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-        String[] args = new String[] {"--edit", "resources", "oneTypeTool:2:PowerStrip;oneTypeTool:8:PowerStrip:!readOnly"};
-        MainClass.main(args);
-        SkillFile sk = null;
-        try {
-            sk = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.Read);
-            Tool oneTypeTool = null;
-            for (Tool t : sk.Tools()) {
-                if (t.getName().equals("oneTypeTool")) {
-                    oneTypeTool = t;
-                }
-            }
-            if (oneTypeTool == null) {
-                fail("Tool is null");
-            }
-            Type powerStrip = null;
-            for (Type t : oneTypeTool.getTypes()) {
-                if (t != null && t.getName().equals("PowerStrip")) {
-                    powerStrip = t;
-                }
-            }
-            if (powerStrip == null) {
-                fail("Type is null");
-            }
-            Hint readOnly = null;
-            for (Hint h : powerStrip.getHints()) {
-                if (h.getName().equals("!readOnly")) {
-                    readOnly = h;
-                }
-            }
-            if (readOnly == null) {
-                fail("Hint is null");
-            }
-//            Files.copy(Paths.get(skillFilePath), Paths.get("testFiles" + File.separator + "CorrectInput" + File.separator + "DeleteTool.sf"), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (sk != null) {
-                sk.close();
-            }
         }
     }
 
@@ -777,16 +761,6 @@ public class EditorCorrectInputTest {
             SkillFile sf = SkillFile.open(skillFilePath, de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
             assertTrue("view not correctly indexed", sf.Types().stream().anyMatch(t -> t.getName().equals("ViewType") && t.getFields().stream().anyMatch(
                     f -> f.getName().equals("view Microwave.requiredPower as i16 myRequiredPower"))));
-            for (Tool tool : sf.Tools()) {
-                System.out.println(tool.getName());
-                for (Type type : tool.getTypes()) {
-                    System.out.println("  " + type.getName());
-                    for (Field field : type.getFields()) {
-                        System.out.println("    " + field.getName());
-                    }
-                }
-                System.out.println();
-            }
             assertTrue("view not correctly added to tool", sf.Tools().stream().anyMatch(
                     t -> t.getName().equals("testTool") && t.getTypes().stream().anyMatch(
                     ty -> ty.getName().equals("ViewType") && ty.getFields().stream().anyMatch(

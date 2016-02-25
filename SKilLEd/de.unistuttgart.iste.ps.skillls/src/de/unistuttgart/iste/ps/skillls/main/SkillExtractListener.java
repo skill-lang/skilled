@@ -128,7 +128,7 @@ public class SkillExtractListener extends SKilLParserBaseListener {
     private void processTypedef(SKilLParser.TypedefContext ctx) throws IOException {
         Type type = null;
         for (Type t : tool.getTypes()) {
-            if (t.getName().toLowerCase().indexOf(ctx.name.getText().toLowerCase()) == "typedef ".length()) {
+            if (t != null && t.getName().toLowerCase().indexOf(ctx.name.getText().toLowerCase()) == "typedef ".length()) {
                 type = t;
                 break;
             }
@@ -162,7 +162,7 @@ public class SkillExtractListener extends SKilLParserBaseListener {
     private void processEnumtype(SKilLParser.EnumtypeContext ctx) throws IOException {
         Type type = null;
         for (Type t : tool.getTypes()) {
-            if (t.getName().toLowerCase().endsWith(ctx.name.getText().toLowerCase())) {
+            if (t != null && t.getName().toLowerCase().endsWith(ctx.name.getText().toLowerCase())) {
                 type = t;
                 break;
             }
@@ -222,7 +222,7 @@ public class SkillExtractListener extends SKilLParserBaseListener {
     private void processUsertype(SKilLParser.UsertypeContext ctx) throws IOException {
         Type type = null;
         for (Type t : tool.getTypes()) {
-            if (t.getName().toLowerCase().equals(ctx.name.getText().toLowerCase()) && t.getFile().getPath().equals(inFile.getPath())) {
+            if (t != null && t.getName().toLowerCase().equals(ctx.name.getText().toLowerCase()) && t.getFile().getPath().equals(inFile.getPath())) {
                 type = t;
                 break;
             }
@@ -270,7 +270,7 @@ public class SkillExtractListener extends SKilLParserBaseListener {
     private void processInterface(SKilLParser.InterfacetypeContext ctx) throws IOException {
         Type type = null;
         for (Type t : tool.getTypes()) {
-            if (t.getName().toLowerCase().endsWith(ctx.name.getText().toLowerCase())) {
+            if (t != null && t.getName().toLowerCase().endsWith(ctx.name.getText().toLowerCase())) {
                 type = t;
                 break;
             }

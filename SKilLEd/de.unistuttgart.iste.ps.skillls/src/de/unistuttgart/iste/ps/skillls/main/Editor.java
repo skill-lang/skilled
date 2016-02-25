@@ -436,7 +436,9 @@ public class Editor {
             }
         }
 
-        for (Field f : type.getOrig().getFields()) {
+        Type origType = type.getOrig() == null ? type : type.getOrig();
+
+        for (Field f : origType.getFields()) {
             String[] splits = f.getName().split(" ");
             if (splits[splits.length - 1].equals(fieldName)) {
                 type.getFields()

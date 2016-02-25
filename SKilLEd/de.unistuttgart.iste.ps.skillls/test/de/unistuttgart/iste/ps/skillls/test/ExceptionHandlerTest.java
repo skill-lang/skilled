@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.ps.skillls.test;
 
 import de.unistuttgart.iste.ps.skillls.main.BreakageException;
+import de.unistuttgart.iste.ps.skillls.main.CleanUpAssistant;
 import de.unistuttgart.iste.ps.skillls.main.ExceptionHandler;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -23,6 +25,11 @@ public class ExceptionHandlerTest {
     public static void setup() {
         System.setOut(new PrintStream(out));
         System.setErr(new PrintStream(err));
+    }
+
+    @After
+    public void cleanup() {
+        CleanUpAssistant.renewInstance();
     }
 
     @Test
