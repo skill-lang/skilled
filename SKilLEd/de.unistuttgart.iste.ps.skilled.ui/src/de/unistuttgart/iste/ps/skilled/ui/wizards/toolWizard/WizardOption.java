@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard;
 
 /**
- * Modes of a {@link de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.SKilLToolWizard SKilLToolWizard}.
+ * Modes of a {@link SKilLToolWizard SKilLToolWizard}.
  * 
  * @author Nico Rusam
  *

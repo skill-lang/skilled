@@ -2,6 +2,7 @@ package de.unistuttgart.iste.ps.skilled.ui.views;
 
 import java.io.File;
 
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -22,7 +23,7 @@ import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
  * 
  * @category GUI
  * @author Nico Rusam
- *
+ * @author Ken Singer
  */
 public class ContextMenuToolView {
 
@@ -32,7 +33,14 @@ public class ContextMenuToolView {
         this.toolView = toolView;
     }
 
-    public void initContextMenu(List toollist, final Menu menu) {
+    /**
+     * 
+     * @param toollist
+     *            - a {@link List list} containing the tools
+     * @param menu
+     *            - {@link Menu}
+     */
+    void initContextMenu(List toollist, final Menu menu) {
 
         toollist.setMenu(menu);
         menu.addMenuListener(new MenuAdapter() {
@@ -55,10 +63,10 @@ public class ContextMenuToolView {
                         SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.RENAME, toollist.getItem(selected));
                         WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), newWizard);
 
-                        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
+                        if (wizardDialog.open() == Window.OK)
                             ToolUtil.cloneTool(toolView.getActiveProject(), toolView.getActiveTool(),
                                     newWizard.getToolNewName(), toolView.getSkillFile());
-                        }
+
                         toolView.refresh();
                     }
 
@@ -98,14 +106,11 @@ public class ContextMenuToolView {
                         SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.RENAME, toollist.getItem(selected));
                         WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), newWizard);
 
-                        if (wizardDialog.open() == org.eclipse.jface.window.Window.OK) {
-                            System.out.println("Ok pressed");
+                        if (wizardDialog.open() == Window.OK)
                             ToolUtil.renameTool(toolView.getActiveTool().getName(), newWizard.getToolNewName(),
                                     toolView.getActiveProject());
-                            toolView.refresh();
 
-                        } else
-                            System.out.println("Cancel pressed");
+                        toolView.refresh();
                     }
 
                     @Override

@@ -1,5 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -10,26 +12,31 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import de.unistuttgart.iste.ps.skillls.tools.Tool;
+
 
 /**
- * creates a wizardpage for renaming a tool
+ * creates a wizardpage for renaming a {@link Tool tool}
  * 
  * @author Nico Rusam
+ * @author Ken Singer
  *
  */
 public class SKilLRenameToolWizardPage extends WizardPage {
 
     private Text tbName;
     private Composite container;
+    private ArrayList<Tool> toollist;
 
     private String name;
 
-    public SKilLRenameToolWizardPage(String name) {
+    public SKilLRenameToolWizardPage(ArrayList<Tool> toollist, String name) {
         super("Rename Tool");
         setTitle("Rename Tool");
         setDescription("On this page you can rename the tool.");
         setControl(tbName);
         this.name = name;
+        this.toollist = toollist;
     }
 
     @Override
@@ -48,14 +55,16 @@ public class SKilLRenameToolWizardPage extends WizardPage {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                // TODO Auto-generated method stub
+                // not used
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                if (!tbName.getText().isEmpty()) {
+                setPageComplete(false);
+                if (!tbName.getText().isEmpty() && toollist.stream()
+                        .noneMatch(t -> t.getName().toLowerCase().equals(tbName.getText().toLowerCase())))
                     setPageComplete(true);
-                }
+
             }
 
         });

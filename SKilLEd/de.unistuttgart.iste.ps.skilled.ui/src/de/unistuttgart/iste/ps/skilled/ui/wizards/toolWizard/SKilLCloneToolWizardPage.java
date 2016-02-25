@@ -17,7 +17,7 @@ import de.unistuttgart.iste.ps.skillls.tools.Tool;
 
 
 /**
- * creates the wizardpage to clone a tool from an existing tool
+ * creates the wizardpage to clone a tool from an existing {@link Tool tool}
  * 
  * @author Ken Singer
  *
@@ -60,7 +60,7 @@ public class SKilLCloneToolWizardPage extends WizardPage {
         this.tbName.addKeyListener(new KeyListener() {
             @Override
             public void keyPressed(KeyEvent e) {
-                // nothing
+                // not used
             }
 
             @Override

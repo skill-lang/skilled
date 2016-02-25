@@ -2,14 +2,13 @@ package de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
 
 
 /**
- * creates the wizards used in SKilLEd
+ * creates the wizards used in SKilLEd to handle {@link Tool tools}
  * 
  * @author Nico Rusam
  * @author Ken Singer
@@ -67,7 +66,7 @@ public class SKilLToolWizard extends Wizard {
                 addPage(pageNewTool);
                 break;
             case RENAME:
-                pageRenameTool = new SKilLRenameToolWizardPage(this.name);
+                pageRenameTool = new SKilLRenameToolWizardPage(toolList, this.name);
                 addPage(pageRenameTool);
                 break;
             case CLONE:
@@ -104,10 +103,6 @@ public class SKilLToolWizard extends Wizard {
                 break;
         }
         return true;
-    }
-
-    private void showMessage(String message) {
-        MessageDialog.openInformation(getShell(), "Tool View", message);
     }
 
     public String getCloneToolName() {

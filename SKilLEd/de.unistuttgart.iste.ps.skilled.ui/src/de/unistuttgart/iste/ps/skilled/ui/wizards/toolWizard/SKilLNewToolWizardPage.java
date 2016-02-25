@@ -17,7 +17,7 @@ import de.unistuttgart.iste.ps.skillls.tools.Tool;
 
 
 /**
- * creates a wizardpage for creating a new tool
+ * creates a wizardpage for creating a new {@link Tool tool}
  * 
  * @author Nico Rusam
  * @author Ken Singer
@@ -51,7 +51,7 @@ public class SKilLNewToolWizardPage extends WizardPage {
         this.tbName.addKeyListener(new KeyListener() {
             @Override
             public void keyPressed(KeyEvent e) {
-                // nothing
+                // not used
             }
 
             @Override

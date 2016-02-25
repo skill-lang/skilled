@@ -13,7 +13,7 @@ import de.unistuttgart.iste.ps.skillls.tools.Tool;
 
 
 /**
- * creates a wizardpage for removing hints from a tool.
+ * creates a wizardpage for removing hints from a {@link Tool tool}.
  * 
  * @author Nico Rusam
  *
