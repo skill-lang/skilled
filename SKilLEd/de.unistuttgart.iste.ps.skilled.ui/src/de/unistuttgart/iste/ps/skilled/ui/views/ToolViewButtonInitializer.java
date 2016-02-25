@@ -76,6 +76,7 @@ public class ToolViewButtonInitializer {
      * @category Dialog
      */
     private void createToolDialog() {
+        long time = -1;
         final SKilLToolWizard sKilLToolWizard = new SKilLToolWizard(WizardOption.CREATE, toolview.getAllToolList());
         WizardDialog wizardDialog = new WizardDialog(toolview.getShell(), sKilLToolWizard);
         if (wizardDialog.open() == Window.OK) {
@@ -88,15 +89,19 @@ public class ToolViewButtonInitializer {
             toolview.readToolBinaryFile();
             if (sKilLToolWizard.getAddAllCheckboxState()) {
                 try {
+                    time = System.currentTimeMillis();
                     Tool tool = toolview.getSkillFile().Tools().stream().filter(t -> t.getName().equals(newToolName))
                             .findFirst().get();
                     ToolUtil.addAllToTool(toolview.getSkillFile(), toolview.getActiveProject(), tool);
                 } catch (NoSuchElementException e) {
+                    // no such tool
                     return;
                 }
             }
             toolview.refresh();
         }
+        System.out.println("Time: " + (System.currentTimeMillis() - time));
+
     }
 
     /**

@@ -111,7 +111,8 @@ public class ToolViewListener {
                             .getActivePage().getActiveEditor().getEditorInput();
                     IProject newActiveProject = file.getFile().getProject();
 
-                    if (toolview.getActiveProject() != null && !toolview.getActiveProject().equals(newActiveProject))
+                    if (toolview.getActiveProject() != null
+                            && !toolview.getActiveProject().getName().equals(newActiveProject.getName()))
                         toolview.refresh();
                 }
             }
@@ -128,7 +129,8 @@ public class ToolViewListener {
                             .getActivePage().getActiveEditor().getEditorInput();
                     IProject newActiveProject = file.getFile().getProject();
 
-                    if (toolview.getActiveProject() == null || !toolview.getActiveProject().equals(newActiveProject))
+                    if (toolview.getActiveProject() != null
+                            && !toolview.getActiveProject().getName().equals(newActiveProject.getName()))
                         toolview.refresh();
                 }
             }
@@ -140,7 +142,8 @@ public class ToolViewListener {
                             .getActivePage().getActiveEditor().getEditorInput();
                     IProject newActiveProject = file.getFile().getProject();
 
-                    if (toolview.getActiveProject() == null || !toolview.getActiveProject().equals(newActiveProject))
+                    if (toolview.getActiveProject() != null
+                            && !toolview.getActiveProject().getName().equals(newActiveProject.getName()))
                         toolview.refresh();
                 }
             }

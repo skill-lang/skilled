@@ -8,7 +8,6 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -96,6 +95,7 @@ public class ToolView extends ViewPart {
     @Override
     public void setFocus() {
         parent.setFocus();
+        shell.setFocus();
     }
 
     /**
@@ -106,7 +106,7 @@ public class ToolView extends ViewPart {
      */
     void refresh() {
         if (!parent.isDisposed()) {
-            clearLists();
+            clearAll();
             toolTabItem.dispose();
             if (null != typeTabItem)
                 typeTabItem.dispose();
@@ -151,7 +151,9 @@ public class ToolView extends ViewPart {
      * 
      * @category Data Handling
      */
-    private void clearLists() {
+    private void clearAll() {
+        activeProject = null;
+        activeTool = null;
         allToolList.clear();
         pathList.clear();
         allTypeList.clear();
@@ -169,19 +171,14 @@ public class ToolView extends ViewPart {
             IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                     .getActiveEditor().getEditorInput();
             activeProject = file.getFile().getProject();
+
+            ToolUtil.indexing(activeProject);
+
             path = activeProject.getLocation().toOSString() + File.separator + ".skills";
             skillFile = SkillFile.open(path, Mode.ReadOnly);
         } catch (Exception e) {
-            activeProject = null;
-            e.printStackTrace();
+            // skillfile does not exist or active project
             return;
-        }
-
-        try {
-            ToolUtil.indexing(activeProject);
-        } catch (CoreException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
 
         if (skillFile.Tools() != null) {
@@ -189,8 +186,9 @@ public class ToolView extends ViewPart {
             skillFile.Tools().forEach(t -> pathList.add(path));
         }
 
-        if (skillFile.Types() != null)
+        if (skillFile.Types() != null) {
             skillFile.Types().stream().filter(t -> t.getOrig() == null).forEach(t -> allTypeList.add(t));
+        }
         // fExport.setPaths(pathList);
     }
 
@@ -266,7 +264,7 @@ public class ToolView extends ViewPart {
     private void iterateTypesAndHints(Tree typeTree) {
         for (Type type : allTypeList) {
             TreeItem typeTreeItem = new TreeItem(typeTree, 0);
-            typeTreeItem.setText(type.getName().replaceAll(" %s ", " "));
+            typeTreeItem.setText(type.getName().replaceAll(" %s", ""));
             typeTreeItem.setData(type);
             Type tooltype = null;
 
