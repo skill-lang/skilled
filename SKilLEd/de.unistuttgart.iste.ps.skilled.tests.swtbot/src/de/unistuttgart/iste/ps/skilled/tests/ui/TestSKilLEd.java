@@ -41,7 +41,6 @@ public class TestSKilLEd {
 	 */
 	@Test
 	public void testCreateSkillProject() {
-		getWorkspacePath();
 		String testFile = "TestFile.skill";
 		// Create a new SKilL Project
 		bot.menu("File").menu("New").menu("Project...").click();
@@ -69,33 +68,76 @@ public class TestSKilLEd {
 		bot.styledText().setText("A{i8 a; }");
 		bot.styledText().setText("A{i8 a; \n	i16 b;	}");
 		bot.toolbarButtonWithTooltip("Save (Ctrl+S)").click();
-		File workspace = new File(workspacePath);
-		if (workspace.exists() && workspace.isDirectory()) {
-			for (File f : workspace.listFiles()) {
-				System.out.println("File: " + f.getName());
-			}
-		}		
+		if(!bot.styledText().getText().equals("A{i8 a; \n	i16 b;	}")){
+			throw new AssertionError();
+		}
 	}
 	
 	/**
-	 * Test for the remove cycle quickfix.
+	 * Test for the remove cycle quickfix (Remove Type).
 	 */
 	@Test
 	public void testRemoveCycleQuickfix(){
 		String testFile = "cyclicTest.skill";
+		//Create new file with cycle
 		createSKilLFileWithContentInTestProject(testFile, "A:BA{} \n BA:A{}");
 		SWTBotEclipseEditor editor = bot.editorByTitle(testFile).toTextEditor();
-		System.out.println("Edit...");
 		editor.navigateTo(1, 2);
 		bot.sleep(5000);
 		for(String s: editor.getQuickFixes()){
-			System.out.println("Quickfix: " + s);
 			editor.quickfix(s);
-			
 		}
 		if(!editor.getText().contains("BA {")){
 			throw new AssertionError();
 		}
+		editor.saveAndClose();
+	}
+	
+	
+	/**
+	 * Test for the rename type Quickfix. 
+	 */
+	@Test
+	public void testRenameTypeQuickfix(){
+		String testFile = "renameTest.skill";
+		//Create new file with non-ASCII-Chars
+		createSKilLFileWithContentInTestProject(testFile, "AÖo{}"); 
+		SWTBotEclipseEditor editor = bot.editorByTitle(testFile).toTextEditor();
+		editor.navigateTo(0, 2);
+		bot.sleep(5000);
+		for(String s: editor.getQuickFixes()){
+			editor.quickfix(s);
+			bot.text().setText("Ao");
+			bot.button("OK").click();
+			bot.editorByTitle(testFile).show();
+		}
+		if(!editor.getText().contains("Ao {")){
+			throw new AssertionError();
+		}
+		editor.saveAndClose();
+	}
+	
+	/**
+	 * Test for the rename field Quickfix. 
+	 */
+	@Test
+	public void testRenameFieldQuickfix(){
+		String testFile = "renameTest2.skill";
+		//Create new file with non-ASCII-Chars
+		createSKilLFileWithContentInTestProject(testFile, "Ao{ i8 abcöü;}"); 
+		SWTBotEclipseEditor editor = bot.editorByTitle(testFile).toTextEditor();
+		editor.navigateTo(0, 9);
+		bot.sleep(5000);
+		for(String s: editor.getQuickFixes()){
+			editor.quickfix(s);
+			bot.text().setText("ab");
+			bot.button("OK").click();
+			bot.editorByTitle(testFile).show();
+		}
+		if(!editor.getText().contains(" ab;")){
+			throw new AssertionError();
+		}
+		editor.saveAndClose();
 	}
 	
 	
@@ -179,7 +221,6 @@ public class TestSKilLEd {
 			SWTBotShell shell = bot.shell("Workspace Launcher");
 			shell.activate();
 			workspacePath = bot.comboBox().getText();
-			System.out.println("Label: " + workspacePath);
 			bot.button("Cancel").click();
 		}
 		return workspacePath;
