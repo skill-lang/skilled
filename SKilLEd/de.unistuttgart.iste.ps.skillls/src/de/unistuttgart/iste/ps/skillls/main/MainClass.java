@@ -30,6 +30,7 @@ import de.unistuttgart.iste.ps.skillls.tools.Type;
 import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
 // TODO: generell mehr trennen, klone entfernen
 
+
 /**
  * This class starts the application and runs the generator if necessary.
  *
