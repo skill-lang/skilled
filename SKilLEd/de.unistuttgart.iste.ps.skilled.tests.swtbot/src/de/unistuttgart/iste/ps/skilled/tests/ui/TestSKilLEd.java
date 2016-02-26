@@ -3,6 +3,7 @@ package de.unistuttgart.iste.ps.skilled.tests.ui;
 import java.io.File;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEclipseEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
@@ -10,7 +11,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import de.unistuttgart.iste.ps.skilled.tests.ui.util.LoadTestfile;
+import de.unistuttgart.iste.ps.skilled.tests.ui.util.LoadTestfiles;
 
 /**
  * @author Jan Berberich
@@ -77,14 +78,36 @@ public class TestSKilLEd {
 	}
 	
 	/**
+	 * Test for the remove cycle quickfix.
+	 */
+	@Test
+	public void testRemoveCycleQuickfix(){
+		String testFile = "cyclicTest.skill";
+		createSKilLFileWithContentInTestProject(testFile, "A:BA{} \n BA:A{}");
+		SWTBotEclipseEditor editor = bot.editorByTitle(testFile).toTextEditor();
+		System.out.println("Edit...");
+		editor.navigateTo(1, 2);
+		bot.sleep(5000);
+		for(String s: editor.getQuickFixes()){
+			System.out.println("Quickfix: " + s);
+			editor.quickfix(s);
+			
+		}
+		if(!editor.getText().contains("BA {")){
+			throw new AssertionError();
+		}
+	}
+	
+	
+	/**
 	 * 
-	 * This method tests the combine SKilL file refactoring. 
+	 * Test for the combine SKilL file refactoring. 
 	 * 
 	 */
 	@Test
 	public void testCombineSkillFile(){
 		getWorkspacePath();
-		String[] testFiles = LoadTestfile.loadCombineTest();
+		String[] testFiles = LoadTestfiles.loadCombineTest();
 		String testFile1 = "testCombine1.skill";
 		String testFile2 = "testCombine2.skill";
 		createSKilLFileWithContentInTestProject(testFile1, testFiles[0]);
@@ -101,7 +124,7 @@ public class TestSKilLEd {
 	
 	/**
 	 * 
-	 * Test the import of a binary file.
+	 * Test for the import of a binary file.
 	 */
 	@Test
 	public void testImportBinary(){
@@ -131,18 +154,18 @@ public class TestSKilLEd {
 	@Test
 	public void openFileTimeSpecified() {
 		String testFile = "timeTestSpecification.skill";
-		String fileContent = LoadTestfile.loadPerformenceTestfile();
+		String fileContent = LoadTestfiles.loadPerformenceTestfile();
 		createSKilLFileWithContentInTestProject(testFile, fileContent);
 		bot.editorByTitle(testFile).close();
 		final long endTime;
 		bot.viewByTitle(projectView).show();
-		//bot.tree().getTreeItem(testProject).expand();
 		final long timeStart = System.currentTimeMillis();
 		bot.tree().getTreeItem(testProject).getNode(testFile).doubleClick();
 		endTime = System.currentTimeMillis();
 		final long timeDiff = endTime - timeStart;
 		System.out.println("File opened in " + timeDiff + " ms.");
 	}
+
 	
 	/**
 	 * Get the path of the current workspace.
