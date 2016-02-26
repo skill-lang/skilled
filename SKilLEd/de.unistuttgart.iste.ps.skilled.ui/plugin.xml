@@ -514,33 +514,6 @@
 	  		name="Sort Usertypes">
 	   </command>
   </extension>
-	<extension
-		  point="org.eclipse.ui.menus">
-	   <menuContribution
-	   		 allPopups="false"
-	   		 locationURI="menu:org.eclipse.ui.main.menu">
-	   	  <menu
-	   	  		id="SKilLEdMenu"
-	   	  		label="SKilLEd">
-          <command
-                commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinedfiles.command"
-                label="Combine .skill-files"
-                style="push"
-                tooltip="Combine multiple .skill-files">
-          </command>
-          <command
-                commandId="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
-                label="Import Binary File"
-                style="push">
-          </command>
-	   	  	 <command
-	   	  	 	   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
-	   	  	 	   label="Sort Usertypes"
-	   	  	 	   style="push">
-	   	  	 </command>
-	   	  </menu>
-	   </menuContribution>
-  </extension>
   	<extension
 		  point="org.eclipse.ui.bindings">
 	   <key
@@ -610,6 +583,31 @@
                  label="Tool View"
                  style="push">
            </command>
+          <command
+                commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinedfiles.command"
+                label="Combine .skill-files"
+                style="push"
+                tooltip="Combine multiple .skill-files">
+          </command>
+          <command
+                commandId="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
+                label="Import Binary File"
+                style="push">
+          </command>
+           <command
+               commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
+               label="Sort Usertypes"
+               style="push">
+           </command>
+           <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeWorkbenchWindow.activePerspective">
+                  <equals
+                        value="de.unistuttgart.iste.ps.skilled.ui.SKilLPerspective">
+                  </equals>
+               </with>
+            </visibleWhen>
         </menu>
      </menuContribution>
   </extension>
