@@ -126,6 +126,12 @@ public class TestExportTools {
         bot.comboBoxWithLabel("Select tool to export:").setSelection("testExport3");
         bot.textWithLabel("Export Location:").setText(workspacePath + File.separator + "testExportOverwrite.skill");
         bot.button("OK").click();
+        try {
+            bot.wait();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         bot.shell("Existing File").isActive();
         bot.button("OK");
     }

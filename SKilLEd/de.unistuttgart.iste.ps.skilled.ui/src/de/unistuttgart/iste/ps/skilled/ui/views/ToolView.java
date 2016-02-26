@@ -105,7 +105,7 @@ public class ToolView extends ViewPart {
      * 
      * @category Data Handling
      */
-    void refresh() {
+    public void refresh() {
         if (!parent.isDisposed()) {
             clearAll();
             toolTabItem.dispose();

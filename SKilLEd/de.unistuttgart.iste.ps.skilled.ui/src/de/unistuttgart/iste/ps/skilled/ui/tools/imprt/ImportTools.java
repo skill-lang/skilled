@@ -246,18 +246,6 @@ public class ImportTools {
                     return;
                 }
 
-                // File fFolderToCheck = new File(tSaveLocation.getText());
-                // File[] listOfFiles = fFolderToCheck.listFiles();
-                //
-                // for (int i = 0; i < listOfFiles.length; i++) {
-                // if (listOfFiles[i].isFile()) {
-                // System.out.println("File " + listOfFiles[i].getName());
-                //
-                // if (listOfFiles[i].getName() == fToolName || listOfFiles[i].getName() == tImportRename.getText()) {
-                // // TODO
-                // }
-                // }
-                // }
                 fFileName = fNameChecker;
                 fProjectName = fCheckIfProjectSelected;
                 fSelectedToolPath = tSelectTool.getText();
@@ -267,6 +255,7 @@ public class ImportTools {
                 fSaveLocation = "";
                 fSelectedTool = "";
                 fFileName = "";
+                fImportRenamed = "";
 
             }
 

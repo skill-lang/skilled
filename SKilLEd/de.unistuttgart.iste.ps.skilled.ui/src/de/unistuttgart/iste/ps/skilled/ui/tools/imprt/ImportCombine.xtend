@@ -28,6 +28,7 @@ import org.eclipse.xtext.EcoreUtil2
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil
 import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile
 import de.ust.skill.common.java.api.SkillFile.Mode
+import de.unistuttgart.iste.ps.skilled.ui.views.ToolView
 
 /**
  * This class provides combine function for Import Tools. If there are 2 or more 
@@ -41,6 +42,7 @@ import de.ust.skill.common.java.api.SkillFile.Mode
  * 
  */
 class ImportCombine {
+	var ToolView toolview = new ToolView();
 	var String fProjectName = ""
 	var de.unistuttgart.iste.ps.skilled.sKilL.File fSelectedToolPath = null;
 	var ArrayList<String> duplicateType = new ArrayList
@@ -89,6 +91,8 @@ class ImportCombine {
 	var String fHArgS = "";
 	var String fHArgT = "";
 	var String fHArgList = "";
+
+	var String fWriteEnums = "";
 
 	def void start() {
 		// Gets project name from ImportTools
@@ -163,6 +167,7 @@ class ImportCombine {
 
 			if (!duplicateType.contains(fDeclarationType + " " + d2.name)) {
 				duplicateType.add(fDeclarationType + " " + d2.name);
+				duplicateTypeAddress.add(ImportTools.getSelectedToolPath());
 			} else {
 				if (counter == 0) {
 					counter += 1;
@@ -289,7 +294,9 @@ class ImportCombine {
 		var File fWriteToTemp = new File(fProjectPath + "TempFileBySKilLEd.skill")
 
 		if (counter == 0) {
-			System.out.println("No duplicates found, moving file");
+			duplicateType.clear();
+			duplicateTypeAddress.clear();
+			counter = 0;
 			// Copy and paste to project folder
 			if (!fDestination.exists) {
 				FileUtils.copyFile(fSource, fDestination);
@@ -297,7 +304,6 @@ class ImportCombine {
 				FileUtils.copyFile(fSource, fDestinationRenamed);
 			}
 		} else {
-			System.out.println("Only 1 duplicate found, starting merge");
 			// If type name already exists, merge
 			var fFindDuplicatedType = duplicateType.get(fDuplicateIndex);
 			var fFindDuplicatedPath = duplicateTypeAddress.get(fDuplicateIndex);
@@ -351,7 +357,11 @@ class ImportCombine {
 				} else {
 					fields = "";
 				}
-				var String fWriteEnums = enums + ", " + fEnumList.substring(0, fEnumList.length - 1) + ";" + "\n";
+
+				if (fEnumList.length > 0) {
+					fWriteEnums = enums + ", " + fEnumList.substring(0, fEnumList.length - 1) + ";" + "\n";
+				}
+
 				var String fWriteFields = fields + "\n" + fDuplicateFields;
 
 				if (!fPreviousLineWasUsertype && fDeclarationType.equals("User") &&
@@ -390,8 +400,7 @@ class ImportCombine {
 					line = line.substring(0, line.length - 1);
 					fText += fComment + line + "\n" + "	" + fDuplicateFields + "}" + "\n";
 					fPreviousLineWasInterfacetype = false;
-				} 
-				// i.e. enum A {
+				} // i.e. enum A {
 				else if (!fPreviousLineWasEnumtype && fDeclarationType.equals("Enum") &&
 					line.toLowerCase.startsWith(fFindDuplicatedType.toLowerCase) && !line.contains(";")) {
 					fText += line + "\n";
@@ -425,35 +434,45 @@ class ImportCombine {
 			// Delete type from original file
 			var String fOriginalFileText = new String(Files.readAllBytes(Paths.get(ImportTools.getSelectedToolPath())));
 			fOriginalFileText = fOriginalFileText.replaceAll("\n+", " #nextline#");
-			fOriginalFileText = fOriginalFileText.toLowerCase.replaceAll(fFindDuplicatedType.toLowerCase + "( (.| )*?)? ?\\{.*?\\}",
-				"");
+			fOriginalFileText = fOriginalFileText.toLowerCase.replaceAll(fFindDuplicatedType.toLowerCase +
+				"( (.| )*?)? ?\\{.*?\\}", "");
 			fOriginalFileText = fOriginalFileText.replaceAll("#nextline#", "\n");
 			// Remove empty lines again to remove empty lines made by the first replace
 			fOriginalFileText = fOriginalFileText.replaceAll("\n+", "#nextline#");
 			fOriginalFileText = fOriginalFileText.replaceAll("#nextline#", "\n");
 
-			// Delete original to be imported file
-			fSource.delete;
-			var FileWriter fw2 = new FileWriter(fSource);
-			if (fOriginalFileText != null) {
-				// Remake to be imported file with the deleted duplicate types 
-				fw2.write(fOriginalFileText);
-				fw2.close;
+			// Copy and paste file to the import location
+			if (!fDestination.exists) {
+				FileUtils.copyFile(fSource, fDestination);
+				var FileWriter fw2 = new FileWriter(fDestination);
+				if (fOriginalFileText != null) {
+					// Remake to be imported file with the deleted duplicate types 
+					fw2.write(fOriginalFileText);
+					fw2.close;
 
-				// Copy and paste file to the import location
-				if (!fDestination.exists) {
-					FileUtils.copyFile(fSource, fDestination);
-
-				} else {
-					FileUtils.copyFile(fSource, fDestinationRenamed);
 				}
+			} else {
+				FileUtils.copyFile(fSource, fDestinationRenamed);
+				var FileWriter fw2 = new FileWriter(fDestinationRenamed);
+				if (fOriginalFileText != null) {
+					// Remake to be imported file with the deleted duplicate types 
+					fw2.write(fOriginalFileText);
+					fw2.close;
 
+				}
 			}
 
+			duplicateType.clear();
+			duplicateTypeAddress.clear();
+			counter = 0;
 		}
+		
 		// Create tool
 		ToolUtil.createTool(ImportTools.getFileName(), project);
 		ImportTools.addAllToNewTool(fProjectPath, project);
+		toolview.refresh();
+		
+
 	}
 
 	def ShowMessage(
