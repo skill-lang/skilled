@@ -1,10 +1,6 @@
 package de.unistuttgart.iste.ps.skilled.tests.ui;
 
 import java.io.File;
-
-import javax.swing.KeyStroke;
-
-import org.eclipse.swt.SWT;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEclipseEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
@@ -25,6 +21,7 @@ public class TestSKilLEd {
 
 	private static SWTWorkbenchBot bot;
 	private String workspacePath = null;
+	private int delayTimeQuickfixes = 3000;
 	private final String testProject = "TestProject"; // Name of the test
 														// project created by
 														// the test
@@ -87,7 +84,7 @@ public class TestSKilLEd {
 		createSKilLFileWithContentInTestProject(testFile, "A:BA{} \n BA:A{}");
 		SWTBotEclipseEditor editor = bot.editorByTitle(testFile).toTextEditor();
 		editor.navigateTo(1, 2);
-		bot.sleep(5000);
+		bot.sleep(delayTimeQuickfixes);
 		for(String s: editor.getQuickFixes()){
 			editor.quickfix(s);
 		}
@@ -95,8 +92,7 @@ public class TestSKilLEd {
 			throw new AssertionError();
 		}
 		editor.saveAndClose();
-	}
-	
+	}	
 	
 	/**
 	 * 
@@ -109,7 +105,7 @@ public class TestSKilLEd {
 		createSKilLFileWithContentInTestProject(testFile, "AÖo{}"); 
 		SWTBotEclipseEditor editor = bot.editorByTitle(testFile).toTextEditor();
 		editor.navigateTo(0, 2);
-		bot.sleep(5000);
+		bot.sleep(delayTimeQuickfixes);
 		for(String s: editor.getQuickFixes()){
 			editor.quickfix(s);
 			bot.text().setText("Ao");
@@ -133,7 +129,7 @@ public class TestSKilLEd {
 		createSKilLFileWithContentInTestProject(testFile, "Ao{ i8 abcöü;}"); 
 		SWTBotEclipseEditor editor = bot.editorByTitle(testFile).toTextEditor();
 		editor.navigateTo(0, 9);
-		bot.sleep(5000);
+		bot.sleep(delayTimeQuickfixes);
 		for(String s: editor.getQuickFixes()){
 			editor.quickfix(s);
 			bot.text().setText("ab");
@@ -158,7 +154,7 @@ public class TestSKilLEd {
 		createSKilLFileWithContentInTestProject(testFile2, "A: B1ImportType{ }");
 		SWTBotEclipseEditor editor = bot.editorByTitle(testFile2).toTextEditor();
 		editor.navigateTo(0, 8);
-		bot.sleep(5000);
+		bot.sleep(delayTimeQuickfixes);
 		System.out.println("count: "+editor.getQuickfixListItemCount());
 		for(String s: editor.getQuickFixes()){
 			if(s.equals("Add missing File")){
@@ -185,7 +181,7 @@ public class TestSKilLEd {
 		createSKilLFileWithContentInTestProject(testFile3, "C2ImportType{ }");
 		SWTBotEclipseEditor editor = bot.editorByTitle(testFile2).toTextEditor();
 		editor.navigateTo(0, 8);
-		bot.sleep(5000);
+		bot.sleep(delayTimeQuickfixes);
 		System.out.println("count: "+editor.getQuickfixListItemCount());
 		for(String s: editor.getQuickFixes()){
 			if(s.equals("Organize imports")){
@@ -197,8 +193,6 @@ public class TestSKilLEd {
 		}
 		editor.saveAndClose();
 	}
-	
-	
 	
 	/**
 	 * 
@@ -265,27 +259,6 @@ public class TestSKilLEd {
 		final long timeDiff = endTime - timeStart;
 		System.out.println("File opened in " + timeDiff + " ms.");
 	}
-
-	/**
-	 * This method deletes a file in the testProject.
-	 * @param filename Name of the file
-	 */
-	private void deleteFileInTestProject(String filename){
-		System.out.println(1);
-		bot.viewByTitle(projectView);
-		System.out.println(2);
-		bot.sleep(1000);
-		bot.tree().getTreeItem(testProject).getNode(filename).select();//.pressShortcut(SWT.NONE, SWT.DEL,(char) SWT.NONE);
-
-		bot.sleep(1000);
-		System.out.println(3);
-		bot.menu("Edit").menu("Delete").click();
-
-		bot.sleep(1000);
-		System.out.println(4);
-		bot.button("OK").click();
-	}
-	
 	
 	/**
 	 * Get the path of the current workspace.

@@ -4,11 +4,13 @@ import java.io.FileReader;
 import java.io.File;
 import java.io.BufferedReader;
 
+/*
+ * @author Jan Berberich
+ */
 public class LoadTestfiles {
 	
 	/**
 	 * Returns the performence testFile as a String.
-	 * 
 	 * @return TestFileSpecification.skill as String.
 	 * 
 	 */
@@ -17,7 +19,7 @@ public class LoadTestfiles {
 	}
 	
 	/**
-	 * Testfile for validating import test.
+	 * Testfile for validating import binary test.
 	 * @return Testfile as String
 	 */
 	public static String loadImportTestfile(){
@@ -25,15 +27,18 @@ public class LoadTestfiles {
 	}
 	
 	/**
-	 * 
-	 * @return Array with content of file 1, content of file 2 and combined content
+	 * Load test files for the combine skill files refactoring.
+	 * @return Array with content of file 1, content of file 2 and combined content of both files
 	 */
 	public static String[] loadCombineTest(){
 		String[] combine = loadArray("combine1", "combine2", "combine12");
 		return combine;
 	}
 	
-	
+	/**
+	 * Load String array with the content of three files
+	 * @return The array
+	 */
 	private static String[] loadArray(String file1, String file2, String file3){
 		String[] combine = new String[3];
 		combine [0]= loadFile("resources" + File.separator +"testCombine"+File.separator+file1+".skill");
@@ -42,7 +47,11 @@ public class LoadTestfiles {
 		return combine;
 	}
 	
-	
+	/**
+	 * Loads a file.
+	 * @param path Path of the file
+	 * @return Content of the file
+	 */
 	private static String loadFile(String path){
 		String fileContent = "";
 		FileReader reader;
