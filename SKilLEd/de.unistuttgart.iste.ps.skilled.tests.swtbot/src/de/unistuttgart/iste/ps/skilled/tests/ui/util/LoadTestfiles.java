@@ -4,16 +4,24 @@ import java.io.FileReader;
 import java.io.File;
 import java.io.BufferedReader;
 
-public class LoadTestfile {
+public class LoadTestfiles {
 	
 	/**
-	 * Returns the testFile as a String.
+	 * Returns the performence testFile as a String.
 	 * 
 	 * @return TestFileSpecification.skill as String.
 	 * 
 	 */
-	public static String loadTestfile() {
+	public static String loadPerformenceTestfile() {
 		return loadFile("resources" + File.separator +"TestFileSpecification.skill");
+	}
+	
+	/**
+	 * Testfile for validating import test.
+	 * @return Testfile as String
+	 */
+	public static String loadImportTestfile(){
+		return loadFile("resources"+ File.separator + "testImport" + File.separator+ "age.skill");
 	}
 	
 	/**
@@ -24,6 +32,7 @@ public class LoadTestfile {
 		String[] combine = loadArray("combine1", "combine2", "combine12");
 		return combine;
 	}
+	
 	
 	private static String[] loadArray(String file1, String file2, String file3){
 		String[] combine = new String[3];

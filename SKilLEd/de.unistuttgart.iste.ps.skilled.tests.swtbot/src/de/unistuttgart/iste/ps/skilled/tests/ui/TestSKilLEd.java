@@ -10,9 +10,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import de.unistuttgart.iste.ps.skilled.tests.ui.util.LoadTestfile;
-import junit.framework.AssertionFailedError;
 
 /**
  * @author Jan Berberich
@@ -102,6 +100,29 @@ public class TestSKilLEd {
 	}
 	
 	/**
+	 * 
+	 * Test the import of a binary file.
+	 */
+	@Test
+	public void testImportBinary(){
+		getWorkspacePath();
+		try{
+			bot.menu("SKilLEd").menu("Import Binary File").click();
+			bot.textWithLabel("Select binary file to import:").setText("resources"+File.separator+"testImport"+File.separator+"age.sf");		
+			bot.textWithLabel("Import to:").setText(workspacePath + File.separator+ testProject);
+			bot.button("OK").click();
+			bot.editorByTitle("age.skill");
+			String text = bot.styledText().getText();
+			if(!((text.contains("age {"))&&(text.contains("v64 age;")&&(text.contains("}"))))){
+				throw new AssertionError();//Not importet correct
+			}
+		}catch(WidgetNotFoundException e){
+			throw new AssertionError(); //Import failed
+		}		
+		
+	}
+	
+	/**
 	 * This test opens a SKilL-File specified in the specification (2.3) and
 	 * checks if it is opened in the specified time. File is specified to be
 	 * opened in a maximum of 50 ms.
@@ -109,32 +130,19 @@ public class TestSKilLEd {
 	 */
 	@Test
 	public void openFileTimeSpecified() {
-		String testFile = "timeTestSpecificatio.skill";
-		// First generate a File with the specified Filecontent
-		String fileContent = LoadTestfile.loadTestfile();
-		createSKilLFile(testFile, testProject);
-		// Focus on Project Explorer, open testFile, save content
-		bot.viewByTitle(projectView).show();
-		bot.tree().getTreeItem(testProject).expand();
-		bot.tree().getTreeItem(testProject).getNode(testFile).doubleClick();
-		bot.editorByTitle(testFile).show();
-		bot.styledText().setText(fileContent);
-		bot.toolbarButtonWithTooltip("Save (Ctrl+S)").click();
+		String testFile = "timeTestSpecification.skill";
+		String fileContent = LoadTestfile.loadPerformenceTestfile();
+		createSKilLFileWithContentInTestProject(testFile, fileContent);
 		bot.editorByTitle(testFile).close();
 		final long endTime;
 		bot.viewByTitle(projectView).show();
-		bot.tree().getTreeItem(testProject).expand();
+		//bot.tree().getTreeItem(testProject).expand();
 		final long timeStart = System.currentTimeMillis();
 		bot.tree().getTreeItem(testProject).getNode(testFile).doubleClick();
 		endTime = System.currentTimeMillis();
 		final long timeDiff = endTime - timeStart;
 		System.out.println("File opened in " + timeDiff + " ms.");
 	}
-	
-
-	
-	
-	
 	
 	/**
 	 * Get the path of the current workspace.
@@ -174,7 +182,6 @@ public class TestSKilLEd {
 		}		
 		return true;
 	}
-	
 	
 	/**
 	 * Creates a new SKilL file in the test Project.
