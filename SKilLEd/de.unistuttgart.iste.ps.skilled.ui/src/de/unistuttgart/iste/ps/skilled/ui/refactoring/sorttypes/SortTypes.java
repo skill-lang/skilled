@@ -119,7 +119,6 @@ public class SortTypes {
                         robot.keyRelease(modifier[i]);
                     }
                 }
-                System.out.println("Hallo");
                 return null;
                 
                 
