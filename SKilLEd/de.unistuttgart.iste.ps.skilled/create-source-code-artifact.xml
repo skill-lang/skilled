@@ -18,6 +18,7 @@
                     <exclude name="**/lib2/*.jar"/>
                     <exclude name="**/out/**"/>
                     <exclude name="**/scala/**"/>
+                    <exclude name="**/buckminster/**"/>
                     <exclude name="**/SKilLEd-source/**"/>
                     <exclude name="**/SKilLEd-source.zip"/>
                     <exclude name="**/de.unistuttgart.iste.ps.skillls/lib/**"/>

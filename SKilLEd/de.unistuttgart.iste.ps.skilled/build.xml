@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="de.unistuttgart.iste.ps.skilled" default="complete-build">
+
+    <property name="buckminster.home" value="../../buckminster"/>
     
     <condition property="scala.exists">
-      <available file="../../scala" type="dir"/>
+        <available file="../../scala" type="dir"/>
+    </condition>
+
+    <condition property="buckminster.exists">
+        <available file="../../buckminster"/>
     </condition>
 
     <target name="unpack-scala" unless="scala.exists">
         <unzip src="lib/scala.zip" dest="../.."/>
+    </target>
+
+    <target name="unpack-buckminster" unless="buckminster.exists">
+        <unzip src="lib/buckminster.zip" dest="../.."/>
     </target>
 
     <target name="build-skillls" depends="unpack-scala">
@@ -29,6 +39,10 @@
 
     <target name="create-javadoc">
         <ant antfile="create-javadoc.xml"/>
+    </target>
+
+    <target name="deploy" depends="unpack-buckminster">
+        <ant antfile="build.ant" dir="../de.unistuttgart.iste.ps.skilled.buckminster"/>
     </target>
 
     <target name="complete-build" depends="build-skillls,build-skilled,build-skilled-ui,build-skilled-tests,create-javadoc"/>

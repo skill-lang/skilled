@@ -12,15 +12,16 @@
 		commands.file		What to do?
 							Default: ${projects.location}/de.unistuttgart.iste.ps.skilled.buckminster/commands.txt
 -->
-<project name="Buckminster Headless" default="buckminster">
+<project name="Buckminster Headless" default="deploy-skilled">
 	<property name="WORKSPACE" location="${ant.file}/../../" />
 	<property name="build.root" location="${WORKSPACE}/buildroot" />
-	<property name="buckminster.home" location="/home/lambdadelta/buckminster" />
+	<property name="buckminster.home" location="" />
 	<property name="projects.location" location="${WORKSPACE}" />
 	<property name="commands.file" location="${projects.location}/de.unistuttgart.iste.ps.skilled.buckminster/commands.txt" />
 	<property name="target.platform" value="target.platform" />
-	
-	<target name="buckminster" depends="cleanup" description="description">
+	<property name="build.result" value="${build.root}/buckminster.output/de.unistuttgart.iste.ps.skilled.site_1.0.0-eclipse.feature/site.p2" />
+
+        <target name="buckminster" depends="cleanup" description="description">
 		<echo message="IMPORTANT: Populating an empty target platform may took over 10 minutes."/>
 		<condition property="executable.file" value="buckminster.bat" else="buckminster">
 			<os family="windows"/>
@@ -53,6 +54,12 @@
 			</fileset>
 		</delete>
 	</target>
+
+        <target name="do-zip-skilled">
+            <zip destfile="${build.result}/SKilLEd.zip" basedir="${build.result}"/>
+        </target>
+
+        <target name="deploy-skilled" depends="buckminster,do-zip-skilled"/>
 
 	<target name="reset.target-platform">
 		<delete includeemptydirs="true">
