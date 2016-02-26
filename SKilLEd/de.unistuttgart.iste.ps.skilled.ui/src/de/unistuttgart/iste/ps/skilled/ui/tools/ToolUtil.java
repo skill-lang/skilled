@@ -48,7 +48,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable e) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -82,7 +82,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable t) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -104,7 +104,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable e) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -127,7 +127,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable t) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -150,7 +150,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable t) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -176,7 +176,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable t) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -202,7 +202,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable t) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -228,7 +228,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable t) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -254,7 +254,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable t) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -283,7 +283,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable t) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -312,7 +312,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable t) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -335,7 +335,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable t) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -356,7 +356,7 @@ public final class ToolUtil {
         try {
             MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
-        } catch (Throwable t) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
@@ -475,8 +475,10 @@ public final class ToolUtil {
      */
     public static void addAllFields(IProject project, Tool tool, Type type) {
         for (Field toAdd : type.getFields()) {
-            addField(tool.getName(), project, getActualName(type.getName()), getActualName(toAdd.getName()));
-            addAllFieldHints(project, tool, type, toAdd);
+            if (toAdd != null) {
+                addField(tool.getName(), project, getActualName(type.getName()), getActualName(toAdd.getName()));
+                addAllFieldHints(project, tool, type, toAdd);
+            }
         }
     }
 
@@ -578,7 +580,7 @@ public final class ToolUtil {
             deleteReportToolErrors(project);
             reportToolError(e, project);
             return false;
-        } catch (Throwable t) {
+        } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
         }
     }
