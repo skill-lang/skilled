@@ -115,19 +115,19 @@ public class TypeTreeListener {
                     }
 
                     if (hint != null) {
+                        final String typeName = ((Type) hint.getParent()).getName();
                         // if the user checks the checkbox add the selected hint
                         if (((TreeItem) event.item).getChecked()) {
-                            final String typeName = ((Type) hint.getParent()).getName();
                             if (toolview.getActiveTool().getTypes().stream().noneMatch(t -> t.getName().equals(typeName)))
                                 ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                        ((Type) hint.getParent()).getName());
-                            ToolUtil.addTypeHint(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                    ToolUtil.getActualName(((Type) hint.getParent()).getName()), hint.getName());
+                                        typeName);
+                            ToolUtil.addTypeHint(toolview.getActiveTool().getName(), toolview.getActiveProject(), typeName,
+                                    hint.getName());
                             toolview.reloadTypelist();
                         } else {
                             // if the user unchecks the checkbox remove the selected hint
                             ToolUtil.removeTypeHint(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                    ToolUtil.getActualName(((Type) hint.getParent()).getName()), hint.getName());
+                                    typeName, hint.getName());
                             toolview.reloadTypelist();
                         }
                     }
@@ -147,7 +147,7 @@ public class TypeTreeListener {
             @Override
             public void keyPressed(KeyEvent arg0) {
                 if (arg0.keyCode == SWT.F5)
-                    toolview.refresh();
+                    toolview.reloadTypelist();
             }
         });
     }

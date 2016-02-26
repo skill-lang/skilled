@@ -101,15 +101,16 @@ public class FieldTreeListener {
                         hint = (Hint) ((TreeItem) event.item).getData();
 
                     if (null != field) {
+                        final String typeName = ToolUtil.getActualName(field.getType().getName());
+                        final String fieldName = ToolUtil.getActualName(field.getName());
+
                         // if the user checks the checkbox add the selected field and all its hints
                         if (((TreeItem) event.item).getChecked()) {
-                            final String fieldName = field.getType().getName();
-                            if (toolview.getActiveTool().getTypes().stream().noneMatch(t -> t.getName().equals(fieldName)))
+                            if (toolview.getActiveTool().getTypes().stream().noneMatch(t -> t.getName().equals(typeName)))
                                 ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                        field.getType().getName());
-                            ToolUtil.addField(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                    ToolUtil.getActualName(field.getType().getName()),
-                                    ToolUtil.getActualName(field.getName()));
+                                        typeName);
+                            ToolUtil.addField(toolview.getActiveTool().getName(), toolview.getActiveProject(), typeName,
+                                    fieldName);
                             ToolUtil.addAllFieldHints(toolview.getActiveProject(), toolview.getActiveTool(), field.getType(),
                                     field);
                             toolview.reloadFieldList();
@@ -117,36 +118,37 @@ public class FieldTreeListener {
                             // if the user checks the checkbox add the selected field and all its hints
                             ToolUtil.removeAllFieldHints(toolview.getActiveProject(), toolview.getActiveTool(),
                                     field.getType(), field);
-                            ToolUtil.removeField(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                    ToolUtil.getActualName(field.getType().getName()),
-                                    ToolUtil.getActualName(field.getName()));
+                            ToolUtil.removeField(toolview.getActiveTool().getName(), toolview.getActiveProject(), typeName,
+                                    fieldName);
                             toolview.reloadFieldList();
                         }
                     }
 
                     if (hint != null) {
+                        final String hintParentName = ToolUtil.getActualName(((Field) hint.getParent()).getName());
+                        final String typeName = ToolUtil.getActualName(((Field) hint.getParent()).getType().getName());
                         // if the user checks the checkbox add the selected hint
                         if (((TreeItem) event.item).getChecked()) {
-                            final String hintParentName = ((Field) hint.getParent()).getName();
-                            final String typeName = ((Field) hint.getParent()).getType().getName();
 
-                            if (toolview.getActiveTool().getTypes().stream().noneMatch(t -> t.getName().equals(typeName)))
+                            if (toolview.getActiveTool().getTypes().stream().noneMatch(t -> t.getName().equals(typeName))) {
                                 ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
                                         typeName);
-
-                            if (((Field) hint.getParent()).getType().getFields().stream()
-                                    .noneMatch(f -> f.getName().equals(hintParentName)))
-                                ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                        ((Field) hint.getParent()).getType().getName());
-                            ToolUtil.addFieldHint(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                    ToolUtil.getActualName(((Field) hint.getParent()).getType().getName()),
-                                    ToolUtil.getActualName(((Field) hint.getParent()).getName()), hint.getName());
+                                toolview.reloadFieldList();
+                            }
+                            if (toolview.getActiveTool().getTypes().stream().filter(t -> t.getName().equals(typeName))
+                                    .findFirst().get().getFields().stream()
+                                    .noneMatch(f -> f.getName().equals(hintParentName))) {
+                                ToolUtil.addField(toolview.getActiveTool().getName(), toolview.getActiveProject(), typeName,
+                                        hintParentName);
+                                toolview.reloadFieldList();
+                            }
+                            ToolUtil.addFieldHint(toolview.getActiveTool().getName(), toolview.getActiveProject(), typeName,
+                                    hintParentName, hint.getName());
                             toolview.reloadFieldList();
                         } else {
                             // if the user unchecks the checkbox remove the selected hint
                             ToolUtil.removeFieldHint(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                    ToolUtil.getActualName(((Field) hint.getParent()).getType().getName()),
-                                    ToolUtil.getActualName(((Field) hint.getParent()).getName()), hint.getName());
+                                    typeName, hintParentName, hint.getName());
                             toolview.reloadFieldList();
                         }
                     }
@@ -159,14 +161,14 @@ public class FieldTreeListener {
 
             @Override
             public void keyReleased(KeyEvent arg0) {
-                // TODO Auto-generated method stub
+                // not used
 
             }
 
             @Override
             public void keyPressed(KeyEvent arg0) {
                 if (arg0.keyCode == SWT.F5)
-                    toolview.refresh();
+                    toolview.reloadFieldList();
             }
         });
     }

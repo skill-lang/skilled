@@ -106,72 +106,47 @@ public class ToolViewListener {
 
             @Override
             public void partOpened(IWorkbenchPart part) {
-                if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor() != null) {
-                    IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                            .getActivePage().getActiveEditor().getEditorInput();
-                    IProject newActiveProject = file.getFile().getProject();
-
-                    if (toolview.getActiveProject() == null)
-                        toolview.refresh();
-
-                    if (toolview.getActiveProject() != null
-                            && !toolview.getActiveProject().getName().equals(newActiveProject.getName()))
-                        toolview.refresh();
-                }
+                doRefreshOnProjectChange();
             }
 
             @Override
             public void partDeactivated(IWorkbenchPart part) {
-                if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor() != null) {
-                    IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                            .getActivePage().getActiveEditor().getEditorInput();
-                    IProject newActiveProject = file.getFile().getProject();
-
-                    if (toolview.getActiveProject() == null)
-                        toolview.refresh();
-
-                    if (toolview.getActiveProject() != null
-                            && !toolview.getActiveProject().getName().equals(newActiveProject.getName()))
-                        toolview.refresh();
-                }
+                doRefreshOnProjectChange();
             }
 
             @Override
             public void partClosed(IWorkbenchPart part) {
+                toolview.setdoIndexing(true);
                 toolview.refresh();
             }
 
             @Override
             public void partBroughtToTop(IWorkbenchPart part) {
-                if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor() != null) {
-                    IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                            .getActivePage().getActiveEditor().getEditorInput();
-                    IProject newActiveProject = file.getFile().getProject();
-
-                    if (toolview.getActiveProject() == null)
-                        toolview.refresh();
-
-                    if (toolview.getActiveProject() != null
-                            && !toolview.getActiveProject().getName().equals(newActiveProject.getName()))
-                        toolview.refresh();
-                }
+                doRefreshOnProjectChange();
             }
 
             @Override
             public void partActivated(IWorkbenchPart part) {
+                doRefreshOnProjectChange();
+            }
+
+            /**
+             * calls {@link ToolView#refresh()} if the project has changed
+             */
+            private void doRefreshOnProjectChange() {
                 if (PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor() != null) {
                     IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                             .getActivePage().getActiveEditor().getEditorInput();
                     IProject newActiveProject = file.getFile().getProject();
 
-                    if (toolview.getActiveProject() == null)
+                    if (toolview.getActiveProject() == null
+                            || !toolview.getActiveProject().getName().equals(newActiveProject.getName())) {
+                        toolview.setdoIndexing(true);
                         toolview.refresh();
-
-                    if (toolview.getActiveProject() != null
-                            && !toolview.getActiveProject().getName().equals(newActiveProject.getName()))
-                        toolview.refresh();
+                    }
                 }
             }
+
         });
     }
 }

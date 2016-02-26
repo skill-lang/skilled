@@ -21,10 +21,10 @@ import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
  */
 public class FileChangeAction {
 
-    ToolView tv = null;
+    ToolView toolview = null;
 
     public FileChangeAction(ToolView tv) {
-        this.tv = tv;
+        this.toolview = tv;
     }
 
     /**
@@ -128,14 +128,15 @@ public class FileChangeAction {
 
     private boolean indexFile() {
         boolean back = false;
-        if (tv != null && tv.getActiveProject() != null) {
+        if (toolview != null && toolview.getActiveProject() != null) {
             try {
-                back = ToolUtil.indexing(tv.getActiveProject());
+                back = ToolUtil.indexing(toolview.getActiveProject());
             } catch (CoreException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            tv.refresh();
+            toolview.setdoIndexing(true);
+            toolview.refresh();
         }
         return back;
     }

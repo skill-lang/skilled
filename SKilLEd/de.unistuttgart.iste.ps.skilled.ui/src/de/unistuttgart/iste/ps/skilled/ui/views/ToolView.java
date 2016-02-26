@@ -62,10 +62,10 @@ public class ToolView extends ViewPart {
     private IProject activeProject = null;
     private String path = "";
     private Menu menu;
+    private boolean doIndexing = true;
     // Lists
     private final ArrayList<Tool> allToolList = new ArrayList<Tool>();
     private final ArrayList<Type> allTypeList = new ArrayList<Type>();
-    private final ArrayList<String> pathList = new ArrayList<String>();
     private ArrayList<Type> typeListOfActualTool = new ArrayList<Type>();
     private ArrayList<Hint> typeHintListOfActualTool = new ArrayList<Hint>();
 
@@ -100,8 +100,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Dispose and null <b>tabfolder</b>, <b>tabitem</b>, <b>typeTabItem</b>, <b>fieldTabItem</b>. Create a new contextmenu
-     * for the toolview.
+     * refreshs the data shown in the {@link ToolView toolview}
      * 
      * @category Data Handling
      */
@@ -129,7 +128,6 @@ public class ToolView extends ViewPart {
                 .filter(tool -> tool.getName().toLowerCase().equals(activeTool.getName().toLowerCase())).findFirst().get();
         buildTypeTree();
         tabFolder.setSelection(typeTabItem);
-
     }
 
     /**
@@ -147,15 +145,14 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Clear the lists <b>allToolList</b>, <b>pathList</b>, <b>allTypeList</b> and null <b>typeListOfActualTool</b> and
-     * <b>typeHintListOfActualTool</b>.
+     * clears the lists <code>allToolList</code>, <code>allTypeList</code>, <code>typeListOfActualTool</code> and
+     * <code>typeHintListOfActualTool</code>. sets <code>activeProject<\code> to null .
      * 
      * @category Data Handling
      */
     private void clearAll() {
         activeProject = null;
         allToolList.clear();
-        pathList.clear();
         allTypeList.clear();
         typeListOfActualTool.clear();
         typeHintListOfActualTool.clear();
@@ -172,7 +169,10 @@ public class ToolView extends ViewPart {
                     .getActiveEditor().getEditorInput();
             activeProject = file.getFile().getProject();
 
-            ToolUtil.indexing(activeProject);
+            if (doIndexing) {
+                ToolUtil.indexing(activeProject);
+                doIndexing = false;
+            }
 
             path = activeProject.getLocation().toOSString() + File.separator + ".skills";
             skillFile = SkillFile.open(path, Mode.ReadOnly);
@@ -181,15 +181,11 @@ public class ToolView extends ViewPart {
             return;
         }
 
-        if (skillFile.Tools() != null) {
+        if (skillFile.Tools() != null)
             skillFile.Tools().forEach(tool -> allToolList.add(tool));
-            skillFile.Tools().forEach(t -> pathList.add(path));
-        }
 
-        if (skillFile.Types() != null) {
+        if (skillFile.Types() != null)
             skillFile.Types().stream().filter(t -> t.getOrig() == null).forEach(t -> allTypeList.add(t));
-        }
-        // fExport.setPaths(pathList);
     }
 
     /**
@@ -216,8 +212,8 @@ public class ToolView extends ViewPart {
         } catch (@SuppressWarnings("unused") NullPointerException e) {
             toolTabItem.setText("Tools");
         }
-
         toolTabItem.setControl(toolViewList);
+        toolTabItem.setData(toolViewList);
 
         if (null != skillFile)
             allToolList.forEach(t -> toolViewList.add((t).getName()));
@@ -251,6 +247,8 @@ public class ToolView extends ViewPart {
             iterateTypesAndHints(typeTree);
 
         typeTabItem.setControl(typeTree);
+        typeTabItem.setData(typeTree);
+
         TypeTreeListener tvl = new TypeTreeListener(this);
         tvl.initTypeTreeListener(typeTree);
     }
@@ -298,7 +296,7 @@ public class ToolView extends ViewPart {
             TreeItem typeHintItem = new TreeItem(typeTreeItem, 0);
             typeHintItem.setText(hint.getName());
             typeHintItem.setChecked(false);
-            typeHintItem.setExpanded(true);
+            typeTreeItem.setExpanded(true);
             typeHintItem.setData(hint);
 
             // set all toolspecific typeHints as checked
@@ -332,13 +330,15 @@ public class ToolView extends ViewPart {
             tooltype = null;
         }
 
-        fieldTabItem.setText("Fields - " + selectedType.getName());
+        fieldTabItem.setText("Fields - " + selectedType.getName().replaceAll(" %s", ""));
 
         if (null != skillFile && null != selectedType)
             // add all fields to the tree
             iterateFieldsAndFieldHints(fieldTree, tooltype);
 
         fieldTabItem.setControl(fieldTree);
+        fieldTabItem.setData(fieldTree);
+
         FieldTreeListener ftl = new FieldTreeListener(this);
         ftl.initFieldTreeListener(fieldTree);
     }
@@ -357,6 +357,7 @@ public class ToolView extends ViewPart {
             fieldTreeItem.setText(field.getName());
             fieldTreeItem.setChecked(false);
             fieldTreeItem.setData(field);
+            fieldTreeItem.setExpanded(true);
             Field toolField = null;
 
             // check all the fields used by the actual tool
@@ -571,5 +572,24 @@ public class ToolView extends ViewPart {
      */
     public SkillFile getSkillFile() {
         return skillFile;
+    }
+
+    /**
+     * returns the {@link Boolean doIndexing} field
+     * 
+     * @return - {@link Boolean doIndexing}
+     */
+    public boolean isdoIndexing() {
+        return doIndexing;
+    }
+
+    /**
+     * sets the {@link Boolean doIndexing} field
+     * 
+     * @param doIndexing
+     *            - {@link Boolean}
+     */
+    public void setdoIndexing(boolean doIndexing) {
+        this.doIndexing = doIndexing;
     }
 }
