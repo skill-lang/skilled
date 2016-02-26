@@ -6,7 +6,5 @@ package de.unistuttgart.iste.ps.skillls.main;
  * @author Armin Hüneburg
  */
 public enum Indexing {
-    JUST_INDEXING,
-    NO_INDEXING,
-    NORMAL
+	JUST_INDEXING, NO_INDEXING, NORMAL
 }
