@@ -42,7 +42,6 @@ import de.unistuttgart.iste.ps.skilled.ui.views.ToolView
  * 
  */
 class ImportCombine {
-	var ToolView toolview = new ToolView();
 	var String fProjectName = ""
 	var de.unistuttgart.iste.ps.skilled.sKilL.File fSelectedToolPath = null;
 	var ArrayList<String> duplicateType = new ArrayList
@@ -470,7 +469,6 @@ class ImportCombine {
 		// Create tool
 		ToolUtil.createTool(ImportTools.getFileName(), project);
 		ImportTools.addAllToNewTool(fProjectPath, project);
-		toolview.refresh();
 		
 
 	}

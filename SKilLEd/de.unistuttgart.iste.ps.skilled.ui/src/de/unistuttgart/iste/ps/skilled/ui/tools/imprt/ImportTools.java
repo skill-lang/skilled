@@ -301,7 +301,7 @@ public class ImportTools {
         SkillFile sk;
         try {
             sk = SkillFile.open(ProjectPath + File.separator + ".skills", Mode.ReadOnly);
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return false;
         }
         ToolUtil.addAllToTool(sk, project, sk.Tools().stream().filter(t -> t.getName().equals(fFileName)).findFirst().get());

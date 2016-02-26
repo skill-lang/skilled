@@ -8,6 +8,9 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
+import org.eclipse.swtbot.swt.finder.keyboard.Keyboard;
+import org.eclipse.swtbot.swt.finder.keyboard.KeyboardFactory;
+import org.eclipse.swtbot.swt.finder.keyboard.Keystrokes;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -30,6 +33,8 @@ public class TestImportTools {
     String classProjectPath = getClass().getProtectionDomain().getCodeSource().getLocation().toString().substring(5,
             getClass().getProtectionDomain().getCodeSource().getLocation().toString().length() - 1);
     String resourcePath = classProjectPath + File.separator + "resources" + File.separator + "FileToBeImported.skill";
+
+    Keyboard key = KeyboardFactory.getSWTKeyboard();
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -65,9 +70,10 @@ public class TestImportTools {
         bot.tree().getTreeItem("TestImportTools").expand();
         bot.tree().getTreeItem("TestImportTools").getNode("FileToBeImported.skill").doubleClick();
         bot.editorByTitle("FileToBeImported.skill").show();
+
         bot.viewByTitle("ToolView").show();
-        bot.menu("File").menu("Refresh").click();
-        bot.viewByTitle("ToolView").show();
+        // Refresh ToolView window
+        key.pressShortcut(Keystrokes.F5);
         // Select Tool "FileToBeImported" to check if it exists
         bot.list().select("FileToBeImported");
         bot.editorByTitle("FileToBeImported.skill").show();
@@ -110,9 +116,10 @@ public class TestImportTools {
         bot.tree().getTreeItem("TestImportTools2").expand();
         bot.tree().getTreeItem("TestImportTools2").getNode("FileToBeImported.skill").doubleClick();
         bot.editorByTitle("FileToBeImported.skill").show();
+
         bot.viewByTitle("ToolView").show();
-        bot.menu("File").menu("Refresh").click();
-        bot.viewByTitle("ToolView").show();
+        // Refresh ToolView window
+        key.pressShortcut(Keystrokes.F5);
         // Select Tool "FileToBeImported" to check if it exists
         bot.list().select("FileToBeImported");
         bot.editorByTitle("FileToBeImported.skill").show();
@@ -176,7 +183,22 @@ public class TestImportTools {
                 .setText("renamedFileToBeImported");
         bot.textWithLabel("Import to Project:").setText(workspacePath + File.separator + "TestImportTools4");
         bot.button("OK").click();
-        bot.sleep(5000);
+
+        bot.viewByTitle("Project Explorer").show();
+        bot.tree().getTreeItem("TestImportTools4").select();
+        bot.menu("File").menu("Refresh").click();
+        bot.tree().getTreeItem("TestImportTools4").expand();
+        bot.tree().getTreeItem("TestImportTools4").getNode("renamedFileToBeImported.skill").doubleClick();
+        bot.editorByTitle("renamedFileToBeImported.skill").show();
+
+        bot.viewByTitle("ToolView").show();
+        // Refresh ToolView window
+        key.pressShortcut(Keystrokes.F5);
+        // Select Tool "FileToBeImported" to check if it exists
+        bot.list().select("renamedFileToBeImported");
+        bot.editorByTitle("renamedFileToBeImported.skill").show();
+        bot.editorByTitle("renamedFileToBeImported.skill").close();
+
     }
 
     /**
