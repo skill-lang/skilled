@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.ps.skilled.SWTbotTest.util;
+package de.unistuttgart.iste.ps.skilled.tests.ui.util;
 
 import java.io.FileReader;
 import java.io.File;

@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.ps.skilled.SWTbotTest;
+package de.unistuttgart.iste.ps.skilled.tests.ui;
 
 import java.io.File;
 
@@ -11,7 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.unistuttgart.iste.ps.skilled.SWTbotTest.util.LoadTestfile;
+import de.unistuttgart.iste.ps.skilled.tests.ui.util.LoadTestfile;
 import junit.framework.AssertionFailedError;
 
 /**
