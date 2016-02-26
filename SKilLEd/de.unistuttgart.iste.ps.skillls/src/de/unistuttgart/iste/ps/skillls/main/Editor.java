@@ -541,7 +541,7 @@ public class Editor {
             if (typeName.equals(origType.getName())
                     || origType.getName().toLowerCase().equals("enum " + typeName.toLowerCase())
                     || origType.getName().toLowerCase().equals("interface " + typeName.toLowerCase())
-                    || origType.getName().toLowerCase().startsWith("typedef " + typeName.toLowerCase())) {
+                    || origType.getName().toLowerCase().startsWith("typedef " + typeName.toLowerCase() + " ")) {
                 Type type = null;
                 // type is not in tool
                 if (tool.getTypes().stream().noneMatch(ty -> ty != null && ty.getName().equals(typeName))) {

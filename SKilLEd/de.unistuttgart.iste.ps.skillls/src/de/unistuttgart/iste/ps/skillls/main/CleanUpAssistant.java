@@ -86,13 +86,13 @@ public class CleanUpAssistant {
 		for (Type type : tool.getTypes()) {
 			transferType(type, newTool);
 		}
-		List<String> containedTypes = newTool.getTypes().stream().map(Type::getName).collect(Collectors.toList());
+		List<String> containedTypes = newTool.getTypes().stream().map(t -> normalize(t.getName())).collect(Collectors.toList());
 		HashSet<String> containedExtends = new HashSet<>();
 		for (Type type : newTool.getTypes()) {
-			containedExtends.addAll(type.getExtends());
+			containedExtends.addAll(type.getExtends().stream().map(CleanUpAssistant::normalize).collect(Collectors.toList()));
 		}
 		containedExtends.removeAll(containedTypes);
-		List<Type> missing = containedExtends.stream().map(e -> findType(e)).collect(Collectors.toList());
+		List<Type> missing = containedExtends.stream().map(e -> findType(e)).filter(e -> e != null).collect(Collectors.toList());
 		for (Type type : missing) {
 			brokenTools.add(newTool);
 			transferType(type, newTool);
