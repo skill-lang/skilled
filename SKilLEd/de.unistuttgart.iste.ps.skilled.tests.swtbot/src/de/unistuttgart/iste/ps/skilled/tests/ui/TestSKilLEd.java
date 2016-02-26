@@ -2,6 +2,9 @@ package de.unistuttgart.iste.ps.skilled.tests.ui;
 
 import java.io.File;
 
+import javax.swing.KeyStroke;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotEclipseEditor;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
@@ -35,9 +38,9 @@ public class TestSKilLEd {
 	}
 
 	/**
+	 * 
 	 * Basic test: Create a new SKilL-Project and a SKilL-File in the project
 	 * and write some content in it.
-	 * 
 	 */
 	@Test
 	public void testCreateSkillProject() {
@@ -74,6 +77,7 @@ public class TestSKilLEd {
 	}
 	
 	/**
+	 * 
 	 * Test for the remove cycle quickfix (Remove Type).
 	 */
 	@Test
@@ -95,7 +99,8 @@ public class TestSKilLEd {
 	
 	
 	/**
-	 * Test for the rename type Quickfix. 
+	 * 
+	 * Test for the rename type quickfix. 
 	 */
 	@Test
 	public void testRenameTypeQuickfix(){
@@ -118,7 +123,8 @@ public class TestSKilLEd {
 	}
 	
 	/**
-	 * Test for the rename field Quickfix. 
+	 * 
+	 * Test for the rename field quickfix. 
 	 */
 	@Test
 	public void testRenameFieldQuickfix(){
@@ -139,6 +145,59 @@ public class TestSKilLEd {
 		}
 		editor.saveAndClose();
 	}
+	
+	/**
+	 * 
+	 * This test tests the organize import quickfix (Add missing File).
+	 */
+	@Test
+	public void testAddMissingFileQuickfix(){
+		String testFile = "importQuickfixTest1-0.skill";
+		String testFile2 = "importQuickfixTest1-2.skill";
+		createSKilLFileWithContentInTestProject(testFile, "B1ImportType{ }");
+		createSKilLFileWithContentInTestProject(testFile2, "A: B1ImportType{ }");
+		SWTBotEclipseEditor editor = bot.editorByTitle(testFile2).toTextEditor();
+		editor.navigateTo(0, 8);
+		bot.sleep(5000);
+		System.out.println("count: "+editor.getQuickfixListItemCount());
+		for(String s: editor.getQuickFixes()){
+			if(s.equals("Add missing File")){
+				editor.quickfix(s);
+			}
+		}
+		if(!editor.getText().contains("include \""+testFile+"\"")){
+			throw new AssertionError();
+		}
+		editor.saveAndClose();
+	}
+	
+	/**
+	 * 
+	 * This test tests the organize import quickfix (Organize imports).
+	 */
+	@Test
+	public void testOrganizeImportsQuickfix(){
+		String testFile = "importQuickfixTest2-0.skill";
+		String testFile2 = "importQuickfixTest2-2.skill";
+		String testFile3 = "importQuickfixTest2-3.skill";
+		createSKilLFileWithContentInTestProject(testFile, "B2ImportType{ }");
+		createSKilLFileWithContentInTestProject(testFile2, "A: B2ImportType{ } \n B:C2ImportType{}");
+		createSKilLFileWithContentInTestProject(testFile3, "C2ImportType{ }");
+		SWTBotEclipseEditor editor = bot.editorByTitle(testFile2).toTextEditor();
+		editor.navigateTo(0, 8);
+		bot.sleep(5000);
+		System.out.println("count: "+editor.getQuickfixListItemCount());
+		for(String s: editor.getQuickFixes()){
+			if(s.equals("Organize imports")){
+				editor.quickfix(s);
+			}
+		}
+		if(!(editor.getText().contains("include \""+testFile+"\"")&&(editor.getText().contains("include \""+testFile3 +"\"")))){
+			throw new AssertionError();
+		}
+		editor.saveAndClose();
+	}
+	
 	
 	
 	/**
@@ -184,14 +243,13 @@ public class TestSKilLEd {
 		}catch(WidgetNotFoundException e){
 			throw new AssertionError(); //Import failed
 		}		
-		
 	}
 	
 	/**
+	 * 
 	 * This test opens a SKilL-File specified in the specification (2.3) and
 	 * checks if it is opened in the specified time. File is specified to be
 	 * opened in a maximum of 50 ms.
-	 * 
 	 */
 	@Test
 	public void openFileTimeSpecified() {
@@ -208,6 +266,26 @@ public class TestSKilLEd {
 		System.out.println("File opened in " + timeDiff + " ms.");
 	}
 
+	/**
+	 * This method deletes a file in the testProject.
+	 * @param filename Name of the file
+	 */
+	private void deleteFileInTestProject(String filename){
+		System.out.println(1);
+		bot.viewByTitle(projectView);
+		System.out.println(2);
+		bot.sleep(1000);
+		bot.tree().getTreeItem(testProject).getNode(filename).select();//.pressShortcut(SWT.NONE, SWT.DEL,(char) SWT.NONE);
+
+		bot.sleep(1000);
+		System.out.println(3);
+		bot.menu("Edit").menu("Delete").click();
+
+		bot.sleep(1000);
+		System.out.println(4);
+		bot.button("OK").click();
+	}
+	
 	
 	/**
 	 * Get the path of the current workspace.
