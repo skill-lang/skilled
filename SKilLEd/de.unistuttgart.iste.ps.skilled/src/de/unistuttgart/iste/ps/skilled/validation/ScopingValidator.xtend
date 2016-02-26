@@ -38,7 +38,7 @@ class ScopingValidator extends AbstractSKilLComposedValidatorPart {
   @Check
   def checkFileDependencies(File file) {
     if (services.getProject(file) != null) {
-      var Set<File> files = services.getAll(file);
+      var Set<File> files = services.getAll(file, true);
       dependencyGraph = new DependencyGraph();
       dependencyGraph.generateIgnoreOrigin(file, files);
     }

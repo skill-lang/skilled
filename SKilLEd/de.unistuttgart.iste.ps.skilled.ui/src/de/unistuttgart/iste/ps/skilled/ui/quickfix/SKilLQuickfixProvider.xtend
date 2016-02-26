@@ -27,7 +27,6 @@ import java.util.LinkedList
 import java.util.List
 import java.util.Set
 import org.apache.log4j.Logger
-
 import org.eclipse.core.resources.IWorkspaceRoot
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.Path
@@ -518,7 +517,7 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       return
     }
     
-    dependencyGraph.generateIgnoreOrigin((file as File), services.getAll(file as File))
+    dependencyGraph.generateIgnoreOrigin((file as File), services.getAll(file as File, true))
     
     val org = new SKilLOrganizeImportsHandler(dependencyGraph)
     org.organizeImportsWholeProject(file as File)
@@ -534,7 +533,7 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
       return;
     }
 
-    dependencyGraph.generateIgnoreOrigin((file as File), services.getAll(file as File))
+    dependencyGraph.generateIgnoreOrigin((file as File), services.getAll(file as File, true))
     val org = new SKilLImportOrganizer(dependencyGraph)  
     val missing = dependencyGraph.getMissingIncludes((file as File).eResource)
 

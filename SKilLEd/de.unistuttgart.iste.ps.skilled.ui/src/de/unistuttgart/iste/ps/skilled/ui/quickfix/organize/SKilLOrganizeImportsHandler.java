@@ -92,7 +92,7 @@ public class SKilLOrganizeImportsHandler {
 	public void organizeImportsWholeProject(File file) {
 		IProject project = services.getProject(file);
 		File main = services.getMainFile(file);
-		Set<File> files = services.getAll(file);
+		Set<File> files = services.getAll(file, true);
 		StringBuilder sb = new StringBuilder();
 
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
