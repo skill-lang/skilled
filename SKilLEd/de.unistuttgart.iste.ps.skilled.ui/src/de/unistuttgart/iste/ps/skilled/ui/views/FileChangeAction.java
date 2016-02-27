@@ -16,6 +16,7 @@ import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
  * Handle the ChangeActions of files in the editor.
  * 
  * @author Nico Rusam
+ * @author Ken Singer
  * @category GUI
  *
  */
@@ -38,23 +39,22 @@ public class FileChangeAction {
 
             @Override
             public void notHandled(String arg0, NotHandledException arg1) {
-                System.out.println("save notHandled");
+                // not used
             }
 
             @Override
             public void postExecuteFailure(String arg0, ExecutionException arg1) {
-                System.out.println("save ExecuteFailure");
+                // not used
             }
 
             @Override
             public void postExecuteSuccess(String arg0, Object arg1) {
-                System.out.println("save ExecuteSuccess");
                 indexFile();
             }
 
             @Override
             public void preExecute(String arg0, ExecutionEvent arg1) {
-                System.out.println("save preExecute");
+                // not used
             }
 
         });
@@ -71,23 +71,22 @@ public class FileChangeAction {
 
             @Override
             public void notHandled(String arg0, NotHandledException arg1) {
-                System.out.println("saveAll nothandled");
+                // not used
             }
 
             @Override
             public void postExecuteFailure(String arg0, ExecutionException arg1) {
-                System.out.println("saveAll ExecuteFailure");
+                // not used
             }
 
             @Override
             public void postExecuteSuccess(String arg0, Object arg1) {
-                System.out.println("saveAll ExecuteSuccess");
                 indexFile();
             }
 
             @Override
             public void preExecute(String arg0, ExecutionEvent arg1) {
-                System.out.println("saveAll preExecute");
+                // not used
             }
 
         });
@@ -104,28 +103,32 @@ public class FileChangeAction {
 
             @Override
             public void notHandled(String arg0, NotHandledException arg1) {
-                System.out.println("import nothandled");
+                // not used
             }
 
             @Override
             public void postExecuteFailure(String arg0, ExecutionException arg1) {
-                System.out.println("import ExecuteFailure");
+                // not used
             }
 
             @Override
             public void postExecuteSuccess(String arg0, Object arg1) {
-                System.out.println("import ExecuteSuccess");
                 indexFile();
             }
 
             @Override
             public void preExecute(String arg0, ExecutionEvent arg1) {
-                System.out.println("import preExecute");
+                // not used
             }
 
         });
     }
 
+    /**
+     * indexes the file and refreshs the toolview
+     * 
+     * @return
+     */
     private boolean indexFile() {
         boolean back = false;
         if (toolview != null && toolview.getActiveProject() != null) {
@@ -133,11 +136,15 @@ public class FileChangeAction {
                 ToolUtil.deleteReportToolErrors(toolview.getActiveProject());
                 back = ToolUtil.indexing(toolview.getActiveProject());
             } catch (CoreException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            toolview.setdoIndexing(true);
-            toolview.refresh();
+
+            if (toolview.getTabFolder().getSelectionIndex() == 1)
+                toolview.reloadTypelist();
+            else if (toolview.getTabFolder().getSelectionIndex() == 2)
+                toolview.reloadFieldList();
+            else
+                toolview.refresh();
         }
         return back;
     }

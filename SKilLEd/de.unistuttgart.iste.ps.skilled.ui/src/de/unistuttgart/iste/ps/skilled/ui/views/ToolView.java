@@ -94,9 +94,7 @@ public class ToolView extends ViewPart {
 
     @Override
     public void setFocus() {
-        parent.setFocus();
-        shell.setFocus();
-        tabFolder.setFocus();
+        tabFolder.setSelection(toolTabItem);
     }
 
     /**
@@ -140,6 +138,8 @@ public class ToolView extends ViewPart {
      */
     void reloadFieldList() {
         reloadTypelist();
+        selectedType = skillFile.Types().stream()
+                .filter(type -> type.getName().toLowerCase().equals(selectedType.getName().toLowerCase())).findFirst().get();
         buildFieldTree();
         tabFolder.setSelection(fieldTabItem);
     }
@@ -534,27 +534,6 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Get the {@link CTabItem CTabItem} for the fields.
-     * 
-     * @category Getter
-     * @return {@link CTabItemt CTabItem}
-     */
-    CTabItem getFieldTabItem() {
-        return fieldTabItem;
-    }
-
-    /**
-     * Set the {@link CTabItem CTabItem} for the fields.
-     * 
-     * @category Setter
-     * @param fieldTabItem
-     *            the CTabItem for the fields.
-     */
-    void setFieldTabItem(CTabItem fieldTabItem) {
-        this.fieldTabItem = fieldTabItem;
-    }
-
-    /**
      * Get the shell.
      * 
      * @category Getter
@@ -591,5 +570,24 @@ public class ToolView extends ViewPart {
      */
     public void setdoIndexing(boolean doIndexing) {
         this.doIndexing = doIndexing;
+    }
+
+    /**
+     * returns the {@link CTabFolder tabfolder} of the toolview
+     * 
+     * @return te {@link CTabFolder tabfolder} of the toolview
+     */
+    public CTabFolder getTabFolder() {
+        return tabFolder;
+    }
+
+    /**
+     * sets the {@link CTabFolder tabfolder} of the toolview
+     * 
+     * @param tabFolder
+     *            - {@link CTabFolder}
+     */
+    public void setTabFolder(CTabFolder tabFolder) {
+        this.tabFolder = tabFolder;
     }
 }
