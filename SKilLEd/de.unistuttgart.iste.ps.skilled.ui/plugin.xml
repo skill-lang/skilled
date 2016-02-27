@@ -489,6 +489,80 @@
      </perspectiveExtension>
 
   </extension>
+  <extension
+        point="org.eclipse.ui.commands">
+     <command
+           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.tools.imprt.ImportBinaryHandler"
+           id="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
+           name="Import Binary File">
+     </command>
+  </extension>
+  <extension
+        point="org.eclipse.ui.bindings">
+     <key
+           commandId="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
+           contextId="org.eclipse.ui.contexts.window"
+           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+           sequence="M1+4">
+     </key>
+  </extension>
+  <extension
+  		point="org.eclipse.ui.bindings">
+  		<key
+  			commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.extractspecification.command"
+  			             contextId="org.eclipse.ui.contexts.window"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+9">
+        </key>
+    </extension>
+	<extension
+		  point="org.eclipse.ui.commands">
+	   <command
+	  		defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.SortTypesHandler"
+	  		id="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
+	  		name="Sort Usertypes">
+	   </command>
+  </extension>
+  <extension
+  		point="org.eclipse.ui.commands">
+  		<command
+  			defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.extractspecification.ExtractSpecificationHandler"
+  			id="de.unistuttgart.iste.ps.skilled.ui.refactoring.extractspecification.command"
+  			name="Extract Usertypes">
+  		</command>
+  	</extension>
+	<extension
+		  point="org.eclipse.ui.menus">
+	   <menuContribution
+	   		 allPopups="false"
+	   		 locationURI="menu:org.eclipse.ui.main.menu">
+	   	  <menu
+	   	  		id="SKilLEdMenu"
+	   	  		label="SKilLEd">
+          <command
+                commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinedfiles.command"
+                label="Combine .skill-files"
+                style="push"
+                tooltip="Combine multiple .skill-files">
+          </command>
+          <command
+                commandId="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
+                label="Import Binary File"
+                style="push">
+          </command>
+	   	  	 <command
+	   	  	 	   commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
+	   	  	 	   label="Sort Usertypes"
+	   	  	 	   style="push">
+	   	  	 </command>
+	   	  	 <command
+	   	  	 		commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.extractspecification.command"
+	   	  	 		label="Extract Usertypes"
+	   	  	 		style="push">
+	   	  	 </command>
+	   	  </menu>
+	   </menuContribution>
+  </extension>
   	<extension
 		  point="org.eclipse.ui.bindings">
       <key

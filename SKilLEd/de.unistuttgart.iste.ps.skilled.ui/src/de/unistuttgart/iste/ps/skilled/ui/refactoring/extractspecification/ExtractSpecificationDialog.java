@@ -2,6 +2,7 @@ package de.unistuttgart.iste.ps.skilled.ui.refactoring.extractspecification;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -41,6 +42,7 @@ import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.utils.EditorUtils;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.validation.Issue;
+import org.eclipse.xtext.xbase.lib.Extension;
 
 import com.google.inject.Inject;
 
@@ -58,10 +60,10 @@ import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
  *
  */
 public class ExtractSpecificationDialog {
-    
 
     @Inject
-    static ValidationTestHelper helper;
+    @Extension
+    static ValidationTestHelper helper = new ValidationTestHelper();
 
     static List<TypeDeclaration> declarations;
     TypeDeclaration[] checkedDeclarations = null;
@@ -72,6 +74,7 @@ public class ExtractSpecificationDialog {
     String folderPath;
     String fileName;
     static IPath currentFilePath;
+    static IXtextDocument xtextDocument = null;
 
     /**
      * Creates dialog window
@@ -90,8 +93,7 @@ public class ExtractSpecificationDialog {
     }
 
     private static boolean getDeclarations() {
-        IXtextDocument xtextDocument = null;
-        if (EditorUtils.getActiveXtextEditor() != null || EditorUtils.getActiveXtextEditor().getDocument() == null)
+        if (EditorUtils.getActiveXtextEditor() == null || EditorUtils.getActiveXtextEditor().getDocument() == null)
             return false;
         xtextDocument = EditorUtils.getActiveXtextEditor().getDocument();
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -103,17 +105,20 @@ public class ExtractSpecificationDialog {
 
             @Override
             public java.lang.Void exec(XtextResource state) throws Exception {
-                de.unistuttgart.iste.ps.skilled.sKilL.File file = (de.unistuttgart.iste.ps.skilled.sKilL.File) new SKilLServices()
-                        .getAll(state).toArray()[0];
-                List<Issue> issues = helper.validate(file);
+                //only allow extraction if file has no errors
+                List<Issue> issues = helper.validate(state);
                 for (Issue i : issues) {
                     if (i.getSeverity().toString().equals("ERROR")) {
                         JOptionPane.showMessageDialog(null, "The file must not contain errors!");
                         return null;
                     }
                 }
+                
+                de.unistuttgart.iste.ps.skilled.sKilL.File file = (de.unistuttgart.iste.ps.skilled.sKilL.File) new SKilLServices()
+                        .getAll(state).toArray()[0];
                 EList<Declaration> declarationList = file.getDeclarations();
 
+                //only add user types and interfaces
                 for (Declaration d : declarationList) {
                     if (d instanceof TypeDeclaration) {
                         declarations.add((TypeDeclaration) d);
@@ -284,20 +289,41 @@ public class ExtractSpecificationDialog {
                             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
                     if (overwrite == JOptionPane.YES_OPTION) {
                         fExistC.delete();
-                        ExtractSpecification.run(checkedDeclarations, fExistC, currentFilePath);
-                        // Reset save location
-                        saveLocation = "";
-                        saveLocationText.setText(saveLocation);
-                        shell.dispose();
+                        executeExtraction(fExistC);
+                        
                     }
                 } else {
-                    ExtractSpecification.run(checkedDeclarations, fExistC, currentFilePath);
-                    // Reset save location
-                    saveLocation = "";
-                    saveLocationText.setText(saveLocation);
-                    shell.dispose();
+                    executeExtraction(fExistC);
                 }
 
+            }
+
+            private void executeExtraction(File file) {
+                // remove declarations from old file
+                xtextDocument.modify(new IUnitOfWork<Void, XtextResource>() {
+
+                    @Override
+                    public java.lang.Void exec(XtextResource state) throws Exception {
+                        de.unistuttgart.iste.ps.skilled.sKilL.File file = (de.unistuttgart.iste.ps.skilled.sKilL.File) new SKilLServices()
+                                .getAll(state).toArray()[0];
+                        EList<Declaration> declarationList = file.getDeclarations();
+                        declarationList.removeAll(Arrays.asList(checkedDeclarations));
+                        
+                        // remove unnecessary imports
+                        List<Issue> issues = helper.validate(state);
+                        for (Issue i : issues) {
+                            System.out.println(i.getCode());
+                        }
+                        return null;
+                    }
+                    
+                });
+                // create new file
+                ExtractSpecification.run(checkedDeclarations, file, currentFilePath);
+                // Reset save location
+                saveLocation = "";
+                saveLocationText.setText(saveLocation);
+                shell.dispose();
             }
         });
 
