@@ -91,11 +91,13 @@ public class ExportTools {
             return;
         }
 
+        // Get tool information directly from .skills file so that Toolview does not need to be open.S
         if (skillfile.Tools() != null) {
             skillfile.Tools().forEach(tool -> allToolList.add(tool));
             skillfile.Tools().forEach(t -> pathList.add(path));
         }
 
+        // List of all tools in the .skills file
         if (allToolList.size() > 0) {
             toolNameList = new ArrayList<String>();
             for (int i = 0; i < allToolList.size(); i++) {
@@ -104,6 +106,7 @@ public class ExportTools {
             }
         }
 
+        // List of the file paths for each of the tools
         if (pathList.size() > 0) {
             toolPathList = new ArrayList<String>();
             for (int i = 0; i < pathList.size(); i++) {
@@ -169,7 +172,7 @@ public class ExportTools {
         gridDataLabel2.horizontalSpan = 1;
         lSaveLocation.setLayoutData(gridDataLabel2);
 
-        // Export location here
+        // Textfield for export location here
         Text tSaveLocation = new Text(shell, SWT.BORDER | SWT.SINGLE);
         tSaveLocation.setText(saveLocation);
         GridData gridDataWidgetsSmall = new GridData();
@@ -186,6 +189,7 @@ public class ExportTools {
             }
         });
 
+        // Browse button
         Button bSaveLocation = new Button(shell, SWT.PUSH);
         bSaveLocation.setText("Browse");
         GridData gridDataButtons = new GridData();
@@ -220,16 +224,20 @@ public class ExportTools {
             public void widgetSelected(SelectionEvent event) {
 
                 checkSave = new File(saveLocation);
+                // Check if exported file is a .skill file
                 if (!saveLocation.endsWith(".skill") || checkSave.isDirectory()) {
                     ShowMessage("Invalid export format!", "Invalid Export Format");
                     return;
-                } else if (checkSave.exists()) {
+                }
+                // If file already exists in the export location, ask user if they want to overwrite the file. Clicking "No"
+                // will cancel the export.
+                else if (checkSave.exists()) {
                     saveName = tSaveLocation.getText().substring(tSaveLocation.getText().lastIndexOf(File.separator) + 1);
                     int overwrite = ShowMessageOption();
                     if (overwrite == JOptionPane.YES_OPTION) {
                         checkSave.delete();
                         combineFiles();
-                        // Reset text fields
+                        // Reset fields
                         name = "";
                         saveLocation = "";
                         allToolList.clear();
@@ -244,7 +252,6 @@ public class ExportTools {
                 // Create tool file
                 else {
                     combineFiles();
-                    shell.dispose();
                     name = "";
                     saveLocation = "";
                     allToolList.clear();
@@ -253,6 +260,7 @@ public class ExportTools {
                     toolPathList = null;
                     cSelectTool.removeAll();
                     skillfile = null;
+                    shell.dispose();
 
                 }
 
@@ -294,9 +302,12 @@ public class ExportTools {
 
         }
         for (File file : listofFiles) {
+            // If object is a file and ends with ".skill", add file to array list
             if (file.isFile() && file.getName().endsWith(".skill")) {
                 checkFiles.add(file);
-            } else if (file.isDirectory()) {
+            }
+            // If object is a directory, check it for files with file extension ".skill"
+            else if (file.isDirectory()) {
                 listAllFiles(file.getAbsolutePath(), checkFiles);
             }
         }
@@ -335,8 +346,10 @@ public class ExportTools {
         listofFiles = new ArrayList<>();
         listAllFiles(fToolFolder, listofFiles);
 
+        // Head comment that says which tool the merged files belong to
         String fText = "# Tool " + name + "\n";
 
+        // Copy all text in the file except for the head comments
         for (File f : listofFiles) {
             FileInputStream fis;
             try {
@@ -357,8 +370,9 @@ public class ExportTools {
             }
 
         }
-        // Head comment that says which tool the merged files belong to
+
         try {
+            // Write all text (without headcomments) into the exported file
             FileWriter fw = new FileWriter(checkSave, true);
             fw.write(fText);
             fw.close();
@@ -368,6 +382,14 @@ public class ExportTools {
 
     }
 
+    /**
+     * Creates error message dialog
+     * 
+     * @param string
+     *            - content of message dialog
+     * @param string2
+     *            - title of message dialog
+     */
     @SuppressWarnings("static-method")
     private void ShowMessage(String string, String string2) {
         EventQueue.invokeLater(new Runnable() {
@@ -378,6 +400,10 @@ public class ExportTools {
         });
     }
 
+    /**
+     * Creates a yes-no option message dialog
+     * 
+     */
     private int ShowMessageOption() {
         EventQueue.invokeLater(new Runnable() {
             @Override

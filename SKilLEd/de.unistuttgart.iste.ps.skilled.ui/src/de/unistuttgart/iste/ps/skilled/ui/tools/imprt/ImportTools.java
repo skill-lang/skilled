@@ -32,7 +32,7 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
 
 
 /**
- * This class provides the dialog window for "Export Tools" which allows the user to export a certain tool to a location of
+ * This class provides the dialog window for "Import Tools" which allows the user to export a certain tool to a location of
  * his or her choice
  * 
  * @author Leslie
@@ -135,7 +135,7 @@ public class ImportTools {
         });
 
         Label lImportRename = new Label(shell, SWT.WRAP | SWT.CENTER | SWT.NONE);
-        lImportRename.setText("Rename imported file to:\n(If blank, the name of the exported file will be used)");
+        lImportRename.setText("Rename imported file to:\n(If blank, the name of the imported file will be used)");
         GridData gridDataLabel1 = new GridData();
         gridDataLabel1.horizontalAlignment = SWT.CENTER;
         gridDataLabel1.horizontalSpan = 2;
@@ -297,6 +297,14 @@ public class ImportTools {
         return fFileName;
     }
 
+    /**
+     * Adds all types to the tool
+     * 
+     * @param ProjectPath
+     *            - absolute path of the project
+     * @param project
+     *            - IProject path of project
+     */
     public static boolean addAllToNewTool(String ProjectPath, IProject project) {
         SkillFile sk;
         try {
@@ -308,6 +316,14 @@ public class ImportTools {
         return true;
     }
 
+    /**
+     * Creates error message dialog
+     * 
+     * @param string
+     *            - content of message dialog
+     * @param string2
+     *            - title of message dialog
+     */
     @SuppressWarnings("static-method")
     private void ShowMessage(String string, String string2) {
         EventQueue.invokeLater(new Runnable() {

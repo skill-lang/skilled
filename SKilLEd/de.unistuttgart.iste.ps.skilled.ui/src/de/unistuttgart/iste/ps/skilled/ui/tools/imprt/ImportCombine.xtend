@@ -26,14 +26,11 @@ import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.emf.common.util.URI
 import org.eclipse.xtext.EcoreUtil2
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil
-import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile
-import de.ust.skill.common.java.api.SkillFile.Mode
-import de.unistuttgart.iste.ps.skilled.ui.views.ToolView
 
 /**
  * This class provides combine function for Import Tools. If there are 2 or more 
  * duplicate types when comparing the to-be-imported file with the files in the 
- * project folder then an error is given. If there is only one duplicate type, 
+ * project folder then an error is given. If there are only zero-or-one duplicate types, 
  * the fields from the duplicate type in the imported file will be transfered to
  * its identical type in one of the files in the project folder. 
  * 
@@ -54,6 +51,7 @@ class ImportCombine {
 	var String fProjectFilePath = "";
 	var String fFieldTypes;
 	var String fFieldNames;
+	var String fType;
 	var String fDeclarationType;
 	var String fEnumName;
 	var String fEnumList = "";
@@ -70,7 +68,6 @@ class ImportCombine {
 	var String fRestrictions = "";
 	var String fIsBraceOpen = "";
 	var String fIsBraceClosed = "";
-
 	var String fResArgB = "";
 	var String fResArgD = "";
 	var String fResArgL = "";
@@ -79,11 +76,8 @@ class ImportCombine {
 	var String fResArgList = "";
 
 	var String fHint
-
 	var String fIsBraceOpenHints = "";
-
 	var String fIsBraceClosedHints = "";
-
 	var String fHints = "";
 	var String fHArgD = "";
 	var String fHArgL = "";
@@ -116,20 +110,21 @@ class ImportCombine {
 		// Check types in all files in the project folder
 		for (de.unistuttgart.iste.ps.skilled.sKilL.File f : files) {
 			for (Declaration d : f.declarations) {
+				// Notes which type of declaration it is
 				if (d instanceof Usertype) {
-					fDeclarationType = "User"
+					fType = "User"
 				} else if (d instanceof Typedef) {
-					fDeclarationType = "Typedef";
+					fType = "Typedef";
 
 				} else if (d instanceof Enumtype) {
-					fDeclarationType = "Enum";
+					fType = "Enum";
 
 				} else if (d instanceof Interfacetype) {
-					fDeclarationType = "Interface";
+					fType = "Interface";
 				}
 				// add type to list of types if it is not in the list of types
-				if (!duplicateType.contains(fDeclarationType + " " + d.name)) {
-					duplicateType.add(fDeclarationType + " " + d.name);
+				if (!duplicateType.contains(fType + " " + d.name)) {
+					duplicateType.add(fType + " " + d.name);
 					var uri = EcoreUtil2.getNormalizedResourceURI(f);
 					uri = URI.createFileURI(uri.path);
 					if (uri.toFileString.startsWith(File.separator)) {
@@ -139,10 +134,11 @@ class ImportCombine {
 					} else {
 						fProjectFilePath = uri.toFileString.substring(uri.toFileString.indexOf(File.separator));
 					}
-					// Create absolute path of the file
+					// Create absolute path of the file which the type is in and add it to the list of type addresses
 					duplicateTypeAddress.add(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() +
 						fProjectFilePath);
-				} else {
+				} // If duplicate types found in project, return an error message
+				else {
 					JOptionPane.showMessageDialog(null, "Duplicate types in project!", "Duplicate Types",
 						JOptionPane.ERROR_MESSAGE);
 					return;
@@ -153,22 +149,23 @@ class ImportCombine {
 		// Check types in the selected tool file
 		for (Declaration d2 : fSelectedToolPath.declarations) {
 			if (d2 instanceof Usertype) {
-				fDeclarationType = "User"
+				fType = "User"
 			} else if (d2 instanceof Typedef) {
-				fDeclarationType = "Typedef";
+				fType = "Typedef";
 
 			} else if (d2 instanceof Enumtype) {
-				fDeclarationType = "Enum";
+				fType = "Enum";
 
 			} else if (d2 instanceof Interfacetype) {
-				fDeclarationType = "Interface";
+				fType = "Interface";
 			}
 
-			if (!duplicateType.contains(fDeclarationType + " " + d2.name)) {
-				duplicateType.add(fDeclarationType + " " + d2.name);
+			if (!duplicateType.contains(fType + " " + d2.name)) {
+				duplicateType.add(fType + " " + d2.name);
 				duplicateTypeAddress.add(ImportTools.getSelectedToolPath());
 			} else {
 				if (counter == 0) {
+					fDeclarationType = fType;
 					counter += 1;
 					fDuplicateTypeName = d2.name;
 					fDuplicateIndex = duplicateType.indexOf(fDeclarationType + " " + d2.name);
@@ -191,7 +188,9 @@ class ImportCombine {
 							fDuplicateFields += fFieldTypes + " " + fFieldNames + ";" + "\n";
 						}
 						if (d2 instanceof Usertype) {
+							// Grab restriction information from declaration and build it into a string
 							for (restriction : d2.restrictions) {
+								// Restriction name
 								fRestriction = restriction.restrictionName
 								if (restriction.isIsBraceOpen) {
 									fIsBraceOpen = "(";
@@ -200,31 +199,44 @@ class ImportCombine {
 									fIsBraceClosed = ")"
 								}
 								for (ra : restriction.restrictionArguments) {
-									if (ra.valueBoolean.value == 0) {
+									if (ra.valueBoolean != null && ra.valueBoolean.value == 0) {
 										fResArgB = false.toString;
-									} else {
+									} else if (ra.valueBoolean != null && ra.valueBoolean.value == 1) {
 										fResArgB = true.toString;
 									}
-									fResArgD = ra.valueDouble.toString + ", ";
-									fResArgL = ra.valueLong.toString + ", ";
-									fResArgS = ra.valueString + ", ";
-									fResArgT = ra.valueType.type.toString + ", ";
+									if (ra.valueDouble != null || ra.valueDouble != "") {
+										fResArgD = ra.valueDouble.toString + ", ";
+									}
+									if (ra.valueLong != null || ra.valueLong != "") {
+										fResArgL = ra.valueLong.toString + ", ";
+									}
+									if (ra.valueString != null || ra.valueString != "") {
+										fResArgS = ra.valueString + ", ";
+									}
+									if (ra.valueType != null || ra.valueType != "") {
+										fResArgT = ra.valueType.type.toString + ", ";
+									}
 									fResArgList += fResArgB + fResArgD + fResArgL + fResArgS + fResArgT;
+									// Clear restriction attributes
 									fResArgB = "";
 									fResArgD = "";
 									fResArgL = "";
 									fResArgS = "";
 									fResArgT = "";
 								}
+								// Check if Restriction Argument List (fResArgList) is empty, if not, remove last ", "
 								if (fResArgList.length > 2) {
 									fResArgList = fResArgList.substring(0, fResArgList.length - 2);
 								}
+								// Construct full restriction 
 								fRestrictions = fRestriction + fIsBraceOpen + fResArgList + fIsBraceClosed;
-								if (fRestrictions.length > 0) {
+								if (fRestriction.length > 0) {
 									fRestrictions = "@" + fRestrictions + "\n";
 								}
 							}
+							// Grab hint information from declaration and build it into a string
 							for (Hint hint : d2.hints) {
+								// Hint name
 								fHint = hint.hintName;
 								if (hint.isIsBraceOpen) {
 									fIsBraceOpenHints = "(";
@@ -233,19 +245,29 @@ class ImportCombine {
 									fIsBraceClosedHints = ")";
 								}
 								for (HintArgument ha : hint.hintArguments) {
-									fHArgD = ha.valueDouble.toString + ", ";
-									fHArgL = ha.valueLong.toString + ", ";
-									fHArgS = ha.valueString + ", ";
-									fHArgT = ha.valueType.type.toString + ", ";
+									if (ha.valueDouble != null || ha.valueDouble != "") {
+										fHArgD = ha.valueDouble.toString + ", ";
+									}
+									if (ha.valueLong != null || ha.valueLong != "") {
+										fHArgL = ha.valueLong.toString + ", ";
+									}
+									if (ha.valueString != null || ha.valueString != "") {
+										fHArgS = ha.valueString + ", ";
+									}
+									if (ha.valueType.type != null || ha.valueType.type != "") {
+										fHArgT = ha.valueType.type.toString + ", ";
+									}
 									fHArgList += fHArgD + fHArgL + fHArgS + fHArgT;
 									fHArgD = "";
 									fHArgL = "";
 									fHArgS = "";
 									fHArgT = "";
 								}
+								// Check if Restriction Argument List (fResArgList) is empty, if not, remove last ", "
 								if (fHArgList.length > 2) {
 									fHArgList = fHArgList.substring(0, fHArgList.length - 2);
 								}
+								// Construct full restriction 
 								fHints = fHint + fIsBraceOpenHints + fHArgList + fIsBraceClosedHints;
 								if (fHints.length > 0) {
 									fHints = "!" + fHints + "\n";
@@ -255,6 +277,7 @@ class ImportCombine {
 
 						}
 					} else if (d2 instanceof Enumtype) {
+						// Get list of enums
 						for (Enuminstance enum : d2.instances) {
 							fEnumName = enum.name.toString.substring(enum.name.toString.indexOf("name: ") + 1);
 							fEnumList += fEnumName + ",";
@@ -303,7 +326,7 @@ class ImportCombine {
 				FileUtils.copyFile(fSource, fDestinationRenamed);
 			}
 		} else {
-			// If type name already exists, merge
+			// If type name already exists, restructure
 			var fFindDuplicatedType = duplicateType.get(fDuplicateIndex);
 			var fFindDuplicatedPath = duplicateTypeAddress.get(fDuplicateIndex);
 
@@ -363,41 +386,56 @@ class ImportCombine {
 
 				var String fWriteFields = fields + "\n" + fDuplicateFields;
 
+				// i.e. A
 				if (!fPreviousLineWasUsertype && fDeclarationType.equals("User") &&
 					line.toLowerCase.startsWith(fFindDuplicatedType.toLowerCase) && !line.contains(";")) {
-					fText += fComment + fRestrictions + fHints + line + "\n";
+					fText += fComment + line + "\n";
 					fPreviousLineWasUsertype = true;
-				} else if (fPreviousLineWasUsertype && !line.contains("}")) {
-					fText += line + "\n" + "	" + fDuplicateFields;
+				} // i.e. {...
+				else if (fPreviousLineWasUsertype && !line.contains("}")) {
+					if (line.contains("{")) {
+						fText += line + "\n" + "	" + fRestrictions + fHints + fDuplicateFields;
+					}
+					else {
+						fText += "	" + fRestrictions + fHints + fDuplicateFields + line + "\n";
+					}
 					fPreviousLineWasUsertype = false;
-				} else if (isUsertype && !line.contains("}")) {
-					fText += fComment + fRestrictions + fHints + line + "\n" + "	" + fDuplicateFields;
+				} // i.e. A{...
+				else if (isUsertype && !line.contains("}")) {
+					fText += fComment + line + "\n" + "	  " + fRestrictions + fHints + fDuplicateFields;
 					fPreviousLineWasUsertype = false;
-				} else if (fPreviousLineWasUsertype && line.contains("}")) {
+				} // i.e. {...}
+				else if (fPreviousLineWasUsertype && line.contains("}")) {
 					line = line.substring(0, line.length - 1);
-					fText += line + "\n" + "	" + fDuplicateFields + "}" + "\n";
+					fText += line + "\n" + "	" + fRestrictions + fHints + fDuplicateFields + "}" + "\n";
 					fPreviousLineWasUsertype = false;
-				} else if (isUsertype && line.contains("}")) {
+				} // i.e. A{...}
+				else if (isUsertype && line.contains("}")) {
 					line = line.substring(0, line.length - 1);
-					fText += fComment + fRestrictions + fHints + line + "\n" + "	" + fDuplicateFields + "}" + "\n";
+					fText += fComment + line + "\n" + "	  " + fRestrictions + fHints + fDuplicateFields + "}" + "\n";
 					fPreviousLineWasUsertype = false;
-				} else if (!fPreviousLineWasInterfacetype && fDeclarationType.equals("Interface") &&
+				} // i.e. interface A
+				else if (!fPreviousLineWasInterfacetype && fDeclarationType.equals("Interface") &&
 					line.toLowerCase.startsWith(fFindDuplicatedType.toLowerCase) && !line.contains(";")) {
 					fText += line + "\n";
 					fPreviousLineWasInterfacetype = true;
-				} else if (fPreviousLineWasInterfacetype && !line.contains("}")) {
+				} // i.e. { ...
+				else if (fPreviousLineWasInterfacetype && !line.contains("}")) {
 					fText += line + "\n" + "	" + fDuplicateFields;
 					fPreviousLineWasInterfacetype = false;
-				} else if (isInterfacetype && !line.contains("}")) {
-					fText += fComment + line + "\n" + "	" + fDuplicateFields;
+				} // i.e. interface A{ ...
+				else if (isInterfacetype && !line.contains("}")) {
+					fText += fComment + line + "\n" + "	  " + fDuplicateFields;
 					fPreviousLineWasInterfacetype = false;
-				} else if (fPreviousLineWasInterfacetype && line.contains("}")) {
+				} // i.e. {....}
+				else if (fPreviousLineWasInterfacetype && line.contains("}")) {
 					line = line.substring(0, line.length - 1);
 					fText += line + "\n" + "	" + fDuplicateFields + "}" + "\n";
 					fPreviousLineWasInterfacetype = false;
-				} else if (isInterfacetype && line.contains("}")) {
+				} // i.e. interface A { ... } 
+				else if (isInterfacetype && line.contains("}")) {
 					line = line.substring(0, line.length - 1);
-					fText += fComment + line + "\n" + "	" + fDuplicateFields + "}" + "\n";
+					fText += fComment + line + "\n" + "	  " + fDuplicateFields + "}" + "\n";
 					fPreviousLineWasInterfacetype = false;
 				} // i.e. enum A {
 				else if (!fPreviousLineWasEnumtype && fDeclarationType.equals("Enum") &&
@@ -433,6 +471,7 @@ class ImportCombine {
 			// Delete type from original file
 			var String fOriginalFileText = new String(Files.readAllBytes(Paths.get(ImportTools.getSelectedToolPath())));
 			fOriginalFileText = fOriginalFileText.replaceAll("\n+", " #nextline#");
+			// Remove duplicate type from exported file
 			fOriginalFileText = fOriginalFileText.toLowerCase.replaceAll(fFindDuplicatedType.toLowerCase +
 				"( (.| )*?)? ?\\{.*?\\}", "");
 			fOriginalFileText = fOriginalFileText.replaceAll("#nextline#", "\n");
@@ -448,7 +487,6 @@ class ImportCombine {
 					// Remake to be imported file with the deleted duplicate types 
 					fw2.write(fOriginalFileText);
 					fw2.close;
-
 				}
 			} else {
 				FileUtils.copyFile(fSource, fDestinationRenamed);
@@ -460,19 +498,24 @@ class ImportCombine {
 
 				}
 			}
-
+			fDuplicateFields = "";
 			duplicateType.clear();
 			duplicateTypeAddress.clear();
 			counter = 0;
 		}
-		
+
 		// Create tool
 		ToolUtil.createTool(ImportTools.getFileName(), project);
 		ImportTools.addAllToNewTool(fProjectPath, project);
-		
 
 	}
 
+	/**
+	 * Creates error message dialog
+	 * 
+	 * @param string - content of message dialog
+	 * @param string2 - title of message dialog
+	 */
 	def ShowMessage(
 		String string,
 		String string2
