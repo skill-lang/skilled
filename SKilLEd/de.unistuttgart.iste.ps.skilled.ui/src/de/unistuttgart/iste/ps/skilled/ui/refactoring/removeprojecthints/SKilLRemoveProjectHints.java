@@ -20,7 +20,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
@@ -42,6 +41,7 @@ public class SKilLRemoveProjectHints {
     /**
      * Remove hints from the file in the active editor window.
      */
+    @SuppressWarnings("static-method")
     public void runFromMenu() {
 
         final String linebreak = System.lineSeparator();
@@ -60,8 +60,8 @@ public class SKilLRemoveProjectHints {
             IPath path = ((FileEditorInput) input).getPath();
             String projectName = path.segment(basePath.segmentCount());
             LinkedList<java.io.File> fileList = new LinkedList<java.io.File>();
-            
-            //add all files in the project to a list
+
+            // add all files in the project to a list
             fileList.add(new File(basePath.append(projectName).toString()));
             int index = 0;
             while (index < fileList.size()) {
@@ -88,7 +88,7 @@ public class SKilLRemoveProjectHints {
                         }
                         br.close();
                     } catch (IOException e) {
-                        
+
                         // show error message in a notification window
                         StringBuilder sb = new StringBuilder("Error: ");
                         sb.append(e.getMessage());
@@ -115,19 +115,18 @@ public class SKilLRemoveProjectHints {
                     JOptionPane.showMessageDialog(null, "Please save the current file before removing hints!",
                             "File not saved!", JOptionPane.ERROR_MESSAGE);
                 }
-                
-                //replace the file with a file where the hints have been removed
+
+                // replace the file with a file where the hints have been removed
                 try {
                     FileWriter fw = new FileWriter(file, false);
                     fw.write(fCurrentContents);
                     fw.close();
                     fCurrentContents = "";
-                    root.getProject(projectName).refreshLocal(IResource.DEPTH_INFINITE,
-                            new NullProgressMonitor());
+                    root.getProject(projectName).refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
                     page.saveAllEditors(false);
                 } catch (IOException e) {
-                    
-                    //show error message in a notification window
+
+                    // show error message in a notification window
                     StringBuilder sb = new StringBuilder("Error: ");
                     sb.append(e.getMessage());
                     sb.append(linebreak);
@@ -149,8 +148,8 @@ public class SKilLRemoveProjectHints {
                     };
                     JOptionPane.showMessageDialog(null, jsp, "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (CoreException e) {
-                    
-                    //very unlikely that this will ever happen
+
+                    // very unlikely that this will ever happen
                     e.printStackTrace();
                 }
             }
