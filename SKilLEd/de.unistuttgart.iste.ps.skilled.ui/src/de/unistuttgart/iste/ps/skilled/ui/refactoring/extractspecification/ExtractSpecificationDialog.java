@@ -1,15 +1,25 @@
 package de.unistuttgart.iste.ps.skilled.ui.refactoring.extractspecification;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -48,7 +58,7 @@ import com.google.inject.Inject;
 
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration;
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration;
-import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
+import de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider;
 
 
 /**
@@ -66,7 +76,7 @@ public class ExtractSpecificationDialog {
     static ValidationTestHelper helper = new ValidationTestHelper();
 
     static List<TypeDeclaration> declarations;
-    TypeDeclaration[] checkedDeclarations = null;
+    static TypeDeclaration[] checkedDeclarations = null;
     Display d;
     File saveLocationFile = null;
     String saveLocation = "";
@@ -75,13 +85,17 @@ public class ExtractSpecificationDialog {
     String fileName;
     static IPath currentFilePath;
     static IXtextDocument xtextDocument = null;
+    static boolean hasErrors = false;
+    static IWorkbenchPage page = null;
+    static de.unistuttgart.iste.ps.skilled.sKilL.File file = null;
 
     /**
      * Creates dialog window
      * 
      */
     public void run() {
-        if (!getDeclarations())
+        hasErrors = false;
+        if (!getDeclarations() || hasErrors)
             return;
         Shell shell = new Shell(d);
         shell.setText("Extract User Types");
@@ -96,29 +110,30 @@ public class ExtractSpecificationDialog {
         if (EditorUtils.getActiveXtextEditor() == null || EditorUtils.getActiveXtextEditor().getDocument() == null)
             return false;
         xtextDocument = EditorUtils.getActiveXtextEditor().getDocument();
-        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         if (page == null || page.getActiveEditor() == null)
             return false;
         currentFilePath = ((FileEditorInput) page.getActiveEditor().getEditorInput()).getPath();
-        
+
         xtextDocument.readOnly(new IUnitOfWork<Void, XtextResource>() {
 
             @Override
             public java.lang.Void exec(XtextResource state) throws Exception {
-                //only allow extraction if file has no errors
+                // only allow extraction if file has no errors
                 List<Issue> issues = helper.validate(state);
                 for (Issue i : issues) {
                     if (i.getSeverity().toString().equals("ERROR")) {
                         JOptionPane.showMessageDialog(null, "The file must not contain errors!");
+                        hasErrors = true;
                         return null;
                     }
                 }
-                
-                de.unistuttgart.iste.ps.skilled.sKilL.File file = (de.unistuttgart.iste.ps.skilled.sKilL.File) new SKilLServices()
-                        .getAll(state).toArray()[0];
+
+                file = (de.unistuttgart.iste.ps.skilled.sKilL.File) state.getContents().get(0);
                 EList<Declaration> declarationList = file.getDeclarations();
 
-                //only add user types and interfaces
+                // only add user types and interfaces
+                declarations = new LinkedList<TypeDeclaration>();
                 for (Declaration d : declarationList) {
                     if (d instanceof TypeDeclaration) {
                         declarations.add((TypeDeclaration) d);
@@ -167,7 +182,11 @@ public class ExtractSpecificationDialog {
         tree.addCheckStateListener(new ICheckStateListener() {
             @Override
             public void checkStateChanged(CheckStateChangedEvent event) {
-                checkedDeclarations = (TypeDeclaration[]) tree.getCheckedElements();
+                Object[] checked = tree.getCheckedElements();
+                checkedDeclarations = new TypeDeclaration[checked.length];
+                for (int i = 0; i < checked.length; i++) {
+                    checkedDeclarations[i] = (TypeDeclaration) checked[i];
+                }
             }
         });
 
@@ -290,7 +309,7 @@ public class ExtractSpecificationDialog {
                     if (overwrite == JOptionPane.YES_OPTION) {
                         fExistC.delete();
                         executeExtraction(fExistC);
-                        
+
                     }
                 } else {
                     executeExtraction(fExistC);
@@ -300,26 +319,62 @@ public class ExtractSpecificationDialog {
 
             private void executeExtraction(File file) {
                 // remove declarations from old file
-                xtextDocument.modify(new IUnitOfWork<Void, XtextResource>() {
-
-                    @Override
-                    public java.lang.Void exec(XtextResource state) throws Exception {
-                        de.unistuttgart.iste.ps.skilled.sKilL.File file = (de.unistuttgart.iste.ps.skilled.sKilL.File) new SKilLServices()
-                                .getAll(state).toArray()[0];
-                        EList<Declaration> declarationList = file.getDeclarations();
-                        declarationList.removeAll(Arrays.asList(checkedDeclarations));
-                        
-                        // remove unnecessary imports
-                        List<Issue> issues = helper.validate(state);
-                        for (Issue i : issues) {
-                            System.out.println(i.getCode());
-                        }
-                        return null;
+                page.saveAllEditors(false);
+                // get file content
+                try {
+                    FileInputStream fis = new FileInputStream(currentFilePath.toFile());
+                    BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+                    String line;
+                    String fileContent = "";
+                    List<String> headComments = new LinkedList<String>();
+                    while ((line = br.readLine()) != null) {
+                        if (line.startsWith("#")) headComments.add(line);
+                        fileContent += line + System.lineSeparator();
                     }
-                    
-                });
+                    br.close();
+                    // delete types that were checked previously
+                    String[] declarations = fileContent.split("}");
+                    List<String> newDeclarations = new LinkedList<String>();
+                    for (String s : declarations) {
+                        for (TypeDeclaration decl : checkedDeclarations) {
+                            if (s.toLowerCase().replace(" ", "").contains(decl.getName().toLowerCase() + "{") ||
+                                    s.toLowerCase().replace(" ", "").contains(decl.getName().toLowerCase() + ":") ||
+                                    s.toLowerCase().replace(" ", "").contains(decl.getName().toLowerCase() + "with") ||
+                                    s.toLowerCase().replace(" ", "").contains(decl.getName().toLowerCase() +
+                                    "extends")) {
+                                s = "";
+                            }
+                            newDeclarations.add(s);
+                        }
+                    }
+                    // overwrite old file
+                    FileWriter fw = new FileWriter(currentFilePath.toFile(), false);
+                    for (String s : headComments) {
+                        fw.write(s);
+                    }
+                    for (String s : newDeclarations) {
+                        fw.write(s);
+                        if (s.contains("{"))
+                            fw.write("}");
+                    }
+                    fw.close();
+                    // refresh workspace
+                    IWorkspaceRoot root  = ResourcesPlugin.getWorkspace().getRoot();
+                    IPath basePath = root.getLocation();
+                    String projectName = currentFilePath.segment(basePath.segmentCount());
+                    root.getProject(projectName).refreshLocal(IResource.DEPTH_INFINITE,
+                            new NullProgressMonitor());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (CoreException e) {
+                    e.printStackTrace();
+                }
                 // create new file
-                ExtractSpecification.run(checkedDeclarations, file, currentFilePath);
+                ExtractSpecification.run(checkedDeclarations, file);
+                // organize imports
+                new SKilLQuickfixProvider().organizeImports(ExtractSpecificationDialog.file);
                 // Reset save location
                 saveLocation = "";
                 saveLocationText.setText(saveLocation);
