@@ -503,8 +503,8 @@
            allPopups="false"
            locationURI="menu:org.eclipse.ui.main.menu">
         <menu
-              id="SKilLMenu"
-              label="SKilL">
+              id="SKilLEdMenu"
+              label="SKilLEd">
            <command
                  commandId="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
                  label="Import Binary File"

@@ -1,0 +1,19 @@
+# Test Remove Hints
+
+/*
+ * A horrifying mutated creature
+ */
+Monster {
+
+  /*
+   * A Monster has a fixed set of fangs but they can
+   * rot due to radiation
+   */
+  const i8 fangs = 14;
+
+  /*
+   * Nobody cares about a monsters background
+   */
+  string backgroundStory;
+
+}

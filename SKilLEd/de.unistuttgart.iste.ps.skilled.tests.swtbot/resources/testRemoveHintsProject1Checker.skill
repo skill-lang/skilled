@@ -1,0 +1,7 @@
+# Test Remove Hints Project 1
+
+Monster {
+
+  string backgroundStory;
+
+}
