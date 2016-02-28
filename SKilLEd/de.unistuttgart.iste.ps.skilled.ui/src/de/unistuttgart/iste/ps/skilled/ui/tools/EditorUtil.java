@@ -34,10 +34,25 @@ import de.unistuttgart.iste.ps.skillls.tools.Tool;
 import de.unistuttgart.iste.ps.skillls.tools.Type;
 
 
+/**
+ * Useful methods for the ToolView to open the generated tool files.
+ * 
+ * @author Marco Link
+ *
+ */
 public class EditorUtil {
 
     private SKilLServices services = new SKilLServices();
 
+    /**
+     * Opens all tool specific skill files of a tool in the editor.
+     * 
+     * @param tool
+     *            which generated files should be opened.
+     * @param project
+     *            The project in which the tool is located.
+     * @return true if everything went fine, otherwise false
+     */
     public boolean openToolInEditor(Tool tool, IProject project) {
         try {
             refreshToolFolder(tool, project);
@@ -67,6 +82,17 @@ public class EditorUtil {
         return true;
     }
 
+    /**
+     * Opens the given type of a tool in the editor.
+     * 
+     * @param tool
+     *            in which the type is contained.
+     * @param type
+     *            The type which should be opened.
+     * @param project
+     *            The project in which the tool is located.
+     * @return true if everything went fine, otherwise false
+     */
     public boolean openTypeInEditor(Tool tool, Type type, IProject project) {
         try {
             refreshToolFolder(tool, project);
@@ -108,6 +134,17 @@ public class EditorUtil {
                 typeNameToMark.getTotalEndOffset());
     }
 
+    /**
+     * Opens the given field of a tool in the editor.
+     * 
+     * @param tool
+     *            in which the field is contained.
+     * @param field
+     *            The field which should be opened.
+     * @param project
+     *            The project in which the tool is located.
+     * @return true if everything went fine, otherwise false
+     */
     public boolean openFieldInEditor(Tool tool, de.unistuttgart.iste.ps.skillls.tools.Field field, IProject project) {
         try {
             refreshToolFolder(tool, project);
@@ -162,6 +199,17 @@ public class EditorUtil {
                 fieldToMark.getTotalEndOffset());
     }
 
+    /**
+     * Returns the location of a generated toolfile in the project.
+     * 
+     * @param tool
+     *            The tool in which the needed file is located.
+     * @param type
+     *            The type which is located in the needed toolfile.
+     * @param project
+     *            The project in which the tool is located.
+     * @return A URI of the needed toolfile.
+     */
     public static URI getToolFileURI(Tool tool, Type type, IProject project) {
         String originalFilePath = type.getFile().getPath();
         URI originalFileUri = URI.createPlatformResourceURI(originalFilePath, true);
@@ -185,6 +233,19 @@ public class EditorUtil {
         return URI.createPlatformResourceURI(path, true);
     }
 
+    /**
+     * Helping method which opens the editor and also moves the cursor at a specific location.
+     * 
+     * @param fileToOpen
+     *            The file which should be opened.
+     * @param startLineNumber
+     *            The line number in which the cursor should be positioned.
+     * @param charStart
+     *            The offset of the beginning char.
+     * @param charEnd
+     *            The end offset of the last char.
+     * @return true if everything went fine, otherwise false
+     */
     public static boolean openFileAtSpecificLocation(IFile fileToOpen, int startLineNumber, int charStart, int charEnd) {
         IWorkbench wb = PlatformUI.getWorkbench();
         IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
@@ -210,6 +271,15 @@ public class EditorUtil {
         return true;
     }
 
+    /**
+     * Refresehes a specific tool folder.
+     * 
+     * @param tool
+     *            The tool which folder should be refreshed.
+     * @param project
+     *            The project in which the tool is located.
+     * @throws CoreException
+     */
     public static void refreshToolFolder(Tool tool, IProject project) throws CoreException {
         IFolder folder = project.getFolder(".skillt/" + tool.getName());
         folder.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());

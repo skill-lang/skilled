@@ -578,10 +578,23 @@ public final class ToolUtil {
         }
     }
 
+    /**
+     * Deletes all markers of the broken Tools.
+     * 
+     * @param project
+     * @throws CoreException
+     */
     public static void deleteReportToolErrors(IProject project) throws CoreException {
         project.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
     }
 
+    /**
+     * Adds markers for all broken Tools.
+     * 
+     * @param breakageException
+     * @param project
+     * @throws CoreException
+     */
     public static void reportToolError(final BreakageException breakageException, final IProject project)
             throws CoreException {
         for (Tool brokenTool : breakageException.getTools()) {
