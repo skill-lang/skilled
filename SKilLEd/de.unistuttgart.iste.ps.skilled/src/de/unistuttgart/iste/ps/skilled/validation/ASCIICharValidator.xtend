@@ -9,6 +9,7 @@ import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
 
 /**
+ * This class contains the validation methods for non-ASCII names warnings.
  * @author Jan Berberich
  */
 class ASCIICharValidator extends AbstractDeclarativeValidator {
@@ -18,6 +19,10 @@ class ASCIICharValidator extends AbstractDeclarativeValidator {
 	public static val DECLARATION_HAS_NONASCII_CHARS = "declarationNonASCII"
 	public static val FIELD_HAS_NONASCII_CHARS = "fieldNonASCII"
 
+	/**
+	 * Checks if the name of the declaration has non-ASCII chars.
+	 * @dec The declaration to check.
+	 */
 	@Check
 	def void checkDeclarationIsPureASCII(Declaration dec) {
 		if (!CheckASCII.isPureAscii(dec.name)) {
@@ -26,6 +31,10 @@ class ASCIICharValidator extends AbstractDeclarativeValidator {
 		}
 	}
 
+	/**
+	 * Check if the field has non-ASCII chars
+	 * @f The field to check.
+	 */
 	@Check
 	def void checkFieldIsPureASCII(Field f) {
 		if (!CheckASCII.isPureAscii(f.fieldcontent.name)) {

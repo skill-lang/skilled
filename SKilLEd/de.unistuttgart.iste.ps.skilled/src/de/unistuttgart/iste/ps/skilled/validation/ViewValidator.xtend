@@ -17,8 +17,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.impl.InterfacetypeImpl
 import java.util.List
 
 /**
- * This class validates views.
- * 
+ * This class contains the validation methods for validating views.
  * @author Jan Berberich
  */
 class ViewValidator extends AbstractDeclarativeValidator {
@@ -30,13 +29,13 @@ class ViewValidator extends AbstractDeclarativeValidator {
 	override register(EValidatorRegistrar registar) {}
 
 	/**
-	 * This methods checks all views in CheckedTypeDeclaration.
+	 * This methods checks all views in checkedTypeDeclaration.
 	 * @param CheckedTypeDeclaration The TypeDeclaration the checked views are in.
 	 * 
 	 */
 	@Check
-	def validateViews(TypeDeclaration CheckedTypeDeclaration) {
-		for (Field f : CheckedTypeDeclaration.fields) {
+	def validateViews(TypeDeclaration checkedTypeDeclaration) {
+		for (Field f : checkedTypeDeclaration.fields) {
 			// Check if Field is a View
 			if ((f.fieldcontent instanceof View)) {
 				var boolean isUsertype = false; // becomes true if the as variable is a Usertype
@@ -53,17 +52,17 @@ class ViewValidator extends AbstractDeclarativeValidator {
 							eContainer as Declaration).name; // a
 						var String supertypeVarname = viewToCheck.fieldcontent.fieldcontent.name; // x
 						typesSearched.clear
-						var TypeDeclaration supertypeDec = searchSupertype(supertypeTypename, CheckedTypeDeclaration)
+						var TypeDeclaration supertypeDec = searchSupertype(supertypeTypename, checkedTypeDeclaration)
 						if (supertypeDec == null) {
 							// Error: A not a supertype of td
-							if (supertypeTypename.equals(CheckedTypeDeclaration.name)) {
+							if (supertypeTypename.equals(checkedTypeDeclaration.name)) {
 								error(
 									"Error: you must reference a type with a different name than the type the view is in.",
 									viewToCheck, SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
 							} else {
 								error(
 									"Error: " + supertypeTypename + " is not a supertype of " +
-										CheckedTypeDeclaration.name + ".", viewToCheck,
+										checkedTypeDeclaration.name + ".", viewToCheck,
 									SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
 							}
 

@@ -34,6 +34,11 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 
 	override register(EValidatorRegistrar registar) {}
 
+	/**
+	 * Searches for cyclic where dec is involved. If there is no 
+	 * cycle involving dec, search for multiple inheritence.
+	 * 
+	 */
 	@Check
 	def searchCyclicType(TypeDeclaration dec) {
 		// Index counter for Tarjan's strongly connected components algorithm
@@ -70,7 +75,7 @@ class InheritenceValidator extends AbstractDeclarativeValidator {
 	}
 
 	/**
-	 * Validates Multiple Inheritence for TypeDeclaration dec
+	 * Validates multiple inheritence for TypeDeclaration dec
 	 * 
 	 */
 	def void multipleInheritence(TypeDeclaration dec) {

@@ -11,65 +11,66 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-
 /**
  * @author Jan Berberich
  * 
- *         This field is used in the Quickfix for nonASCIICharWarnings. It opens a dialog to enter a new name for the Field
- *         or TypeDeclarationand changes the name to the entered name if the user clicks on the OK Button.
+ *         This field is used in the Quickfix for nonASCIICharWarnings. It opens
+ *         a dialog to enter a new name for the Field or TypeDeclarationand
+ *         changes the name to the entered name if the user clicks on the OK
+ *         Button.
  */
 public class ChangeNameField {
 
-    private String oldName = ""; // The old name of the element.
-    private SetName name; // The class used to change the name.
+	private String oldName = ""; // The old name of the element.
+	private SetName name; // The class used to change the name.
 
-    /**
-     * Opens the chanceNameField window.
-     */
-    public void open() {
-        // create Shell
-        Display d = Display.getDefault();
-        final Shell shell = new Shell(d);
-        shell.setText("Enter new Name");
-        // create textfield
-        final Text text1 = new Text(shell, SWT.NONE);
-        text1.setText(oldName);
-        // create Button
-        Button continueButton = new Button(shell, SWT.NONE);
-        continueButton.setText("OK");
-        continueButton.addListener(SWT.Selection, new Listener() {
-            @Override
-            public void handleEvent(Event e) {
-                switch (e.type) {
-                    case SWT.Selection:
-                        String newName = text1.getText();
-                        if (!newName.equals("")) {
-                            name.changeName(newName);
-                            shell.close();
-                        }
-                }
-            }
-        });
-        // set Layout
-        shell.setLayout(new GridLayout(1, true));
-        GridData gridData = new GridData();
-        text1.setLayoutData(gridData);
-        continueButton.setLayoutData(gridData);
-        Point newSize = shell.computeSize(400, 200, true);
-        shell.setSize(newSize);
-        gridData.horizontalAlignment = GridData.FILL;
-        gridData.verticalAlignment = GridData.FILL;
-        gridData.grabExcessHorizontalSpace = true;
-        gridData.grabExcessVerticalSpace = true;
-        shell.open();
-    }
+	/**
+	 * Opens the chanceNameField window.
+	 */
+	public void open() {
+		// create Shell
+		Display d = Display.getDefault();
+		final Shell shell = new Shell(d);
+		shell.setText("Enter new Name");
+		// create textfield
+		final Text text1 = new Text(shell, SWT.NONE);
+		text1.setText(oldName);
+		// create Button
+		Button continueButton = new Button(shell, SWT.NONE);
+		continueButton.setText("OK");
+		continueButton.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event e) {
+				switch (e.type) {
+				case SWT.Selection:
+					String newName = text1.getText();
+					if (!newName.equals("")) {
+						name.changeName(newName);
+						shell.close();
+					}
+				}
+			}
+		});
+		// set Layout
+		shell.setLayout(new GridLayout(1, true));
+		GridData gridData = new GridData();
+		text1.setLayoutData(gridData);
+		continueButton.setLayoutData(gridData);
+		Point newSize = shell.computeSize(400, 200, true);
+		shell.setSize(newSize);
+		gridData.horizontalAlignment = GridData.FILL;
+		gridData.verticalAlignment = GridData.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.grabExcessVerticalSpace = true;
+		shell.open();
+	}
 
-    public void setOldName(String oldName) {
-        this.oldName = oldName;
-    }
+	public void setOldName(String oldName) {
+		this.oldName = oldName;
+	}
 
-    public ChangeNameField(SetName name) {
-        this.name = name;
-    }
+	public ChangeNameField(SetName name) {
+		this.name = name;
+	}
 
 }
