@@ -1,0 +1,7 @@
+interface A{
+   i8 something;
+}
+  
+b {  
+   string something;  
+}

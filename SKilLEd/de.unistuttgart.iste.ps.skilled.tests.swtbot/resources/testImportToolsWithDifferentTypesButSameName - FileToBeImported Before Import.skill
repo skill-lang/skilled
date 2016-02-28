@@ -1,0 +1,5 @@
+typedef A i8;
+
+interface A {}
+
+enum A{something, else; i8 something;}

@@ -1,0 +1,8 @@
+enum A{
+   something, else; 
+   i8 something;
+}
+
+b {
+   i8 something;
+}

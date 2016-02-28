@@ -1,0 +1,9 @@
+# test import  
+
+A {
+   i8 something;
+}
+  
+b {  
+   string something;  
+}

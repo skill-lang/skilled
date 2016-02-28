@@ -1,0 +1,6 @@
+# Tool testExport
+
+A {
+	!ignore
+	i8 Test;
+}

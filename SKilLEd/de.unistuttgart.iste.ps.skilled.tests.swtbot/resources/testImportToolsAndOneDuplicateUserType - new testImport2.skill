@@ -1,0 +1,6 @@
+# Test Import
+A {
+  i8 something;
+  !ignore
+  i8 Test;
+}

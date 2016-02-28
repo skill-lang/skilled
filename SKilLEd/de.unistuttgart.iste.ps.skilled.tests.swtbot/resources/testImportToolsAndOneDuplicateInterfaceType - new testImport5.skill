@@ -1,0 +1,6 @@
+# Test Import
+
+interface A {
+	i8 Test;
+	i8 something;
+}
