@@ -35,11 +35,14 @@ public class TestImportTools {
     File workspaceDirectory = workspace.getRoot().getLocation().toFile();
     String workspacePath = workspaceDirectory.getAbsolutePath();
 
-    String classProjectPath = getClass().getProtectionDomain().getCodeSource().getLocation().toString().substring(5,
-            getClass().getProtectionDomain().getCodeSource().getLocation().toString().length() - 1);
-    String resourcePathGenericFileToBeImported = classProjectPath + File.separator + "resources" + File.separator
-            + "FileToBeImported.skill";
-    String resourcePath = classProjectPath + File.separator + "resources" + File.separator;
+    // String classProjectPath = getClass().getProtectionDomain().getCodeSource().getLocation().toString().substring(5,
+    // getClass().getProtectionDomain().getCodeSource().getLocation().toString().length() - 1);
+    // String resourcePathGenericFileToBeImported = classProjectPath + File.separator + "resources" + File.separator
+    // + "FileToBeImported.skill";
+    // String resourcePath = classProjectPath + File.separator + "resources" + File.separator;
+
+    String resourcePathGenericFileToBeImported = "resources" + File.separator + "FileToBeImported.skill";
+    String resourcePath = "resources" + File.separator;
 
     Keyboard key = KeyboardFactory.getSWTKeyboard();
     String originalImportedFile;
@@ -109,9 +112,6 @@ public class TestImportTools {
         originalImportedFile = originalImportedFile.replaceAll("\\s+", "");
         FileInProjectAfterImport = FileInProjectAfterImport.replaceAll("\\s+", "");
 
-        System.out.println(originalImportedFile);
-        System.out.println(FileInProjectAfterImport);
-
         // Check if the contents of the imported file are correct
         assertTrue(originalImportedFile.equals(FileInProjectAfterImport));
 
@@ -164,14 +164,13 @@ public class TestImportTools {
         try {
             newtestImport = new String(Files.readAllBytes(
                     Paths.get(workspacePath + File.separator + "TestImportTools2" + File.separator + "testImport2.skill")));
-            newtestImportChecker = new String(Files.readAllBytes(Paths.get(classProjectPath + File.separator + "resources"
-                    + File.separator + "testImportToolsAndOneDuplicateUserType - new testImport2.skill")));
+            newtestImportChecker = new String(Files.readAllBytes(
+                    Paths.get(resourcePath + "testImportToolsAndOneDuplicateUserType - new testImport2.skill")));
 
             newFileToBeImportedAfterImport = new String(Files.readAllBytes(Paths
                     .get(workspacePath + File.separator + "TestImportTools2" + File.separator + "FileToBeImported.skill")));
-            newFileToBeImportedAfterImportChecker = new String(
-                    Files.readAllBytes(Paths.get(classProjectPath + File.separator + "resources" + File.separator
-                            + "testImportToolsAndOneDuplicateUserType - FileToBeImported After Import.skill")));
+            newFileToBeImportedAfterImportChecker = new String(Files.readAllBytes(Paths
+                    .get(resourcePath + "testImportToolsAndOneDuplicateUserType - FileToBeImported After Import.skill")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -239,9 +238,8 @@ public class TestImportTools {
             newFileToBeImportedAfterImport = new String(
                     Files.readAllBytes(Paths.get(workspacePath + File.separator + "TestImportTools3" + File.separator
                             + "testImportToolsWithDifferentTypesButSameName - FileToBeImported Before Import.skill")));
-            newFileToBeImportedAfterImportChecker = new String(
-                    Files.readAllBytes(Paths.get(classProjectPath + File.separator + "resources" + File.separator
-                            + "testImportToolsWithDifferentTypesButSameName - FileToBeImported Before Import.skill")));
+            newFileToBeImportedAfterImportChecker = new String(Files.readAllBytes(Paths.get(
+                    resourcePath + "testImportToolsWithDifferentTypesButSameName - FileToBeImported Before Import.skill")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -297,9 +295,6 @@ public class TestImportTools {
         // Remove all whitespaces so that they do not affect the comparision
         originalImportedFile = originalImportedFile.replaceAll("\\s+", "");
         FileInProjectAfterImport = FileInProjectAfterImport.replaceAll("\\s+", "");
-
-        System.out.println(originalImportedFile);
-        System.out.println(FileInProjectAfterImport);
 
         // Check if the contents of the imported file are correct
         assertTrue(originalImportedFile.equals(FileInProjectAfterImport));
@@ -359,9 +354,8 @@ public class TestImportTools {
             newFileToBeImportedAfterImport = new String(
                     Files.readAllBytes(Paths.get(workspacePath + File.separator + "TestImportTools5" + File.separator
                             + "testImportToolsAndOneDuplicateInterfaceType - FileToBeImported Before Import.skill")));
-            newFileToBeImportedAfterImportChecker = new String(
-                    Files.readAllBytes(Paths.get(classProjectPath + File.separator + "resources" + File.separator
-                            + "testImportToolsAndOneDuplicateInterfaceType - FileToBeImported After Import.skill")));
+            newFileToBeImportedAfterImportChecker = new String(Files.readAllBytes(Paths.get(
+                    resourcePath + "testImportToolsAndOneDuplicateInterfaceType - FileToBeImported After Import.skill")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -418,15 +412,14 @@ public class TestImportTools {
         try {
             newtestImport = new String(Files.readAllBytes(
                     Paths.get(workspacePath + File.separator + "TestImportTools6" + File.separator + "testImport6.skill")));
-            newtestImportChecker = new String(Files.readAllBytes(Paths.get(classProjectPath + File.separator + "resources"
-                    + File.separator + "testImportToolsAndOneDuplicateEnumType - new testImport6.skill")));
+            newtestImportChecker = new String(Files.readAllBytes(
+                    Paths.get(resourcePath + "testImportToolsAndOneDuplicateEnumType - new testImport6.skill")));
 
             newFileToBeImportedAfterImport = new String(
                     Files.readAllBytes(Paths.get(workspacePath + File.separator + "TestImportTools6" + File.separator
                             + "testImportToolsAndOneDuplicateEnumType - FileToBeImported before Import.skill")));
-            newFileToBeImportedAfterImportChecker = new String(
-                    Files.readAllBytes(Paths.get(classProjectPath + File.separator + "resources" + File.separator
-                            + "testImportToolsAndOneDuplicateEnumType - FileToBeImported after Import.skill")));
+            newFileToBeImportedAfterImportChecker = new String(Files.readAllBytes(Paths
+                    .get(resourcePath + "testImportToolsAndOneDuplicateEnumType - FileToBeImported after Import.skill")));
         } catch (IOException e) {
             e.printStackTrace();
         }
