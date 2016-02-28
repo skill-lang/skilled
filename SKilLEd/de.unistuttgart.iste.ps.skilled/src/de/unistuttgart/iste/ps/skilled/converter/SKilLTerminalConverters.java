@@ -8,6 +8,8 @@ import com.google.inject.Inject;
 
 
 /**
+ * Extends the default converter to add conversion for hexadecimal values.
+ * 
  * @author Marco Link
  * @author Tobias Heck
  */

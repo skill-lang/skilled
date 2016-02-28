@@ -11,7 +11,6 @@ import de.unistuttgart.iste.ps.skilled.validation.restrictions.fields.UserTypeFi
 import de.unistuttgart.iste.ps.skilled.validation.restrictions.types.TypedefRestrictionValidator
 import de.unistuttgart.iste.ps.skilled.validation.restrictions.types.UserTypeRestrictionValidator
 import org.eclipse.xtext.validation.ComposedChecks
-import org.eclipse.xtext.validation.NamesAreUniqueValidator
 
 /**
  * The base validator, that calls all other validators

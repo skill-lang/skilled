@@ -26,7 +26,7 @@ class SKilLScopeProvider extends AbstractDeclarativeScopeProvider {
 	/**
 	 * Custom scoping which takes the generated tool files into account.
 	 * Root specification files cannot reference to files in the tools folder 
-	 * and tools files cannot reference to something outside its folder. 
+	 * and tool files cannot reference to something outside its folder. 
 	 */
 	override IScope getScope(EObject ctx, EReference ref) {
 		var scope = super.getScope(ctx, ref);

@@ -7,6 +7,9 @@ import org.eclipse.xtext.util.Strings;
 
 
 /**
+ * This class is used in combination with the Lexer. It will take care of the conversion of hexadecimal strings to a long *
+ * value.
+ * 
  * @author Marco Link
  */
 public class HEXINTValueConverter extends AbstractLexerBasedConverter<Long> {

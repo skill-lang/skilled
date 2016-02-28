@@ -24,6 +24,12 @@ import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
 import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph;
 
 
+/**
+ * This class contains helping methods for organize imports and the validation for included uris.
+ * 
+ * @author Marco Link
+ *
+ */
 public class SKilLImportOrganizer {
 
     private DependencyGraph dependencyGraph;
@@ -36,29 +42,13 @@ public class SKilLImportOrganizer {
         this.dependencyGraph = dependencyGraph;
     }
 
-    public String getOrganizedImportSection(File file) {
-        StringBuilder includes = new StringBuilder();
-        List<IncludeFile> test = getUnusedImports(file);
-        Set<URI> missing = dependencyGraph.getMissingIncludes(file.eResource());
-        test.addAll(getDuplicateIncludes(file));
-        for (Include inc : file.getIncludes()) {
-            for (IncludeFile incF : inc.getIncludeFiles()) {
-                if (!test.contains(incF)) {
-                    includes.append("include " + "\"" + incF.getImportURI() + "\"" + "\n");
-                }
-            }
-        }
-
-        for (URI u : missing) {
-            URI referencedURI = u.deresolve(file.eResource().getURI());
-            if (referencedURI != null) {
-                includes.append("include " + "\"" + referencedURI.path() + "\"" + "\n");
-            }
-
-        }
-        return includes.toString();
-    }
-
+    /**
+     * Checks for duplicate includes in a skill file.
+     * 
+     * @param file
+     *            The file for which the duplicate includes shall be returned.
+     * @return A list which includes all duplicated IncludeFiles (the element in the AST which contains the included uri).
+     */
     public static List<IncludeFile> getDuplicateIncludes(File file) {
         if (file == null) {
             return null;
@@ -77,35 +67,31 @@ public class SKilLImportOrganizer {
         return duplicates;
     }
 
-    public static List<Integer> getIndexOfDuplicateImports(List<URI> uris) {
-        List<Integer> index = new ArrayList<Integer>();
-        Set<URI> visited = new HashSet<URI>();
-        for (int i = 0; i < uris.size(); i++) {
-            if (visited.contains(uris.get(i))) {
-                index.add(i);
-            } else {
-                visited.add(uris.get(i));
-            }
-        }
-        return index;
-    }
-
+    /**
+     * Checks for unused includes in a skill file.
+     * 
+     * @param file
+     *            The file for which the unsued includes shall be returned.
+     * @return A list which includes all unused IncludeFiles (the element in the AST which contains the included uri).
+     */
     public List<IncludeFile> getUnusedImports(File file) {
         Map<URI, IncludeFile> map = new HashMap<URI, IncludeFile>();
         List<Triple<URI, Integer, List<URI>>> list = new ArrayList<Triple<URI, Integer, List<URI>>>();
 
-        Set<URI> uris2 = new HashSet<URI>();
+        Set<URI> allIncludedURIs = new HashSet<URI>();
 
-        for (Include inc : file.getIncludes()) {
-            for (IncludeFile i : inc.getIncludeFiles()) {
-                uris2.add(services.createAbsoluteURIFromRelative(i.getImportURI(), file.eResource().getURI()));
-                map.put(services.createAbsoluteURIFromRelative(i.getImportURI(), file.eResource().getURI()), i);
+        for (Include include : file.getIncludes()) {
+            for (IncludeFile includeFile : include.getIncludeFiles()) {
+                allIncludedURIs
+                        .add(services.createAbsoluteURIFromRelative(includeFile.getImportURI(), file.eResource().getURI()));
+                map.put(services.createAbsoluteURIFromRelative(includeFile.getImportURI(), file.eResource().getURI()),
+                        includeFile);
             }
         }
 
         Set<URI> neededURIs = dependencyGraph.getNeededIncludes(file.eResource());
 
-        for (URI uri : uris2) {
+        for (URI uri : allIncludedURIs) {
             Triple<URI, Integer, List<URI>> triple = getCount(uri, neededURIs);
             list.add(triple);
         }
@@ -135,7 +121,16 @@ public class SKilLImportOrganizer {
         return unusedURIs;
     }
 
-    public Triple<URI, Integer, List<URI>> getCount(URI includeURI, Set<URI> neededURIs) {
+    /**
+     * Computes the number of direct and transitive reachable needed uris of a uri.
+     * 
+     * @param includeURI
+     *            The uri for which the number shall be computed.
+     * @param neededURIs
+     *            The uris which will increase the count if it will be included.
+     * @return A triple with the original uri, the amount of uris which are included and the included uris.
+     */
+    private Triple<URI, Integer, List<URI>> getCount(URI includeURI, Set<URI> neededURIs) {
         int count = 0;
         List<URI> uris = new ArrayList<URI>();
         Set<URI> includes = dependencyGraph.getIncludedURIsFromURI(includeURI);
@@ -155,6 +150,13 @@ public class SKilLImportOrganizer {
         this.dependencyGraph = dependencyGraph;
     }
 
+    /**
+     * Finds the position (region) in a file at which the includes are or can be written.
+     * 
+     * @param file
+     *            The file for which the region shall be found.
+     * @return A TextRegion which represents the position of the includes.
+     */
     public static TextRegion getIncludeImportRegion(File file) {
         if (file != null) {
             if (file.getIncludes().size() > 0) {

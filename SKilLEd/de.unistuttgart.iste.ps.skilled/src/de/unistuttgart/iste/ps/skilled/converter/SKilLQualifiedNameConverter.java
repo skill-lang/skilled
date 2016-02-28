@@ -8,6 +8,8 @@ import org.eclipse.xtext.naming.QualifiedName;
 
 
 /**
+ * Converts QualifiedNames to strings and back. It is customized for SKilL so the special conversion will be considered.
+ * 
  * @author Marco Link
  * @author Tobias Heck
  */
@@ -26,6 +28,9 @@ public class SKilLQualifiedNameConverter extends DefaultImpl {
 
     /**
      * Make names case-insensitive,ignore single underscores and all underscores at the end
+     * 
+     * @param string
+     *            - The String which will be converted.
      */
     public static String makeEquivalent(String string) {
         String converted = string.toLowerCase();

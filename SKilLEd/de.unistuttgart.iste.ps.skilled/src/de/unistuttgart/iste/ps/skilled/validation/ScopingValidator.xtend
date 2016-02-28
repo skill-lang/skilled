@@ -17,7 +17,8 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
 
 /**
- * Validation for the correct usage of linked declaration. It checks whether the needed skill file is included.
+ * Validation for the correct usage of linked declaration. It checks whether the needed skill file is included, 
+ * or if there are missing, duplicated or unused includes within a skill file.
  * 
  * @author Marco Link
  */
@@ -44,6 +45,9 @@ class ScopingValidator extends AbstractSKilLComposedValidatorPart {
     }
   }
 
+  /**
+   * Raises a warning if there a unused or duplicated includes in a skill file.
+   */
   @Check
   def checkForUnsuedAndDuplicateIncludes(File file) {
     if (dependencyGraph == null) {

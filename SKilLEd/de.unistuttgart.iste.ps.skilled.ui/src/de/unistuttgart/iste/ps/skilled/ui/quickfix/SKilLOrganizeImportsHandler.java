@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.ps.skilled.ui.quickfix.organize;
+package de.unistuttgart.iste.ps.skilled.ui.quickfix;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -39,11 +39,10 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import de.unistuttgart.iste.ps.skilled.formatting2.SKilLImportOrganizer;
 import de.unistuttgart.iste.ps.skilled.sKilL.File;
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
-import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph;
 
 
 /**
- * Handles the Organize-Imports-Quickfix
+ * Handles the project-wide Organize-Imports-Quickfix
  * 
  * @author Marco Link
  *
@@ -51,11 +50,6 @@ import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph;
 public class SKilLOrganizeImportsHandler {
 
     private SKilLServices services = new SKilLServices();
-    private SKilLImportOrganizer skillImportOrganizer;
-
-    public SKilLOrganizeImportsHandler(DependencyGraph dependencyGraph) {
-        skillImportOrganizer = new SKilLImportOrganizer(dependencyGraph);
-    }
 
     /**
      * Creates the includes for the main file, basically a index of all files in the project.
@@ -193,12 +187,6 @@ public class SKilLOrganizeImportsHandler {
                         if (include != null) {
                             return Tuples.create(new Region(importRegion.getOffset(), importRegion.getLength()), include);
                         }
-
-                        final String organizedImportSection = skillImportOrganizer.getOrganizedImportSection(type);
-                        if (organizedImportSection != null) {
-                            return Tuples.create(new Region(importRegion.getOffset(), importRegion.getLength()),
-                                    organizedImportSection);
-                        }
                     }
                     return null;
                 }
@@ -229,7 +217,7 @@ public class SKilLOrganizeImportsHandler {
                         }
 
                     }
-                } catch (@SuppressWarnings("unused") BadLocationException e) {
+                } catch (BadLocationException e) {
                     // Ignore.
                 }
             }

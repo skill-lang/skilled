@@ -28,8 +28,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import de.unistuttgart.iste.ps.skilled.ui.SKilLPerspectiveFactory;
-
 
 /**
  * This is a new wizard. Its role is to create a new file resource in the provided container. If the container resource (a
@@ -89,7 +87,6 @@ public class SKilLNewFileWizard extends Wizard implements INewWizard {
             MessageDialog.openError(getShell(), "Error", realException.getMessage());
             return false;
         }
-        SKilLPerspectiveFactory.openSKilLPerspective();
         return true;
     }
 
@@ -99,7 +96,6 @@ public class SKilLNewFileWizard extends Wizard implements INewWizard {
      */
     private void doFinish(String containerName, String fileName, IProgressMonitor monitor) throws CoreException {
         // create a sample file
-        String fileNameWithExtention = fileName;
         monitor.beginTask("Creating " + fileName, 2);
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         IResource resource = root.findMember(new Path(containerName));
@@ -108,11 +104,12 @@ public class SKilLNewFileWizard extends Wizard implements INewWizard {
         }
         IContainer container = (IContainer) resource;
 
-        if (container.getFile(new Path(fileName)).getFileExtension() == null) {
-            fileNameWithExtention = fileName + ".skill";
+        String generatedFileName = fileName;
+        if (container.getFile(new Path(generatedFileName)).getFileExtension() == null) {
+            generatedFileName += ".skill";
         }
 
-        final IFile file = container.getFile(new Path(fileNameWithExtention));
+        final IFile file = container.getFile(new Path(generatedFileName));
 
         if (file.exists()) {
             throwCoreException("File already exist.");

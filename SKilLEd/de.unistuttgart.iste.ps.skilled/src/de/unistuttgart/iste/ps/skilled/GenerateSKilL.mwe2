@@ -1,5 +1,5 @@
 /**
- * @author Marco Link (and xtext)
+ * @author Marco Link - Only customized to work better with SKilL.
  */
 module de.unistuttgart.iste.ps.skilled.GenerateSKilL
 

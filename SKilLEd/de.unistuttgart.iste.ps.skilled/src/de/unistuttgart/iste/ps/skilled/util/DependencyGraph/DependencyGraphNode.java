@@ -13,6 +13,9 @@ import de.unistuttgart.iste.ps.skilled.util.Tarjan.Vertex;
 
 
 /**
+ * This class represent a node in the dependeny graph. It represents one skill file in the project and contains all other
+ * nodes which are specified as include in the skill file and the strongly connected component in which the file is in.
+ * 
  * @author Marco Link
  */
 public class DependencyGraphNode extends Vertex {
@@ -26,6 +29,11 @@ public class DependencyGraphNode extends Vertex {
         this.fileURI = file.eResource().getURI();
     }
 
+    /**
+     * Returns all strongly connected components which can be reached by the file's component in which it is in.
+     * 
+     * @return
+     */
     public Set<StronglyConnectedComponent> getReferencedComponent() {
         Set<StronglyConnectedComponent> components = new HashSet<>();
         for (Vertex v : getEdges()) {
@@ -36,6 +44,11 @@ public class DependencyGraphNode extends Vertex {
         return components;
     }
 
+    /**
+     * Returns all uris which are included by the file.
+     * 
+     * @return
+     */
     public Set<URI> getIncludedURIs() {
         Set<URI> uRIs = new HashSet<>();
         Set<String> includeStrings = new HashSet<>();
