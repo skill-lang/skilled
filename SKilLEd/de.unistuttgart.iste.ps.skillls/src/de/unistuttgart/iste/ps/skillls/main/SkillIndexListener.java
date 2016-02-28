@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Class for indexing all types, fields, hints and restrictions of a skill
@@ -122,17 +123,7 @@ class SkillIndexListener extends SKilLParserBaseListener {
 		ArrayList<String> extend = new ArrayList<>();
 		Type newType;
 
-		for (SKilLParser.FieldContext fieldContext : interfacetype.field()) {
-			Field field;
-			if (fieldContext.constant() != null) {
-				field = indexFieldConstant(fieldContext);
-			} else if (fieldContext.data() != null) {
-				field = indexFieldData(fieldContext);
-			} else {
-				field = indexField(fieldContext.view(), fieldContext);
-			}
-			fields.add(field);
-		}
+		parseFields(interfacetype.field(), fields);
 
 		String comment;
 		if (interfacetype.COMMENT() != null) {
@@ -210,17 +201,8 @@ class SkillIndexListener extends SKilLParserBaseListener {
 				new ArrayList<>());
 		fields.add(enumValues);
 
-		for (SKilLParser.FieldContext fieldContext : enumtype.field()) {
-			Field field;
-			if (fieldContext.constant() != null) {
-				field = indexFieldConstant(fieldContext);
-			} else if (fieldContext.data() != null) {
-				field = indexFieldData(fieldContext);
-			} else {
-				field = indexField(fieldContext.view(), fieldContext);
-			}
-			fields.add(field);
-		}
+		parseFields(enumtype.field(), fields);
+
 		String comment;
 		if (enumtype.COMMENT() != null) {
 			comment = enumtype.COMMENT().getText();
@@ -264,17 +246,8 @@ class SkillIndexListener extends SKilLParserBaseListener {
 			extend.add(extensionContext.Identifier().getText());
 		}
 
-		for (SKilLParser.FieldContext fieldContext : usertypeContext.field()) {
-			Field field;
-			if (fieldContext.constant() != null) {
-				field = indexFieldConstant(fieldContext);
-			} else if (fieldContext.data() != null) {
-				field = indexFieldData(fieldContext);
-			} else {
-				field = indexField(fieldContext.view(), fieldContext);
-			}
-			fields.add(field);
-		}
+		parseFields(usertypeContext.field(), fields);
+
 		String comment;
 		if (usertypeContext.description().COMMENT() != null) {
 			comment = usertypeContext.description().COMMENT().getText();
@@ -288,6 +261,28 @@ class SkillIndexListener extends SKilLParserBaseListener {
 		}
 		for (Hint hint : hints) {
 			hint.setParent(newType);
+		}
+	}
+
+	/**
+	 * Parses the fieldcontexts to {@link Field} objects and adds them to a list
+	 * 
+	 * @param fieldContextList
+	 *            the list containing the contexts
+	 * @param fields
+	 *            the list the {@link Field} objects are added to
+	 */
+	private void parseFields(List<SKilLParser.FieldContext> fieldContextList, ArrayList<Field> fields) {
+		for (SKilLParser.FieldContext fieldContext : fieldContextList) {
+			Field field;
+			if (fieldContext.constant() != null) {
+				field = indexFieldConstant(fieldContext);
+			} else if (fieldContext.data() != null) {
+				field = indexFieldData(fieldContext);
+			} else {
+				field = indexField(fieldContext.view(), fieldContext);
+			}
+			fields.add(field);
 		}
 	}
 

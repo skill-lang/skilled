@@ -63,27 +63,8 @@ public class SkillExtractListener extends SKilLParserBaseListener {
 			}
 			// add dependencies of file to file
 			for (SKilLParser.IncludeContext include : fileContext.header().include()) {
-				StringBuilder line = new StringBuilder();
-				line.append("\n");
-				line.append(include.includeWord().getText());
-				line.append(" ");
-				for (TerminalNode i : include.StringLiteral()) {
-					String text = i.getSymbol().getText().substring(1, i.getSymbol().getText().length() - 1);
-					if (file == null)
-						return;
-					for (String dep : file.getDependencies()) {
-						if (dep.endsWith(text)) {
-							line.append(i.getSymbol().getText());
-							line.append(" ");
-						}
-					}
-				}
-				// remove last include
-				if (line.toString().trim().endsWith(include.includeWord().getText())) {
-					line.setLength(line.length() - include.includeWord().getText().length() - 1);
-				}
-				line.append("\n");
-				outFile.write(line.toString().getBytes());
+				if (!writeIncludes(file, include))
+					return;
 			}
 			fileContext.declaration().forEach((ctx) -> {
 				try {
@@ -95,6 +76,43 @@ public class SkillExtractListener extends SKilLParserBaseListener {
 		} catch (IOException e) {
 			ExceptionHandler.handle(e, "Temporary File could not be created. File: " + inFile.getName());
 		}
+	}
+
+	/**
+	 * Writes the includes of a file
+	 * 
+	 * @param file
+	 *            the file that should be written
+	 * @param include
+	 *            the context of the current include
+	 * @return whether the writing was successful or not
+	 * @throws IOException
+	 *             thrown when {@link FileOutputStream#write(byte[])} throws it
+	 */
+	private boolean writeIncludes(de.unistuttgart.iste.ps.skillls.tools.File file, SKilLParser.IncludeContext include)
+			throws IOException {
+		StringBuilder line = new StringBuilder();
+		line.append("\n");
+		line.append(include.includeWord().getText());
+		line.append(" ");
+		for (TerminalNode i : include.StringLiteral()) {
+			String text = i.getSymbol().getText().substring(1, i.getSymbol().getText().length() - 1);
+			if (file == null)
+				return false;
+			for (String dep : file.getDependencies()) {
+				if (dep.endsWith(text)) {
+					line.append(i.getSymbol().getText());
+					line.append(" ");
+				}
+			}
+		}
+		// remove last include
+		if (line.toString().trim().endsWith(include.includeWord().getText())) {
+			line.setLength(line.length() - include.includeWord().getText().length() - 1);
+		}
+		line.append("\n");
+		outFile.write(line.toString().getBytes());
+		return true;
 	}
 
 	/**

@@ -67,39 +67,11 @@ public class MainClass {
 	 *            The command line arguments.
 	 */
 	public static void start(Indexing indexing, String[] args) {
-		CleanUpAssistant cleanUpAssistant = null;
+		CleanUpAssistantWrapper cleanUpAssistantWrapper = new CleanUpAssistantWrapper();
 		switch (args[0]) {
 			case "-e" :
 			case "--edit" :
-				Editor editor = new Editor(args[2]);
-				File projectDirectory = new File(args[1]);
-				File sfFile = new File(projectDirectory.getAbsolutePath() + File.separator + ".skills");
-				if (!sfFile.exists()) {
-					try {
-						// noinspection ResultOfMethodCallIgnored
-						sfFile.createNewFile();
-					} catch (IOException e1) {
-						ExceptionHandler.handle(e1);
-					}
-				}
-				try {
-					skillFile = SkillFile.open(sfFile.getAbsolutePath(), SkillFile.Mode.Read, SkillFile.Mode.Write);
-				} catch (IOException e1) {
-					ExceptionHandler.handle(e1);
-					return;
-				}
-				cleanUpAssistant = new CleanUpAssistant(skillFile);
-				indexFiles(projectDirectory, cleanUpAssistant.getTemporary(), indexing);
-				if (indexing != Indexing.NO_INDEXING) {
-					cleanUpAssistant.merge();
-					cleanUpAssistant.cleanUp();
-				}
-				if (indexing == Indexing.JUST_INDEXING) {
-					skillFile.close();
-					break;
-				}
-				editor.setSkillFile(skillFile);
-				editor.start();
+				startEditor(indexing, args, cleanUpAssistantWrapper);
 				break;
 
 			case "-h" :
@@ -108,93 +80,185 @@ public class MainClass {
 				break;
 
 			default :
-				HashMap<String, ArgumentEvaluation> evaluations = new HashMap<>();
-
-				for (int i = 0; i < args.length; i++) {
-					ArgumentEvaluation[] evals = evaluateArgument(args, i);
-					if (evals != null) {
-						Arrays.stream(evals).forEach(e -> evaluations.put(e.getName(), e));
-					}
-					for (ArgumentEvaluation e : evaluations.values()) {
-						i = i > e.getIndex() ? i : e.getIndex();
-					}
-				}
-
-				if (evaluations.containsKey("all")) {
-					fileFlag = FileFlag.All;
-				}
-
-				if (evaluations.containsKey("cleanup")) {
-					cleanUp = false;
-				}
-
-				if (evaluations.containsKey("list")) {
-					list(evaluations.get("path").getArgument() + File.separator + ".skills", evaluations);
-					return;
-				}
-				try {
-					skillFile = SkillFile.open(evaluations.get("path").getArgument() + File.separator + ".skills",
-							SkillFile.Mode.Write, SkillFile.Mode.Read);
-				} catch (IOException e) {
-					ExceptionHandler.handle(e);
-					break;
-				}
-				buildDependencies(skillFile);
-				ArrayList<String> tools = new ArrayList<>();
-				// set the environment of the generation.
-				for (String key : evaluations.keySet()) {
-					switch (key) {
-						case "path" :
-							path = evaluations.get("path").getArgument();
-							break;
-
-						case "generator" :
-							generator = skillFile.Generators().make(evaluations.get("exec").getArgument(),
-									evaluations.get("generator").getArgument());
-							break;
-
-						case "lang" :
-							language = evaluations.get("lang").getArgument();
-							break;
-
-						case "module" :
-							module = evaluations.get("module").getArgument();
-							break;
-
-						case "output" :
-							output = new File(evaluations.get("output").getArgument());
-							break;
-
-						default :
-							tools.add(evaluations.get(key).getArgument());
-
-						case "all" :
-						case "cleanup" :
-						case "list" :
-						case "exec" :
-							break;
-					}
-				}
-				cleanUpAssistant = new CleanUpAssistant(skillFile);
-				indexFiles(new File(path), cleanUpAssistant.getTemporary(), indexing);
-				if (indexing != Indexing.NO_INDEXING) {
-					cleanUpAssistant.merge();
-					cleanUpAssistant.cleanUp();
-				}
-				if (indexing == Indexing.JUST_INDEXING) {
-					break;
-				}
-
-				try {
-					generate(new File(path), tools, skillFile);
-				} catch (IOException e) {
-					ExceptionHandler.handle(e);
-				}
-				break;
+				prepareGeneration(indexing, args, cleanUpAssistantWrapper);
 		}
-		if (cleanUpAssistant != null && indexing != Indexing.NO_INDEXING) {
-			cleanUpAssistant.analyseBreakage();
+		if (cleanUpAssistantWrapper.get() != null && indexing != Indexing.NO_INDEXING) {
+			cleanUpAssistantWrapper.get().analyseBreakage();
 		}
+	}
+
+	/**
+	 * Prepares everything for the generation of bindings and temporary files
+	 * 
+	 * @param indexing
+	 *            whether indexing should happen, or not and whether other stuff
+	 *            should happen, or not
+	 * @param args
+	 *            the arguments given on the command line
+	 * @param cleanUpAssistantWrapper
+	 *            the wrapper that saves the {@link CleanUpAssistant} instance
+	 */
+	private static void prepareGeneration(Indexing indexing, String[] args,
+			CleanUpAssistantWrapper cleanUpAssistantWrapper) {
+		HashMap<String, ArgumentEvaluation> evaluations = new HashMap<>();
+
+		for (int i = 0; i < args.length; i++) {
+			ArgumentEvaluation[] evals = evaluateArgument(args, i);
+			if (evals != null) {
+				Arrays.stream(evals).forEach(e -> evaluations.put(e.getName(), e));
+			}
+			for (ArgumentEvaluation e : evaluations.values()) {
+				i = i > e.getIndex() ? i : e.getIndex();
+			}
+		}
+
+		setFlags(evaluations);
+
+		if (evaluations.containsKey("list")) {
+			list(evaluations.get("path").getArgument() + File.separator + ".skills", evaluations);
+			return;
+		}
+		try {
+			skillFile = SkillFile.open(evaluations.get("path").getArgument() + File.separator + ".skills",
+					SkillFile.Mode.Write, SkillFile.Mode.Read);
+		} catch (IOException e) {
+			ExceptionHandler.handle(e);
+			return;
+		}
+		buildDependencies(skillFile);
+		ArrayList<String> tools = new ArrayList<>();
+		// set the environment of the generation.
+		parseArguments(evaluations, tools);
+		index(indexing, cleanUpAssistantWrapper, new File(path));
+		if (indexing == Indexing.JUST_INDEXING) {
+			return;
+		}
+
+		try {
+			generate(new File(path), tools, skillFile);
+		} catch (IOException e) {
+			ExceptionHandler.handle(e);
+		}
+	}
+
+	/**
+	 * Sets the flags for the generation
+	 * 
+	 * @param evaluations
+	 *            the evaluations of the command line arguments
+	 */
+	private static void setFlags(HashMap<String, ArgumentEvaluation> evaluations) {
+		if (evaluations.containsKey("all")) {
+			fileFlag = FileFlag.All;
+		}
+
+		if (evaluations.containsKey("cleanup")) {
+			cleanUp = false;
+		}
+	}
+
+	/**
+	 * Creates the corresponding objects for the skill specification in the
+	 * project directory
+	 * 
+	 * @param indexing
+	 *            whether indexing should happen and whether the original intent
+	 *            should happen
+	 * @param cleanUpAssistantWrapper
+	 *            wrapper for saving the {@link CleanUpAssistant} instance
+	 * @param project
+	 *            the directory containing the .skills file and the skill
+	 *            specification
+	 */
+	private static void index(Indexing indexing, CleanUpAssistantWrapper cleanUpAssistantWrapper, File project) {
+		cleanUpAssistantWrapper.set(new CleanUpAssistant(skillFile));
+		indexFiles(project, cleanUpAssistantWrapper.get().getTemporary(), indexing);
+		if (indexing != Indexing.NO_INDEXING) {
+			cleanUpAssistantWrapper.get().merge();
+			cleanUpAssistantWrapper.get().cleanUp();
+		}
+	}
+
+	/**
+	 * Parses the arguments that were saved in a {@link HashMap}
+	 * 
+	 * @param evaluations
+	 *            the preprocessed evaluations of the arguments
+	 * @param tools
+	 *            out param, tools that should be generated
+	 */
+	private static void parseArguments(HashMap<String, ArgumentEvaluation> evaluations, ArrayList<String> tools) {
+		for (String key : evaluations.keySet()) {
+			switch (key) {
+				case "path" :
+					path = evaluations.get("path").getArgument();
+					break;
+
+				case "generator" :
+					generator = skillFile.Generators().make(evaluations.get("exec").getArgument(),
+							evaluations.get("generator").getArgument());
+					break;
+
+				case "lang" :
+					language = evaluations.get("lang").getArgument();
+					break;
+
+				case "module" :
+					module = evaluations.get("module").getArgument();
+					break;
+
+				case "output" :
+					output = new File(evaluations.get("output").getArgument());
+					break;
+
+				default :
+					tools.add(evaluations.get(key).getArgument());
+
+				case "all" :
+				case "cleanup" :
+				case "list" :
+				case "exec" :
+					break;
+			}
+		}
+	}
+
+	/**
+	 * Prepares the start of the editor
+	 * 
+	 * @param indexing
+	 *            Whether indexing should happen and whether the editor should
+	 *            be run
+	 * @param args
+	 *            the command line arguments
+	 * @param cleanUpAssistantWrapper
+	 *            the wrapper for the {@link CleanUpAssistant} instance
+	 */
+	private static void startEditor(Indexing indexing, String[] args, CleanUpAssistantWrapper cleanUpAssistantWrapper) {
+		Editor editor = new Editor(args[2]);
+		File projectDirectory = new File(args[1]);
+		File sfFile = new File(projectDirectory.getAbsolutePath() + File.separator + ".skills");
+		if (!sfFile.exists()) {
+			try {
+				// noinspection ResultOfMethodCallIgnored
+				sfFile.createNewFile();
+			} catch (IOException e1) {
+				ExceptionHandler.handle(e1);
+			}
+		}
+		try {
+			skillFile = SkillFile.open(sfFile.getAbsolutePath(), SkillFile.Mode.Read, SkillFile.Mode.Write);
+		} catch (IOException e1) {
+			ExceptionHandler.handle(e1);
+			return;
+		}
+		index(indexing, cleanUpAssistantWrapper, projectDirectory);
+		if (indexing == Indexing.JUST_INDEXING) {
+			skillFile.close();
+			return;
+		}
+		editor.setSkillFile(skillFile);
+		editor.start();
 	}
 
 	/**
@@ -259,6 +323,7 @@ public class MainClass {
 			tools.addAll(sf.Tools());
 		}
 		for (Tool tool : tools) {
+			System.out.println(tool.getName());
 			for (de.unistuttgart.iste.ps.skillls.tools.File file : tool.getFiles()) {
 				listFileContent(tool, file);
 			}
@@ -338,65 +403,100 @@ public class MainClass {
 		int index = globalIndex;
 		ArrayList<ArgumentEvaluation> list = new ArrayList<>();
 		for (char c : args[index].substring(1).toCharArray()) {
-			switch (c) {
-				case 'g' :
-					// test if l was typed
-					index = wasLastCharL(index, list, last, args[index + 1]);
-					index++;
-					list.add(new ArgumentEvaluation(index, args[index], "generator"));
-					break;
-
-				case 'a' :
-					// test if l was typed
-					index = wasLastCharL(index, list, last, args[index + 1]);
-					list.add(new ArgumentEvaluation(index, null, "all"));
-					break;
-
-				case 'l' :
-					break;
-
-				case 'x' :
-					// test if l was typed
-					index = wasLastCharL(index, list, last, args[index + 1]);
-					index++;
-					list.add(new ArgumentEvaluation(index, args[index], "exec"));
-					break;
-
-				case 'p' :
-					// test if l was typed
-					index = wasLastCharL(index, list, last, args[index + 1]);
-					index++;
-					list.add(new ArgumentEvaluation(index, args[index], "path"));
-					break;
-
-				case 'o' :
-					// test if l was typed
-					index = wasLastCharL(index, list, last, args[index + 1]);
-					index++;
-					list.add(new ArgumentEvaluation(index, args[index], "output"));
-					break;
-
-				case 'm' :
-					// test if l was typed
-					index = wasLastCharL(index, list, last, args[index + 1]);
-					index++;
-					list.add(new ArgumentEvaluation(index, args[index], "module"));
-					break;
-
-				case 's' :
-					// test if l was typed, if yes it is list else invalid
-					if (last == 'l') {
-						list.add(new ArgumentEvaluation(index, args[index], "list"));
-						break;
-					}
-					throw new IllegalArgumentException();
-
-				default :
-					throw new IllegalArgumentException();
-			}
+			index = parseCharParams(args, last, index, list, c);
 			last = c;
 		}
 		return list.toArray(new ArgumentEvaluation[list.size()]);
+	}
+
+	/**
+	 * parses a character that is interpreted as argument
+	 * 
+	 * @param args
+	 *            the arguments of the command line
+	 * @param last
+	 *            the last character that was read
+	 * @param globalIndex
+	 *            the index of the last argument parsed
+	 * @param list
+	 *            the list of argument evaluations
+	 * @param c
+	 *            the current character
+	 * @return returns the index of the last argument parsed
+	 */
+	private static int parseCharParams(String[] args, char last, int globalIndex, ArrayList<ArgumentEvaluation> list,
+			char c) {
+		int index = globalIndex;
+		switch (c) {
+			case 'g' :
+				// test if l was typed
+				index = wasLastCharL(index, list, last, args[index + 1]);
+				index = addEvaluation(index, args, "generator", list);
+				break;
+
+			case 'a' :
+				// test if l was typed
+				index = wasLastCharL(index, list, last, args[index + 1]);
+				list.add(new ArgumentEvaluation(index, null, "all"));
+				break;
+
+			case 'l' :
+				break;
+
+			case 'x' :
+				// test if l was typed
+				index = wasLastCharL(index, list, last, args[index + 1]);
+				index = addEvaluation(index, args, "exec", list);
+				break;
+
+			case 'p' :
+				// test if l was typed
+				index = wasLastCharL(index, list, last, args[index + 1]);
+				index = addEvaluation(index, args, "path", list);
+				break;
+
+			case 'o' :
+				// test if l was typed
+				index = wasLastCharL(index, list, last, args[index + 1]);
+				index = addEvaluation(index, args, "output", list);
+				break;
+
+			case 'm' :
+				// test if l was typed
+				index = wasLastCharL(index, list, last, args[index + 1]);
+				index = addEvaluation(index, args, "module", list);
+				break;
+
+			case 's' :
+				// test if l was typed, if yes it is list else invalid
+				if (last == 'l') {
+					list.add(new ArgumentEvaluation(index, args[index], "list"));
+					break;
+				}
+				throw new IllegalArgumentException();
+
+			default :
+				throw new IllegalArgumentException();
+		}
+		return index;
+	}
+
+	/**
+	 * Creates an {@link ArgumentEvaluation} object from a command line argument
+	 * 
+	 * @param index
+	 *            the index of the last parsed argument
+	 * @param args
+	 *            the command line arguments
+	 * @param key
+	 *            the key, that should be used in the evaluation
+	 * @param evaluations
+	 *            the list, the evaluation should be added to
+	 * @return the index of the last parsed argument
+	 */
+	private static int addEvaluation(int index, String[] args, String key, ArrayList<ArgumentEvaluation> evaluations) {
+		evaluations.add(new ArgumentEvaluation(index, args[index + 1], key));
+		return index + 1;
 	}
 
 	/**
@@ -660,26 +760,10 @@ public class MainClass {
 				if (child.isDirectory() && !child.getName().equals(".skillt")) {
 					indexFiles(child, skillFile, indexing);
 				} else if (child.getAbsolutePath().endsWith(".skill")) {
-					de.unistuttgart.iste.ps.skillls.tools.File f = null;
-					if (getStream(child, skillFile).count() != 0) {
-						f = getStream(child, skillFile).findFirst().get();
-					}
-					String hash = hash(child);
-					if (f == null) {
-						// noinspection UnusedAssignment
-						f = skillFile.Files().make(new ArrayList<>(), "", hash, child.getPath(),
-								child.lastModified() + "");
-						indexTypes(child, skillFile);
-					} else if (Paths.get(child.getPath()).relativize(Paths.get(f.getPath())).toString().equals("")
-							&& (!f.getMd5().equals(hash) || !f.getTimestamp().equals("" + child.lastModified()))) {
-						indexTypes(child, skillFile);
-						f.setTimestamp("" + child.lastModified());
-						f.setMd5(hash);
-					} else if (Paths.get(child.getPath()).relativize(Paths.get(f.getPath())).toString().equals("")) {
-						indexTypes(child, skillFile);
-						f.setTimestamp("" + child.lastModified());
-						f.setMd5(hash);
-					}
+					// noinspection UnusedAssignment
+					skillFile.Files().make(new ArrayList<>(), "", hash(child), child.getPath(),
+							child.lastModified() + "");
+					indexTypes(child, skillFile);
 				}
 			}
 		}

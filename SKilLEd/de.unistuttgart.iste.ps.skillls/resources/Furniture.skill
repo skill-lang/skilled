@@ -38,8 +38,10 @@ Table {
   set<annotation> objects;
 }
 
+!singleton
 Chair {
   @nonnull
+  !ignore
   Color color;
 
   Material material;

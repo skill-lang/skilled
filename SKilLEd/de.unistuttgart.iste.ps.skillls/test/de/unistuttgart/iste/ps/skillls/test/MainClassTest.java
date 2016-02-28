@@ -240,7 +240,7 @@ public class MainClassTest {
 		System.setOut(out);
 		System.setErr(err);
 
-		String[] args = new String[]{"--list", "--path", "resources"};
+		String[] args = new String[]{"--all", "--list", "--path", "resources"};
 		try {
 			MainClass.main(args);
 		} catch (Error e) {
@@ -254,6 +254,78 @@ public class MainClassTest {
 		String[] got = outStream.toString().trim().split("\n");
 		System.setOut(origOut);
 		System.setErr(origErr);
+		assertEquals("line not correct", "twoTypeTool", got[0]);
+		assertEquals("line not correct", "  resources/Furniture.skill", got[1]);
+		assertEquals("line not correct", "    Bathtub", got[2]);
+		assertEquals("line not correct", "    Window", got[4]);
+		assertEquals("line not correct", "oneTypeTool", got[6]);
+		assertEquals("line not correct", "  resources/Furniture.skill", got[7]);
+		assertEquals("line not correct", "    Bathtub", got[8]);
+		assertEquals("line not correct", "    Chair", got[10]);
+		assertEquals("line not correct", "      Position pos", got[11]);
+		assertEquals("line not correct", "  resources/Utility.skill", got[13]);
+		assertEquals("line not correct", "    Position", got[14]);
+		assertEquals("line not correct", "noTypeTool", got[16]);
+		assertTrue("No Output", got.length != 0);
+	}
+
+	@SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
+	@Test
+	public void testListShortParamAll() {
+		outStream = new ByteArrayOutputStream();
+		errStream = new ByteArrayOutputStream();
+		out = new PrintStream(outStream);
+		err = new PrintStream(errStream);
+
+		System.setOut(out);
+		System.setErr(err);
+
+		MainClass.main(new String[]{"-e", "resources",
+				"oneTypeTool:8:Chair:!singleton;oneTypeTool:4:Chair:color;oneTypeTool:6:Chair:color:!ignore"});
+		String[] args = new String[]{"-alsp", "resources"};
+		try {
+			MainClass.main(args);
+		} catch (Error e) {
+			if (e.getMessage().equals("TODO")) {
+				fail("OK, not implemented");
+			} else {
+				fail(e.getMessage());
+			}
+		}
+
+		String[] got = outStream.toString().trim().split("\n");
+		System.setOut(origOut);
+		System.setErr(origErr);
+		for (String s : got) {
+			System.out.println(s);
+		}
+		assertEquals("line not correct", "twoTypeTool", got[0]);
+		assertEquals("line not correct", "  resources/Furniture.skill", got[1]);
+		assertEquals("line not correct", "    Bathtub", got[2]);
+		assertEquals("line not correct", "    Window", got[4]);
+		assertEquals("line not correct", "oneTypeTool", got[6]);
+		if (got[7].contains("Furniture")) {
+			assertEquals("line not correct", "  resources/Furniture.skill", got[7]);
+			assertEquals("line not correct", "    Bathtub", got[8]);
+			assertEquals("line not correct", "    !singleton", got[10]);
+			assertEquals("line not correct", "    Chair", got[11]);
+			assertEquals("line not correct", "      Position pos", got[12]);
+			assertEquals("line not correct", "      !ignore", got[13]);
+			assertEquals("line not correct", "      Color color", got[14]);
+			assertEquals("line not correct", "  resources/Utility.skill", got[16]);
+			assertEquals("line not correct", "    Position", got[17]);
+		} else {
+			assertEquals("line not correct", "  resources/Utility.skill", got[7]);
+			assertEquals("line not correct", "    Position", got[8]);
+			assertEquals("line not correct", "  resources/Furniture.skill", got[10]);
+			assertEquals("line not correct", "    Bathtub", got[11]);
+			assertEquals("line not correct", "    !singleton", got[13]);
+			assertEquals("line not correct", "    Chair", got[14]);
+			assertEquals("line not correct", "      Position pos", got[15]);
+			assertEquals("line not correct", "      !ignore", got[16]);
+			assertEquals("line not correct", "      Color color", got[17]);
+		}
+		assertEquals("line not correct", "noTypeTool", got[19]);
 		assertTrue("No Output", got.length != 0);
 	}
 
@@ -414,5 +486,29 @@ public class MainClassTest {
 		if (failed) {
 			fail();
 		}
+	}
+
+	@Test
+	public void testTypeHintDisappearance() {
+		System.setOut(origOut);
+
+		MainClass.main(new String[]{"-e", "resources",
+				"&n:testTool:2:PowerStrip;testTool:8:PowerStrip:!readOnly;testTool:9:PowerStrip:!readOnly"});
+		try {
+			int amountHints = 0;
+			SkillFile sk = SkillFile.open(Paths.get(skillFilePath),
+					de.ust.skill.common.java.api.SkillFile.Mode.ReadOnly);
+			for (Type type : sk.Types()) {
+				if (!type.getName().equals("PowerStrip") || type.getOrig() != null) {
+					continue;
+				}
+				amountHints = type.getHints().size();
+			}
+			assertEquals("PowerStrip has wrong amount of Hints", 1, amountHints);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.setOut(out);
 	}
 }

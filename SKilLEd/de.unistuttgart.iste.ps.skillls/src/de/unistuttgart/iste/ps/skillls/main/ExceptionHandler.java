@@ -58,7 +58,7 @@ public class ExceptionHandler {
 	 * @param message
 	 *            the message to print
 	 */
-	public static void handle(BreakageException e, final String message) {
+	public static void handle(final BreakageException e, final String message) {
 		System.out.println(message + "\n" + e.getMessage());
 		if (rethrow) {
 			throw e;

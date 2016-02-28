@@ -86,23 +86,37 @@ public class CleanUpAssistant {
 		for (Type type : tool.getTypes()) {
 			transferType(type, newTool);
 		}
-		List<String> containedTypes = newTool.getTypes().stream().map(t -> normalize(t.getName())).collect(Collectors.toList());
-		HashSet<String> containedExtends = new HashSet<>();
-		for (Type type : newTool.getTypes()) {
-			containedExtends.addAll(type.getExtends().stream().map(CleanUpAssistant::normalize).collect(Collectors.toList()));
-		}
-		containedExtends.removeAll(containedTypes);
-		List<Type> missing = containedExtends.stream().map(e -> findType(e)).filter(e -> e != null).collect(Collectors.toList());
-		for (Type type : missing) {
-			brokenTools.add(newTool);
-			transferType(type, newTool);
-		}
+		checkForMissingExtends(newTool);
 
 		HashSet<File> files = new HashSet<>();
 		for (Type type : newTool.getTypes()) {
 			files.add(type.getFile());
 		}
 		newTool.setFiles(new ArrayList<>(files));
+	}
+
+	/**
+	 * Method for checking whether some types, that are base types of used ones,
+	 * are missing.
+	 * 
+	 * @param newTool
+	 *            Tool that should be analyzed for missing extensions.
+	 */
+	private void checkForMissingExtends(Tool newTool) {
+		List<String> containedTypes = newTool.getTypes().stream().map(t -> normalize(t.getName()))
+				.collect(Collectors.toList());
+		HashSet<String> containedExtends = new HashSet<>();
+		for (Type type : newTool.getTypes()) {
+			containedExtends
+					.addAll(type.getExtends().stream().map(CleanUpAssistant::normalize).collect(Collectors.toList()));
+		}
+		containedExtends.removeAll(containedTypes);
+		List<Type> missing = containedExtends.stream().map(this::findType).filter(e -> e != null)
+				.collect(Collectors.toList());
+		for (Type type : missing) {
+			brokenTools.add(newTool);
+			transferType(type, newTool);
+		}
 	}
 
 	/**
@@ -225,7 +239,7 @@ public class CleanUpAssistant {
 	 *            the field whose equivalent should be found
 	 * @return the field, if it was found, else null
 	 */
-	private Field findField(Type origType, Field field) {
+	private static Field findField(Type origType, Field field) {
 		for (Field field1 : origType.getFields()) {
 			if (field1.getOrig() == null && normalize(field1.getName()).equals(normalize(field.getName()))) {
 				return field1;
