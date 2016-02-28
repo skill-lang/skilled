@@ -92,9 +92,6 @@ public class TestRemoveHints {
         fileAfterRemoveHints = fileAfterRemoveHints.replaceAll("\\s+", "");
         fileAfterRemoveHintsChecker = fileAfterRemoveHintsChecker.replaceAll("\\s+", "");
 
-        System.out.println(fileAfterRemoveHints);
-        System.out.println(fileAfterRemoveHintsChecker);
-
         // Check if the contents of the files after hint removal are correct
         assertTrue(fileAfterRemoveHints.equals(fileAfterRemoveHintsChecker));
 
