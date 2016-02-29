@@ -16,62 +16,62 @@ import org.eclipse.xtext.validation.Check
  * @author Nikolay Fateev
  * @author Daniel Ryan Degutis
  */
-class NestingValidator extends AbstractSKilLValidator {
+class NestingValidator extends AbstractSKilLComposedValidatorPart {
 
-	public static val INVALID_NESTED_TYPEDEF = 'invalidNestedTypedef'
+  public static val INVALID_NESTED_TYPEDEF = 'invalidNestedTypedef'
 
-	/**
-	 * Checks whether a typedef hides a compound type, raises an error if so
-	 */
-	def checkInvalidNestedTypes(DeclarationReference dr) {
-		if (dr.type instanceof Typedef) {
-			val td = dr.type as Typedef
-			if (!(td.fieldtype instanceof Basetype)) {
-				error('It is forbidden to nest containers inside of other containers.', dr,
-					SKilLPackage.Literals.DECLARATION_REFERENCE__TYPE, INVALID_NESTED_TYPEDEF)
-			}
-		}
-	}
+  /**
+   * Checks whether a typedef hides a compound type, raises an error if so
+   */
+  def checkInvalidNestedTypes(DeclarationReference dr) {
+    if (dr.type instanceof Typedef) {
+      val td = dr.type as Typedef
+      if (!(td.fieldtype instanceof Basetype)) {
+        error('It is forbidden to nest containers inside of other containers.', dr,
+          SKilLPackage.Literals.DECLARATION_REFERENCE__TYPE, INVALID_NESTED_TYPEDEF)
+      }
+    }
+  }
 
-	/**
-	 * Checks whether a typedef is illegally used to define a list
-	 */
-	@Check
-	def checkInvalidNestedTypedef(Listtype listtype) {
-		if (listtype.basetype instanceof DeclarationReference) {
-			checkInvalidNestedTypes(listtype.basetype as DeclarationReference)
-		}
-	}
+  /**
+   * Checks whether a typedef is illegally used to define a list
+   */
+  @Check
+  def checkInvalidNestedTypedef(Listtype listtype) {
+    if (listtype.basetype instanceof DeclarationReference) {
+      checkInvalidNestedTypes(listtype.basetype as DeclarationReference)
+    }
+  }
 
-	/**
-	 * Checks whether a typedef is illegally used to define an array
-	 */
-	@Check
-	def checkInvalidNestedTypedef(Arraytype arraytype) {
-		if (arraytype.basetype instanceof DeclarationReference) {
-			checkInvalidNestedTypes(arraytype.basetype as DeclarationReference)
-		}
-	}
+  /**
+   * Checks whether a typedef is illegally used to define an array
+   */
+  @Check
+  def checkInvalidNestedTypedef(Arraytype arraytype) {
+    if (arraytype.basetype instanceof DeclarationReference) {
+      checkInvalidNestedTypes(arraytype.basetype as DeclarationReference)
+    }
+  }
 
-	/**
-	 * Checks whether a typedef is illegally used to define a map
-	 */
-	@Check
-	def checkInvalidNestedTypedef(Maptype maptype) {
-		for (keyValuePair : maptype.basetypes) {
-			if (keyValuePair instanceof DeclarationReference) {
-				keyValuePair.checkInvalidNestedTypes
-			}
-		}
-	}
+  /**
+   * Checks whether a typedef is illegally used to define a map
+   */
+  @Check
+  def checkInvalidNestedTypedef(Maptype maptype) {
+    for (keyValuePair : maptype.basetypes) {
+      if (keyValuePair instanceof DeclarationReference) {
+        keyValuePair.checkInvalidNestedTypes
+      }
+    }
+  }
 
-	/**
-	 * Checks whether a typedef is illegally used to define a set
-	 */
-	@Check
-	def checkInvalidNestedTypedef(Settype settype) {
-		if (settype.basetype instanceof DeclarationReference) {
-			checkInvalidNestedTypes(settype.basetype as DeclarationReference)
-		}
-	}
+  /**
+   * Checks whether a typedef is illegally used to define a set
+   */
+  @Check
+  def checkInvalidNestedTypedef(Settype settype) {
+    if (settype.basetype instanceof DeclarationReference) {
+      checkInvalidNestedTypes(settype.basetype as DeclarationReference)
+    }
+  }
 }

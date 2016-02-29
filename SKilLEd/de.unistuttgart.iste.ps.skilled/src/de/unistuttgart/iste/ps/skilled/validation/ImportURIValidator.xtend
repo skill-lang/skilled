@@ -3,23 +3,19 @@ package de.unistuttgart.iste.ps.skilled.validation
 import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import org.eclipse.emf.common.util.URI
-import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.Check
-import org.eclipse.xtext.validation.EValidatorRegistrar
 
 /**
  * This class contains validation rules for checking the includes in a skill files.
  * 
  * @author Marco Link
  */
-class ImportURIValidator extends AbstractDeclarativeValidator {
+class ImportURIValidator extends AbstractSKilLComposedValidatorPart {
 
   public static val TOOLSFOLDER = '.skillt';
 
   public static val INVALID_IMPORT_URI_PLATFORM = 'invalidImportURIPlatform';
   public static val INVALID_IMPORT_URI_OUTSIDE_SCOPE = 'invalidImportURIOutsideScope';
-
-  override register(EValidatorRegistrar registar) {}
 
   /**
    * Checks whether the included URI is in the eclipse platform format (SKilL geneartor can't handle this) 
