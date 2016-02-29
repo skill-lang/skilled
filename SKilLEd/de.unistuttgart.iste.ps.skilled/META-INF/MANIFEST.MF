@@ -12,8 +12,7 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.antlr.runtime,
  org.eclipse.xtext.ui,
  org.eclipse.core.resources,
- org.eclipse.core.runtime,
- de.unistuttgart.iste.ps.skillls;bundle-version="1.0.0"
+ org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.unistuttgart.iste.ps.skilled;uses:="com.google.inject,org.eclipse.xtext.service,org.eclipse.xtext",
  de.unistuttgart.iste.ps.skilled.converter;
@@ -57,4 +56,5 @@ Bundle-ClassPath: .,
  lib/scala-library.jar,
  lib/skill_2.11-0.3.jar,
  lib/deps/skill.java.common.jar,
- lib/deps/skill.jvm.common.jar
+ lib/deps/skill.jvm.common.jar,
+ lib/SKilLls.jar

@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src-gen"/>
 	<classpathentry kind="src" path="xtend-gen"/>
+	<classpathentry exported="true" kind="lib" path="lib/SKilLls.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/scala-library.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/skill_2.11-0.3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>

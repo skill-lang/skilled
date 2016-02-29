@@ -674,13 +674,11 @@
              style="push"
              tooltip="Combine multiple .skill-files">
        </command>
-<<<<<<< d842db39aebb279188221a8ac8513f61e7758911
        <command
              defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.SortTypesHandler"
              id="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
              name="Sort Usertypes">
        </command>
-=======
     </extension>
     <extension
           point="org.eclipse.ui.bindings">
@@ -690,14 +688,6 @@
              schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
              sequence="M1+8">
        </key>
->>>>>>> added comments and implemented automatic formatting for quickfixes and refactorings #80
-    </extension>
-    <extension
-          point="org.eclipse.ui.commands">
-       <command
-             id="de.unistuttgart.iste.ps.skilled.ui.command1"
-             name="name">
-       </command>
     </extension>
     <extension
           point="org.eclipse.ui.commands">
