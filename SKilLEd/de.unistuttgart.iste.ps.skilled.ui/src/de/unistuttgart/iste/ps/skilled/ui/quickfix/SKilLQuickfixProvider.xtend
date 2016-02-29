@@ -16,7 +16,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLFactory
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
-import de.unistuttgart.iste.ps.skilled.ui.quickfix.organize.SKilLOrganizeImportsHandler
+import de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLOrganizeImportsHandler
 import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices
 import de.unistuttgart.iste.ps.skilled.validation.InheritenceValidator
@@ -524,6 +524,11 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 		)
 	}
 
+	/**
+	 * Organizes the import of a whole project, for this there will be on main file which includes all includes 
+	 * and every other skill file will include the main file.
+	 * @param element The project in which this element is located will be organized.
+	 */
 	def organizeImportsProjectWide(EObject element) {
 		var dependencyGraph = new DependencyGraph
 
@@ -536,10 +541,14 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 
 		dependencyGraph.generateIgnoreOrigin((file as File), services.getAll(file as File, true))
 
-		val org = new SKilLOrganizeImportsHandler(dependencyGraph)
+		val org = new SKilLOrganizeImportsHandler()
 		org.organizeImportsWholeProject(file as File)
 	}
 
+	/**
+	 * Organizes the imports of on skill file.
+	 * @param element The file in which this element is located will be organized.
+	 */
 	def organizeImports(EObject element) {
 		var dependencyGraph = new DependencyGraph()
 
