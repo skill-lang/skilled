@@ -154,8 +154,11 @@ public class TestImportTools {
         bot.editorByTitle("FileToBeImported.skill").show();
 
         bot.viewByTitle("ToolView").show();
+        bot.viewByTitle("ToolView").isActive();
+        bot.sleep(1000);
         // Refresh ToolView window
         key.pressShortcut(Keystrokes.F5);
+        bot.list().pressShortcut(Keystrokes.F5);
         // Select Tool "FileToBeImported" to check if it exists
         bot.list().select("FileToBeImported");
         bot.editorByTitle("FileToBeImported.skill").show();
@@ -207,8 +210,8 @@ public class TestImportTools {
 
         // Run Import Tools
         bot.menu("SKilLEd").menu("Import Tools").click();
-        bot.textWithLabel("Select tool to import:").setText(
-                resourcePath + "testImportToolsWithDifferentTypesButSameName - FileToBeImported Before Import.skill");
+        bot.textWithLabel("Select tool to import:").setText(resourcePath + "testImportToolsWithDifferentTypesButSameName"
+                + File.separator + "FileToBeImported Before Import.skill");
         bot.textWithLabel("Import to Project:").setText(workspacePath + File.separator + "TestImportTools3");
         bot.button("OK").click();
 
@@ -216,30 +219,29 @@ public class TestImportTools {
         bot.tree().getTreeItem("TestImportTools3").select();
         bot.menu("File").menu("Refresh").click();
         bot.tree().getTreeItem("TestImportTools3").expand();
-        bot.tree().getTreeItem("TestImportTools3")
-                .getNode("testImportToolsWithDifferentTypesButSameName - FileToBeImported Before Import.skill")
-                .doubleClick();
-        bot.editorByTitle("testImportToolsWithDifferentTypesButSameName - FileToBeImported Before Import.skill").show();
+        bot.tree().getTreeItem("TestImportTools3").getNode("FileToBeImported Before Import.skill").doubleClick();
+        bot.editorByTitle("FileToBeImported Before Import.skill").show();
 
         bot.viewByTitle("ToolView").show();
         // Refresh ToolView window
         key.pressShortcut(Keystrokes.F5);
+        bot.list().pressShortcut(Keystrokes.F5);
         // Select Tool "testImportToolsWithDifferentTypesButSameName - FileToBeImported Before Import" to check if it exists
-        bot.list().select("testImportToolsWithDifferentTypesButSameName - FileToBeImported Before Import");
-        bot.editorByTitle("testImportToolsWithDifferentTypesButSameName - FileToBeImported Before Import.skill").show();
-        bot.editorByTitle("testImportToolsWithDifferentTypesButSameName - FileToBeImported Before Import.skill").close();
+        bot.list().select("FileToBeImported Before Import");
+        bot.editorByTitle("FileToBeImported Before Import.skill").show();
+        bot.editorByTitle("FileToBeImported Before Import.skill").close();
 
         try {
             newtestImport = new String(Files.readAllBytes(
                     Paths.get(workspacePath + File.separator + "TestImportTools3" + File.separator + "testImport3.skill")));
-            newtestImportChecker = new String(Files.readAllBytes(
-                    Paths.get(resourcePath + "testImportToolsWithDifferentTypesButSameName - new testImport3.skill")));
+            newtestImportChecker = new String(Files.readAllBytes(Paths.get(resourcePath
+                    + "testImportToolsWithDifferentTypesButSameName" + File.separator + "new testImport3.skill")));
 
-            newFileToBeImportedAfterImport = new String(
-                    Files.readAllBytes(Paths.get(workspacePath + File.separator + "TestImportTools3" + File.separator
-                            + "testImportToolsWithDifferentTypesButSameName - FileToBeImported Before Import.skill")));
-            newFileToBeImportedAfterImportChecker = new String(Files.readAllBytes(Paths.get(
-                    resourcePath + "testImportToolsWithDifferentTypesButSameName - FileToBeImported Before Import.skill")));
+            newFileToBeImportedAfterImport = new String(Files.readAllBytes(Paths.get(workspacePath + File.separator
+                    + "TestImportTools3" + File.separator + "FileToBeImported Before Import.skill")));
+            newFileToBeImportedAfterImportChecker = new String(
+                    Files.readAllBytes(Paths.get(resourcePath + "testImportToolsWithDifferentTypesButSameName"
+                            + File.separator + "FileToBeImported Before Import.skill")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -341,6 +343,7 @@ public class TestImportTools {
         bot.viewByTitle("ToolView").show();
         // Refresh ToolView window
         key.pressShortcut(Keystrokes.F5);
+        bot.list().pressShortcut(Keystrokes.F5);
         // Select Tool "testImportToolsAndOneDuplicateInterfaceType - FileToBeImported Before Import" to check if it exists
         bot.list().select("testImportToolsAndOneDuplicateInterfaceType - FileToBeImported Before Import");
         bot.editorByTitle("testImportToolsAndOneDuplicateInterfaceType - FileToBeImported Before Import.skill").show();
@@ -388,8 +391,8 @@ public class TestImportTools {
 
         // Run Import Tools
         bot.menu("SKilLEd").menu("Import Tools").click();
-        bot.textWithLabel("Select tool to import:")
-                .setText(resourcePath + "testImportToolsAndOneDuplicateEnumType - FileToBeImported before Import.skill");
+        bot.textWithLabel("Select tool to import:").setText(resourcePath + "testImportToolsAndOneDuplicateEnumType"
+                + File.separator + "FileToBeImported before Import.skill");
         bot.textWithLabel("Import to Project:").setText(workspacePath + File.separator + "TestImportTools6");
         bot.button("OK").click();
 
@@ -397,29 +400,28 @@ public class TestImportTools {
         bot.tree().getTreeItem("TestImportTools6").select();
         bot.menu("File").menu("Refresh").click();
         bot.tree().getTreeItem("TestImportTools6").expand();
-        bot.tree().getTreeItem("TestImportTools6")
-                .getNode("testImportToolsAndOneDuplicateEnumType - FileToBeImported before Import.skill").doubleClick();
-        bot.editorByTitle("testImportToolsAndOneDuplicateEnumType - FileToBeImported before Import.skill").show();
+        bot.tree().getTreeItem("TestImportTools6").getNode("FileToBeImported before Import.skill").doubleClick();
+        bot.editorByTitle("FileToBeImported before Import.skill").show();
 
         bot.viewByTitle("ToolView").show();
         // Refresh ToolView window
         key.pressShortcut(Keystrokes.F5);
+        bot.list().pressShortcut(Keystrokes.F5);
         // Select Tool "FileToBeImported" to check if it exists
-        bot.list().select("testImportToolsAndOneDuplicateEnumType - FileToBeImported before Import");
-        bot.editorByTitle("testImportToolsAndOneDuplicateEnumType - FileToBeImported before Import.skill").show();
-        bot.editorByTitle("testImportToolsAndOneDuplicateEnumType - FileToBeImported before Import.skill").close();
+        bot.list().select("FileToBeImported before Import");
+        bot.editorByTitle("FileToBeImported before Import.skill").show();
+        bot.editorByTitle("FileToBeImported before Import.skill").close();
 
         try {
             newtestImport = new String(Files.readAllBytes(
                     Paths.get(workspacePath + File.separator + "TestImportTools6" + File.separator + "testImport6.skill")));
-            newtestImportChecker = new String(Files.readAllBytes(
-                    Paths.get(resourcePath + "testImportToolsAndOneDuplicateEnumType - new testImport6.skill")));
+            newtestImportChecker = new String(Files.readAllBytes(Paths.get(
+                    resourcePath + "testImportToolsAndOneDuplicateEnumType" + File.separator + "new testImport6.skill")));
 
-            newFileToBeImportedAfterImport = new String(
-                    Files.readAllBytes(Paths.get(workspacePath + File.separator + "TestImportTools6" + File.separator
-                            + "testImportToolsAndOneDuplicateEnumType - FileToBeImported before Import.skill")));
-            newFileToBeImportedAfterImportChecker = new String(Files.readAllBytes(Paths
-                    .get(resourcePath + "testImportToolsAndOneDuplicateEnumType - FileToBeImported after Import.skill")));
+            newFileToBeImportedAfterImport = new String(Files.readAllBytes(Paths.get(workspacePath + File.separator
+                    + "TestImportTools6" + File.separator + "FileToBeImported before Import.skill")));
+            newFileToBeImportedAfterImportChecker = new String(Files.readAllBytes(Paths.get(resourcePath
+                    + "testImportToolsAndOneDuplicateEnumType" + File.separator + "FileToBeImported after Import.skill")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -453,6 +455,11 @@ public class TestImportTools {
         newtestImportChecker = newtestImportChecker.replaceAll("\\s+", "");
         newFileToBeImportedAfterImport = newFileToBeImportedAfterImport.replaceAll("\\s+", "");
         newFileToBeImportedAfterImportChecker = newFileToBeImportedAfterImportChecker.replaceAll("\\s+", "");
+
+        System.out.println(newtestImport);
+        System.out.println(newtestImportChecker);
+        System.out.println(newFileToBeImportedAfterImport);
+        System.out.println(newFileToBeImportedAfterImportChecker);
 
         // Check if the contents of the imported and merged files are correct
         assertTrue(newtestImport.equals(newtestImportChecker));
