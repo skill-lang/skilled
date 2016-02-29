@@ -30,6 +30,7 @@ import de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLTextEditComposer;
 
 /**
  * This class is used to register components to be used within the IDE.
+ * 
  * @author Tobias Heck
  */
 public class SKilLUiModule extends de.unistuttgart.iste.ps.skilled.ui.AbstractSKilLUiModule {
@@ -89,12 +90,12 @@ public class SKilLUiModule extends de.unistuttgart.iste.ps.skilled.ui.AbstractSK
     public static Class<? extends ITextEditComposer> bindITextEditComposer() {
         return SKilLTextEditComposer.class;
     }
-    
+
     public static Class<? extends TerminalsProposalProvider> bindTerminalsProposalProvider() {
         return SKilLTerminalsProposalProvider.class;
     }
-    
-    public static Class<? extends DefaultCompletionProposalPostProcessor> bindCompletionProposalPostProcessor () {
+
+    public static Class<? extends DefaultCompletionProposalPostProcessor> bindCompletionProposalPostProcessor() {
         return SKilLCompletionProposalPostProcessor.class;
     }
 }

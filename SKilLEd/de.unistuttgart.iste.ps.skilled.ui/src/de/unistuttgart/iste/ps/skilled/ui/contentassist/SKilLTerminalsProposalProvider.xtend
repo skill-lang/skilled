@@ -13,9 +13,9 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal
 
 class SKilLTerminalsProposalProvider extends TerminalsProposalProvider {
-	
+
 	override public void complete_ID(EObject model, RuleCall ruleCall, ContentAssistContext context,
-			ICompletionProposalAcceptor acceptor) {
+		ICompletionProposalAcceptor acceptor) {
 		if (doCreateIdProposals) {
 			val PrefixMatcher newMatcher = new PrefixMatcher {
 				override public boolean isCandidateMatchingPrefix(String name, String prefix) {
@@ -48,10 +48,9 @@ class SKilLTerminalsProposalProvider extends TerminalsProposalProvider {
 			}
 			acceptor.accept(proposal)
 		}
-		
-		
+
 	}
-	
+
 	def private String getAssignedFeature(RuleCall call) {
 		val Assignment assignment = GrammarUtil.containingAssignment(call)
 		if (assignment != null) {
@@ -62,17 +61,17 @@ class SKilLTerminalsProposalProvider extends TerminalsProposalProvider {
 		}
 		return null
 	}
-	
+
 	override public void complete_STRING(EObject model, RuleCall ruleCall, ContentAssistContext context,
-			ICompletionProposalAcceptor acceptor) {
+		ICompletionProposalAcceptor acceptor) {
 		if (doCreateStringProposals) {
 			val String feature = ruleCall.getAssignedFeature
 			createStringProposal(context, acceptor, feature, ruleCall)
 		}
 	}
-	
+
 	def private void createStringProposal(ContentAssistContext context, ICompletionProposalAcceptor acceptor,
-			String feature, RuleCall ruleCall) {
+		String feature, RuleCall ruleCall) {
 		var String proposalText = null
 		if (feature != null) {
 			proposalText = feature
@@ -90,7 +89,7 @@ class SKilLTerminalsProposalProvider extends TerminalsProposalProvider {
 			configurable.setSelectionLength(proposalText.length - 2)
 			configurable.setAutoInsertable(true)
 			configurable.setSimpleLinkedMode(context.getViewer, proposalText.charAt(0), '\t');
-			
+
 		}
 		acceptor.accept(proposal)
 	}

@@ -13,43 +13,39 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent;
 import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype;
 import de.unistuttgart.iste.ps.skilled.sKilL.File;
 import de.unistuttgart.iste.ps.skilled.sKilL.Floattype;
-import de.unistuttgart.iste.ps.skilled.sKilL.View;
 import de.unistuttgart.iste.ps.skilled.sKilL.Integertype;
 import de.unistuttgart.iste.ps.skilled.sKilL.Listtype;
 import de.unistuttgart.iste.ps.skilled.sKilL.Maptype;
 import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype;
+import de.unistuttgart.iste.ps.skilled.sKilL.View;
+
 
 /**
- * This class supplies a method to compare two fields
- * and determine their order.
- * The field order can be read in the SKilL specification.
- * If the fields are of the same type, their names are
- * used instead to determine the order.
+ * This class supplies a method to compare two fields and determine their order. The field order can be read in the SKilL
+ * specification. If the fields are of the same type, their names are used instead to determine the order.
  * 
  * @author Tobias Heck
  *
  */
 public class FieldComparator implements Comparator<Field> {
-    
+
     /**
      * 
-     * You may pass the file in which the
-     * fields are saved to establish an order <br>
-     * between fields referencing different user types
-     * (as long as they are in the file). <br>
-     * You may also pass <I>null</I> to have them
-     * sorted by name.
+     * You may pass the file in which the fields are saved to establish an order <br>
+     * between fields referencing different user types (as long as they are in the file). <br>
+     * You may also pass <I>null</I> to have them sorted by name.
      */
     public FieldComparator(File file) {
         this.file = file;
     }
-    
+
     File file;
 
     @Override
     public int compare(Field o1, Field o2) {
         int difference = getOrder(o1) - getOrder(o2);
-        if (difference != 0) return difference;
+        if (difference != 0)
+            return difference;
         return o1.getFieldcontent().getName().compareTo(o2.getFieldcontent().getName());
     }
 
@@ -122,7 +118,8 @@ public class FieldComparator implements Comparator<Field> {
     }
 
     private int idxT(Declaration type) {
-        if (file == null) return -1;
+        if (file == null)
+            return -1;
         return file.getDeclarations().indexOf(type);
     }
 

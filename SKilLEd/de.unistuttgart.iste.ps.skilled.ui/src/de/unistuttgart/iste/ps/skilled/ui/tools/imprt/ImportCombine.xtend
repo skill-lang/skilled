@@ -395,8 +395,7 @@ class ImportCombine {
 				else if (fPreviousLineWasUsertype && !line.contains("}")) {
 					if (line.contains("{")) {
 						fText += line + "\n" + "	" + fRestrictions + fHints + fDuplicateFields;
-					}
-					else {
+					} else {
 						fText += "	" + fRestrictions + fHints + fDuplicateFields + line + "\n";
 					}
 					fPreviousLineWasUsertype = false;

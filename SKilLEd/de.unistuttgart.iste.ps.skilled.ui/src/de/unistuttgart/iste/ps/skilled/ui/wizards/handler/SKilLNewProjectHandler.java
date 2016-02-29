@@ -11,51 +11,50 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import de.unistuttgart.iste.ps.skilled.ui.wizards.SKilLNewProjectWizard;
 
+
 /**
- * Small Handler for open a new SKilL Project Wizard. It is needed for making a
- * contribution to the right click of the project explorer.
+ * Small Handler for open a new SKilL Project Wizard. It is needed for making a contribution to the right click of the
+ * project explorer.
  * 
  * @author Marco Link
  */
 public class SKilLNewProjectHandler implements IHandler {
 
-	@Override
-	public void addHandlerListener(IHandlerListener handlerListener) {
-		// Not needed
+    @Override
+    public void addHandlerListener(IHandlerListener handlerListener) {
+        // Not needed
+    }
 
-	}
+    @Override
+    public void dispose() {
+        // Not needed
+    }
 
-	@Override
-	public void dispose() {
-		// Not needed
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        Shell activeShell = HandlerUtil.getActiveShell(event);
 
-	}
+        IWizard wizard = new SKilLNewProjectWizard();
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Shell activeShell = HandlerUtil.getActiveShell(event);
+        WizardDialog dialog = new WizardDialog(activeShell, wizard);
 
-		IWizard wizard = new SKilLNewProjectWizard();
+        dialog.open();
+        return null;
+    }
 
-		WizardDialog dialog = new WizardDialog(activeShell, wizard);
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
-		dialog.open();
-		return null;
-	}
+    @Override
+    public boolean isHandled() {
+        return true;
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-
-	@Override
-	public boolean isHandled() {
-		return true;
-	}
-
-	@Override
-	public void removeHandlerListener(IHandlerListener handlerListener) {
-		// Not needed
-	}
+    @Override
+    public void removeHandlerListener(IHandlerListener handlerListener) {
+        // Not needed
+    }
 
 }

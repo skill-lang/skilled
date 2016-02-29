@@ -27,7 +27,7 @@ class SKilLCompletionProposalPostProcessor extends DefaultCompletionProposalPost
 				var Object additionalProposalInfo = proposal.getAdditionalProposalInfo(new NullProgressMonitor);
 				if (additionalProposalInfo != null) {
 					if (additionalProposalInfo instanceof XtextBrowserInformationControlInput) {
-						
+
 						// change strings to match: [declaration name]
 						if (additionalProposalInfo?.element instanceof Declaration) {
 							var Declaration dec = additionalProposalInfo.element as Declaration;

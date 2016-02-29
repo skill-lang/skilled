@@ -4,6 +4,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
+
 /**
  * Activates SortTypes-routine
  * 
@@ -12,7 +13,7 @@ import org.eclipse.core.commands.ExecutionException;
  */
 public class SortTypesHandler extends AbstractHandler {
     SortTypes sorter = new SortTypes();
-    
+
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         sorter.run();

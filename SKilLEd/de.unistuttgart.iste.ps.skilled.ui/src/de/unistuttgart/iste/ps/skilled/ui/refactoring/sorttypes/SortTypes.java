@@ -24,6 +24,7 @@ import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
  */
 public class SortTypes {
 
+    @SuppressWarnings("static-method")
     public void run() {
         IXtextDocument xtextDocument = EditorUtils.getActiveXtextEditor().getDocument();
         xtextDocument.modify(new IUnitOfWork<Void, XtextResource>() {

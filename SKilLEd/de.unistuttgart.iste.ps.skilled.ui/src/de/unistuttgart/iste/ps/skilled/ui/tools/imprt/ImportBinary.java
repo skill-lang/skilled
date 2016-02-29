@@ -20,7 +20,6 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -231,6 +230,7 @@ public class ImportBinary {
         OK.setLayoutData(gridDataButtons);
         OK.setText("OK");
         OK.addSelectionListener(new SelectionAdapter() {
+            @SuppressWarnings({ "restriction", "unchecked" })
             @Override
             public void widgetSelected(SelectionEvent event) {
 
@@ -412,8 +412,8 @@ public class ImportBinary {
                         IWorkspaceRoot root = workspace.getRoot();
                         IPath path = root.getLocation();
                         String shortPath = fImportLocationPath.toString().split(path.lastSegment())[1];
-                        org.eclipse.core.internal.resources.File file = constructor.newInstance(
-                                new org.eclipse.core.runtime.Path(shortPath), ResourcesPlugin.getWorkspace());
+                        org.eclipse.core.internal.resources.File file = constructor
+                                .newInstance(new org.eclipse.core.runtime.Path(shortPath), ResourcesPlugin.getWorkspace());
                         File rename = new File(fImportLocationPath.toString());
                         File deleteLater = new File(fImportLocationPath.toString() + "asdf");
                         rename.renameTo(deleteLater);

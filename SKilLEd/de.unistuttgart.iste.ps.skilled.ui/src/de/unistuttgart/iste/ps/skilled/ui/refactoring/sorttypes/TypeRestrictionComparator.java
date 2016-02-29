@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 import de.unistuttgart.iste.ps.skilled.sKilL.Restriction;
 
+
 /**
  * sorts type restrictions according to the order specified in the SKilL specification
  * 
@@ -19,11 +20,16 @@ public class TypeRestrictionComparator implements Comparator<Restriction> {
 
     private static int getOrder(Restriction o1) {
         switch (o1.getRestrictionName().toLowerCase()) {
-            case "unique": return 0;
-            case "singleton": return 1;
-            case "monotone": return 2;
-            case "abstract": return 3;
-            case "default": return 5;
+            case "unique":
+                return 0;
+            case "singleton":
+                return 1;
+            case "monotone":
+                return 2;
+            case "abstract":
+                return 3;
+            case "default":
+                return 5;
         }
         return -1;
     }

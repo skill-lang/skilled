@@ -16,7 +16,7 @@ import org.eclipse.xtext.validation.Issue
  *  
  */
 class SetName {
-	
+
 	var IssueResolutionAcceptor acceptor
 	var Issue issue;
 
@@ -51,5 +51,5 @@ class SetName {
 			}
 		}
 	}
-	
+
 }
