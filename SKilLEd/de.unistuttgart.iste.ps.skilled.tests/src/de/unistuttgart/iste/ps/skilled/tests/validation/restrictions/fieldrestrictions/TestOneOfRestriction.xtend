@@ -64,8 +64,6 @@ class TestOneOfRestriction {
 	
 	//User types
 	
-	//TODO
-	
 	@Test
 	def void testOneOfUsertypeCorrectArgument() {
 		assertTrue("A {} B : A {} C {@oneOf(B) A a;}".parse.validate.isNullOrEmpty)
@@ -137,8 +135,6 @@ class TestOneOfRestriction {
 	def void testOneOfBoolean() {
 		assertFalse("A {} B {@oneOf(A) bool a;}".parse.validate.isNullOrEmpty)
 	}
-	
-	//TODO
 	
 	@Test
 	def void testOneOfAnnotation() {

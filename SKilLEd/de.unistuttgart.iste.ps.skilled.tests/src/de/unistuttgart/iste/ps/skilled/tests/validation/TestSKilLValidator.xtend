@@ -16,7 +16,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * TODO Comment everything
+ *
  * @author Marco Link
  * @author Armin Hüneburg
  * @author Moritz Platzer

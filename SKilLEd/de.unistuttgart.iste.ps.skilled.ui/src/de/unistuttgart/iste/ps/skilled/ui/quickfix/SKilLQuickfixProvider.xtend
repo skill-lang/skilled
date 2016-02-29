@@ -81,7 +81,6 @@ import org.eclipse.xtext.validation.Issue
  */
 public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 
-	/** TODO Comment */
 	@Inject private SKilLServices services
 
 	@Fix("Imported resource could not be found.")
@@ -126,7 +125,6 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 	@Inject
 	private CrossRefResolutionConverter converter
 
-	/** TODO Hilfsmethoden auslagern */
 	def private int getLevenshteinDistance(String s0, String s1) {
 		val m = s0.length
 		val n = s1.length

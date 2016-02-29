@@ -35,12 +35,12 @@ public class SKilLNewProjectWizard extends Wizard implements INewWizard {
     private WizardNewProjectCreationPage mainpage;
 
     public SKilLNewProjectWizard() {
-        // TODO Auto-generated constructor stub
+        // not used
     }
 
     @Override
     public void init(IWorkbench workbench, IStructuredSelection selection) {
-        // TODO Auto-generated method stub
+        // not used
     }
 
     /**

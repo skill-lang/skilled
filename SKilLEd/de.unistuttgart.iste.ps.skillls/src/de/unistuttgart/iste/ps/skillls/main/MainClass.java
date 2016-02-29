@@ -28,7 +28,6 @@ import de.unistuttgart.iste.ps.skillls.tools.Hint;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
 import de.unistuttgart.iste.ps.skillls.tools.Type;
 import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
-// TODO: generell mehr trennen, klone entfernen
 
 
 /**

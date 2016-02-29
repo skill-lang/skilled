@@ -56,8 +56,7 @@ public class Editor {
      *            The single command, containing subcommands.
      */
     private void processCommand(String command) {
-        String[] subCommands = command.split(":");// TODO: subcommand vllt
-        // ändern
+        String[] subCommands = command.split(":");
         if (subCommands.length <= 1) {
             return;
         }
