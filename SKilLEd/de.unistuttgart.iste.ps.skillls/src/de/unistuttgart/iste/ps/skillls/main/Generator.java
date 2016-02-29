@@ -112,25 +112,28 @@ public class Generator implements Runnable {
         }
     }
 
-    /**
-     * Creates the file that includes every other file.
-     * 
-     * @throws IOException
-     *             throws exception at the same time as {@link Files#write(Path, byte[], OpenOption...)}
-     */
-    private void makeMain() throws IOException {
-        mainFile = path + java.io.File.separator + ".." + java.io.File.separator + tool.getName() + "-Mainfile.skill";
-        StringBuilder builder = new StringBuilder();
-        for (File file : tool.getFiles()) {
-            builder.append("include \"");
-            builder.append(tool.getName());
-            builder.append('/');
-            builder.append(file.getPath().substring(file.getPath().indexOf(java.io.File.separatorChar) + 1));
-            builder.append('"');
-            builder.append(System.getProperty("line.separator"));
-        }
-        Files.write(Paths.get(mainFile), builder.toString().getBytes());
-    }
+	/**
+	 * Creates the file that includes every other file.
+	 * 
+	 * @throws IOException
+	 *             throws exception at the same time as
+	 *             {@link Files#write(Path, byte[], OpenOption...)}
+	 */
+	private void makeMain() throws IOException {
+		mainFile = path + java.io.File.separator + ".." + java.io.File.separator + tool.getName() + "-Mainfile.skill";
+		Path path = Paths.get(new java.io.File(this.path).getParentFile().getParentFile().getAbsolutePath());
+		StringBuilder builder = new StringBuilder();
+		for (File file : tool.getFiles()) {
+			String p = path.relativize(Paths.get(file.getPath())).toString();
+			builder.append("include \"");
+			builder.append(tool.getName());
+			builder.append('/');
+			builder.append(p);
+			builder.append('"');
+			builder.append(System.getProperty("line.separator"));
+		}
+		Files.write(Paths.get(mainFile), builder.toString().getBytes());
+	}
 
     /**
      * Creates the directories for the temporary files

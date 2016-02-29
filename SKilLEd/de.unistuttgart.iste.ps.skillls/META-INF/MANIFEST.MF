@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Skillls
-Bundle-SymbolicName: de.unistuttgart.iste.ps.skillls
+Bundle-SymbolicName: de.unistuttgart.iste.ps.skillls-eclipsefix
 Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: skillls.jar,
  lib/antlr4-runtime-4.5.1-1.jar,
