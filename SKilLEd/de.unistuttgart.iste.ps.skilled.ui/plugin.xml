@@ -489,39 +489,39 @@
      </perspectiveExtension>
 
   </extension>
-  <extension
-        point="org.eclipse.ui.commands">
-     <command
-           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.tools.imprt.ImportBinaryHandler"
-           id="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
-           name="Import Binary File">
-     </command>
-  </extension>
-  <extension
-        point="org.eclipse.ui.bindings">
-     <key
-           commandId="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
-           contextId="org.eclipse.ui.contexts.window"
-           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-           sequence="M1+4">
-     </key>
-  </extension>
-	<extension
-		  point="org.eclipse.ui.commands">
-	   <command
-	  		defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.SortTypesHandler"
-	  		id="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
-	  		name="Sort Usertypes">
-	   </command>
-  </extension>
   	<extension
 		  point="org.eclipse.ui.bindings">
-	   <key
-	   		 commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
-	   		 contextId="org.eclipse.ui.contexts.window"
-	   		 schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	   		 sequence="M1+9">
-	   </key>
+      <key
+            commandId="de.unistuttgart.iste.ps.skilled.ui.views"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+F1">
+      </key>
+      <key
+            commandId="de.unistuttgart.iste.ps.skilled.ui.tools.imprt"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+F2">
+      </key>
+      <key
+            commandId="de.unistuttgart.iste.ps.skilled.ui.tools.export"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+F3">
+      </key>
+      <key
+            commandId="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+F4">
+      </key>
+      <key
+            commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinedfiles.command"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+F5">
+      </key>
+      <key
+            commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+F6">
+      </key>
   </extension>
   
   
@@ -535,6 +535,26 @@
     <extension
           point="org.eclipse.ui.commands">
        <command
+             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.views.ToolViewHandler"
+             id="de.unistuttgart.iste.ps.skilled.ui.views"
+             name="Tool View">
+       </command>
+       <command
+             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.tools.imprt.ImportToolsHandler"
+             id="de.unistuttgart.iste.ps.skilled.ui.tools.imprt"
+             name="Import Tools">
+       </command>
+       <command
+             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.tools.export.ExportToolsHandler"
+             id="de.unistuttgart.iste.ps.skilled.ui.tools.export"
+             name="Export Tools">
+       </command>
+       <command
+             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.tools.imprt.ImportBinaryHandler"
+             id="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
+             name="Import Binary File">
+       </command>
+       <command
              commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinefiles.command"
              defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinefiles.SKilLCombineHandler"
              id="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinedfiles.command"
@@ -543,15 +563,11 @@
              style="push"
              tooltip="Combine multiple .skill-files">
        </command>
-    </extension>
-    <extension
-          point="org.eclipse.ui.bindings">
-       <key
-             commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinedfiles.command"
-             contextId="org.eclipse.ui.contexts.window"
-             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-             sequence="M1+1">
-       </key>
+       <command
+             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.SortTypesHandler"
+             id="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
+             name="Sort Usertypes">
+       </command>
     </extension>
 
   <extension
@@ -569,8 +585,8 @@
               id="SKilLEdMenu"
               label="SKilLEd">
            <command
-                 commandId="de.unistuttgart.iste.ps.skilled.ui.tools.export"
-                 label="Export Tools"
+                 commandId="de.unistuttgart.iste.ps.skilled.ui.views"
+                 label="Tool View"
                  style="push">
            </command>
            <command
@@ -579,8 +595,13 @@
                  style="push">
            </command>
            <command
-                 commandId="de.unistuttgart.iste.ps.skilled.ui.views"
-                 label="Tool View"
+                 commandId="de.unistuttgart.iste.ps.skilled.ui.tools.export"
+                 label="Export Tools"
+                 style="push">
+           </command>
+           <command
+                 commandId="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
+                 label="Import Binary File"
                  style="push">
            </command>
           <command
@@ -588,11 +609,6 @@
                 label="Combine .skill-files"
                 style="push"
                 tooltip="Combine multiple .skill-files">
-          </command>
-          <command
-                commandId="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
-                label="Import Binary File"
-                style="push">
           </command>
            <command
                commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes.command"
@@ -612,27 +628,7 @@
      </menuContribution>
   </extension>
   <extension
-        point="org.eclipse.ui.bindings">
-     <key
-           commandId="de.unistuttgart.iste.ps.skilled.ui.tools.export"
-           contextId="org.eclipse.ui.contexts.window"
-           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-           sequence="M1+3">
-     </key>
-     <key
-           commandId="de.unistuttgart.iste.ps.skilled.ui.tools.imprt"
-           contextId="org.eclipse.ui.contexts.window"
-           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-           sequence="M1+4">
-     </key>
-  </extension>
-  <extension
         point="org.eclipse.ui.commands">
-     <command
-           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.tools.export.ExportToolsHandler"
-           id="de.unistuttgart.iste.ps.skilled.ui.tools.export"
-           name="Export Tools">
-     </command>
      <command
            defaultHandler="de.unistuttgart.iste.ps.skilled.ui.wizards.handler.SKilLNewProjectHandler"
            id="de.unistuttgart.iste.ps.skilled.ui.SKilLNewProjectHandler"
@@ -642,16 +638,6 @@
            defaultHandler="de.unistuttgart.iste.ps.skilled.ui.wizards.handler.SKilLNewFileHandler"
            id="de.unistuttgart.iste.ps.skilled.ui.SKilLNewFileHandler"
            name="New SKilL File">
-     </command>
-     <command
-           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.views.ToolViewHandler"
-           id="de.unistuttgart.iste.ps.skilled.ui.views"
-           name="Tool View">
-     </command>
-     <command
-           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.tools.imprt.ImportToolsHandler"
-           id="de.unistuttgart.iste.ps.skilled.ui.tools.imprt"
-           name="Import Tools">
      </command>"de.unistuttgart.iste.ps.skilled.ui.tools.imprt.ImportToolsHandler"
            id="de.unistuttgart.iste.ps.skilled.ui.tools.imprt"
            name="Import Tools">
