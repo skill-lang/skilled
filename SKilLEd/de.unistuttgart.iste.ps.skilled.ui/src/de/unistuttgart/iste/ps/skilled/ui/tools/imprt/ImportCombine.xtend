@@ -10,6 +10,7 @@ import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
 import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices
 import java.awt.EventQueue
 import java.io.BufferedReader
@@ -21,11 +22,9 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.ArrayList
 import javax.swing.JOptionPane
-import org.apache.commons.io.FileUtils
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.emf.common.util.URI
 import org.eclipse.xtext.EcoreUtil2
-import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil
 
 /**
  * This class provides combine function for Import Tools. If there are 2 or more 
@@ -320,11 +319,8 @@ class ImportCombine {
 			duplicateTypeAddress.clear();
 			counter = 0;
 			// Copy and paste to project folder
-			if (!fDestination.exists) {
-				FileUtils.copyFile(fSource, fDestination);
-			} else {
-				FileUtils.copyFile(fSource, fDestinationRenamed);
-			}
+			Files.deleteIfExists(Paths.get(fDestination.absolutePath))
+			Files.copy(Paths.get(fSource.absolutePath), Paths.get(fDestination.absolutePath))
 		} else {
 			// If type name already exists, restructure
 			var fFindDuplicatedType = duplicateType.get(fDuplicateIndex);
@@ -480,7 +476,7 @@ class ImportCombine {
 
 			// Copy and paste file to the import location
 			if (!fDestination.exists) {
-				FileUtils.copyFile(fSource, fDestination);
+				Files.copy(Paths.get(fSource.absolutePath), Paths.get(fDestination.absolutePath))
 				var FileWriter fw2 = new FileWriter(fDestination);
 				if (fOriginalFileText != null) {
 					// Remake to be imported file with the deleted duplicate types 
@@ -488,7 +484,7 @@ class ImportCombine {
 					fw2.close;
 				}
 			} else {
-				FileUtils.copyFile(fSource, fDestinationRenamed);
+				Files.copy(Paths.get(fSource.absolutePath), Paths.get(fDestinationRenamed.absolutePath))
 				var FileWriter fw2 = new FileWriter(fDestinationRenamed);
 				if (fOriginalFileText != null) {
 					// Remake to be imported file with the deleted duplicate types 
