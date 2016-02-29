@@ -32,7 +32,7 @@ public class SKilLCloneToolWizardPage extends WizardPage {
     public SKilLCloneToolWizardPage(ArrayList<Tool> toolList) {
         super("Clone an existing tool");
         setTitle("Clone an existing tool");
-        setDescription("In this page you can select a tool and create a clone out of it.");
+        setDescription("On this page you can select a tool and create a clone out of it");
         this.toolList = toolList;
     }
 
@@ -44,7 +44,7 @@ public class SKilLCloneToolWizardPage extends WizardPage {
         layout.numColumns = 2;
         container.setLayout(layout);
         Label label1 = new Label(container, SWT.NONE);
-        label1.setText("Select a tool to clone from.");
+        label1.setText("Select a tool to clone from");
 
         dropdown = new CCombo(container, SWT.DROP_DOWN | SWT.H_SCROLL | SWT.READ_ONLY);
         String[] toolnames = new String[toolList.size()];

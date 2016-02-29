@@ -21,6 +21,7 @@ import de.unistuttgart.iste.ps.skillls.tools.Type;
  * this class is used to initialize the buttons displayed in the {@link ToolView toolview}
  * 
  * @author Ken Singer
+ * @author Marco Link
  * @category GUI
  */
 public class ToolViewButtonInitializer {
@@ -36,7 +37,7 @@ public class ToolViewButtonInitializer {
     }
 
     /**
-     * Actions for the buttons in the {@link ToolView toolview}.
+     * make the Actions for the buttons in the {@link ToolView toolview}.
      * 
      * @category GUI
      */
@@ -76,7 +77,6 @@ public class ToolViewButtonInitializer {
      * @category Dialog
      */
     private void createToolDialog() {
-        long time = -1;
         final SKilLToolWizard sKilLToolWizard = new SKilLToolWizard(WizardOption.CREATE, toolview.getAllToolList());
         WizardDialog wizardDialog = new WizardDialog(toolview.getShell(), sKilLToolWizard);
         if (wizardDialog.open() == Window.OK) {
@@ -89,7 +89,6 @@ public class ToolViewButtonInitializer {
             toolview.readToolBinaryFile();
             if (sKilLToolWizard.getAddAllCheckboxState()) {
                 try {
-                    time = System.currentTimeMillis();
                     Tool tool = toolview.getSkillFile().Tools().stream().filter(t -> t.getName().equals(newToolName))
                             .findFirst().get();
                     ToolUtil.addAllToTool(toolview.getSkillFile(), toolview.getActiveProject(), tool);
@@ -100,8 +99,6 @@ public class ToolViewButtonInitializer {
             }
             toolview.refresh();
         }
-        System.out.println("Time: " + (System.currentTimeMillis() - time));
-
     }
 
     /**

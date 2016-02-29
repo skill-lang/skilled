@@ -33,7 +33,7 @@ public class SKilLRenameToolWizardPage extends WizardPage {
     public SKilLRenameToolWizardPage(ArrayList<Tool> toollist, String name) {
         super("Rename Tool");
         setTitle("Rename Tool");
-        setDescription("On this page you can rename the tool.");
+        setDescription("On this page you can rename the selected tool.");
         setControl(tbName);
         this.name = name;
         this.toollist = toollist;

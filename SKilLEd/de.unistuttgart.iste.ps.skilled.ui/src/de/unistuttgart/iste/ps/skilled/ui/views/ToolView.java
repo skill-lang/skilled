@@ -33,7 +33,7 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
 
 /**
  * This class creates the SKilL-Tool-Overview which enables the user to create and organize {@link Tool tools} within a
- * SKilLEd-Project.
+ * SKilLEd-Project. It can be used to add, remove and rename tools, add and remove types/fields/hints.
  * 
  * 
  * @author Ken Singer
@@ -98,9 +98,10 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * refreshs the data shown in the {@link ToolView toolview}
+     * refreshs the data shown in the {@link ToolView toolview} and sets the {@link CTabFolder tooltab} as the selected tab
+     * of the {@link CTabFolder tabfolder}.
      * 
-     * @category Data Handling
+     * @category GUI
      */
     public void refresh() {
         if (!parent.isDisposed()) {
@@ -116,9 +117,10 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * reload the typelist after adding a {@link Type type} or {@link Hint hint}to a tool
+     * reload the typelist after adding a {@link Type type} or {@link Hint typehinthint} to a tool and sets the
+     * {@link CTabFolder typetab} as the selected tab of the {@link CTabFolder tabfolder}.
      * 
-     * @category Data Handling
+     * @category GUI
      */
     void reloadTypelist() {
         refresh();
@@ -129,11 +131,10 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Reload the fieldlist after adding a {@link Field field} or {@link Hint hint} to a {@link Tree tooltype}
+     * Reload the fieldlist after adding a {@link Field field} or {@link Hint fieldhint} to a {@link Tree fieldtab} and sets
+     * the {@link CTabFolder toolitem} as the selected tab of the {@link CTabFolder tabfolder}.
      * 
-     * @category Data Handling
      * @category GUI
-     * @param type
      * 
      */
     void reloadFieldList() {
@@ -146,7 +147,7 @@ public class ToolView extends ViewPart {
 
     /**
      * clears the lists <code>allToolList</code>, <code>allTypeList</code>, <code>typeListOfActualTool</code> and
-     * <code>typeHintListOfActualTool</code>. sets <code>activeProject<\code> to null .
+     * <code>typeHintListOfActualTool</code>. sets <code>activeProject<\code> to null.
      * 
      * @category Data Handling
      */
@@ -159,7 +160,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Read the .skills file of the <code>activeProject</code>
+     * Reads the .skills file of the current <code>{@link IProject activeProject}</code>.
      * 
      * @category Data Handling
      */
@@ -189,11 +190,10 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Build up the tooltab inside the toolview an a list of all tools.
+     * Builds up the {@link CTabItem tooltab} inside the {@link ToolView toolview} and a {@link List list} of all
+     * {@link Tools tools}.
      * 
-     * @param parent
-     *            - {@link Composite}
-     * @return a {@link List} containing all the tools in the .skills file of the <code>activeProject</code>
+     * @return a {@link List} containing all the tools in the .skills file of the <code>{@link IProject activeProject}</code>
      * @category Data Handling
      */
     private List buildToollist() {
@@ -226,7 +226,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Builds up the <code>typeTree</code>, containing all types with their specific hints.
+     * Builds up the <code>{@link Tree typeTree}</code>, containing all types with their specific {@link Hint hints}.
      * 
      * @param activeTool
      *            - the selected {@link Tool}
@@ -243,7 +243,6 @@ public class ToolView extends ViewPart {
         typeTabItem.setText("Types - " + activeTool.getName());
 
         if (null != skillFile)
-            // add all types to the tree
             iterateTypesAndHints(typeTree);
 
         typeTabItem.setControl(typeTree);
@@ -254,12 +253,14 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * iterate over all the types and their hints
+     * iterate over all the {@link Type types} and their {@link Hint hints} in the
+     * <code>{@link IProject activeProject}</code>.
      * 
      * @param typeTree
-     *            - {@link Tree}
+     *            - a {@link Tree} to hold the types and their hints
      */
     private void iterateTypesAndHints(Tree typeTree) {
+        // add all types to the tree
         for (Type type : allTypeList) {
             TreeItem typeTreeItem = new TreeItem(typeTree, 0);
             typeTreeItem.setText(type.getName().replaceAll(" %s", ""));
@@ -281,14 +282,14 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * iterate over all typehints
+     * iterate over all {@link Hint typehints}.
      * 
      * @param typeTreeItem
      *            - {@link TreeItem}
      * @param type
      *            - the original {@link Type}
      * @param tooltype
-     *            - the tool specific {@link Type} or <code>null</code> if not in tool
+     *            - the {@link Tool tool} specific type or <code>null</code> if the type not in tool
      */
     private void interateTypeHints(TreeItem typeTreeItem, Type type, Type tooltype) {
         // add all typeHints to the Tree
@@ -313,7 +314,8 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Build the <code>fieldTree</code>, listing all fields with their specific hints.
+     * Build the <code>{@link Tree fieldTree}</code>, listing all {@link Field fields} with their specific {@link Hint hints}
+     * .
      * 
      * @category GUI
      */
@@ -321,15 +323,16 @@ public class ToolView extends ViewPart {
         Tree fieldTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.FULL_SELECTION);
         Type tooltype;
 
-        if (null == fieldTabItem || fieldTabItem.isDisposed())
-            fieldTabItem = new CTabItem(tabFolder, 0, 2);
         try {
             tooltype = typeListOfActualTool.stream().filter(t -> selectedType.getName().equals(t.getName())).findFirst()
                     .get();
         } catch (@SuppressWarnings("unused") NoSuchElementException e) {
+            // there is no tooltype
             tooltype = null;
         }
 
+        if (null == fieldTabItem || fieldTabItem.isDisposed())
+            fieldTabItem = new CTabItem(tabFolder, 0, 2);
         fieldTabItem.setText("Fields - " + selectedType.getName().replaceAll(" %s", ""));
 
         if (null != skillFile && null != selectedType)
@@ -344,7 +347,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * iterate over all the fields and their hints
+     * iterate over all the {@link Field fields} and their {@link Hint hints}.
      * 
      * @param fieldTree
      *            - {@link Tree}
@@ -375,7 +378,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * iterate over all the hints of a field
+     * iterate over all the {@link Hint hints} of a {@link Field field}.
      * 
      * @param field
      *            - the original {@link Field}
@@ -406,7 +409,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Creates the contextmenu for the toolview.
+     * Creates the {@link ContextMenuToolView contextmenu} for the {@link ToolView toolview}.
      * 
      * @param toollist
      *            - {@link List} containing all the tools
@@ -421,10 +424,10 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * recursivly deletes a directory
+     * recursivly deletes a {@link File directory}.
      * 
-     * @param directoryToDelete
-     *            - the {@link File directory} to delete
+     * @param {@link
+     *            File directory} - the directory to delete
      * @category Data Handling
      */
     void deleteDirectoryRecursivly(File directoryToDelete) {
@@ -440,10 +443,10 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Show a message with the parameter string.
+     * Show a message window with the passed string.
      * 
      * @param message
-     *            - {@link String Message} which should be printed.
+     *            - {@link String Message} which should be displayed.
      * @category Dialog
      */
     void showMessage(String message) {
@@ -451,7 +454,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Return the selected field.
+     * Return the selected .
      * 
      * @category Getter
      * @return the selected {@link Field field}.
@@ -461,7 +464,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Set the selected field.
+     * Set the selected {@link Field field}.
      * 
      * @category Setter
      * @param selectedField
@@ -472,7 +475,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Get the selected type.
+     * Get the selected {@link Type type}.
      * 
      * @category Getter
      * @return the selected {@link Type type}
@@ -482,7 +485,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Set the selected type.
+     * Set the selected {@link Type type}.
      * 
      * @category Setter
      * @param selectedType
@@ -493,7 +496,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Get the active tool.
+     * Get the active {@link Tool tool}.
      * 
      * @category Getter
      * @return the active {@link Tool tool}.
@@ -503,7 +506,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Set the active tool.
+     * Set the active {@link Tool tool}.
      * 
      * @category Setter
      * @param activeTool
@@ -514,7 +517,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Get the active project.
+     * Get the active {@link IProject project}.
      * 
      * @category Getter
      * @return the active {@link IProject project}.
@@ -527,7 +530,7 @@ public class ToolView extends ViewPart {
      * Get a list of all tools.
      * 
      * @category Getter
-     * @return {@link ArrayList ArrayList} from type tool with all tools.
+     * @return {@link ArrayList ArrayList} with all tools.
      */
     ArrayList<Tool> getAllToolList() {
         return allToolList;
@@ -554,7 +557,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * returns the {@link Boolean doIndexing} field
+     * returns if the {@link SkillFile} should be indexed
      * 
      * @return - {@link Boolean doIndexing}
      */
@@ -563,7 +566,7 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * sets the {@link Boolean doIndexing} field
+     * sets if the {@link SkillFile} should be indexed
      * 
      * @param doIndexing
      *            - {@link Boolean}

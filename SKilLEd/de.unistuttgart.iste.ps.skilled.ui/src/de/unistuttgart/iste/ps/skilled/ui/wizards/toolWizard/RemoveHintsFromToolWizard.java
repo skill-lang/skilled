@@ -26,10 +26,10 @@ public class RemoveHintsFromToolWizard extends WizardPage {
     private Composite container;
 
     public RemoveHintsFromToolWizard(ArrayList<Tool> tools) {
-        super("Select Tool(s) where Hints should be deleted.");
+        super("Select the Tool(s) which should be freed from Hints.");
         this.tools = tools;
-        setTitle("Select Tool(s) where Hints should be deleted.");
-        setDescription("In this page you can select the tool(s) where the hints should be deleted.");
+        setTitle("Select the Tool(s) which should be freed from Hints.");
+        setDescription("On this page you can select the tool(s) which should be freed from Hints.");
     }
 
     @Override
@@ -46,12 +46,17 @@ public class RemoveHintsFromToolWizard extends WizardPage {
         setControl(container);
     }
 
+    /**
+     * returns a list containing the selected tools
+     * 
+     * @return a {@link ArrayList} containing the selected tools
+     */
     ArrayList<Tool> getSelectedTools() {
-        ArrayList<Tool> temp = new ArrayList<>();
+        ArrayList<Tool> listOfSelectedTools = new ArrayList<>();
         for (TreeItem item : toolTree.getItems()) {
             if (item.getChecked())
-                temp.add((Tool) item.getData());
+                listOfSelectedTools.add((Tool) item.getData());
         }
-        return temp;
+        return listOfSelectedTools;
     }
 }

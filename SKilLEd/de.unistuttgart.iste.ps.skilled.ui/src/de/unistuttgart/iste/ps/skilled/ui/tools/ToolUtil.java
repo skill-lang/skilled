@@ -535,7 +535,7 @@ public final class ToolUtil {
     }
 
     /**
-     * removes a type and all the types that inherit from it
+     * removes a type and all the types that inherit from it.
      * 
      * @param project
      *            - the project, where the tool originates in
@@ -555,6 +555,16 @@ public final class ToolUtil {
 
     }
 
+    /**
+     * adds every type, field and hint in the read {@link SkillFile} to a tool.
+     * 
+     * @param skillFile
+     *            - read in skillfile
+     * @param project
+     *            - the currently active project
+     * @param tool
+     *            - the tool, which should contain everything
+     */
     public static void addAllToTool(SkillFile skillFile, IProject project, Tool tool) {
         for (Type type : skillFile.Types()) {
             ToolUtil.addTypeToTool(tool.getName(), project, getActualName(type.getName()));
@@ -563,6 +573,13 @@ public final class ToolUtil {
         }
     }
 
+    /**
+     * indexes the {@link SkillFile} of the currently active {@link IProject}
+     * 
+     * @param project
+     * @return
+     * @throws CoreException
+     */
     public static boolean indexing(IProject project) throws CoreException {
         String[] arguments = null;
         if (project != null)

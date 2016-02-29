@@ -60,7 +60,7 @@ public class ContextMenuToolView {
                 cloneToolItem.addSelectionListener(new SelectionListener() {
                     @Override
                     public void widgetSelected(SelectionEvent arg0) {
-                        SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.RENAME, toollist.getItem(selected));
+                        SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.CLONE, toolView.getAllToolList());
                         WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), newWizard);
 
                         if (wizardDialog.open() == Window.OK)

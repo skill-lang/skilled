@@ -55,7 +55,6 @@ public class FieldTreeListener {
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
                 // no default
-
             }
         });
 
@@ -64,13 +63,11 @@ public class FieldTreeListener {
             @Override
             public void mouseUp(MouseEvent arg0) {
                 // not used
-
             }
 
             @Override
             public void mouseDown(MouseEvent arg0) {
                 // not used
-
             }
 
             @Override
@@ -104,7 +101,7 @@ public class FieldTreeListener {
                         final String typeName = ToolUtil.getActualName(field.getType().getName());
                         final String fieldName = ToolUtil.getActualName(field.getName());
 
-                        // if the user checks the checkbox add the selected field and all its hints
+                        // if the user checks the checkbox, add the selected field, all its hints and the parenttype
                         if (((TreeItem) event.item).getChecked()) {
                             if (toolview.getActiveTool().getTypes().stream().noneMatch(t -> t.getName().equals(typeName)))
                                 ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
@@ -115,7 +112,7 @@ public class FieldTreeListener {
                                     field);
                             toolview.reloadFieldList();
                         } else {
-                            // if the user checks the checkbox add the selected field and all its hints
+                            // if the user unchecks the checkbox, remove the selected field and all its hints
                             ToolUtil.removeAllFieldHints(toolview.getActiveProject(), toolview.getActiveTool(),
                                     field.getType(), field);
                             ToolUtil.removeField(toolview.getActiveTool().getName(), toolview.getActiveProject(), typeName,
@@ -127,7 +124,8 @@ public class FieldTreeListener {
                     if (hint != null) {
                         final String hintParentName = ToolUtil.getActualName(((Field) hint.getParent()).getName());
                         final String typeName = ToolUtil.getActualName(((Field) hint.getParent()).getType().getName());
-                        // if the user checks the checkbox add the selected hint
+                        // if the user checks the checkbox add the selected hint, the parentfield and the parenttype of the
+                        // field
                         if (((TreeItem) event.item).getChecked()) {
 
                             if (toolview.getActiveTool().getTypes().stream().noneMatch(t -> t.getName().equals(typeName))) {
@@ -146,7 +144,7 @@ public class FieldTreeListener {
                                     hintParentName, hint.getName());
                             toolview.reloadFieldList();
                         } else {
-                            // if the user unchecks the checkbox remove the selected hint
+                            // if the user unchecks the checkbox, remove the selected hint
                             ToolUtil.removeFieldHint(toolview.getActiveTool().getName(), toolview.getActiveProject(),
                                     typeName, hintParentName, hint.getName());
                             toolview.reloadFieldList();
@@ -162,7 +160,6 @@ public class FieldTreeListener {
             @Override
             public void keyReleased(KeyEvent arg0) {
                 // not used
-
             }
 
             @Override

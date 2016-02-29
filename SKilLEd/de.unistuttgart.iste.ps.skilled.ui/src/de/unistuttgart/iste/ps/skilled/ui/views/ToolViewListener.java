@@ -35,7 +35,7 @@ public class ToolViewListener {
     }
 
     /**
-     * initialize the listener for the {@link List toollist}used in the {@link ToolView toolview}
+     * initialize the listener for the {@link List toollist} used in the {@link ToolView toolview}
      * 
      * @param toolViewList
      */

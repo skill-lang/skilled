@@ -42,7 +42,7 @@ public class SKilLToolWizard extends Wizard {
     }
 
     /**
-     * Constructor for <b>clone</b> and <b>remove hints</b>
+     * Constructor which is used if the desired operation is to <b>clone</b> a tool or to <b>remove hints</b> from tools
      * 
      * @param option
      * @param toolList
