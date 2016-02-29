@@ -107,9 +107,9 @@ public class ToolView extends ViewPart {
         if (!parent.isDisposed()) {
             clearAll();
             toolTabItem.dispose();
-            if (null != typeTabItem)
+            if (typeTabItem != null)
                 typeTabItem.dispose();
-            if (null != fieldTabItem)
+            if (fieldTabItem != null)
                 fieldTabItem.dispose();
             buildToolContextMenu(buildToollist());
             tabFolder.setSelection(toolTabItem);
@@ -215,7 +215,7 @@ public class ToolView extends ViewPart {
         toolTabItem.setControl(toolViewList);
         toolTabItem.setData(toolViewList);
 
-        if (null != skillFile)
+        if (skillFile != null)
             allToolList.forEach(t -> toolViewList.add((t).getName()));
 
         ToolViewListener tvl = new ToolViewListener(this);
@@ -237,12 +237,12 @@ public class ToolView extends ViewPart {
         typeListOfActualTool = activeTool.getTypes().stream().filter(t -> t != null)
                 .collect(Collectors.toCollection(ArrayList<Type>::new));
 
-        if (null == typeTabItem || typeTabItem.isDisposed())
+        if (typeTabItem == null || typeTabItem.isDisposed())
             typeTabItem = new CTabItem(tabFolder, 0, 1);
 
         typeTabItem.setText("Types - " + activeTool.getName());
 
-        if (null != skillFile)
+        if (skillFile != null)
             iterateTypesAndHints(typeTree);
 
         typeTabItem.setControl(typeTree);
@@ -268,7 +268,7 @@ public class ToolView extends ViewPart {
             Type tooltype = null;
 
             // set all the toolspecific types as checked
-            if (null != typeListOfActualTool) {
+            if (typeListOfActualTool != null) {
                 for (Type t : typeListOfActualTool) {
                     if (t.getName().equals(type.getName())) {
                         typeTreeItem.setChecked(true);
@@ -301,7 +301,7 @@ public class ToolView extends ViewPart {
             typeHintItem.setData(hint);
 
             // set all toolspecific typeHints as checked
-            if (null == tooltype || null == tooltype.getHints())
+            if (tooltype == null || tooltype.getHints() == null)
                 continue;
             typeHintListOfActualTool = tooltype.getHints();
             for (Hint toolhint : typeHintListOfActualTool) {
@@ -331,11 +331,11 @@ public class ToolView extends ViewPart {
             tooltype = null;
         }
 
-        if (null == fieldTabItem || fieldTabItem.isDisposed())
+        if (fieldTabItem == null || fieldTabItem.isDisposed())
             fieldTabItem = new CTabItem(tabFolder, 0, 2);
         fieldTabItem.setText("Fields - " + selectedType.getName().replaceAll(" %s", ""));
 
-        if (null != skillFile && null != selectedType)
+        if (skillFile != null && selectedType != null)
             // add all fields to the tree
             iterateFieldsAndFieldHints(fieldTree, tooltype);
 
@@ -364,7 +364,7 @@ public class ToolView extends ViewPart {
             Field toolField = null;
 
             // check all the fields used by the actual tool
-            if (null != tooltype) {
+            if (tooltype != null) {
                 for (Field f : tooltype.getFields()) {
                     if (field.getName().equals(f.getName())) {
                         fieldTreeItem.setChecked(true);
@@ -388,7 +388,6 @@ public class ToolView extends ViewPart {
      *            - {@link TreeItem}
      */
     private static void iterateFieldHints(Field field, Field toolField, TreeItem fieldTreeItem) {
-
         for (Hint hint : field.getHints()) {
             TreeItem fieldHintItem = new TreeItem(fieldTreeItem, 0);
             fieldHintItem.setText(hint.getName());
@@ -397,7 +396,7 @@ public class ToolView extends ViewPart {
             fieldHintItem.setData(hint);
 
             // check all the hints used by the tool
-            if (null == toolField)
+            if (toolField == null)
                 continue;
             for (Hint h : toolField.getHints()) {
                 if (hint.getName().equals(h.getName())) {
@@ -416,7 +415,7 @@ public class ToolView extends ViewPart {
      * @category GUI
      */
     private void buildToolContextMenu(List toollist) {
-        if (null != menu)
+        if (menu != null)
             menu.dispose();
         menu = new Menu(toollist);
         ContextMenuToolView cmtv = new ContextMenuToolView(this);
@@ -434,7 +433,6 @@ public class ToolView extends ViewPart {
         if (directoryToDelete.isDirectory())
             for (File toDelete : directoryToDelete.listFiles())
                 deleteDirectoryRecursivly(toDelete);
-
         try {
             Files.deleteIfExists(directoryToDelete.toPath());
         } catch (IOException e) {
