@@ -168,7 +168,6 @@ public class TestSKilLEd {
         SWTBotEclipseEditor editor = bot.editorByTitle(testFile2).toTextEditor();
         editor.navigateTo(0, 8);
         bot.sleep(delayTimeQuickfixes);
-        System.out.println("count: " + editor.getQuickfixListItemCount());
         for (String s : editor.getQuickFixes()) {
             if (s.equals("Add missing File")) {
                 editor.quickfix(s);
@@ -195,7 +194,6 @@ public class TestSKilLEd {
         SWTBotEclipseEditor editor = bot.editorByTitle(testFile2).toTextEditor();
         editor.navigateTo(0, 8);
         bot.sleep(delayTimeQuickfixes);
-        System.out.println("count: " + editor.getQuickfixListItemCount());
         for (String s : editor.getQuickFixes()) {
             if (s.equals("Organize imports")) {
                 editor.quickfix(s);
@@ -336,8 +334,6 @@ public class TestSKilLEd {
      *            Content of the file
      */
     private void createSKilLFileWithContentInTestProject(String fileName, String content) {
-        System.out.println("Creating");
-        System.out.println("Create: " + fileName);
         createSKilLFile(fileName, testProject);
         bot.editorByTitle(fileName).show();
         bot.styledText().setText(content);
@@ -363,10 +359,8 @@ public class TestSKilLEd {
         shell2.activate();
         bot.sleep(1000);
         for (SWTBotTreeItem t : bot.tree().getAllItems()) {
-            System.out.println("Checking: " + t.getText());
             if (t.getText().startsWith(projectName)) {
                 t.select();
-                System.out.println("Selecting!");
             }
         }
         // bot.tree().select(projectName);
