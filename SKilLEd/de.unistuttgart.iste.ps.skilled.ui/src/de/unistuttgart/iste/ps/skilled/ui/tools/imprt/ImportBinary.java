@@ -256,13 +256,6 @@ public class ImportBinary {
                         while (it2.hasNext()) {
                             FieldDeclaration<?> declaration = it2.next();
                             LazyField<?, ?> lazyField = (LazyField<?, ?>) declaration;
-                            // none of the sf's available for testing had restrictions
-                            // maybe those files aren't meant to contain them
-                            /*
-                             * Iterator<?> it3 = lazyField.restrictions.iterator(); while (it3.hasNext()) {
-                             * FieldRestriction<?> restriction = (FieldRestriction<?>) it3.next();
-                             * System.out.println(restriction); strings.add("@" + restriction.toString()) }
-                             */
                             strings.add("  " + lazyField.toString() + ";");
                         }
                         strings.add("}");
@@ -357,7 +350,6 @@ public class ImportBinary {
                             makeDirectory2.mkdirs();
                         }
                     }
-                    System.out.println(fToolFilePath);
                 }
                 // Converts string filepaths to paths
                 tSelectBinary.setText(new File("TemporaryFileBySKilLEd.skill").getAbsolutePath());
@@ -522,7 +514,6 @@ public class ImportBinary {
         } else {
             location = directoryName;
         }
-        System.out.println(directoryName);
         File fProjectDirectory = new File(location);
         File[] listofFiles = fProjectDirectory.listFiles();
         for (File file : listofFiles) {
@@ -562,7 +553,6 @@ public class ImportBinary {
                         }
                     }
                     br.close();
-                    System.out.println("Check");
                     // Head comment that says which tool the merged files are
                     fw.write("# Tool " + fBinaryName);
                     fw.write(fImports);
@@ -576,34 +566,5 @@ public class ImportBinary {
             }
 
         }
-        // else {
-        // FileInputStream fis;
-        // try {
-        // FileWriter fw = new FileWriter(fToolFilePath, true);
-        // fis = new FileInputStream(fSelectedTool);
-        // BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-        // String line;
-        //
-        // while ((line = br.readLine()) != null) {
-        // // Ignore all other head comments
-        // if (!line.startsWith("#")) {
-        // if (line.startsWith("include") || line.startsWith("with")) {
-        // fImports += line + "\n";
-        // } else {
-        // fBody += line + "\n";
-        // }
-        // }
-        // }
-        // br.close();
-        // System.out.println("Check");
-        // // Head comment that says which tool the merged files are
-        // fw.write("# Tool " + fToolName);
-        // fw.write(fImports);
-        // fw.write(fBody);
-        // fw.close();
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
-        // }
     }
 }

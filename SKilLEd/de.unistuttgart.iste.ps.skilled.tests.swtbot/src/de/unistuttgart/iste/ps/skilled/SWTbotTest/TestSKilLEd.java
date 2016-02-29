@@ -1,7 +1,5 @@
 package de.unistuttgart.iste.ps.skilled.SWTbotTest;
 
-import java.io.File;
-
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
@@ -68,12 +66,7 @@ public class TestSKilLEd {
         bot.styledText().setText("A{i8 a; }");
         bot.styledText().setText("A{i8 a; \n	i16 b;	}");
         bot.toolbarButtonWithTooltip("Save (Ctrl+S)").click();
-        File workspace = new File(workspacePath);
-        if (workspace.exists() && workspace.isDirectory()) {
-            for (File f : workspace.listFiles()) {
-                System.out.println("File: " + f.getName());
-            }
-        }
+
     }
 
     /**
@@ -118,7 +111,6 @@ public class TestSKilLEd {
             SWTBotShell shell = bot.shell("Workspace Launcher");
             shell.activate();
             workspacePath = bot.comboBox().getText();
-            System.out.println("Label: " + workspacePath);
             bot.button("Cancel").click();
         }
         return workspacePath;

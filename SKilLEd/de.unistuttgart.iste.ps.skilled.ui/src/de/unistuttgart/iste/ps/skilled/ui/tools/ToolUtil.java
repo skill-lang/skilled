@@ -547,7 +547,6 @@ public final class ToolUtil {
     public static void removeTypeAndAllSubtypes(IProject project, Tool tool, Type type) {
         for (Type ty : tool.getTypes()) {
             if (ty.getExtends().size() > 0 && ty.getExtends().contains(type.getName())) {
-                System.out.println("subtypes");
                 removeTypeAndAllSubtypes(project, tool, ty);
             }
             ToolUtil.removeTypeFromTool(tool.getName(), project, type.getName());

@@ -335,13 +335,10 @@ public class ExportTools {
         // Generate tool folder and files
         IProject project = workspace.getRoot().getProject(fToolProjectName);
         ToolUtil.generateTemporarySKilLFiles(name, project);
-        System.out.println("name: " + name);
-        System.out.print("project: " + project.getName());
 
         // File path of the tool folder in the .skillt folder (i.e.
         // C:\\...\Workspace\Project\.skillt\Tool
         String fToolFolder = fToolProjectPath + File.separator + ".skillt" + File.separator + name;
-        System.out.println("Toolfolder: " + fToolFolder);
 
         listofFiles = new ArrayList<>();
         listAllFiles(fToolFolder, listofFiles);

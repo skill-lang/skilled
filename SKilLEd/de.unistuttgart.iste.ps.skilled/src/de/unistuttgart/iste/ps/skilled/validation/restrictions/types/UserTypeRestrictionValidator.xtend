@@ -76,7 +76,6 @@ class UserTypeRestrictionValidator extends AbstractTypeRestrictionsValidator {
 		if (!wasSingletonUsed) {
 			if (restriction.restrictionArguments.size == 0) {
 				if (subtypesFinder.getSubtypes(declaration as Usertype).size != 0) {
-					System.out.println("AJDLFJLKJFKLDSJ§");
 					showError(TypeRestrictionsErrorMessages.Singleton_Usage, restriction)
 				}
 			} else {
