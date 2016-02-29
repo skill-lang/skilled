@@ -599,7 +599,10 @@ public final class ToolUtil {
             throws CoreException {
         for (Tool brokenTool : breakageException.getTools()) {
             IMarker marker = project.createMarker(IMarker.PROBLEM);
-            marker.setAttribute(IMarker.MESSAGE, "You have succesfully broken the following Tool: " + brokenTool.getName());
+            marker.setAttribute(IMarker.MESSAGE, "Structural integrity of tool may be compromized.");
+            marker.setAttribute(IMarker.LOCATION, "Tool: " + brokenTool.getName());
+            marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+            marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
         }
     }
 
