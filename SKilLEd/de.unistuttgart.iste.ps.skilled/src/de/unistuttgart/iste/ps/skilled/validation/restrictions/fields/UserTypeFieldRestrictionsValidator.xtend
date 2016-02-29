@@ -1,20 +1,20 @@
 package de.unistuttgart.iste.ps.skilled.validation.restrictions.fields
 
+import com.google.inject.Inject
+import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
 import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.sKilL.Enuminstance
 import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype
 import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
-import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
-import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
 import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
-import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
-import com.google.inject.Inject
-import de.unistuttgart.iste.ps.skilled.util.SubtypesFinder
+import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
+import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
+import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.util.SubtypesFinder
+import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
 import java.util.Set
-import de.unistuttgart.iste.ps.skilled.sKilL.Enuminstance
 
 /**
  * @author Daniel Ryan Degutis

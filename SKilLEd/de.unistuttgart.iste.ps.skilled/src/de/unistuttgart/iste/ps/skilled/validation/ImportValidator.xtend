@@ -1,12 +1,12 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import org.eclipse.xtext.validation.ImportUriValidator
-import org.eclipse.xtext.validation.Check
-import org.eclipse.xtext.validation.CheckType
+import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
+import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.EcoreUtil2
-import org.eclipse.emf.common.util.URI
-import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
+import org.eclipse.xtext.validation.Check
+import org.eclipse.xtext.validation.CheckType
+import org.eclipse.xtext.validation.ImportUriValidator
 
 class ImportValidator extends ImportUriValidator {
 

@@ -1,19 +1,16 @@
 package de.unistuttgart.iste.ps.skilled.tests.validation.asciichar;
 
-import static org.junit.Assert.*;
-
-import org.eclipse.xtext.junit4.InjectWith;
-import org.eclipse.xtext.junit4.XtextRunner;
-import org.eclipse.xtext.junit4.util.ParseHelper;
-
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider;
-import de.unistuttgart.iste.ps.skilled.sKilL.File;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import com.google.inject.Inject;
+import com.google.inject.Inject
+import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
+import de.unistuttgart.iste.ps.skilled.sKilL.File
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.junit.Test
+import org.junit.runner.RunWith
+
+import static org.junit.Assert.*
 
 /**
  * This Class tests ASCIICharValidator.xtend

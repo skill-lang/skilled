@@ -3,6 +3,7 @@ package de.unistuttgart.iste.ps.skilled.tests.validation.inheritance;
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
 import de.unistuttgart.iste.ps.skilled.sKilL.File
+import de.unistuttgart.iste.ps.skilled.tests.utils.ErrorMessageComparator
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
@@ -11,7 +12,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import de.unistuttgart.iste.ps.skilled.tests.utils.ErrorMessageComparator
 
 /**
  * 

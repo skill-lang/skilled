@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import java.util.Set
-import java.util.HashSet
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import java.util.HashSet
+import java.util.Set
 
 /**
  * Nodes for the Graph for CyclicTypes Validation

@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.tests.utils
 
-import org.eclipse.xtext.validation.Issue
-import java.util.List
 import java.util.ArrayList
+import java.util.List
+import org.eclipse.xtext.validation.Issue
 
 /**
  * @author Tobias Heck

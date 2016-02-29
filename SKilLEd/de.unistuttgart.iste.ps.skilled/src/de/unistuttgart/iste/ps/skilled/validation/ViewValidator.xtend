@@ -3,18 +3,18 @@ package de.unistuttgart.iste.ps.skilled.validation
 import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
 import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
 import de.unistuttgart.iste.ps.skilled.sKilL.Field
+import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype
+import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
+import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
 import de.unistuttgart.iste.ps.skilled.sKilL.View
+import de.unistuttgart.iste.ps.skilled.sKilL.impl.InterfacetypeImpl
+import java.util.ArrayList
+import java.util.List
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
-import java.util.ArrayList
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.InterfacetypeImpl
-import java.util.List
 
 /**
  * This class contains the validation methods for validating views.

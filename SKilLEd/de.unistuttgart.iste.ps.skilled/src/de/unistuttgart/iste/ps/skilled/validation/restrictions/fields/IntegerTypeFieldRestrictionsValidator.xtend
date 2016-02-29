@@ -1,11 +1,11 @@
 package de.unistuttgart.iste.ps.skilled.validation.restrictions.fields
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
-import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
-import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
 import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
+import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
+import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
 import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
+import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
 
 /**
  * @author Daniel Ryan Degutis

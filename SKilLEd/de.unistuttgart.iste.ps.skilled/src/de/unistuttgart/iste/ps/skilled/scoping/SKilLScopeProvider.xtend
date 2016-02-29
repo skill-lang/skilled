@@ -4,13 +4,13 @@
 package de.unistuttgart.iste.ps.skilled.scoping
 
 import com.google.common.base.Predicate
+import de.unistuttgart.iste.ps.skilled.validation.ImportURIValidator
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider
 import org.eclipse.xtext.scoping.impl.FilteringScope
-import de.unistuttgart.iste.ps.skilled.validation.ImportURIValidator
 
 /**
  * This class contains custom scoping description.

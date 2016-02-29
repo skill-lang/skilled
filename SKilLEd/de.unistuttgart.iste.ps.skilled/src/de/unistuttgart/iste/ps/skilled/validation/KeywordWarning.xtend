@@ -1,13 +1,13 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
-import org.eclipse.xtext.validation.Check
-import org.eclipse.xtext.validation.AbstractDeclarativeValidator
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import org.eclipse.xtext.validation.EValidatorRegistrar
-import java.util.ArrayList
-import de.unistuttgart.iste.ps.skilled.util.KeywordCheckEscaping
 import de.unistuttgart.iste.ps.skilled.sKilL.Field
+import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.util.KeywordCheckEscaping
+import java.util.ArrayList
+import org.eclipse.xtext.validation.AbstractDeclarativeValidator
+import org.eclipse.xtext.validation.Check
+import org.eclipse.xtext.validation.EValidatorRegistrar
 
 /**
  * This Class checks if a name is a keyword that requires escaping in the target 
