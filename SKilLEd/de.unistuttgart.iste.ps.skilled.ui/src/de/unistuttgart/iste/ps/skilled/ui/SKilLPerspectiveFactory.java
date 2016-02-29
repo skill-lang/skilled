@@ -25,11 +25,9 @@ public class SKilLPerspectiveFactory implements IPerspectiveFactory {
 
         IFolderLayout problemViewfolder = layout.createFolder("bottom", IPageLayout.BOTTOM, (float) 0.75, editorArea);
         problemViewfolder.addView(IPageLayout.ID_PROBLEM_VIEW);
-        problemViewfolder.addView("de.unistuttgart.iste.ps.skilled.ui.views.ToolView");
 
-        //
-        // IFolderLayout toolViewFolder = layout.createFolder("toolView", IPageLayout.RIGHT, (float) 0.75, editorArea);
-        // toolViewFolder.addView("de.unistuttgart.iste.ps.skilled.ui.views.ToolView");
+        IFolderLayout toolViewFolder = layout.createFolder("toolView", IPageLayout.RIGHT, (float) 0.75, editorArea);
+        toolViewFolder.addView("de.unistuttgart.iste.ps.skilled.ui.views.ToolView");
 
         IFolderLayout outlineFolder = layout.createFolder("right", IPageLayout.BOTTOM, (float) 0.5, "left");
         outlineFolder.addView(IPageLayout.ID_OUTLINE);

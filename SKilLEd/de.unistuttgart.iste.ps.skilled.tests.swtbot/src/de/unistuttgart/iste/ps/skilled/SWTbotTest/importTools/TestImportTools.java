@@ -35,12 +35,6 @@ public class TestImportTools {
     File workspaceDirectory = workspace.getRoot().getLocation().toFile();
     String workspacePath = workspaceDirectory.getAbsolutePath();
 
-    // String classProjectPath = getClass().getProtectionDomain().getCodeSource().getLocation().toString().substring(5,
-    // getClass().getProtectionDomain().getCodeSource().getLocation().toString().length() - 1);
-    // String resourcePathGenericFileToBeImported = classProjectPath + File.separator + "resources" + File.separator
-    // + "FileToBeImported.skill";
-    // String resourcePath = classProjectPath + File.separator + "resources" + File.separator;
-
     String resourcePathGenericFileToBeImported = "resources" + File.separator + "FileToBeImported.skill";
     String resourcePath = "resources" + File.separator;
 
@@ -455,11 +449,6 @@ public class TestImportTools {
         newtestImportChecker = newtestImportChecker.replaceAll("\\s+", "");
         newFileToBeImportedAfterImport = newFileToBeImportedAfterImport.replaceAll("\\s+", "");
         newFileToBeImportedAfterImportChecker = newFileToBeImportedAfterImportChecker.replaceAll("\\s+", "");
-
-        System.out.println(newtestImport);
-        System.out.println(newtestImportChecker);
-        System.out.println(newFileToBeImportedAfterImport);
-        System.out.println(newFileToBeImportedAfterImportChecker);
 
         // Check if the contents of the imported and merged files are correct
         assertTrue(newtestImport.equals(newtestImportChecker));
