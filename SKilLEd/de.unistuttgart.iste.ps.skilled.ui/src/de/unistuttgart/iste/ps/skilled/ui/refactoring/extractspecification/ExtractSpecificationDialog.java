@@ -374,7 +374,13 @@ public class ExtractSpecificationDialog {
                 // create new file
                 ExtractSpecification.run(checkedDeclarations, file);
                 // organize imports
-                new SKilLQuickfixProvider().organizeImports(ExtractSpecificationDialog.file);
+                xtextDocument.modify(new IUnitOfWork<Void, XtextResource>() {
+                    @Override
+                    public java.lang.Void exec(XtextResource state) throws Exception {
+                        new SKilLQuickfixProvider().organizeImports(ExtractSpecificationDialog.file);
+                        return null;
+                    }
+                });
                 // Reset save location
                 saveLocation = "";
                 saveLocationText.setText(saveLocation);

@@ -80,7 +80,9 @@ public class ExtractSpecification {
                 }
                 fw.write("{" + System.lineSeparator());
                 for (Field field : decl.getFields()) {
-                    fw.write("  " + field.getComment() + System.lineSeparator());
+                    if (field.getComment() != null) {
+                        fw.write("  " + field.getComment() + System.lineSeparator());
+                    }
                     for (Hint hint : field.getHints()) {
                         fw.write("  !" + hint.getHintName() + System.lineSeparator());
                     }
@@ -103,7 +105,7 @@ public class ExtractSpecification {
                         fw.write("  const ");
                         fw.write(((Integertype) ((Constant) fieldcontent).getFieldtype()).getType().getName());
                         fw.write(" ");
-                        fw.write(((Constant) fieldcontent).getConstantName());
+                        fw.write(((Constant) fieldcontent).getName());
                         fw.write(" = ");
                         fw.write(((Constant) fieldcontent).getValue().toString());
                         fw.write(";" + System.lineSeparator());
@@ -158,6 +160,8 @@ public class ExtractSpecification {
                                 fw.write(((Arraytype) type).getLength().toString());
                             }
                             fw.write("] ");
+                        } else if (type instanceof DeclarationReference) {
+                            fw.write(((DeclarationReference) type).getType().getName() + " ");
                         } else {
                             fw.write(getBuiltInTypeName((BuiltInType) type) + " ");
                         }
@@ -207,14 +211,14 @@ public class ExtractSpecification {
         // organize imports
         IXtextDocument xtextDocument = EditorUtils.getActiveXtextEditor().getDocument();
         
-        xtextDocument.readOnly(new IUnitOfWork<Void, XtextResource>() {
+        xtextDocument.modify(new IUnitOfWork<Void, XtextResource>() {
             @Override
             public java.lang.Void exec(XtextResource state) throws Exception {
                 SKilLFile = (de.unistuttgart.iste.ps.skilled.sKilL.File) state.getContents().get(0);
+                new SKilLQuickfixProvider().organizeImports(SKilLFile);
                 return null;
             }
         });
-        new SKilLQuickfixProvider().organizeImports(SKilLFile);
     }
 
     private static String getBuiltInTypeName(BuiltInType basetype) {

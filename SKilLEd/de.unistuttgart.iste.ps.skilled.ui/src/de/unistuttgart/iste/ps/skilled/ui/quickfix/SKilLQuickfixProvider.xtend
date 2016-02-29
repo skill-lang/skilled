@@ -16,7 +16,6 @@ import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
 import de.unistuttgart.iste.ps.skilled.sKilL.SKilLFactory
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
 import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
-import de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLOrganizeImportsHandler
 import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices
 import de.unistuttgart.iste.ps.skilled.validation.InheritenceValidator
@@ -550,6 +549,9 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 	 * @param element The file in which this element is located will be organized.
 	 */
 	def organizeImports(EObject element) {
+		if (services == null) {
+			services = new SKilLServices
+		}
 		var dependencyGraph = new DependencyGraph()
 
 		// The file in which the element is located.
