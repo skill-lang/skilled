@@ -248,17 +248,20 @@ public class SKilLCombineRefactoring {
      *            Creates a file with the combined content of the pre-combined files
      */
 
+    @SuppressWarnings({ "restriction", "unchecked" })
     public void combine(File combinedFile) {
         try {
             FileWriter fw = new FileWriter(combinedFile, true);
 
             if (fComment != null) {
                 fw.write(fComment);
-                if (!fComment.equals("")) fw.write(System.lineSeparator());
+                if (!fComment.equals(""))
+                    fw.write(System.lineSeparator());
             }
             if (fHead != null) {
                 fw.write(fHead);
-                if (!fHead.equals("")) fw.write(System.lineSeparator());
+                if (!fHead.equals(""))
+                    fw.write(System.lineSeparator());
             }
             if (fBody != null) {
                 fw.write(fBody);
@@ -289,7 +292,8 @@ public class SKilLCombineRefactoring {
             constructor.setAccessible(true);
             org.eclipse.core.internal.resources.File file = constructor
                     .newInstance(new org.eclipse.core.runtime.Path(shortPath), ResourcesPlugin.getWorkspace());
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(file), desc.getId());
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(file),
+                    desc.getId());
         } catch (IOException e) {
             StringBuilder sb = new StringBuilder("Error: ");
             sb.append(e.getMessage());
