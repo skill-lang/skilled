@@ -5,10 +5,9 @@ import org.eclipse.xtext.conversion.impl.AbstractLexerBasedConverter;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.util.Strings;
 
-
 /**
- * This class is used in combination with the Lexer. It will take care of the conversion of hexadecimal strings to a long *
- * value.
+ * This class is used in combination with the Lexer. It will take care of the
+ * conversion of hexadecimal strings to a long value.
  * 
  * @author Marco Link
  */
