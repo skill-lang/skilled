@@ -16,16 +16,16 @@ import org.eclipse.xtext.util.TextRegion;
 import org.eclipse.xtext.util.Triple;
 import org.eclipse.xtext.util.Tuples;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.File;
-import de.unistuttgart.iste.ps.skilled.sKilL.Include;
-import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile;
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage;
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage;
+import de.unistuttgart.iste.ps.skilled.skill.File;
+import de.unistuttgart.iste.ps.skilled.skill.Include;
+import de.unistuttgart.iste.ps.skilled.skill.IncludeFile;
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
 import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph;
 
-
 /**
- * This class contains helping methods for organize imports and the validation for included uris.
+ * This class contains helping methods for organize imports and the validation
+ * for included uris.
  * 
  * @author Marco Link
  *
@@ -47,7 +47,8 @@ public class SKilLImportOrganizer {
      * 
      * @param file
      *            The file for which the duplicate includes shall be returned.
-     * @return A list which includes all duplicated IncludeFiles (the element in the AST which contains the included uri).
+     * @return A list which includes all duplicated IncludeFiles (the element in
+     *         the AST which contains the included uri).
      */
     public static List<IncludeFile> getDuplicateIncludes(File file) {
         if (file == null) {
@@ -72,7 +73,8 @@ public class SKilLImportOrganizer {
      * 
      * @param file
      *            The file for which the unsued includes shall be returned.
-     * @return A list which includes all unused IncludeFiles (the element in the AST which contains the included uri).
+     * @return A list which includes all unused IncludeFiles (the element in the
+     *         AST which contains the included uri).
      */
     public List<IncludeFile> getUnusedImports(File file) {
         Map<URI, IncludeFile> map = new HashMap<URI, IncludeFile>();
@@ -82,8 +84,8 @@ public class SKilLImportOrganizer {
 
         for (Include include : file.getIncludes()) {
             for (IncludeFile includeFile : include.getIncludeFiles()) {
-                allIncludedURIs
-                        .add(services.createAbsoluteURIFromRelative(includeFile.getImportURI(), file.eResource().getURI()));
+                allIncludedURIs.add(
+                        services.createAbsoluteURIFromRelative(includeFile.getImportURI(), file.eResource().getURI()));
                 map.put(services.createAbsoluteURIFromRelative(includeFile.getImportURI(), file.eResource().getURI()),
                         includeFile);
             }
@@ -122,13 +124,15 @@ public class SKilLImportOrganizer {
     }
 
     /**
-     * Computes the number of direct and transitive reachable needed uris of a uri.
+     * Computes the number of direct and transitive reachable needed uris of a
+     * uri.
      * 
      * @param includeURI
      *            The uri for which the number shall be computed.
      * @param neededURIs
      *            The uris which will increase the count if it will be included.
-     * @return A triple with the original uri, the amount of uris which are included and the included uris.
+     * @return A triple with the original uri, the amount of uris which are
+     *         included and the included uris.
      */
     private Triple<URI, Integer, List<URI>> getCount(URI includeURI, Set<URI> neededURIs) {
         int count = 0;
@@ -151,7 +155,8 @@ public class SKilLImportOrganizer {
     }
 
     /**
-     * Finds the position (region) in a file at which the includes are or can be written.
+     * Finds the position (region) in a file at which the includes are or can be
+     * written.
      * 
      * @param file
      *            The file for which the region shall be found.
@@ -170,7 +175,7 @@ public class SKilLImportOrganizer {
                 int off = node.getTotalOffset();
                 return new TextRegion(off, 0);
             } else if (file.getHeadComments().size() > 0) {
-                List<INode> nodes = NodeModelUtils.findNodesForFeature(file, SKilLPackage.Literals.FILE__HEAD_COMMENTS);
+                List<INode> nodes = NodeModelUtils.findNodesForFeature(file, SkillPackage.Literals.FILE__HEAD_COMMENTS);
                 if (nodes != null) {
                     int off = nodes.get(nodes.size() - 1).getTotalEndOffset();
                     return new TextRegion(off, 0);

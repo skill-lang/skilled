@@ -2,22 +2,22 @@ package de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes;
 
 import java.util.Comparator;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Arraytype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Booleantype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Constant;
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration;
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference;
-import de.unistuttgart.iste.ps.skilled.sKilL.Field;
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent;
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.File;
-import de.unistuttgart.iste.ps.skilled.sKilL.Floattype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Integertype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Listtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Maptype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.View;
+import de.unistuttgart.iste.ps.skilled.skill.Annotationtype;
+import de.unistuttgart.iste.ps.skilled.skill.Arraytype;
+import de.unistuttgart.iste.ps.skilled.skill.Booleantype;
+import de.unistuttgart.iste.ps.skilled.skill.Constant;
+import de.unistuttgart.iste.ps.skilled.skill.Declaration;
+import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference;
+import de.unistuttgart.iste.ps.skilled.skill.Field;
+import de.unistuttgart.iste.ps.skilled.skill.Fieldcontent;
+import de.unistuttgart.iste.ps.skilled.skill.Fieldtype;
+import de.unistuttgart.iste.ps.skilled.skill.File;
+import de.unistuttgart.iste.ps.skilled.skill.Floattype;
+import de.unistuttgart.iste.ps.skilled.skill.Integertype;
+import de.unistuttgart.iste.ps.skilled.skill.Listtype;
+import de.unistuttgart.iste.ps.skilled.skill.Maptype;
+import de.unistuttgart.iste.ps.skilled.skill.Stringtype;
+import de.unistuttgart.iste.ps.skilled.skill.View;
 
 
 /**

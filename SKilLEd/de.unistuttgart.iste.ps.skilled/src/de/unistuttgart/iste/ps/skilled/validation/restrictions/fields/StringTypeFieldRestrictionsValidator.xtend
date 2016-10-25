@@ -1,9 +1,9 @@
 package de.unistuttgart.iste.ps.skilled.validation.restrictions.fields
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
-import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
+import de.unistuttgart.iste.ps.skilled.skill.Fieldtype
+import de.unistuttgart.iste.ps.skilled.skill.Restriction
+import de.unistuttgart.iste.ps.skilled.skill.Stringtype
+import de.unistuttgart.iste.ps.skilled.skill.Typedef
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
 
 /**

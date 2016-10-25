@@ -1,5 +1,8 @@
 package de.unistuttgart.iste.ps.skillls.editor;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 import de.unistuttgart.iste.ps.skillls.main.Command;
 import de.unistuttgart.iste.ps.skillls.main.ExceptionHandler;
 import de.unistuttgart.iste.ps.skillls.tools.Field;
@@ -7,9 +10,6 @@ import de.unistuttgart.iste.ps.skillls.tools.Hint;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
 import de.unistuttgart.iste.ps.skillls.tools.Type;
 import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
-
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 /**
  * This class performs editing tasks on tools.

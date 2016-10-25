@@ -25,10 +25,10 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration;
-import de.unistuttgart.iste.ps.skilled.sKilL.Field;
-import de.unistuttgart.iste.ps.skilled.sKilL.File;
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage;
+import de.unistuttgart.iste.ps.skilled.skill.Declaration;
+import de.unistuttgart.iste.ps.skilled.skill.Field;
+import de.unistuttgart.iste.ps.skilled.skill.File;
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage;
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
 import de.unistuttgart.iste.ps.skillls.tools.Tool;
 import de.unistuttgart.iste.ps.skillls.tools.Type;
@@ -110,7 +110,7 @@ public class EditorUtil {
 
         for (Declaration dec : file.getDeclarations()) {
             if (dec.getName().equals(ToolUtil.getActualName(type.getName()))) {
-                List<INode> nodes = NodeModelUtils.findNodesForFeature(dec, SKilLPackage.Literals.DECLARATION__NAME);
+                List<INode> nodes = NodeModelUtils.findNodesForFeature(dec, SkillPackage.Literals.DECLARATION__NAME);
                 if (nodes != null) {
                     if (nodes.size() == 1) {
                         typeNameToMark = nodes.get(0);
@@ -176,7 +176,7 @@ public class EditorUtil {
         for (Field f : services.getFields(declaration)) {
             if (f.getFieldcontent().getName().equals(ToolUtil.getActualName(field.getName()))) {
                 List<INode> nodes = NodeModelUtils.findNodesForFeature(f.getFieldcontent(),
-                        SKilLPackage.Literals.FIELDCONTENT__NAME);
+                        SkillPackage.Literals.FIELDCONTENT__NAME);
                 if (nodes != null) {
                     if (nodes.size() == 1) {
                         fieldToMark = nodes.get(0);

@@ -1,13 +1,13 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Arraytype
-import de.unistuttgart.iste.ps.skilled.sKilL.Basetype
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
-import de.unistuttgart.iste.ps.skilled.sKilL.Listtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Maptype
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.sKilL.Settype
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
+import de.unistuttgart.iste.ps.skilled.skill.Arraytype
+import de.unistuttgart.iste.ps.skilled.skill.Basetype
+import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.skill.Listtype
+import de.unistuttgart.iste.ps.skilled.skill.Maptype
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
+import de.unistuttgart.iste.ps.skilled.skill.Settype
+import de.unistuttgart.iste.ps.skilled.skill.Typedef
 import org.eclipse.xtext.validation.Check
 
 /**
@@ -28,7 +28,7 @@ class NestingValidator extends AbstractSKilLComposedValidatorPart {
       val td = dr.type as Typedef
       if (!(td.fieldtype instanceof Basetype)) {
         error('It is forbidden to nest containers inside of other containers.', dr,
-          SKilLPackage.Literals.DECLARATION_REFERENCE__TYPE, INVALID_NESTED_TYPEDEF)
+          SkillPackage.Literals.DECLARATION_REFERENCE__TYPE, INVALID_NESTED_TYPEDEF)
       }
     }
   }

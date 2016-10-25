@@ -1,11 +1,11 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
-import de.unistuttgart.iste.ps.skilled.sKilL.Hint
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.skill.Declaration
+import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.skill.Hint
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
+import de.unistuttgart.iste.ps.skilled.skill.Typedef
+import de.unistuttgart.iste.ps.skilled.skill.Usertype
 import org.eclipse.xtext.validation.Check
 
 /** 
@@ -524,10 +524,10 @@ class TypeHintsValidator extends AbstractSKilLComposedValidatorPart {
     }
 
     def showError(String message, Hint hint) {
-      error(message, hint, SKilLPackage.Literals.HINT__HINT_NAME)
+      error(message, hint, SkillPackage.Literals.HINT__HINT_NAME)
     }
 
     def showWarning(String message, Hint hint) {
-      warning(message, hint, SKilLPackage.Literals.HINT__HINT_NAME)
+      warning(message, hint, SkillPackage.Literals.HINT__HINT_NAME)
     }
   }

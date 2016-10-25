@@ -6,9 +6,9 @@ import org.eclipse.xtext.naming.QualifiedName;
 
 import com.google.inject.Inject;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration;
-import de.unistuttgart.iste.ps.skilled.sKilL.Enuminstance;
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent;
+import de.unistuttgart.iste.ps.skilled.skill.Declaration;
+import de.unistuttgart.iste.ps.skilled.skill.Enuminstance;
+import de.unistuttgart.iste.ps.skilled.skill.Fieldcontent;
 
 
 /**

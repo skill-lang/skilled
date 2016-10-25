@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.Field
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.skill.Declaration
+import de.unistuttgart.iste.ps.skilled.skill.Field
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
 import org.eclipse.xtext.validation.Check
 
 /**
@@ -19,7 +19,7 @@ class ReservedSKilLKeywordValidator extends AbstractSKilLComposedValidatorPart {
   def checkTypeNameReservedSkillKeyword(Declaration declaration) {
     var name = declaration.name.toLowerCase;
     if (name.equals("skillid") || name.equals("api") || name.equals("internal")) {
-      warning("Usage of skillid, api or internal is discouraged", declaration, SKilLPackage.Literals.DECLARATION__NAME)
+      warning("Usage of skillid, api or internal is discouraged", declaration, SkillPackage.Literals.DECLARATION__NAME)
     }
   }
 
@@ -32,7 +32,7 @@ class ReservedSKilLKeywordValidator extends AbstractSKilLComposedValidatorPart {
     var name = field.fieldcontent.name.toLowerCase
     if (name.equals("skillid") || name.equals("api") || name.equals("internal")) {
       warning("Usage of skillid, api or internal is discouraged", field.fieldcontent,
-        SKilLPackage.Literals.FIELDCONTENT__NAME)
+        SkillPackage.Literals.FIELDCONTENT__NAME)
     }
   }
 

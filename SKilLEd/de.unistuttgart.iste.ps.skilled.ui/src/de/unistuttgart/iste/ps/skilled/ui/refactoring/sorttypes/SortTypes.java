@@ -18,12 +18,12 @@ import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.utils.EditorUtils;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration;
-import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Field;
-import de.unistuttgart.iste.ps.skilled.sKilL.File;
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration;
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype;
+import de.unistuttgart.iste.ps.skilled.skill.Declaration;
+import de.unistuttgart.iste.ps.skilled.skill.Enumtype;
+import de.unistuttgart.iste.ps.skilled.skill.Field;
+import de.unistuttgart.iste.ps.skilled.skill.File;
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration;
+import de.unistuttgart.iste.ps.skilled.skill.Usertype;
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
 
 

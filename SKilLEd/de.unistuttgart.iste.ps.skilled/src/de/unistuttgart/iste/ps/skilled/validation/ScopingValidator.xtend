@@ -2,11 +2,11 @@ package de.unistuttgart.iste.ps.skilled.validation
 
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.formatting2.SKilLImportOrganizer
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
-import de.unistuttgart.iste.ps.skilled.sKilL.File
-import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
+import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.skill.File
+import de.unistuttgart.iste.ps.skilled.skill.IncludeFile
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclarationReference
 import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices
 import java.util.Set
@@ -76,14 +76,14 @@ class ScopingValidator extends AbstractSKilLComposedValidatorPart {
 		var duplicate = SKilLImportOrganizer.getDuplicateIncludes(file);
 		for (IncludeFile f : duplicate) {
 			if (!f.importURI.equals(mainFileRelative)) {
-				warning("Duplicate include.", f, SKilLPackage.Literals.INCLUDE_FILE__IMPORT_URI,
+				warning("Duplicate include.", f, SkillPackage.Literals.INCLUDE_FILE__IMPORT_URI,
 					DUPLICATED_INCLUDED_FILE);
 			}
 		}
 		var unused = imp.getUnusedImports(file);
 		for (IncludeFile f : unused) {
 			if (!f.importURI.equals(mainFileRelative)) {
-				warning("Unused include.", f, SKilLPackage.Literals.INCLUDE_FILE__IMPORT_URI, UNUSED_INCLUDED_FILE);
+				warning("Unused include.", f, SkillPackage.Literals.INCLUDE_FILE__IMPORT_URI, UNUSED_INCLUDED_FILE);
 			}
 		}
 	}
@@ -118,9 +118,9 @@ class ScopingValidator extends AbstractSKilLComposedValidatorPart {
 
 		var EReference reference;
 		if (object instanceof DeclarationReference) {
-			reference = SKilLPackage.Literals.DECLARATION_REFERENCE__TYPE;
+			reference = SkillPackage.Literals.DECLARATION_REFERENCE__TYPE;
 		} else if (object instanceof TypeDeclarationReference) {
-			reference = SKilLPackage.Literals.TYPE_DECLARATION_REFERENCE__TYPE;
+			reference = SkillPackage.Literals.TYPE_DECLARATION_REFERENCE__TYPE;
 		}
 
 		var URI linkedObjectURI = EcoreUtil2.getNormalizedResourceURI(linkedObject);

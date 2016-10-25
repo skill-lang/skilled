@@ -6,7 +6,7 @@
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
        uri = "http://www.unistuttgart.de/iste/ps/skilled/SKilL" 
-       class = "de.unistuttgart.iste.ps.skilled.SKilL.SKilLPackage"
+       class = "de.unistuttgart.iste.ps.skilled.skill.SkillPackage"
        genModel = "model/generated/SKilL.genmodel" /> 
 	
   </extension>

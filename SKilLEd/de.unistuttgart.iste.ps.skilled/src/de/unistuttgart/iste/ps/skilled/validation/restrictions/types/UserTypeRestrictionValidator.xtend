@@ -1,10 +1,10 @@
 package de.unistuttgart.iste.ps.skilled.validation.restrictions.types
 
 import com.google.inject.Inject
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.skill.Declaration
+import de.unistuttgart.iste.ps.skilled.skill.Restriction
+import de.unistuttgart.iste.ps.skilled.skill.Typedef
+import de.unistuttgart.iste.ps.skilled.skill.Usertype
 import de.unistuttgart.iste.ps.skilled.util.SubtypesFinder
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.TypeRestrictionsErrorMessages
 

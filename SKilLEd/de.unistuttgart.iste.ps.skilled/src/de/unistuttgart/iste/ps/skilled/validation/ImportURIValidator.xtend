@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.skill.IncludeFile
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
 import org.eclipse.emf.common.util.URI
 import org.eclipse.xtext.validation.Check
 
@@ -25,7 +25,7 @@ class ImportURIValidator extends AbstractSKilLComposedValidatorPart {
   def checkPlatformURI(IncludeFile includeFile) {
     var URI includeURI = URI.createURI(includeFile.importURI)
     if (includeURI.isPlatform()) {
-      error("Platform uris aren't allowed", includeFile, SKilLPackage.Literals.INCLUDE_FILE__IMPORT_URI,
+      error("Platform uris aren't allowed", includeFile, SkillPackage.Literals.INCLUDE_FILE__IMPORT_URI,
         INVALID_IMPORT_URI_PLATFORM)
     }
   }
@@ -55,10 +55,10 @@ class ImportURIValidator extends AbstractSKilLComposedValidatorPart {
         // Everything is fine.
       } else if ((!isFileInTools && isIncludeFileInTools) || (isFileInTools && !isIncludeFileInTools)) {
         error("It is forbidden to reference from main specification to tools specification and vice versa.",
-          includeFile, SKilLPackage.Literals.INCLUDE_FILE__IMPORT_URI);
+          includeFile, SkillPackage.Literals.INCLUDE_FILE__IMPORT_URI);
       } else if (!fileURISegments?.get(3).equals(includeURISegements?.get(3))) {
         error("It is forbidden to reference from one tool to another.", includeFile,
-          SKilLPackage.Literals.INCLUDE_FILE__IMPORT_URI);
+          SkillPackage.Literals.INCLUDE_FILE__IMPORT_URI);
       }
 
     }

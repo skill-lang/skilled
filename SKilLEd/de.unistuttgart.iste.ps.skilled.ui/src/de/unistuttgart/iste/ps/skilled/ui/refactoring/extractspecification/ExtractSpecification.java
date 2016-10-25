@@ -25,28 +25,28 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import com.google.inject.Inject;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Arraytype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Basetype;
-import de.unistuttgart.iste.ps.skilled.sKilL.BuiltInType;
-import de.unistuttgart.iste.ps.skilled.sKilL.Constant;
-import de.unistuttgart.iste.ps.skilled.sKilL.Data;
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference;
-import de.unistuttgart.iste.ps.skilled.sKilL.Field;
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent;
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Floattype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Hint;
-import de.unistuttgart.iste.ps.skilled.sKilL.Integertype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Listtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Maptype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction;
-import de.unistuttgart.iste.ps.skilled.sKilL.Settype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration;
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference;
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype;
-import de.unistuttgart.iste.ps.skilled.sKilL.View;
+import de.unistuttgart.iste.ps.skilled.skill.Annotationtype;
+import de.unistuttgart.iste.ps.skilled.skill.Arraytype;
+import de.unistuttgart.iste.ps.skilled.skill.Basetype;
+import de.unistuttgart.iste.ps.skilled.skill.BuiltInType;
+import de.unistuttgart.iste.ps.skilled.skill.Constant;
+import de.unistuttgart.iste.ps.skilled.skill.Data;
+import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference;
+import de.unistuttgart.iste.ps.skilled.skill.Field;
+import de.unistuttgart.iste.ps.skilled.skill.Fieldcontent;
+import de.unistuttgart.iste.ps.skilled.skill.Fieldtype;
+import de.unistuttgart.iste.ps.skilled.skill.Floattype;
+import de.unistuttgart.iste.ps.skilled.skill.Hint;
+import de.unistuttgart.iste.ps.skilled.skill.Integertype;
+import de.unistuttgart.iste.ps.skilled.skill.Listtype;
+import de.unistuttgart.iste.ps.skilled.skill.Maptype;
+import de.unistuttgart.iste.ps.skilled.skill.Restriction;
+import de.unistuttgart.iste.ps.skilled.skill.Settype;
+import de.unistuttgart.iste.ps.skilled.skill.Stringtype;
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration;
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclarationReference;
+import de.unistuttgart.iste.ps.skilled.skill.Usertype;
+import de.unistuttgart.iste.ps.skilled.skill.View;
 import de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider;
 
 
@@ -55,7 +55,7 @@ public class ExtractSpecification {
     @Inject
     static ValidationTestHelper helper;
     
-    static de.unistuttgart.iste.ps.skilled.sKilL.File SKilLFile = null;
+    static de.unistuttgart.iste.ps.skilled.skill.File SKilLFile = null;
 
     public static void run(TypeDeclaration[] checkedDeclarations, File newFile) {
         // write extracted declarations
@@ -214,7 +214,7 @@ public class ExtractSpecification {
         xtextDocument.modify(new IUnitOfWork<Void, XtextResource>() {
             @Override
             public java.lang.Void exec(XtextResource state) throws Exception {
-                SKilLFile = (de.unistuttgart.iste.ps.skilled.sKilL.File) state.getContents().get(0);
+                SKilLFile = (de.unistuttgart.iste.ps.skilled.skill.File) state.getContents().get(0);
                 new SKilLQuickfixProvider().organizeImports(SKilLFile);
                 return null;
             }

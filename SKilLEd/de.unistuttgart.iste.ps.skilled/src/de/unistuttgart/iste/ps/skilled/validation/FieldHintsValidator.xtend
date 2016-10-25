@@ -1,10 +1,10 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Constant
-import de.unistuttgart.iste.ps.skilled.sKilL.Field
-import de.unistuttgart.iste.ps.skilled.sKilL.Hint
-import de.unistuttgart.iste.ps.skilled.sKilL.HintArgument
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.skill.Constant
+import de.unistuttgart.iste.ps.skilled.skill.Field
+import de.unistuttgart.iste.ps.skilled.skill.Hint
+import de.unistuttgart.iste.ps.skilled.skill.HintArgument
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldHintsErrorMessages
 import java.util.List
 import org.eclipse.xtext.validation.Check
@@ -160,11 +160,11 @@ class FieldHintsValidator extends AbstractSKilLComposedValidatorPart {
   }
 
   def void showError(String message, Hint hint) {
-    error(message, hint, SKilLPackage.Literals.HINT__HINT_NAME)
+    error(message, hint, SkillPackage.Literals.HINT__HINT_NAME)
   }
 
   def void showWarning(String message, Hint hint) {
-    warning(message, hint, SKilLPackage.Literals.HINT__HINT_NAME)
+    warning(message, hint, SkillPackage.Literals.HINT__HINT_NAME)
   }
 
 }

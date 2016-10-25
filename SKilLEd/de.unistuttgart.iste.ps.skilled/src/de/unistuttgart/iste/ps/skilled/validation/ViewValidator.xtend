@@ -1,15 +1,15 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
-import de.unistuttgart.iste.ps.skilled.sKilL.Field
-import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
-import de.unistuttgart.iste.ps.skilled.sKilL.View
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.InterfacetypeImpl
+import de.unistuttgart.iste.ps.skilled.skill.Declaration
+import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.skill.Field
+import de.unistuttgart.iste.ps.skilled.skill.Interfacetype
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclarationReference
+import de.unistuttgart.iste.ps.skilled.skill.Usertype
+import de.unistuttgart.iste.ps.skilled.skill.View
+import de.unistuttgart.iste.ps.skilled.skill.impl.InterfacetypeImpl
 import java.util.ArrayList
 import java.util.List
 import org.eclipse.xtext.validation.Check
@@ -52,10 +52,10 @@ class ViewValidator extends AbstractSKilLComposedValidatorPart {
               // Error: A not a supertype of td
               if (supertypeTypename.equals(checkedTypeDeclaration.name)) {
                 error("Error: you must reference a type with a different name than the type the view is in.",
-                  viewToCheck, SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
+                  viewToCheck, SkillPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
               } else {
                 error("Error: " + supertypeTypename + " is not a supertype of " + checkedTypeDeclaration.name + ".",
-                  viewToCheck, SKilLPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
+                  viewToCheck, SkillPackage.Literals.VIEW.getEStructuralFeature(2), IS_NO_SUPERTYPE)
               }
 
             } else {
@@ -63,7 +63,7 @@ class ViewValidator extends AbstractSKilLComposedValidatorPart {
               if (supertypeVar == null) {
                 // Error: x not a var in A
                 error("Error: " + supertypeVarname + " is not a Variable in " + supertypeTypename + ".", viewToCheck,
-                  SKilLPackage.Literals.VIEW.getEStructuralFeature(2), VIEW_ERROR)
+                  SkillPackage.Literals.VIEW.getEStructuralFeature(2), VIEW_ERROR)
 
               } else {
                 var Declaration usertypeSupertypeVar = null;
@@ -81,12 +81,12 @@ class ViewValidator extends AbstractSKilLComposedValidatorPart {
                 // If SupertypeVar isn't a usertype => error else check if the type of supertypeVar is a supertype of the as var.
                 if (!supertypeVarIsUsertype) {
                   error("Error: " + supertypeVarname + " is not a Usertype or Interface variable.", viewToCheck,
-                    SKilLPackage.Literals.VIEW.getEStructuralFeature(2), VIEW_ERROR)
+                    SkillPackage.Literals.VIEW.getEStructuralFeature(2), VIEW_ERROR)
                 } else if (usertype.name != usertypeSupertypeVar.name) {
                   typesSearched.clear
                   if (searchSupertype(usertypeSupertypeVar.name, usertype) == null) {
                     error("Error: " + usertypeSupertypeVar.name + " is not a supertype of " + usertype.name + ".",
-                      viewToCheck, SKilLPackage.Literals.VIEW.getEStructuralFeature(1), VIEW_ERROR)
+                      viewToCheck, SkillPackage.Literals.VIEW.getEStructuralFeature(1), VIEW_ERROR)
                   }
                 }
               }
@@ -95,7 +95,7 @@ class ViewValidator extends AbstractSKilLComposedValidatorPart {
         }
         if (!isUsertype) {
           // Error: not a usertype!
-          error("Error: not a usertype variable.", viewToCheck, SKilLPackage.Literals.VIEW.getEStructuralFeature(1),
+          error("Error: not a usertype variable.", viewToCheck, SkillPackage.Literals.VIEW.getEStructuralFeature(1),
             VIEW_ERROR)
         }
 

@@ -37,7 +37,7 @@ import org.eclipse.xtext.util.Tuples;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import de.unistuttgart.iste.ps.skilled.formatting2.SKilLImportOrganizer;
-import de.unistuttgart.iste.ps.skilled.sKilL.File;
+import de.unistuttgart.iste.ps.skilled.skill.File;
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
 
 

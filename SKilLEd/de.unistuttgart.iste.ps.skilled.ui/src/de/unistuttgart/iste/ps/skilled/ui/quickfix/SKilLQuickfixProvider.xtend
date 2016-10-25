@@ -7,15 +7,15 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.formatting2.SKilLImportOrganizer
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
-import de.unistuttgart.iste.ps.skilled.sKilL.File
-import de.unistuttgart.iste.ps.skilled.sKilL.Include
-import de.unistuttgart.iste.ps.skilled.sKilL.IncludeFile
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLFactory
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference
+import de.unistuttgart.iste.ps.skilled.skill.Declaration
+import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.skill.Fieldcontent
+import de.unistuttgart.iste.ps.skilled.skill.File
+import de.unistuttgart.iste.ps.skilled.skill.Include
+import de.unistuttgart.iste.ps.skilled.skill.IncludeFile
+import de.unistuttgart.iste.ps.skilled.skill.SkillFactory
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclarationReference
 import de.unistuttgart.iste.ps.skilled.util.DependencyGraph.DependencyGraph
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices
 import de.unistuttgart.iste.ps.skilled.validation.InheritenceValidator
@@ -420,8 +420,8 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 
 					if (referencedURI != null) {
 						// Create new include.
-						var Include include = SKilLFactory.eINSTANCE.createInclude;
-						var IncludeFile includeFile = SKilLFactory.eINSTANCE.createIncludeFile
+						var Include include = SkillFactory.eINSTANCE.createInclude;
+						var IncludeFile includeFile = SkillFactory.eINSTANCE.createIncludeFile
 						includeFile.importURI = referencedURI?.path;
 						include.includeFiles.add(includeFile);
 						if (file instanceof File) {
@@ -568,8 +568,8 @@ public class SKilLQuickfixProvider extends DefaultQuickfixProvider {
 			val URI referencedURI = uri.deresolve(file.eResource.URI)
 			if (referencedURI != null) {
 				// Create new include.
-				var Include include = SKilLFactory.eINSTANCE.createInclude
-				var IncludeFile includeFile = SKilLFactory.eINSTANCE.createIncludeFile
+				var Include include = SkillFactory.eINSTANCE.createInclude
+				var IncludeFile includeFile = SkillFactory.eINSTANCE.createIncludeFile
 				includeFile.importURI = referencedURI?.path
 				include.includeFiles.add(includeFile)
 				if (file instanceof File) {

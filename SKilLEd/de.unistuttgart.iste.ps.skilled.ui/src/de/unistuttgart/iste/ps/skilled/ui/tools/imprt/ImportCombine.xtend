@@ -1,15 +1,15 @@
 package de.unistuttgart.iste.ps.skilled.ui.tools.imprt
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.Enuminstance
-import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Field
-import de.unistuttgart.iste.ps.skilled.sKilL.Hint
-import de.unistuttgart.iste.ps.skilled.sKilL.HintArgument
-import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.skill.Declaration
+import de.unistuttgart.iste.ps.skilled.skill.Enuminstance
+import de.unistuttgart.iste.ps.skilled.skill.Enumtype
+import de.unistuttgart.iste.ps.skilled.skill.Field
+import de.unistuttgart.iste.ps.skilled.skill.Hint
+import de.unistuttgart.iste.ps.skilled.skill.HintArgument
+import de.unistuttgart.iste.ps.skilled.skill.Interfacetype
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.skill.Typedef
+import de.unistuttgart.iste.ps.skilled.skill.Usertype
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices
 import java.awt.EventQueue
@@ -39,7 +39,7 @@ import org.eclipse.xtext.EcoreUtil2
  */
 class ImportCombine {
 	var String fProjectName = ""
-	var de.unistuttgart.iste.ps.skilled.sKilL.File fSelectedToolPath = null;
+	var de.unistuttgart.iste.ps.skilled.skill.File fSelectedToolPath = null;
 	var ArrayList<String> duplicateType = new ArrayList
 	var ArrayList<String> duplicateTypeAddress = new ArrayList
 	var int counter = 0;
@@ -107,7 +107,7 @@ class ImportCombine {
 		var project = ResourcesPlugin.getWorkspace.getRoot.getProject(fProjectName);
 		var files = fSKilLServices.getAll(project, true);
 		// Check types in all files in the project folder
-		for (de.unistuttgart.iste.ps.skilled.sKilL.File f : files) {
+		for (de.unistuttgart.iste.ps.skilled.skill.File f : files) {
 			for (Declaration d : f.declarations) {
 				// Notes which type of declaration it is
 				if (d instanceof Usertype) {

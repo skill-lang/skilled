@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
-import de.unistuttgart.iste.ps.skilled.sKilL.View
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.skill.View
 import java.util.ArrayList
 import java.util.List
 import org.eclipse.xtext.validation.Check
@@ -63,7 +63,7 @@ class DuplicatedTypenameValidation extends AbstractSKilLComposedValidatorPart {
     for (field : validate.fields) {
       if (field.fieldcontent.name.equals(name) && !(field.fieldcontent instanceof View)) {
         error("Error: Fieldname already exists in a supertype!", field.fieldcontent,
-          SKilLPackage.Literals.FIELDCONTENT__NAME, FIELDNAME_ALREADY_EXISTS, field.fieldcontent.name)
+          SkillPackage.Literals.FIELDCONTENT__NAME, FIELDNAME_ALREADY_EXISTS, field.fieldcontent.name)
       }
     }
   }

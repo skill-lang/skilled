@@ -17,8 +17,8 @@ import org.eclipse.xtext.validation.NamesAreUniqueValidationHelper;
 import com.google.inject.Inject;
 
 import de.unistuttgart.iste.ps.skilled.converter.SKilLQualifiedNameProvider;
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration;
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage;
+import de.unistuttgart.iste.ps.skilled.skill.Declaration;
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage;
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
 
 
@@ -75,14 +75,14 @@ public class NamesAreUniqueValidator extends org.eclipse.xtext.validation.NamesA
                 if (!eobjectDescription.getEObjectURI().equals(eObjectURI)) {
                     if ((!services.isToolFile(eObjectURI)) && (!services.isToolFile(eobjectDescription.getEObjectURI()))) {
                         String errorMessage = helper.getDuplicateNameErrorMessage(declarationDescription,
-                                declaration.eClass(), SKilLPackage.Literals.DECLARATION__NAME);
-                        error(errorMessage, declaration, SKilLPackage.Literals.DECLARATION__NAME);
+                                declaration.eClass(), SkillPackage.Literals.DECLARATION__NAME);
+                        error(errorMessage, declaration, SkillPackage.Literals.DECLARATION__NAME);
                         return false;
                     } else if ((!services.isToolFile(eObjectURI))
                             && (!services.isToolFile(eobjectDescription.getEObjectURI()))) {
                         String errorMessage = helper.getDuplicateNameErrorMessage(declarationDescription,
-                                declaration.eClass(), SKilLPackage.Literals.DECLARATION__NAME);
-                        error(errorMessage, declaration, SKilLPackage.Literals.DECLARATION__NAME);
+                                declaration.eClass(), SkillPackage.Literals.DECLARATION__NAME);
+                        error(errorMessage, declaration, SkillPackage.Literals.DECLARATION__NAME);
                         return false;
                     }
                 }

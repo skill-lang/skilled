@@ -56,8 +56,8 @@ import org.eclipse.xtext.xbase.lib.Extension;
 
 import com.google.inject.Inject;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration;
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration;
+import de.unistuttgart.iste.ps.skilled.skill.Declaration;
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration;
 import de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider;
 
 
@@ -87,7 +87,7 @@ public class ExtractSpecificationDialog {
     static IXtextDocument xtextDocument = null;
     static boolean hasErrors = false;
     static IWorkbenchPage page = null;
-    static de.unistuttgart.iste.ps.skilled.sKilL.File file = null;
+    static de.unistuttgart.iste.ps.skilled.skill.File file = null;
 
     /**
      * Creates dialog window
@@ -129,7 +129,7 @@ public class ExtractSpecificationDialog {
                     }
                 }
 
-                file = (de.unistuttgart.iste.ps.skilled.sKilL.File) state.getContents().get(0);
+                file = (de.unistuttgart.iste.ps.skilled.skill.File) state.getContents().get(0);
                 EList<Declaration> declarationList = file.getDeclarations();
 
                 // only add user types and interfaces

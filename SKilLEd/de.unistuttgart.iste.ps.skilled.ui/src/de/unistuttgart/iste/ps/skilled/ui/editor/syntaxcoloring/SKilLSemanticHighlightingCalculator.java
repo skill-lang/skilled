@@ -10,21 +10,21 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Basetype;
-import de.unistuttgart.iste.ps.skilled.sKilL.BuiltInType;
-import de.unistuttgart.iste.ps.skilled.sKilL.Constant;
-import de.unistuttgart.iste.ps.skilled.sKilL.Data;
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference;
-import de.unistuttgart.iste.ps.skilled.sKilL.Enuminstance;
-import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.FieldcontentReference;
-import de.unistuttgart.iste.ps.skilled.sKilL.Hint;
-import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction;
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference;
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef;
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype;
-import de.unistuttgart.iste.ps.skilled.sKilL.View;
+import de.unistuttgart.iste.ps.skilled.skill.Basetype;
+import de.unistuttgart.iste.ps.skilled.skill.BuiltInType;
+import de.unistuttgart.iste.ps.skilled.skill.Constant;
+import de.unistuttgart.iste.ps.skilled.skill.Data;
+import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference;
+import de.unistuttgart.iste.ps.skilled.skill.Enuminstance;
+import de.unistuttgart.iste.ps.skilled.skill.Enumtype;
+import de.unistuttgart.iste.ps.skilled.skill.FieldcontentReference;
+import de.unistuttgart.iste.ps.skilled.skill.Hint;
+import de.unistuttgart.iste.ps.skilled.skill.Interfacetype;
+import de.unistuttgart.iste.ps.skilled.skill.Restriction;
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclarationReference;
+import de.unistuttgart.iste.ps.skilled.skill.Typedef;
+import de.unistuttgart.iste.ps.skilled.skill.Usertype;
+import de.unistuttgart.iste.ps.skilled.skill.View;
 
 
 /**

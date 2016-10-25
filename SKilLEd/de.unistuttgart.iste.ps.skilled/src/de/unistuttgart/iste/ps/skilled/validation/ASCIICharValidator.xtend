@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.Field
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.skill.Declaration
+import de.unistuttgart.iste.ps.skilled.skill.Field
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
 import de.unistuttgart.iste.ps.skilled.util.CheckASCII
 import org.eclipse.xtext.validation.Check
 
@@ -23,7 +23,7 @@ class ASCIICharValidator extends AbstractSKilLComposedValidatorPart {
   def void checkDeclarationIsPureASCII(Declaration dec) {
     if (!CheckASCII.isPureAscii(dec.name)) {
       warning("Warning: Declaration contains non-ASCII-Chars in the name.", dec,
-        SKilLPackage.Literals.DECLARATION.getEStructuralFeature(1), DECLARATION_HAS_NONASCII_CHARS, dec.name)
+        SkillPackage.Literals.DECLARATION.getEStructuralFeature(1), DECLARATION_HAS_NONASCII_CHARS, dec.name)
     }
   }
 
@@ -35,7 +35,7 @@ class ASCIICharValidator extends AbstractSKilLComposedValidatorPart {
   def void checkFieldIsPureASCII(Field f) {
     if (!CheckASCII.isPureAscii(f.fieldcontent.name)) {
       warning("Warning: Field contains non-ASCII-Chars in the name.", f.fieldcontent,
-        SKilLPackage.Literals.FIELDCONTENT__NAME, FIELD_HAS_NONASCII_CHARS, f.fieldcontent.name)
+        SkillPackage.Literals.FIELDCONTENT__NAME, FIELD_HAS_NONASCII_CHARS, f.fieldcontent.name)
     }
   }
 

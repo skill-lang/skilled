@@ -2,7 +2,7 @@ package de.unistuttgart.iste.ps.skilled.tests.validation.asciichar;
 
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
-import de.unistuttgart.iste.ps.skilled.sKilL.File
+import de.unistuttgart.iste.ps.skilled.skill.File
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper

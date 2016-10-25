@@ -3,10 +3,10 @@ package de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes;
 import java.util.Comparator;
 import java.util.HashSet;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration;
-import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration;
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef;
+import de.unistuttgart.iste.ps.skilled.skill.Declaration;
+import de.unistuttgart.iste.ps.skilled.skill.Enumtype;
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration;
+import de.unistuttgart.iste.ps.skilled.skill.Typedef;
 import de.unistuttgart.iste.ps.skilled.validation.InheritenceValidator;
 
 

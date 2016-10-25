@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration
 import java.util.HashSet
 import java.util.Set
 

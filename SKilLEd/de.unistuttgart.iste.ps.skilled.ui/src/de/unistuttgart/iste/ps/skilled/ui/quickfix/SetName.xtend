@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.ui.quickfix
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.skill.Fieldcontent
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.ui.editor.model.edit.IModificationContext
 import org.eclipse.xtext.ui.editor.model.edit.ISemanticModification

@@ -11,9 +11,9 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference;
-import de.unistuttgart.iste.ps.skilled.sKilL.File;
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference;
+import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference;
+import de.unistuttgart.iste.ps.skilled.skill.File;
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclarationReference;
 import de.unistuttgart.iste.ps.skilled.util.Tarjan.StronglyConnectedComponent;
 import de.unistuttgart.iste.ps.skilled.util.Tarjan.TarjanAlgorithm;
 import de.unistuttgart.iste.ps.skilled.util.Tarjan.Vertex;

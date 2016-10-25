@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Field
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.skill.Field
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration
 import de.unistuttgart.iste.ps.skilled.util.KeywordCheckEscaping
 import java.util.ArrayList
 import org.eclipse.xtext.validation.Check
@@ -22,7 +22,7 @@ class KeywordWarning extends AbstractSKilLComposedValidatorPart {
   def KeywordWarning(TypeDeclaration dec) {
     val ArrayList<String> requiresEscaping = KeywordCheckEscaping.requiresEscaping(dec.name);
     if (!requiresEscaping.isNullOrEmpty) {
-      warning(errorMessage(requiresEscaping), dec, SKilLPackage.Literals.DECLARATION__NAME)
+      warning(errorMessage(requiresEscaping), dec, SkillPackage.Literals.DECLARATION__NAME)
     }
   }
 
@@ -34,7 +34,7 @@ class KeywordWarning extends AbstractSKilLComposedValidatorPart {
   def void fieldCheck(Field field) {
     val ArrayList<String> requiresEscaping = KeywordCheckEscaping.requiresEscaping(field.fieldcontent.name);
     if (!requiresEscaping.isNullOrEmpty) {
-      warning(errorMessage(requiresEscaping), field.fieldcontent, SKilLPackage.Literals.FIELDCONTENT__NAME)
+      warning(errorMessage(requiresEscaping), field.fieldcontent, SkillPackage.Literals.FIELDCONTENT__NAME)
     }
 
   }

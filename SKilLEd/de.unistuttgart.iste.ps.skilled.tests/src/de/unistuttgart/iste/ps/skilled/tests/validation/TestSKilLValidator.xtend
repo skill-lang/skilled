@@ -2,8 +2,8 @@ package de.unistuttgart.iste.ps.skilled.tests.validation;
 
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
-import de.unistuttgart.iste.ps.skilled.sKilL.File
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.skill.File
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
 import de.unistuttgart.iste.ps.skilled.tests.utils.FileLoader
 import de.unistuttgart.iste.ps.skilled.validation.ConstantValidator
 import de.unistuttgart.iste.ps.skilled.validation.NestingValidator
@@ -61,54 +61,54 @@ public class TestSKilLValidator {
 
 	@Test
 	def void testIntegerConstantsInvalidWithBuiltInType() {
-		integerConstantsInvalidWithBuiltInType.parse.assertError(SKilLPackage::eINSTANCE.constant, ConstantValidator::INVALID_CONSTANT_TYPE,
+		integerConstantsInvalidWithBuiltInType.parse.assertError(SkillPackage::eINSTANCE.constant, ConstantValidator::INVALID_CONSTANT_TYPE,
 			"Only an Integer can be constant.")
 	}
 
 	@Test
 	def void testIntegerConstantsInvalidWithUserType() {
-		integerConstantsInvalidWithUserType.parse.assertError(SKilLPackage::eINSTANCE.constant, ConstantValidator::INVALID_CONSTANT_TYPE,
+		integerConstantsInvalidWithUserType.parse.assertError(SkillPackage::eINSTANCE.constant, ConstantValidator::INVALID_CONSTANT_TYPE,
 			"Only an Integer can be constant.")
 	}
 
 	@Test
 	def void testNestedListInTypedef() {
-		nestedListInTypedef.parse.assertError(SKilLPackage::eINSTANCE.declarationReference, NestingValidator::INVALID_NESTED_TYPEDEF,
+		nestedListInTypedef.parse.assertError(SkillPackage::eINSTANCE.declarationReference, NestingValidator::INVALID_NESTED_TYPEDEF,
 			"It is forbidden to nest containers inside of other containers.")
 
 	}
 
 	@Test
 	def void testNestedListAsField() {
-		nestedListAsField.parse.assertError(SKilLPackage::eINSTANCE.declarationReference, NestingValidator::INVALID_NESTED_TYPEDEF,
+		nestedListAsField.parse.assertError(SkillPackage::eINSTANCE.declarationReference, NestingValidator::INVALID_NESTED_TYPEDEF,
 			"It is forbidden to nest containers inside of other containers.")
 
 	}
 
 	@Test
 	def void testNestedArrayInTypedef() {
-		nestedArrayInTypedef.parse.assertError(SKilLPackage::eINSTANCE.declarationReference, NestingValidator::INVALID_NESTED_TYPEDEF,
+		nestedArrayInTypedef.parse.assertError(SkillPackage::eINSTANCE.declarationReference, NestingValidator::INVALID_NESTED_TYPEDEF,
 			"It is forbidden to nest containers inside of other containers.")
 
 	}
 
 	@Test
 	def void testNestedArrayAsField() {
-		nestedArrayAsField.parse.assertError(SKilLPackage::eINSTANCE.declarationReference, NestingValidator::INVALID_NESTED_TYPEDEF,
+		nestedArrayAsField.parse.assertError(SkillPackage::eINSTANCE.declarationReference, NestingValidator::INVALID_NESTED_TYPEDEF,
 			"It is forbidden to nest containers inside of other containers.")
 
 	}
 
 	@Test
 	def void testNestedSetAsField() {
-		nestedSetAsField.parse.assertError(SKilLPackage::eINSTANCE.declarationReference, NestingValidator::INVALID_NESTED_TYPEDEF,
+		nestedSetAsField.parse.assertError(SkillPackage::eINSTANCE.declarationReference, NestingValidator::INVALID_NESTED_TYPEDEF,
 			"It is forbidden to nest containers inside of other containers.")
 
 	}
 
 	@Test
 	def void testNestedMapAsField() {
-		nestedMapAsField.parse.assertError(SKilLPackage::eINSTANCE.declarationReference, NestingValidator::INVALID_NESTED_TYPEDEF,
+		nestedMapAsField.parse.assertError(SkillPackage::eINSTANCE.declarationReference, NestingValidator::INVALID_NESTED_TYPEDEF,
 			"It is forbidden to nest containers inside of other containers.")
 
 	}

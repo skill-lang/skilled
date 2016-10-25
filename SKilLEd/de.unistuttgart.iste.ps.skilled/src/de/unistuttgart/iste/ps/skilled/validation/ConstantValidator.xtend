@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Constant
-import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.skill.Constant
+import de.unistuttgart.iste.ps.skilled.skill.Integertype
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
 import org.eclipse.xtext.validation.Check
 
 /**
@@ -20,7 +20,7 @@ class ConstantValidator extends AbstractSKilLComposedValidatorPart {
   @Check
   def checkConstantHasAnInteger(Constant constant) {
     if (!(constant.fieldtype instanceof Integertype)) {
-      error('Only an Integer can be constant.', constant, SKilLPackage.Literals.CONSTANT__CONSTANT_NAME,
+      error('Only an Integer can be constant.', constant, SkillPackage.Literals.CONSTANT__CONSTANT_NAME,
         INVALID_CONSTANT_TYPE)
     }
   }

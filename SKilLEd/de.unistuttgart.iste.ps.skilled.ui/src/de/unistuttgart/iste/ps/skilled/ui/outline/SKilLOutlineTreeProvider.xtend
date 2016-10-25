@@ -3,14 +3,14 @@
  */
 package de.unistuttgart.iste.ps.skilled.ui.outline
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
-import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
-import de.unistuttgart.iste.ps.skilled.sKilL.File
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
+import de.unistuttgart.iste.ps.skilled.skill.Declaration
+import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.skill.Enumtype
+import de.unistuttgart.iste.ps.skilled.skill.Fieldcontent
+import de.unistuttgart.iste.ps.skilled.skill.Fieldtype
+import de.unistuttgart.iste.ps.skilled.skill.File
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.skill.Typedef
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider

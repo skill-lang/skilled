@@ -3,12 +3,12 @@ package de.unistuttgart.iste.ps.skilled.ui.mouseoverdoc;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction;
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration;
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclarationReference;
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef;
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype;
+import de.unistuttgart.iste.ps.skilled.skill.Enumtype;
+import de.unistuttgart.iste.ps.skilled.skill.Restriction;
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration;
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclarationReference;
+import de.unistuttgart.iste.ps.skilled.skill.Typedef;
+import de.unistuttgart.iste.ps.skilled.skill.Usertype;
 
 
 /**

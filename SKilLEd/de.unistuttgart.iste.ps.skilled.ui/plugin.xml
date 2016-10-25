@@ -21,16 +21,16 @@
             commandId="org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclaration">
             <activeWhen>
                 <reference
-                    definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened">
+                    definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
         <handler
             class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
-            commandId="de.unistuttgart.iste.ps.skilled.SKilL.validate">
+            commandId="de.unistuttgart.iste.ps.skilled.skill.validate">
          <activeWhen>
             <reference
-                    definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened">
+                    definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened">
             </reference>
          </activeWhen>
       	</handler>
@@ -39,7 +39,7 @@
             class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedNameHandler"
             commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName">
             <activeWhen>
-				<reference definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened" />
+				<reference definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened" />
             </activeWhen>
         </handler>
         <handler
@@ -47,7 +47,7 @@
             commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedName">
             <activeWhen>
             	<and>
-            		<reference definitionId="de.unistuttgart.iste.ps.skilled.SKilL.XtextEditor.opened" />
+            		<reference definitionId="de.unistuttgart.iste.ps.skilled.skill.XtextEditor.opened" />
 	                <iterate>
 						<adapt type="org.eclipse.xtext.ui.editor.outline.IOutlineNode" />
 					</iterate>
@@ -56,7 +56,7 @@
         </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
-        <definition id="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened">
+        <definition id="de.unistuttgart.iste.ps.skilled.skill.Editor.opened">
             <and>
                 <reference definitionId="isActiveEditorAnInstanceOfXtextEditor"/>
                 <with variable="activeEditor">
@@ -66,7 +66,7 @@
                 </with>        
             </and>
         </definition>
-        <definition id="de.unistuttgart.iste.ps.skilled.SKilL.XtextEditor.opened">
+        <definition id="de.unistuttgart.iste.ps.skilled.skill.XtextEditor.opened">
             <and>
                 <reference definitionId="isXtextEditorActive"/>
                 <with variable="activeEditor">
@@ -88,14 +88,14 @@
         <page
             category="de.unistuttgart.iste.ps.skilled.SKilL"
             class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
-            id="de.unistuttgart.iste.ps.skilled.SKilL.coloring"
+            id="de.unistuttgart.iste.ps.skilled.skill.coloring"
             name="Syntax Coloring">
             <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
         </page>
         <page
             category="de.unistuttgart.iste.ps.skilled.SKilL"
             class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
-            id="de.unistuttgart.iste.ps.skilled.SKilL.templates"
+            id="de.unistuttgart.iste.ps.skilled.skill.templates"
             name="Templates">
             <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
         </page>
@@ -141,7 +141,7 @@
          point="org.eclipse.ui.commands">
       <command
             description="Trigger expensive validation"
-            id="de.unistuttgart.iste.ps.skilled.SKilL.validate"
+            id="de.unistuttgart.iste.ps.skilled.skill.validate"
             name="Validate">
       </command>
       <!-- copy qualified name -->
@@ -162,12 +162,12 @@
         <menuContribution
             locationURI="popup:#TextEditorContext?after=group.edit">
              <command
-                 commandId="de.unistuttgart.iste.ps.skilled.SKilL.validate"
+                 commandId="de.unistuttgart.iste.ps.skilled.skill.validate"
                  style="push"
                  tooltip="Trigger expensive validation">
             <visibleWhen checkEnabled="false">
                 <reference
-                    definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened">
+                    definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened">
                 </reference>
             </visibleWhen>
          </command>  
@@ -177,7 +177,7 @@
          	<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName" 
          		style="push" tooltip="Copy Qualified Name">
             	<visibleWhen checkEnabled="false">
-                	<reference definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened" />
+                	<reference definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened" />
             	</visibleWhen>
          	</command>  
          </menuContribution>
@@ -185,7 +185,7 @@
          	<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName"
             	style="push" tooltip="Copy Qualified Name">
             	<visibleWhen checkEnabled="false">
-                	<reference definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened" />
+                	<reference definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened" />
             	</visibleWhen>
          	</command>  
          </menuContribution>
@@ -194,7 +194,7 @@
 				style="push" tooltip="Copy Qualified Name">
          		<visibleWhen checkEnabled="false">
 	            	<and>
-	            		<reference definitionId="de.unistuttgart.iste.ps.skilled.SKilL.XtextEditor.opened" />
+	            		<reference definitionId="de.unistuttgart.iste.ps.skilled.skill.XtextEditor.opened" />
 						<iterate>
 							<adapt type="org.eclipse.xtext.ui.editor.outline.IOutlineNode" />
 						</iterate>
@@ -207,7 +207,7 @@
 		<menuContribution locationURI="popup:#TextEditorContext?endof=group.find">
 			<command commandId="org.eclipse.xtext.ui.editor.FindReferences">
 				<visibleWhen checkEnabled="false">
-                	<reference definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened">
+                	<reference definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened">
                 	</reference>
             	</visibleWhen>
 			</command>
@@ -219,7 +219,7 @@
             commandId="org.eclipse.xtext.ui.editor.FindReferences">
             <activeWhen>
                 <reference
-                    definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened">
+                    definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
@@ -278,7 +278,7 @@
         <page
             category="de.unistuttgart.iste.ps.skilled.SKilL"
             class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
-            id="de.unistuttgart.iste.ps.skilled.SKilL.compiler.preferencePage"
+            id="de.unistuttgart.iste.ps.skilled.skill.compiler.preferencePage"
             name="Compiler">
             <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
         </page>
@@ -288,7 +288,7 @@
         <page
             category="de.unistuttgart.iste.ps.skilled.SKilL"
             class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
-            id="de.unistuttgart.iste.ps.skilled.SKilL.compiler.propertyPage"
+            id="de.unistuttgart.iste.ps.skilled.skill.compiler.propertyPage"
             name="Compiler">
             <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
             <enabledWhen>
@@ -301,10 +301,10 @@
 		<menuContribution locationURI="popup:#TextEditorContext?after=xtext.ui.openDeclaration">
 			<command
 				commandId="org.eclipse.xtext.ui.OpenGeneratedFileCommand"
-				id="de.unistuttgart.iste.ps.skilled.SKilL.OpenGeneratedCode"
+				id="de.unistuttgart.iste.ps.skilled.skill.OpenGeneratedCode"
 				style="push">
 					<visibleWhen checkEnabled="false">
-						<reference definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened" />
+						<reference definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened" />
 					</visibleWhen>
 			</command>
 		</menuContribution>
@@ -314,7 +314,7 @@
 			class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.generator.trace.OpenGeneratedFileHandler"
 			commandId="org.eclipse.xtext.ui.OpenGeneratedFileCommand">
 				<activeWhen>
-					<reference definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened" />
+					<reference definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened" />
 				</activeWhen>
 		</handler>
 	</extension>
@@ -327,7 +327,7 @@
 			commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
 			<activeWhen>
 				<reference
-					definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened">
+					definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -347,7 +347,7 @@
 				style="push"
 				tooltip="Open Quick Outline">
 				<visibleWhen checkEnabled="false">
-					<reference definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened"/>
+					<reference definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened"/>
 				</visibleWhen>
 			</command>
 		</menuContribution>
@@ -387,7 +387,7 @@
 			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
 			<activeWhen>
 				<reference
-					definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened">
+					definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -399,7 +399,7 @@
                style="push">
             <visibleWhen checkEnabled="false">
                <reference
-                     definitionId="de.unistuttgart.iste.ps.skilled.SKilL.Editor.opened">
+                     definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened">
                </reference>
             </visibleWhen>
          </command>
@@ -409,26 +409,26 @@
 	    <page
 	        category="de.unistuttgart.iste.ps.skilled.SKilL"
 	        class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="de.unistuttgart.iste.ps.skilled.SKilL.refactoring"
+	        id="de.unistuttgart.iste.ps.skilled.skill.refactoring"
 	        name="Refactoring">
 	        <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
 	    </page>
 	</extension>
 
   <extension point="org.eclipse.compare.contentViewers">
-    <viewer id="de.unistuttgart.iste.ps.skilled.SKilL.compare.contentViewers"
+    <viewer id="de.unistuttgart.iste.ps.skilled.skill.compare.contentViewers"
             class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
             extensions="skill">
     </viewer>
   </extension>
   <extension point="org.eclipse.compare.contentMergeViewers">
-    <viewer id="de.unistuttgart.iste.ps.skilled.SKilL.compare.contentMergeViewers"
+    <viewer id="de.unistuttgart.iste.ps.skilled.skill.compare.contentMergeViewers"
             class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
             extensions="skill" label="SKilL Compare">
      </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
-    <provider id="de.unistuttgart.iste.ps.skilled.SKilL.editors.documentProviders"
+    <provider id="de.unistuttgart.iste.ps.skilled.skill.editors.documentProviders"
             class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
             extensions="skill">
     </provider>

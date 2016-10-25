@@ -1,11 +1,11 @@
 package de.unistuttgart.iste.ps.skilled.validation.restrictions.types
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.skill.Declaration
+import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.skill.Restriction
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
+import de.unistuttgart.iste.ps.skilled.skill.Typedef
+import de.unistuttgart.iste.ps.skilled.skill.Usertype
 import de.unistuttgart.iste.ps.skilled.validation.AbstractSKilLValidator
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.TypeRestrictionsErrorMessages
 import org.eclipse.emf.common.util.EList
@@ -206,10 +206,10 @@ class AbstractTypeRestrictionsValidator extends AbstractSKilLValidator {
 	}
 
 	def void showError(String message, Restriction restriction) {
-		error(message, restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+		error(message, restriction, SkillPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 	}
 
 	def void showWarning(String message, Restriction restriction) {
-		warning(message, restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+		warning(message, restriction, SkillPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 	}
 }

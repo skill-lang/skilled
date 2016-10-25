@@ -2,11 +2,11 @@ package de.unistuttgart.iste.ps.skilled.tests.edgecases;
 
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
-import de.unistuttgart.iste.ps.skilled.sKilL.DeclarationReference
-import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype
-import de.unistuttgart.iste.ps.skilled.sKilL.File
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.InterfacetypeImpl
-import de.unistuttgart.iste.ps.skilled.sKilL.impl.UsertypeImpl
+import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference
+import de.unistuttgart.iste.ps.skilled.skill.Enumtype
+import de.unistuttgart.iste.ps.skilled.skill.File
+import de.unistuttgart.iste.ps.skilled.skill.impl.InterfacetypeImpl
+import de.unistuttgart.iste.ps.skilled.skill.impl.UsertypeImpl
 import de.unistuttgart.iste.ps.skilled.tests.utils.FileLoader
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner

@@ -15,11 +15,11 @@ import org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.hover.html.IXtextBrowserInformationControl;
 import org.eclipse.xtext.ui.editor.hover.html.XtextBrowserInformationControl;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Enumtype;
-import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype;
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration;
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef;
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype;
+import de.unistuttgart.iste.ps.skilled.skill.Enumtype;
+import de.unistuttgart.iste.ps.skilled.skill.Interfacetype;
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration;
+import de.unistuttgart.iste.ps.skilled.skill.Typedef;
+import de.unistuttgart.iste.ps.skilled.skill.Usertype;
 
 
 /**

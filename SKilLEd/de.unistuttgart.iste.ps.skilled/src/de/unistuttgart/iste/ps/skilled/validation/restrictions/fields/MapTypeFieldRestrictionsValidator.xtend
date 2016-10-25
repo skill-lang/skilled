@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.validation.restrictions.fields
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Maptype
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
+import de.unistuttgart.iste.ps.skilled.skill.Fieldtype
+import de.unistuttgart.iste.ps.skilled.skill.Maptype
+import de.unistuttgart.iste.ps.skilled.skill.Restriction
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
 
 /**

@@ -1,9 +1,9 @@
 package de.unistuttgart.iste.ps.skilled.validation.restrictions.fields
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Field
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.skill.Field
+import de.unistuttgart.iste.ps.skilled.skill.Fieldtype
+import de.unistuttgart.iste.ps.skilled.skill.Restriction
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
 import de.unistuttgart.iste.ps.skilled.validation.AbstractSKilLValidator
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
 import org.eclipse.xtext.validation.Check
@@ -124,11 +124,11 @@ abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator
 	}
 
 	def void showError(String message, Restriction restriction) {
-		error(message, restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+		error(message, restriction, SkillPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 	}
 
 	def void showWarning(String message, Restriction restriction) {
-		warning(message, restriction, SKilLPackage.Literals.RESTRICTION__RESTRICTION_NAME)
+		warning(message, restriction, SkillPackage.Literals.RESTRICTION__RESTRICTION_NAME)
 	}
 
 	def public static boolean isStringNullOrLowercase(String string) {

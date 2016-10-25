@@ -2,8 +2,8 @@ package de.unistuttgart.iste.ps.skilled.tests.validation
 
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
-import de.unistuttgart.iste.ps.skilled.sKilL.File
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.skill.File
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
 import de.unistuttgart.iste.ps.skilled.tests.utils.FileLoader
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -37,32 +37,32 @@ class TestSkillReservedKeywordUsage {
 	
 	@Test
 	def void testFieldApi() {
-		fieldApi.parse.assertWarning(SKilLPackage::eINSTANCE.fieldcontent, null, "Usage of skillid, api or internal is discouraged");
+		fieldApi.parse.assertWarning(SkillPackage::eINSTANCE.fieldcontent, null, "Usage of skillid, api or internal is discouraged");
 	}
 	
 	@Test
 	def void testFieldInternal() {
-		fieldInternal.parse.assertWarning(SKilLPackage::eINSTANCE.fieldcontent, null, "Usage of skillid, api or internal is discouraged");
+		fieldInternal.parse.assertWarning(SkillPackage::eINSTANCE.fieldcontent, null, "Usage of skillid, api or internal is discouraged");
 	}
 	
 	@Test
 	def void testFieldSkillid() {
-		fieldSkillid.parse.assertWarning(SKilLPackage::eINSTANCE.fieldcontent, null, "Usage of skillid, api or internal is discouraged");
+		fieldSkillid.parse.assertWarning(SkillPackage::eINSTANCE.fieldcontent, null, "Usage of skillid, api or internal is discouraged");
 	}
 	
 	@Test
 	def void testTypeApi() {
-		typeApi.parse.assertWarning(SKilLPackage::eINSTANCE.declaration, null, "Usage of skillid, api or internal is discouraged");
+		typeApi.parse.assertWarning(SkillPackage::eINSTANCE.declaration, null, "Usage of skillid, api or internal is discouraged");
 	}
 	
 	@Test
 	def void testTypeInternal() {
-		typeInternal.parse.assertWarning(SKilLPackage::eINSTANCE.declaration, null, "Usage of skillid, api or internal is discouraged");
+		typeInternal.parse.assertWarning(SkillPackage::eINSTANCE.declaration, null, "Usage of skillid, api or internal is discouraged");
 	}
 	
 	@Test
 	def void testTypeSkillid() {
-		typeSkillid.parse.assertWarning(SKilLPackage::eINSTANCE.declaration, null, "Usage of skillid, api or internal is discouraged");
+		typeSkillid.parse.assertWarning(SkillPackage::eINSTANCE.declaration, null, "Usage of skillid, api or internal is discouraged");
 	}
 	
 }

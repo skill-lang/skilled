@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.ui.contentassist
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldcontent
+import de.unistuttgart.iste.ps.skilled.skill.Declaration
+import de.unistuttgart.iste.ps.skilled.skill.Fieldcontent
 import org.eclipse.core.runtime.NullProgressMonitor
 import org.eclipse.jface.text.contentassist.ICompletionProposal
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal

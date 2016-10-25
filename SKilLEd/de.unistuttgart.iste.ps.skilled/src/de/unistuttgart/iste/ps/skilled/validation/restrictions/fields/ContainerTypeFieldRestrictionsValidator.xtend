@@ -1,9 +1,9 @@
 package de.unistuttgart.iste.ps.skilled.validation.restrictions.fields
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Arraytype
-import de.unistuttgart.iste.ps.skilled.sKilL.Fieldtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Listtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Settype
+import de.unistuttgart.iste.ps.skilled.skill.Arraytype
+import de.unistuttgart.iste.ps.skilled.skill.Fieldtype
+import de.unistuttgart.iste.ps.skilled.skill.Listtype
+import de.unistuttgart.iste.ps.skilled.skill.Settype
 
 /**
  * @author Daniel Ryan Degutis

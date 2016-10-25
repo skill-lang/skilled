@@ -1,9 +1,9 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
 import com.google.inject.Inject
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.Field
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
+import de.unistuttgart.iste.ps.skilled.skill.Declaration
+import de.unistuttgart.iste.ps.skilled.skill.Field
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices
 import de.unistuttgart.iste.ps.skillls.tools.Tool
 import de.unistuttgart.iste.ps.skillls.tools.Type
@@ -60,7 +60,7 @@ class UnusedDeclarationValidator extends AbstractSKilLComposedValidatorPart {
       var node = NodeModelUtils.getNode(declaration);
       var offset = node.totalOffset;
       var length = node.totalLength;
-      warning("Type is not used in Tool", declaration, SKilLPackage.Literals.DECLARATION__NAME, UNUSED_TYPE,
+      warning("Type is not used in Tool", declaration, SkillPackage.Literals.DECLARATION__NAME, UNUSED_TYPE,
         #[offset.toString, length.toString]);
     }
   }
@@ -104,7 +104,7 @@ class UnusedDeclarationValidator extends AbstractSKilLComposedValidatorPart {
       var node = NodeModelUtils.getNode(field);
       var offset = node.totalOffset;
       var length = node.totalLength;
-      warning("Field is not used in Tool", field.fieldcontent, SKilLPackage.Literals.FIELDCONTENT__NAME, UNUSED_FIELD,
+      warning("Field is not used in Tool", field.fieldcontent, SkillPackage.Literals.FIELDCONTENT__NAME, UNUSED_FIELD,
         #[offset.toString, length.toString])
     }
   }

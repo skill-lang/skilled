@@ -2,7 +2,7 @@ package de.unistuttgart.iste.ps.skilled.ui.refactoring.sorttypes;
 
 import java.util.Comparator;
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction;
+import de.unistuttgart.iste.ps.skilled.skill.Restriction;
 
 
 /**

@@ -1,16 +1,16 @@
 package de.unistuttgart.iste.ps.skilled.validation.restrictions.types
 
 import com.google.inject.Inject
-import de.unistuttgart.iste.ps.skilled.sKilL.Annotationtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Booleantype
-import de.unistuttgart.iste.ps.skilled.sKilL.Declaration
-import de.unistuttgart.iste.ps.skilled.sKilL.Floattype
-import de.unistuttgart.iste.ps.skilled.sKilL.Integertype
-import de.unistuttgart.iste.ps.skilled.sKilL.Maptype
-import de.unistuttgart.iste.ps.skilled.sKilL.Restriction
-import de.unistuttgart.iste.ps.skilled.sKilL.Stringtype
-import de.unistuttgart.iste.ps.skilled.sKilL.Typedef
-import de.unistuttgart.iste.ps.skilled.sKilL.Usertype
+import de.unistuttgart.iste.ps.skilled.skill.Annotationtype
+import de.unistuttgart.iste.ps.skilled.skill.Booleantype
+import de.unistuttgart.iste.ps.skilled.skill.Declaration
+import de.unistuttgart.iste.ps.skilled.skill.Floattype
+import de.unistuttgart.iste.ps.skilled.skill.Integertype
+import de.unistuttgart.iste.ps.skilled.skill.Maptype
+import de.unistuttgart.iste.ps.skilled.skill.Restriction
+import de.unistuttgart.iste.ps.skilled.skill.Stringtype
+import de.unistuttgart.iste.ps.skilled.skill.Typedef
+import de.unistuttgart.iste.ps.skilled.skill.Usertype
 import de.unistuttgart.iste.ps.skilled.util.SubtypesFinder
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.TypeRestrictionsErrorMessages

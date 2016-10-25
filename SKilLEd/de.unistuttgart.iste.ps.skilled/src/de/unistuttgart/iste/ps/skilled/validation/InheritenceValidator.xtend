@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
-import de.unistuttgart.iste.ps.skilled.sKilL.Interfacetype
-import de.unistuttgart.iste.ps.skilled.sKilL.SKilLPackage
-import de.unistuttgart.iste.ps.skilled.sKilL.TypeDeclaration
+import de.unistuttgart.iste.ps.skilled.skill.Interfacetype
+import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
+import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration
 import java.util.ArrayList
 import java.util.EmptyStackException
 import java.util.HashSet
@@ -61,7 +61,7 @@ class InheritenceValidator extends AbstractSKilLComposedValidatorPart {
 
     // Test if Node is his own parent	
     if (firstnode.getsuccessors.contains(firstnode)) {
-      error("Error: type can't be his own parent.", firstnode.typeDeclaration, SKilLPackage.Literals.DECLARATION__NAME,
+      error("Error: type can't be his own parent.", firstnode.typeDeclaration, SkillPackage.Literals.DECLARATION__NAME,
         TYPE_IS_HIS_OWN_PARENT, firstnode.typeDeclaration.name)
       cyclic = true;
     }
@@ -100,7 +100,7 @@ class InheritenceValidator extends AbstractSKilLComposedValidatorPart {
         if (!minimum) {
           // No minimum found -> Error
           error("Error: Multiple Inheritence is not allowed.", firstnode.typeDeclaration,
-            SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
+            SkillPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE, firstnode.typeDeclaration.name)
           error = true;
         }
       }
@@ -116,7 +116,7 @@ class InheritenceValidator extends AbstractSKilLComposedValidatorPart {
   def checkMultipleInheritence(TypeDeclaration dec) {
     if (!checkSupertypes(dec)) {
       // More than one non-interface Supertype
-      error("Error: Inheritence error.", dec, SKilLPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE_ERROR,
+      error("Error: Inheritence error.", dec, SkillPackage.Literals.DECLARATION__NAME, MULTIPLE_INHERITENCE_ERROR,
         dec.name)
     }
   }
@@ -298,7 +298,7 @@ class InheritenceValidator extends AbstractSKilLComposedValidatorPart {
           counter++
         }
         // Error Message
-        error("Error: can't use extend in a Cycle", firstnode.typeDeclaration, SKilLPackage.Literals.DECLARATION__NAME,
+        error("Error: can't use extend in a Cycle", firstnode.typeDeclaration, SkillPackage.Literals.DECLARATION__NAME,
           CYCLIC_TYPES, array_nodes)
         cyclic = true
       }
