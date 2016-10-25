@@ -18,7 +18,7 @@ import org.eclipse.xtext.validation.ComposedChecks
 @ComposedChecks(validators=#[InheritenceValidator, UserTypeFieldRestrictions, StringTypeFieldRestrictions,
 	IntegerTypeFieldRestrictionsValidator, FloatTypeFieldRestrictionsValidator,
 	AnnotationTypeFieldRestrictionsValidator, BooleanTypeFieldRestrictionsValidator,
-	ContainerTypeFieldRestrictionsValidator, MapTypeFieldRestrictionsValidator, DuplicatedTypenameValidation,
+	ContainerTypeFieldRestrictionsValidator, MapTypeFieldRestrictionsValidator, DuplicatedFieldDefinitionValidation,
 	KeywordWarning, ASCIICharValidator, ViewValidator, ScopingValidator, UserTypeRestrictionValidator,
 	TypedefRestrictionValidator, ImportURIValidator, ImportValidator, FieldHintsValidator, ConstantValidator,
 	NestingValidator, NamesAreUniqueValidator, TypeHintsValidator, ReservedSKilLKeywordValidator, UnusedDeclarationValidator])
