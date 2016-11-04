@@ -3,11 +3,11 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/de.unistuttgart.iste.ps.skilled/lib/antlr4-runtime-4.5.1-1.jar"/>
-	<classpathentry kind="lib" path="/de.unistuttgart.iste.ps.skilled/lib/hamcrest-core-1.3.jar"/>
-	<classpathentry kind="lib" path="/de.unistuttgart.iste.ps.skilled/lib/junit-4.12.jar"/>
-	<classpathentry kind="lib" path="/de.unistuttgart.iste.ps.skilled/lib/deps/skill.java.common.jar"/>
-	<classpathentry kind="lib" path="/de.unistuttgart.iste.ps.skilled/lib/deps/skill.jvm.common.jar"/>
+	<classpathentry kind="lib" path="lib/antlr4-runtime-4.5.1-1.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/deps/skill.java.common.jar"/>
+	<classpathentry kind="lib" path="lib/deps/skill.jvm.common.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
