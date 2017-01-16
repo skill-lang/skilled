@@ -34,4 +34,8 @@ Export-Package: de.unistuttgart.iste.ps.skilled;uses:="com.google.inject,org.ecl
  de.unistuttgart.iste.ps.skilled.skill.impl,
  de.unistuttgart.iste.ps.skilled.skill.util
 Import-Package: org.apache.log4j
-Bundle-ClassPath: .,lib/scala-library.jar,lib/skill_2.11-0.3.jar,lib/deps/skill.java.common.jar,lib/deps/skill.jvm.common.jar,lib/SKilLls.jar
+Bundle-ClassPath: .,
+ lib/scala-library.jar,
+ lib/skill_2.11-0.3.jar,
+ lib/deps/skill.java.common.jar,
+ lib/deps/skill.jvm.common.jar

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="de.unistuttgart.iste.ps.skilled" default="build-skilled">
-    <property name="workflow" value="src/de/unistuttgart/iste/ps/skilled/GenerateSKilL.mwe2"/>
+    <property name="workflow" value="src/de/unistuttgart/iste/ps/skilled/GenerateSkill.mwe2"/>
     <property name="tests-project-path" value="../de.unistuttgart.iste.ps.skilled.tests" />
     <property name="ui-project-path" value="../de.unistuttgart.iste.ps.skilled.ui" />
     <property name="source" value="1.8" />

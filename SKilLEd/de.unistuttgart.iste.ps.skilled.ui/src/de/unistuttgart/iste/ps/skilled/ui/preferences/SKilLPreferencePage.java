@@ -12,7 +12,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.xtext.ui.editor.preferences.AbstractPreferencePage;
 
-import de.unistuttgart.iste.ps.skilled.util.CheckAvailableLanguages;
+import de.unistuttgart.iste.ps.skilled.util.SkillInstallation;
 
 
 /**
@@ -56,7 +56,7 @@ public class SKilLPreferencePage extends AbstractPreferencePage {
 
         putSeperator();
 
-        String[][] availableLanguages = Arrays.stream(CheckAvailableLanguages.getAvailableLanguages()).map(s -> {
+        String[][] availableLanguages = Arrays.stream(SkillInstallation.allGeneratorNames()).map(s -> {
             return new String[] { s, s };
         }).toArray(size -> new String[size][size]);
 
