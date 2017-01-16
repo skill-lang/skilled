@@ -53,18 +53,17 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import com.google.common.base.Strings;
 
-import de.unistuttgart.iste.ps.skilled.ui.sfparser.api.SkillFile;
 import de.ust.skill.common.java.api.Access;
 import de.ust.skill.common.java.api.FieldDeclaration;
 import de.ust.skill.common.java.api.SkillException;
+import de.ust.skill.common.java.api.SkillFile;
 import de.ust.skill.common.java.api.SkillFile.Mode;
 import de.ust.skill.common.java.internal.LazyField;
 import de.ust.skill.common.java.internal.SkillObject;
 
-
 /**
- * This class provides the dialog window for "Import Binary File" which allows the user to import a binary file as a new
- * tool.
+ * This class provides the dialog window for "Import Binary File" which allows
+ * the user to import a binary file as a new tool.
  * 
  * @author Leslie
  * @author Tobias
@@ -245,7 +244,9 @@ public class ImportBinary {
                 }
 
                 try {
-                    SkillFile skillFile = SkillFile.open(fSelectedBinary, Mode.ReadOnly);
+                    SkillFile skillFile = null;
+                    if (null == skillFile)
+                        throw new NoSuchMethodError("not implemented");
                     Iterator<? extends Access<? extends SkillObject>> it = skillFile.allTypes().iterator();
                     LinkedList<String> strings = new LinkedList<String>();
                     while (it.hasNext()) {
@@ -374,28 +375,38 @@ public class ImportBinary {
                 fSelectedBinary = "";
 
                 /*
-                 * IWorkspace workspace = ResourcesPlugin.getWorkspace(); IWorkspaceRoot root = workspace.getRoot(); IProject
-                 * project = root.getProject("NewProject"); IFolder folder = project.getFolder("NewFolder"); IFile file =
-                 * folder.getFile("hell.MyDsl"); if (!project.exists()) try { project.create(null); } catch (CoreException
-                 * e1) { e1.printStackTrace(); } if (!project.isOpen()) try { project.open(null); } catch (CoreException e1)
-                 * { e1.printStackTrace(); } if (!folder.exists()) try { folder.create(IResource.NONE, true, null); } catch
-                 * (CoreException e1) { e1.printStackTrace(); } byte[] bytes = "File contents".getBytes();
-                 * ByteArrayInputStream source = new ByteArrayInputStream(bytes); try { file.create(source, IResource.NONE,
-                 * null);
+                 * IWorkspace workspace = ResourcesPlugin.getWorkspace();
+                 * IWorkspaceRoot root = workspace.getRoot(); IProject project =
+                 * root.getProject("NewProject"); IFolder folder =
+                 * project.getFolder("NewFolder"); IFile file =
+                 * folder.getFile("hell.MyDsl"); if (!project.exists()) try {
+                 * project.create(null); } catch (CoreException e1) {
+                 * e1.printStackTrace(); } if (!project.isOpen()) try {
+                 * project.open(null); } catch (CoreException e1) {
+                 * e1.printStackTrace(); } if (!folder.exists()) try {
+                 * folder.create(IResource.NONE, true, null); } catch
+                 * (CoreException e1) { e1.printStackTrace(); } byte[] bytes =
+                 * "File contents".getBytes(); ByteArrayInputStream source = new
+                 * ByteArrayInputStream(bytes); try { file.create(source,
+                 * IResource.NONE, null);
                  * 
-                 * } catch (CoreException e) { e.printStackTrace(); } IWorkbench wb = PlatformUI.getWorkbench();
-                 * IWorkbenchWindow win = wb.getActiveWorkbenchWindow(); IWorkbenchPage page = win.getActivePage(); try {
-                 * IDE.openEditor(page, file); } catch (PartInitException e) { e.printStackTrace(); }
+                 * } catch (CoreException e) { e.printStackTrace(); } IWorkbench
+                 * wb = PlatformUI.getWorkbench(); IWorkbenchWindow win =
+                 * wb.getActiveWorkbenchWindow(); IWorkbenchPage page =
+                 * win.getActivePage(); try { IDE.openEditor(page, file); }
+                 * catch (PartInitException e) { e.printStackTrace(); }
                  */
 
                 // Get the active page.
                 IWorkbench wb = PlatformUI.getWorkbench();
                 IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
                 IWorkbenchPage page = win.getActivePage();
-                // Figure out the default editor for the file type based on extension.
+                // Figure out the default editor for the file type based on
+                // extension.
                 IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor("a.skill");
                 if (desc == null) {
-                    // MyHLMUtils.popupError("Editor open error", "Unable to find a suitable editor to open file.");
+                    // MyHLMUtils.popupError("Editor open error", "Unable to
+                    // find a suitable editor to open file.");
                 } else {
                     Constructor<org.eclipse.core.internal.resources.File> constructor = (Constructor<org.eclipse.core.internal.resources.File>) org.eclipse.core.internal.resources.File.class
                             .getDeclaredConstructors()[0];
@@ -404,8 +415,8 @@ public class ImportBinary {
                         IWorkspaceRoot root = workspace.getRoot();
                         IPath path = root.getLocation();
                         String shortPath = fImportLocationPath.toString().split(path.lastSegment())[1];
-                        org.eclipse.core.internal.resources.File file = constructor
-                                .newInstance(new org.eclipse.core.runtime.Path(shortPath), ResourcesPlugin.getWorkspace());
+                        org.eclipse.core.internal.resources.File file = constructor.newInstance(
+                                new org.eclipse.core.runtime.Path(shortPath), ResourcesPlugin.getWorkspace());
                         File rename = new File(fImportLocationPath.toString());
                         File deleteLater = new File(fImportLocationPath.toString() + "asdf");
                         rename.renameTo(deleteLater);
@@ -510,7 +521,8 @@ public class ImportBinary {
     public static void listFiles(String directoryName, ArrayList<File> checkFiles) {
         String location = "";
         if (directoryName == "") {
-            location = new File("TemporaryFileBySKilLEd.skill").getAbsolutePath().split("TemporaryFileBySKilLEd.skill")[0];
+            location = new File("TemporaryFileBySKilLEd.skill").getAbsolutePath()
+                    .split("TemporaryFileBySKilLEd.skill")[0];
         } else {
             location = directoryName;
         }

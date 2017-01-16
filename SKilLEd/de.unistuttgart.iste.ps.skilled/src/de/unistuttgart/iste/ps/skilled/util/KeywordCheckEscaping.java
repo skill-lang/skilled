@@ -2,8 +2,6 @@ package de.unistuttgart.iste.ps.skilled.util;
 
 import java.util.ArrayList;
 
-import de.ust.skill.main.CommandLine;
-
 /**
  * Queries the SKilL-Generator to inquire ambigous identifiers that need
  * escaping in the Binding
@@ -11,10 +9,10 @@ import de.ust.skill.main.CommandLine;
  * @author Daniel Ryan Degutis
  */
 public class KeywordCheckEscaping {
-	public static ArrayList<String> requiresEscaping(String args) {
+    public static ArrayList<String> requiresEscaping(String name) {
 		ArrayList<String> languagesWhereEscapingRequired = new ArrayList<>();
-		for (String language : CheckAvailableLanguages.getAvailableLanguages()) {
-			if (CommandLine.checkEscaping(language, new String[] { args }).equals("true")) {
+		for (String language : SkillInstallation.allGeneratorNames()) {
+			if (SkillInstallation.requiresEscaping(language, name)) {
 				languagesWhereEscapingRequired.add(language);
 			}
 		}

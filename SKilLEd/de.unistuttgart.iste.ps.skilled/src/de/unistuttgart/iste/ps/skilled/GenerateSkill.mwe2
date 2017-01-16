@@ -1,14 +1,14 @@
 /**
  * @author Marco Link - Only customized to work better with SKilL.
  */
-module de.unistuttgart.iste.ps.skilled.GenerateSKilL
+module de.unistuttgart.iste.ps.skilled.GenerateSkill
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
 var projectName = "de.unistuttgart.iste.ps.skilled"
-var grammarURI = "platform:/resource/${projectName}/src/de/unistuttgart/iste/ps/skilled/SKilL.xtext"
+var grammarURI = "platform:/resource/${projectName}/src/de/unistuttgart/iste/ps/skilled/skill.xtext"
 var fileExtensions = "skill"
 var runtimeProject = "../${projectName}"
 var generateXtendStub = true

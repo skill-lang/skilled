@@ -21,7 +21,7 @@ import java.util.Set
  * @author Nikolay Fateev
  * @author Tobias Heck
  */
-class UserTypeFieldRestrictions extends AbstractFieldRestrictionsValidator {
+class UserTypeFieldRestrictionsValidator extends AbstractFieldRestrictionsValidator {
 	
 	@Inject
 	private SubtypesFinder subtypes

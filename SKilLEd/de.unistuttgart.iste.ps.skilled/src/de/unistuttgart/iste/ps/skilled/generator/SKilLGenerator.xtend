@@ -5,13 +5,12 @@ package de.unistuttgart.iste.ps.skilled.generator
 
 import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices
-import de.unistuttgart.iste.ps.skillls.main.MainClass
+import de.unistuttgart.iste.ps.skilled.util.SkillInstallation
+import org.eclipse.core.resources.ProjectScope
+import org.eclipse.core.runtime.preferences.IEclipsePreferences
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
-import de.unistuttgart.iste.ps.skillls.main.Indexing;
-import org.eclipse.core.resources.ProjectScope
-import org.eclipse.core.runtime.preferences.IEclipsePreferences
 
 /**
  * Generates code from your model files on save.
@@ -20,7 +19,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences
  */
 class SKilLGenerator implements IGenerator {
 	@Inject SKilLServices ss;
-	
+
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 		val String project = ss.getProject(resource).location.toFile.absolutePath;
 		val ProjectScope scope = new ProjectScope(ss.getProject(resource))
@@ -37,10 +36,12 @@ class SKilLGenerator implements IGenerator {
 		val String module = prefs.get("modulename", "")
 		var String[] args
 		if (all.empty) {
-			args = #["--path", project, "--lang", language, "--generator", genPath, "--exec", exec, "--output", output, "--module", module];
+			args = #["--path", project, "--lang", language, "--generator", genPath, "--exec", exec, "--output", output,
+				"--module", module];
 		} else {
-			args = #[all, "--path", project, "--lang", language, "--generator", genPath, "--exec", exec, "--output", output, "--module", module];
+			args = #[all, "--path", project, "--lang", language, "--generator", genPath, "--exec", exec, "--output",
+				output, "--module", module];
 		}
-		MainClass.start(Indexing.NO_INDEXING, args);
+		SkillInstallation.run(args)
 	}
 }
