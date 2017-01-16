@@ -23,7 +23,7 @@ class SKilLGenerator implements IGenerator {
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 		val String project = ss.getProject(resource).location.toFile.absolutePath;
 		val ProjectScope scope = new ProjectScope(ss.getProject(resource))
-		val IEclipsePreferences prefs = scope.getNode("de.unistuttgart.iste.ps.skilled.SKilL")
+		val IEclipsePreferences prefs = scope.getNode("de.unistuttgart.iste.ps.skilled.skill")
 		var String language = prefs.get("languageselection", "")
 		language = Character.toUpperCase(language.charAt(0)) + language.substring(1)
 		var String all = ""

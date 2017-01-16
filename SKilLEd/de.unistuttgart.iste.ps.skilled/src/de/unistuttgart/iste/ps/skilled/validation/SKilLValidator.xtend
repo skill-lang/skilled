@@ -19,10 +19,8 @@ import org.eclipse.xtext.validation.ComposedChecks
 	StringTypeFieldRestrictionsValidator, IntegerTypeFieldRestrictionsValidator, FloatTypeFieldRestrictionsValidator,
 	AnnotationTypeFieldRestrictionsValidator, BooleanTypeFieldRestrictionsValidator,
 	ContainerTypeFieldRestrictionsValidator, MapTypeFieldRestrictionsValidator, DuplicatedFieldDefinitionValidation,
-	KeywordWarning, ASCIICharValidator, ViewValidator, ScopingValidator, UserTypeRestrictionValidator,
-	TypedefRestrictionValidator, ImportURIValidator, ImportValidator, FieldHintsValidator, ConstantValidator,
-	NestingValidator, NamesAreUniqueValidator, TypeHintsValidator, ReservedSKilLKeywordValidator,
-	UnusedDeclarationValidator])
-	class SKilLValidator extends AbstractSKilLValidator {
-	}
-	
+	KeywordWarning, ViewValidator, ScopingValidator, UserTypeRestrictionValidator, TypedefRestrictionValidator,
+	ImportURIValidator, ImportValidator, FieldHintsValidator, ConstantValidator, NestingValidator,
+	NamesAreUniqueValidator, TypeHintsValidator, ReservedSKilLKeywordValidator, UnusedDeclarationValidator])
+class SKilLValidator extends AbstractSKilLValidator {
+}
