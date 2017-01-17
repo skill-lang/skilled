@@ -1,7 +1,5 @@
 package de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard;
 
-import java.util.ArrayList;
-
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -12,7 +10,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import de.unistuttgart.iste.ps.skillls.tools.Tool;
+import de.unistuttgart.iste.ps.skilled.sir.Tool;
+
 
 
 /**
@@ -26,17 +25,17 @@ public class SKilLRenameToolWizardPage extends WizardPage {
 
     private Text tbName;
     private Composite container;
-    private ArrayList<Tool> toollist;
+    private Iterable<Tool> tools;
 
     private String name;
 
-    public SKilLRenameToolWizardPage(ArrayList<Tool> toollist, String name) {
+    public SKilLRenameToolWizardPage(Iterable<Tool> toollist, String name) {
         super("Rename Tool");
         setTitle("Rename Tool");
         setDescription("On this page you can rename the selected tool.");
         setControl(tbName);
         this.name = name;
-        this.toollist = toollist;
+        this.tools = toollist;
     }
 
     @Override
@@ -61,8 +60,14 @@ public class SKilLRenameToolWizardPage extends WizardPage {
             @Override
             public void keyReleased(KeyEvent e) {
                 setPageComplete(false);
-                if (!tbName.getText().isEmpty() && toollist.stream()
-                        .noneMatch(t -> t.getName().toLowerCase().equals(tbName.getText().toLowerCase())))
+                boolean match = false;
+                for (Tool t : tools) {
+                    if (t.getName().toLowerCase().equals(tbName.getText().toLowerCase())) {
+                        match = true;
+                        break;
+                    }
+                }
+                if (!match)
                     setPageComplete(true);
 
             }

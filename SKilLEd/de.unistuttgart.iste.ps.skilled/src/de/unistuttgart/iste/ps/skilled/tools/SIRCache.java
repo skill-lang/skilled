@@ -23,7 +23,7 @@ public enum SIRCache {
 
     private HashMap<IProject, SkillFile> sirFiles = new HashMap<>();
 
-    static SkillFile ensureFile(IProject p) {
+    public static SkillFile ensureFile(IProject p) {
         SkillFile rval = instance.sirFiles.get(p);
         if (null == rval) {
             try {

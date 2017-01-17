@@ -1,7 +1,5 @@
 package de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard;
 
-import java.util.ArrayList;
-
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -13,8 +11,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import de.unistuttgart.iste.ps.skillls.tools.Tool;
-
+import de.unistuttgart.iste.ps.skilled.sir.Tool;
 
 /**
  * creates a wizardpage for creating a new {@link Tool tool}
@@ -28,13 +25,13 @@ public class SKilLNewToolWizardPage extends WizardPage {
     private Text tbName;
     private Composite container;
     private Button checkbox;
-    private ArrayList<Tool> allToolList;
+    private Iterable<Tool> tools;
 
-    public SKilLNewToolWizardPage(ArrayList<Tool> allToolList) {
+    public SKilLNewToolWizardPage(Iterable<Tool> allToolList) {
         super("Create a new tool");
         setTitle("Create a new tool");
         setDescription("In this page you can insert a name for the new tool.");
-        this.allToolList = allToolList;
+        this.tools = allToolList;
     }
 
     @Override
@@ -57,9 +54,17 @@ public class SKilLNewToolWizardPage extends WizardPage {
             @Override
             public void keyReleased(KeyEvent e) {
                 setPageComplete(false);
-                if (!tbName.getText().isEmpty() && allToolList.stream()
-                        .noneMatch(t -> t.getName().toLowerCase().equals(tbName.getText().toLowerCase())))
-                    setPageComplete(true);
+                if (!tbName.getText().isEmpty()) {
+                    boolean match = false;
+                    for (Tool t : tools) {
+                        if (t.getName().toLowerCase().equals(tbName.getText().toLowerCase())) {
+                            match = true;
+                            break;
+                        }
+                    }
+                    if (!match)
+                        setPageComplete(true);
+                }
             }
         });
         checkbox = new Button(container, SWT.CHECK);

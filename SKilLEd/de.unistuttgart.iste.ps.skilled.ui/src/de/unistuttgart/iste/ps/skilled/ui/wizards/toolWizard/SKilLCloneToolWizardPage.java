@@ -1,7 +1,5 @@
 package de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard;
 
-import java.util.ArrayList;
-
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -13,8 +11,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import de.unistuttgart.iste.ps.skillls.tools.Tool;
-
+import de.unistuttgart.iste.ps.skilled.sir.Tool;
+import de.unistuttgart.iste.ps.skilled.sir.internal.ToolAccess;
 
 /**
  * creates the wizardpage to clone a tool from an existing {@link Tool tool}
@@ -26,14 +24,14 @@ public class SKilLCloneToolWizardPage extends WizardPage {
 
     private Composite container;
     private CCombo dropdown;
-    private ArrayList<Tool> toolList;
+    private ToolAccess tools;
     private Text tbName;
 
-    public SKilLCloneToolWizardPage(ArrayList<Tool> toolList) {
+    public SKilLCloneToolWizardPage(ToolAccess toolList) {
         super("Clone an existing tool");
         setTitle("Clone an existing tool");
         setDescription("On this page you can select a tool and create a clone out of it");
-        this.toolList = toolList;
+        this.tools = toolList;
     }
 
     @Override
@@ -47,9 +45,11 @@ public class SKilLCloneToolWizardPage extends WizardPage {
         label1.setText("Select a tool to clone from");
 
         dropdown = new CCombo(container, SWT.DROP_DOWN | SWT.H_SCROLL | SWT.READ_ONLY);
-        String[] toolnames = new String[toolList.size()];
-        for (int i = 0; i < toolList.size(); i++) {
-            toolnames[i] = toolList.get(i).getName();
+        String[] toolnames = new String[tools.size()];
+        {
+            int i = 0;
+            for (Tool t : tools)
+                toolnames[i++] = t.getName();
         }
         dropdown.setItems(toolnames);
         dropdown.setLayoutData(gd);

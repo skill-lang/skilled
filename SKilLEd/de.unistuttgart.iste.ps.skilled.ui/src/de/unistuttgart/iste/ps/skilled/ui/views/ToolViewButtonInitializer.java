@@ -1,6 +1,5 @@
 package de.unistuttgart.iste.ps.skilled.ui.views;
 
-import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 import org.eclipse.jface.action.Action;
@@ -9,16 +8,15 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IActionBars;
 
+import de.unistuttgart.iste.ps.skilled.sir.Tool;
+import de.unistuttgart.iste.ps.skilled.tools.ToolInfo;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.SKilLToolWizard;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
-import de.unistuttgart.iste.ps.skillls.tools.Field;
-import de.unistuttgart.iste.ps.skillls.tools.Tool;
-import de.unistuttgart.iste.ps.skillls.tools.Type;
-
 
 /**
- * this class is used to initialize the buttons displayed in the {@link ToolView toolview}
+ * this class is used to initialize the buttons displayed in the {@link ToolView
+ * toolview}
  * 
  * @author Ken Singer
  * @author Marco Link
@@ -77,7 +75,8 @@ public class ToolViewButtonInitializer {
      * @category Dialog
      */
     private void createToolDialog() {
-        final SKilLToolWizard sKilLToolWizard = new SKilLToolWizard(WizardOption.CREATE, toolview.getAllToolList());
+        final SKilLToolWizard sKilLToolWizard = new SKilLToolWizard(WizardOption.CREATE,
+                ToolInfo.getTools(toolview.getActiveProject()));
         WizardDialog wizardDialog = new WizardDialog(toolview.getShell(), sKilLToolWizard);
         if (wizardDialog.open() == Window.OK) {
             String newToolName = sKilLToolWizard.getToolNewName();
@@ -107,13 +106,14 @@ public class ToolViewButtonInitializer {
      * @category Dialog
      */
     private void cloneToolDialog() {
-        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.CLONE, toolview.getAllToolList());
+        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.CLONE,
+                toolview.getSkillFile().Tools());
         WizardDialog wizardDialog = new WizardDialog(toolview.getShell(), skillToolWizard);
         if (wizardDialog.open() == Window.OK) {
             String newToolName = skillToolWizard.getToolNewName();
             Tool cloneTool;
             try {
-                cloneTool = toolview.getAllToolList().stream()
+                cloneTool = toolview.getSkillFile().Tools().stream()
                         .filter(t -> t.getName().equals(skillToolWizard.getCloneToolName())).findFirst().get();
             } catch (@SuppressWarnings("unused") NoSuchElementException e) {
                 toolview.showMessage("Could not create tool.");
@@ -135,22 +135,30 @@ public class ToolViewButtonInitializer {
      * @category GUI
      */
     private void removeHintsFromTools() {
-        final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.REMOVEHINTS, toolview.getAllToolList());
-        WizardDialog wizardDialog = new WizardDialog(toolview.getShell(), skillToolWizard);
-        if (wizardDialog.open() == Window.OK) {
-            ArrayList<Tool> removeHints = skillToolWizard.getRemoveHintsFromTools();
-            for (Tool tempTool : removeHints) {
-                for (Type tempType : tempTool.getTypes()) {
-                    for (Field tempField : tempType.getFields()) {
-                        if (tempField.getHints().size() > 0)
-                            ToolUtil.removeAllFieldHints(this.toolview.getActiveProject(), tempTool, tempType, tempField);
-                    }
-                    if (tempType.getHints().size() > 0)
-                        ToolUtil.removeAllTypeHints(this.toolview.getActiveProject(), tempTool, tempType);
-                }
-            }
-            toolview.refresh();
-        }
+        throw new NoSuchMethodError();
+        // final SKilLToolWizard skillToolWizard = new
+        // SKilLToolWizard(WizardOption.REMOVEHINTS,
+        // toolview.getSkillFile().Tools());
+        // WizardDialog wizardDialog = new WizardDialog(toolview.getShell(),
+        // skillToolWizard);
+        // if (wizardDialog.open() == Window.OK) {
+        // ArrayList<Tool> removeHints =
+        // skillToolWizard.getRemoveHintsFromTools();
+        // for (Tool tempTool : removeHints) {
+        // for (Type tempType : tempTool.getTypes()) {
+        // for (Field tempField : tempType.getFields()) {
+        // if (tempField.getHints().size() > 0)
+        // ToolUtil.removeAllFieldHints(this.toolview.getActiveProject(),
+        // tempTool, tempType,
+        // tempField);
+        // }
+        // if (tempType.getHints().size() > 0)
+        // ToolUtil.removeAllTypeHints(this.toolview.getActiveProject(),
+        // tempTool, tempType);
+        // }
+        // }
+        // toolview.refresh();
+        // }
     }
 
     /**

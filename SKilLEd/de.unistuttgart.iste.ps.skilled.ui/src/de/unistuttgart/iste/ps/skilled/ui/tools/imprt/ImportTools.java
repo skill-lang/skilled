@@ -26,10 +26,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
-import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
-import de.ust.skill.common.java.api.SkillFile.Mode;
-
 
 /**
  * This class provides the dialog window for "Import Tools" which allows the user to export a certain tool to a location of
@@ -67,7 +63,7 @@ public class ImportTools {
         Shell shell = new Shell(d);
         shell.setText("Import Tool");
         shell.layout(true, true);
-        createContents(shell);
+        createUI(shell);
         final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
         shell.setSize(newSize);
         shell.open();
@@ -79,7 +75,7 @@ public class ImportTools {
      * @param shell
      *            The window in which the content is created in
      */
-    public void createContents(final Shell shell) {
+    private void createUI(final Shell shell) {
         shell.setLayout(new GridLayout(5, false));
 
         Label title = new Label(shell, SWT.NONE);
@@ -306,14 +302,15 @@ public class ImportTools {
      *            - IProject path of project
      */
     public static boolean addAllToNewTool(String ProjectPath, IProject project) {
-        SkillFile sk;
-        try {
-            sk = SkillFile.open(ProjectPath + File.separator + ".skills", Mode.ReadOnly);
-        } catch (@SuppressWarnings("unused") Exception e) {
-            return false;
-        }
-        ToolUtil.addAllToTool(sk, project, sk.Tools().stream().filter(t -> t.getName().equals(fFileName)).findFirst().get());
-        return true;
+//        SkillFile sk;
+//        try {
+//            sk = SkillFile.open(ProjectPath + File.separator + ".skills", Mode.ReadOnly);
+//        } catch (@SuppressWarnings("unused") Exception e) {
+//            return false;
+//        }
+//        ToolUtil.addAllToTool(sk, project, sk.Tools().stream().filter(t -> t.getName().equals(fFileName)).findFirst().get());
+//        return true;
+        return false;
     }
 
     /**

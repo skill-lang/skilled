@@ -12,14 +12,14 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import de.unistuttgart.iste.ps.skilled.sir.FieldLike;
+import de.unistuttgart.iste.ps.skilled.sir.Hint;
 import de.unistuttgart.iste.ps.skilled.ui.tools.EditorUtil;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
-import de.unistuttgart.iste.ps.skillls.tools.Field;
-import de.unistuttgart.iste.ps.skillls.tools.Hint;
-
 
 /**
- * This class is used to initialize the Listeners for the {@link Tree fieldTree} used in the {@link ToolView toolview}
+ * This class is used to initialize the Listeners for the {@link Tree fieldTree}
+ * used in the {@link ToolView toolview}
  * 
  * @author Ken Singer
  * @category GUI
@@ -45,7 +45,7 @@ public class FieldTreeListener {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    toolview.setSelectedField((Field) (((TreeItem) e.item).getData()));
+                    toolview.setSelectedField((FieldLike) (((TreeItem) e.item).getData()));
                 } catch (@SuppressWarnings("unused") ClassCastException ex) {
                     return;
                     // item was a hint
@@ -75,7 +75,8 @@ public class FieldTreeListener {
                 // open the temporary file of the selected type
                 if (toolview.getActiveProject() != null && toolview.getActiveTool() != null
                         && toolview.getSelectedField() != null) {
-                    ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(), toolview.getActiveProject());
+                    ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(),
+                            toolview.getActiveProject());
                     editorUtil.openFieldInEditor(toolview.getActiveTool(), toolview.getSelectedField(),
                             toolview.getActiveProject());
                 }
@@ -88,67 +89,82 @@ public class FieldTreeListener {
             @Override
             public void handleEvent(Event event) {
                 if (event.detail == SWT.CHECK) {
-                    Field field = null;
+                    FieldLike field = null;
                     Hint hint = null;
 
                     // determine whether selection is a field or a hint
-                    if (event.item.getData() instanceof Field)
-                        field = (Field) ((TreeItem) event.item).getData();
+                    if (event.item.getData() instanceof FieldLike)
+                        field = (FieldLike) ((TreeItem) event.item).getData();
                     else if (event.item.getData() instanceof Hint)
                         hint = (Hint) ((TreeItem) event.item).getData();
 
                     if (null != field) {
-                        final String typeName = ToolUtil.getActualName(field.getType().getName());
+                        // final String typeName =
+                        // ToolUtil.getActualName(field.getType().getName());
                         final String fieldName = ToolUtil.getActualName(field.getName());
 
-                        // if the user checks the checkbox, add the selected field, all its hints and the parenttype
+                        // if the user checks the checkbox, add the selected
+                        // field, all its hints and the parenttype
                         if (((TreeItem) event.item).getChecked()) {
-                            if (toolview.getActiveTool().getTypes().stream().noneMatch(t -> t.getName().equals(typeName)))
-                                ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                        typeName);
-                            ToolUtil.addField(toolview.getActiveTool().getName(), toolview.getActiveProject(), typeName,
-                                    fieldName);
-                            ToolUtil.addAllFieldHints(toolview.getActiveProject(), toolview.getActiveTool(), field.getType(),
-                                    field);
-                            toolview.reloadFieldList();
+                            throw new NoSuchMethodError();
+                            // if
+                            // (toolview.getActiveTool().getTypes().stream().noneMatch(t
+                            // -> t.getName().equals(typeName)))
+                            // ToolUtil.addTypeToTool(toolview.getActiveTool().getName(),
+                            // toolview.getActiveProject(),
+                            // typeName);
+                            // ToolUtil.addField(toolview.getActiveTool().getName(),
+                            // toolview.getActiveProject(), typeName,
+                            // fieldName);
+                            // ToolUtil.addAllFieldHints(toolview.getActiveProject(),
+                            // toolview.getActiveTool(), field.getType(),
+                            // field);
+                            // toolview.reloadFieldList();
                         } else {
-                            // if the user unchecks the checkbox, remove the selected field and all its hints
+                            // if the user unchecks the checkbox, remove the
+                            // selected field and all its hints
                             ToolUtil.removeAllFieldHints(toolview.getActiveProject(), toolview.getActiveTool(),
                                     field.getType(), field);
-                            ToolUtil.removeField(toolview.getActiveTool().getName(), toolview.getActiveProject(), typeName,
-                                    fieldName);
+                            // TODO
+                            // ToolUtil.removeField(toolview.getActiveTool().getName(),
+                            // toolview.getActiveProject(),
+                            // typeName, fieldName);
                             toolview.reloadFieldList();
                         }
                     }
 
                     if (hint != null) {
-                        final String hintParentName = ToolUtil.getActualName(((Field) hint.getParent()).getName());
-                        final String typeName = ToolUtil.getActualName(((Field) hint.getParent()).getType().getName());
-                        // if the user checks the checkbox add the selected hint, the parentfield and the parenttype of the
-                        // field
-                        if (((TreeItem) event.item).getChecked()) {
-
-                            if (toolview.getActiveTool().getTypes().stream().noneMatch(t -> t.getName().equals(typeName))) {
-                                ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                        typeName);
-                                toolview.reloadFieldList();
-                            }
-                            if (toolview.getActiveTool().getTypes().stream().filter(t -> t.getName().equals(typeName))
-                                    .findFirst().get().getFields().stream()
-                                    .noneMatch(f -> f.getName().equals(hintParentName))) {
-                                ToolUtil.addField(toolview.getActiveTool().getName(), toolview.getActiveProject(), typeName,
-                                        hintParentName);
-                                toolview.reloadFieldList();
-                            }
-                            ToolUtil.addFieldHint(toolview.getActiveTool().getName(), toolview.getActiveProject(), typeName,
-                                    hintParentName, hint.getName());
-                            toolview.reloadFieldList();
-                        } else {
-                            // if the user unchecks the checkbox, remove the selected hint
-                            ToolUtil.removeFieldHint(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                    typeName, hintParentName, hint.getName());
-                            toolview.reloadFieldList();
-                        }
+                        throw new NoSuchMethodError();
+//                        final String hintParentName = ToolUtil.getActualName(((Field) hint.getParent()).getName());
+//                        final String typeName = ToolUtil.getActualName(((Field) hint.getParent()).getType().getName());
+//                        // if the user checks the checkbox add the selected
+//                        // hint, the parentfield and the parenttype of the
+//                        // field
+//                        if (((TreeItem) event.item).getChecked()) {
+//
+//                            if (toolview.getActiveTool().getTypes().stream()
+//                                    .noneMatch(t -> t.getName().equals(typeName))) {
+//                                ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
+//                                        typeName);
+//                                toolview.reloadFieldList();
+//                            }
+//                            if (toolview.getActiveTool().getTypes().stream().filter(t -> t.getName().equals(typeName))
+//                                    .findFirst().get().getFields().stream()
+//                                    .noneMatch(f -> f.getName().equals(hintParentName))) {
+//                                ToolUtil.addField(toolview.getActiveTool().getName(), toolview.getActiveProject(),
+//                                        typeName, hintParentName);
+//                                toolview.reloadFieldList();
+//                            }
+//                            ToolUtil.addFieldHint(toolview.getActiveTool().getName(), toolview.getActiveProject(),
+//                                    typeName, hintParentName, hint.getName());
+//                            toolview.reloadFieldList();
+//                        } else {
+//                            // if the user unchecks the checkbox, remove the
+//                            // selected hint
+//                            ToolUtil.removeFieldHint(toolview.getActiveTool().getName(), toolview.getActiveProject(),
+//                                    typeName, hintParentName, hint.getName());
+//                            toolview.reloadFieldList();
+//                        }
                     }
                 }
             }

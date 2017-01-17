@@ -1,19 +1,16 @@
 package de.unistuttgart.iste.ps.skilled.ui.tools;
 
-import org.eclipse.core.resources.IMarker;
+import javax.xml.crypto.NoSuchMechanismException;
+
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
-import de.unistuttgart.iste.ps.skillls.main.BreakageException;
-import de.unistuttgart.iste.ps.skillls.main.Indexing;
-import de.unistuttgart.iste.ps.skillls.main.MainClass;
-import de.unistuttgart.iste.ps.skillls.tools.Field;
-import de.unistuttgart.iste.ps.skillls.tools.Hint;
-import de.unistuttgart.iste.ps.skillls.tools.Tool;
-import de.unistuttgart.iste.ps.skillls.tools.Type;
-import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
-
+import de.unistuttgart.iste.ps.skilled.sir.FieldLike;
+import de.unistuttgart.iste.ps.skilled.sir.Identifier;
+import de.unistuttgart.iste.ps.skilled.sir.Tool;
+import de.unistuttgart.iste.ps.skilled.sir.Type;
+import de.unistuttgart.iste.ps.skilled.sir.UserdefinedType;
+import de.unistuttgart.iste.ps.skilled.sir.api.SkillFile;
 
 /**
  * Class for executing SKilLls commands.
@@ -40,7 +37,7 @@ public final class ToolUtil {
             arguments = new String[] { "-e", project.getLocation().toPortableString(), "&n:" + name };
 
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -66,15 +63,15 @@ public final class ToolUtil {
      *            the location the binding of the tool will be generated in
      * @return true if setting was successful
      */
-    public static boolean setDefaults(String toolName, IProject project, String execEnv, String generator, String language,
-            String module, String outPath) {
+    public static boolean setDefaults(String toolName, IProject project, String execEnv, String generator,
+            String language, String module, String outPath) {
         String[] arguments = null;
         if (project != null)
             arguments = new String[] { "-e", project.getLocation().toPortableString(),
                     toolName + ":10:" + execEnv + ":" + generator + ":" + language + ":" + module + ":" + outPath };
 
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -82,7 +79,8 @@ public final class ToolUtil {
     }
 
     /**
-     * Tries to generate the temporary files in the $PROJECT_PATH/.skillt directory
+     * Tries to generate the temporary files in the $PROJECT_PATH/.skillt
+     * directory
      * 
      * @param toolname
      *            the name of the tool whose temporary files should be created
@@ -96,7 +94,7 @@ public final class ToolUtil {
             arguments = new String[] { "--no-cleanup", "-aplomx", project.getLocation().toPortableString(), "Java",
                     project.getLocation().toString(), "scala", toolname };
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -119,7 +117,7 @@ public final class ToolUtil {
         if (project != null)
             arguments = new String[] { "-e", project.getLocation().toPortableString(), toolName + ":2:" + typeName };
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -142,7 +140,7 @@ public final class ToolUtil {
         if (project != null)
             arguments = new String[] { "-e", project.getLocation().toPortableString(), toolName + ":3:" + typeName };
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -168,7 +166,7 @@ public final class ToolUtil {
             arguments = new String[] { "-e", project.getLocation().toPortableString(),
                     toolName + ":4:" + typeName + ":" + fieldName };
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -194,7 +192,7 @@ public final class ToolUtil {
             arguments = new String[] { "-e", project.getLocation().toPortableString(),
                     toolName + ":5:" + typeName + ":" + fieldName };
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -220,7 +218,7 @@ public final class ToolUtil {
             arguments = new String[] { "-e", project.getLocation().toPortableString(),
                     toolName + ":8:" + typeName + ":" + hintName };
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -246,7 +244,7 @@ public final class ToolUtil {
             arguments = new String[] { "-e", project.getLocation().toPortableString(),
                     toolName + ":9:" + typeName + ":" + hintName };
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -275,7 +273,7 @@ public final class ToolUtil {
             arguments = new String[] { "-e", project.getLocation().toPortableString(),
                     toolName + ":6:" + typeName + ":" + fieldName + ":" + hintName };
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -304,7 +302,7 @@ public final class ToolUtil {
             arguments = new String[] { "-e", project.getLocation().toPortableString(),
                     toolName + ":7:" + typeName + ":" + fieldName + ":" + hintName };
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -325,9 +323,10 @@ public final class ToolUtil {
     public static boolean renameTool(String oldToolName, String newToolName, IProject project) {
         String[] arguments = null;
         if (project != null)
-            arguments = new String[] { "-e", project.getLocation().toPortableString(), oldToolName + ":1:" + newToolName };
+            arguments = new String[] { "-e", project.getLocation().toPortableString(),
+                    oldToolName + ":1:" + newToolName };
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -348,7 +347,7 @@ public final class ToolUtil {
         if (project != null)
             arguments = new String[] { "-e", project.getLocation().toPortableString(), name + ":0" };
         try {
-            MainClass.start(Indexing.NO_INDEXING, arguments);
+            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
             return true;
         } catch (@SuppressWarnings("unused") Throwable t) {
             return false;
@@ -370,45 +369,51 @@ public final class ToolUtil {
         if (project == null)
             return false;
 
-        boolean value = true;
-        final String newName = newToolName;
-        addendum = "";
-        int counter = 0;
-        while (sk.Tools().stream().anyMatch(t -> t.getName().equals(newName + addendum))) {
-            addendum = String.valueOf(++counter);
-        }
-        String newNameForTool = newName + addendum;
-        value &= createTool(newNameForTool, project);
-        for (Type type : tool.getTypes()) {
-            value &= addTypeToTool(newNameForTool, project, getActualName(type.getName()));
-            for (Hint h : type.getHints()) {
-                value &= addTypeHint(newNameForTool, project, getActualName(type.getName()), h.getName());
-            }
-            for (Field f : type.getFields()) {
-                value &= addField(newNameForTool, project, getActualName(type.getName()), getActualName(f.getName()));
-                for (Hint h : f.getHints()) {
-                    value &= addFieldHint(newNameForTool, project, getActualName(type.getName()), getActualName(f.getName()),
-                            h.getName());
-                }
-            }
-        }
-        return value && setDefaults(newNameForTool, project, tool.getGenerator().getExecEnv(), tool.getGenerator().getPath(),
-                tool.getLanguage(), tool.getModule(), tool.getOutPath());
+        throw new NoSuchMethodError("TODO");
+
+        // boolean value = true;
+        // final String newName = newToolName;
+        // addendum = "";
+        // int counter = 0;
+        // while (sk.Tools().stream().anyMatch(t -> t.getName().equals(newName +
+        // addendum))) {
+        // addendum = String.valueOf(++counter);
+        // }
+        // String newNameForTool = newName + addendum;
+        // value &= createTool(newNameForTool, project);
+        // for (Type type : tool.getTypes()) {
+        // value &= addTypeToTool(newNameForTool, project,
+        // getActualName(type.getName()));
+        // for (Hint h : type.getHints()) {
+        // value &= addTypeHint(newNameForTool, project,
+        // getActualName(type.getName()), h.getName());
+        // }
+        // for (Field f : type.getFields()) {
+        // value &= addField(newNameForTool, project,
+        // getActualName(type.getName()), getActualName(f.getName()));
+        // for (Hint h : f.getHints()) {
+        // value &= addFieldHint(newNameForTool, project,
+        // getActualName(type.getName()),
+        // getActualName(f.getName()), h.getName());
+        // }
+        // }
+        // }
+        // return value && setDefaults(newNameForTool, project,
+        // tool.getGenerator().getExecEnv(),
+        // tool.getGenerator().getPath(), tool.getLanguage(), tool.getModule(),
+        // tool.getOutPath());
     }
 
     /**
-     * returns the pure name of a type or field without any extensions like enum, interface, typedef, etc.
-     * 
-     * @param longName
-     * @return the actual name of the Type or Field
+     * returns the pure name of a type or field
      */
-    public static String getActualName(String longName) {
-        String[] splits = longName.split(" ");
-        return splits.length > 1 ? splits[1] : splits[0];
+    public static String getActualName(Identifier identifier) {
+        return identifier.getSkillname();
     }
 
     /**
-     * delete all the tool-specific objects out of the .skillls file, when a tool is deleted
+     * delete all the tool-specific objects out of the .skillls file, when a
+     * tool is deleted
      * 
      * @param project
      *            - the project, where the tool originates in
@@ -416,7 +421,7 @@ public final class ToolUtil {
      *            - the tool, which is deleted
      */
     public static void cleanUpAfterDeletion(IProject project, Tool tool) {
-        for (Type toDelete : tool.getTypes()) {
+        for (UserdefinedType toDelete : tool.getSelectedUserTypes()) {
             removeAllTypeHints(project, tool, toDelete);
             removeAllFields(project, tool, toDelete);
             removeTypeFromTool(tool.getName(), project, getActualName(toDelete.getName()));
@@ -433,9 +438,11 @@ public final class ToolUtil {
      * @param type
      *            - the type containing the hints
      */
-    public static void addAllTypeHints(IProject project, Tool tool, Type type) {
-        for (Hint toAdd : type.getHints())
-            addTypeHint(tool.getName(), project, getActualName(type.getName()), toAdd.getName());
+    public static void addAllTypeHints(IProject project, Tool tool, UserdefinedType type) {
+        throw new NoSuchMethodError();
+        // for (Hint toAdd : type.getHints())
+        // addTypeHint(tool.getName(), project, getActualName(type.getName()),
+        // toAdd.getName());
     }
 
     /**
@@ -448,13 +455,16 @@ public final class ToolUtil {
      * @param type
      *            - the type to delete
      */
-    public static boolean removeAllTypeHints(IProject project, Tool tool, Type type) {
-        boolean failure = false;
-        for (Hint toDelete : type.getHints()) {
-            if (!removeTypeHint(tool.getName(), project, getActualName(type.getName()), getActualName(toDelete.getName())))
-                failure = true;
-        }
-        return failure;
+    public static boolean removeAllTypeHints(IProject project, Tool tool, UserdefinedType type) {
+        throw new NoSuchMethodError();
+        // boolean failure = false;
+        // for (Hint toDelete : type.getHints()) {
+        // if (!removeTypeHint(tool.getName(), project,
+        // getActualName(type.getName()),
+        // getActualName(toDelete.getName())))
+        // failure = true;
+        // }
+        // return failure;
     }
 
     /**
@@ -467,13 +477,15 @@ public final class ToolUtil {
      * @param type
      *            - the type containing the fields
      */
-    public static void addAllFields(IProject project, Tool tool, Type type) {
-        for (Field toAdd : type.getFields()) {
-            if (toAdd != null) {
-                addField(tool.getName(), project, getActualName(type.getName()), getActualName(toAdd.getName()));
-                addAllFieldHints(project, tool, type, toAdd);
-            }
-        }
+    public static void addAllFields(IProject project, Tool tool, UserdefinedType type) {
+        throw new NoSuchMethodError();
+        // for (Field toAdd : type.getFields()) {
+        // if (toAdd != null) {
+        // addField(tool.getName(), project, getActualName(type.getName()),
+        // getActualName(toAdd.getName()));
+        // addAllFieldHints(project, tool, type, toAdd);
+        // }
+        // }
     }
 
     /**
@@ -486,11 +498,13 @@ public final class ToolUtil {
      * @param type
      *            - the type to delete
      */
-    public static void removeAllFields(IProject project, Tool tool, Type type) {
-        for (Field toDelete : type.getFields()) {
-            removeAllFieldHints(project, tool, type, toDelete);
-            removeField(tool.getName(), project, getActualName(type.getName()), getActualName(toDelete.getName()));
-        }
+    public static void removeAllFields(IProject project, Tool tool, UserdefinedType type) {
+        throw new NoSuchMethodError();
+        // for (Field toDelete : type.getFields()) {
+        // removeAllFieldHints(project, tool, type, toDelete);
+        // removeField(tool.getName(), project, getActualName(type.getName()),
+        // getActualName(toDelete.getName()));
+        // }
     }
 
     /**
@@ -505,10 +519,12 @@ public final class ToolUtil {
      * @param field
      *            - the field containing the fieldhints
      */
-    public static void addAllFieldHints(IProject project, Tool tool, Type type, Field field) {
-        for (Hint toAdd : field.getHints())
-            ToolUtil.addFieldHint(tool.getName(), project, getActualName(type.getName()), getActualName(field.getName()),
-                    toAdd.getName());
+    public static void addAllFieldHints(IProject project, Tool tool, UserdefinedType type, FieldLike field) {
+        throw new NoSuchMechanismException();
+        // for (Hint toAdd : field.getHints())
+        // ToolUtil.addFieldHint(tool.getName(), project,
+        // getActualName(type.getName()),
+        // getActualName(field.getName()), toAdd.getName());
     }
 
     /**
@@ -523,15 +539,17 @@ public final class ToolUtil {
      * @param field
      *            - the field to delete
      */
-    public static boolean removeAllFieldHints(IProject project, Tool tool, Type type, Field field) {
-        boolean failure = false;
-        for (Hint toDelete : field.getHints()) {
-            if (!removeFieldHint(tool.getName(), project, getActualName(type.getName()), getActualName(field.getName()),
-                    getActualName(toDelete.getName())))
-                failure = true;
-
-        }
-        return failure;
+    public static boolean removeAllFieldHints(IProject project, Tool tool, Type type, FieldLike field) {
+        throw new NoSuchMechanismException();
+        // boolean failure = false;
+        // for (Hint toDelete : field.getHints()) {
+        // if (!removeFieldHint(tool.getName(), project,
+        // getActualName(type.getName()), getActualName(field.getName()),
+        // getActualName(toDelete.getName())))
+        // failure = true;
+        //
+        // }
+        // return failure;
     }
 
     /**
@@ -544,13 +562,15 @@ public final class ToolUtil {
      * @param type
      *            - the type to delete
      */
-    public static void removeTypeAndAllSubtypes(IProject project, Tool tool, Type type) {
-        for (Type ty : tool.getTypes()) {
-            if (ty.getExtends().size() > 0 && ty.getExtends().contains(type.getName())) {
-                removeTypeAndAllSubtypes(project, tool, ty);
-            }
-            ToolUtil.removeTypeFromTool(tool.getName(), project, type.getName());
-        }
+    public static void removeTypeAndAllSubtypes(IProject project, Tool tool, UserdefinedType type) {
+        throw new NoSuchMethodError();
+        // for (UserdefinedType ty : tool.getSelectedUserTypes()) {
+        // if (ty.getExtends().size() > 0 &&
+        // ty.getExtends().contains(type.getName())) {
+        // removeTypeAndAllSubtypes(project, tool, ty);
+        // }
+        // ToolUtil.removeTypeFromTool(tool.getName(), project, type.getName());
+        // }
 
     }
 
@@ -565,7 +585,7 @@ public final class ToolUtil {
      *            - the tool, which should contain everything
      */
     public static void addAllToTool(SkillFile skillFile, IProject project, Tool tool) {
-        for (Type type : skillFile.Types()) {
+        for (UserdefinedType type : skillFile.UserdefinedTypes()) {
             ToolUtil.addTypeToTool(tool.getName(), project, getActualName(type.getName()));
             ToolUtil.addAllTypeHints(project, tool, type);
             ToolUtil.addAllFields(project, tool, type);
@@ -583,43 +603,8 @@ public final class ToolUtil {
         String[] arguments = null;
         if (project != null)
             arguments = new String[] { "-e", project.getLocation().toPortableString(), "" };
-        try {
-            MainClass.start(Indexing.JUST_INDEXING, arguments);
-            return true;
-        } catch (BreakageException e) {
-            reportToolError(e, project);
-            return false;
-        } catch (@SuppressWarnings("unused") Throwable t) {
-            return false;
-        }
-    }
 
-    /**
-     * Deletes all markers of the broken Tools.
-     * 
-     * @param project
-     * @throws CoreException
-     */
-    public static void deleteReportToolErrors(IProject project) throws CoreException {
-        project.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+        // TODO MainClass.start(Indexing.JUST_INDEXING, arguments);
+        return true;
     }
-
-    /**
-     * Adds markers for all broken Tools.
-     * 
-     * @param breakageException
-     * @param project
-     * @throws CoreException
-     */
-    public static void reportToolError(final BreakageException breakageException, final IProject project)
-            throws CoreException {
-        for (Tool brokenTool : breakageException.getTools()) {
-            IMarker marker = project.createMarker(IMarker.PROBLEM);
-            marker.setAttribute(IMarker.MESSAGE, "Structural integrity of tool may be compromized.");
-            marker.setAttribute(IMarker.LOCATION, "Tool: " + brokenTool.getName());
-            marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
-            marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-        }
-    }
-
 }

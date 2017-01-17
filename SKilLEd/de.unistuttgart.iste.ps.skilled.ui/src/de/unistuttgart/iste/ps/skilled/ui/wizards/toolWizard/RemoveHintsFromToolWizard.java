@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.unistuttgart.iste.ps.skillls.tools.Tool;
+import de.unistuttgart.iste.ps.skilled.sir.Tool;
 
 
 /**
@@ -22,10 +22,10 @@ public class RemoveHintsFromToolWizard extends WizardPage {
 
     private Tree toolTree;
     private TreeItem toolItem;
-    private ArrayList<Tool> tools;
+    private Iterable<Tool> tools;
     private Composite container;
 
-    public RemoveHintsFromToolWizard(ArrayList<Tool> tools) {
+    public RemoveHintsFromToolWizard(Iterable<Tool> tools) {
         super("Select the Tool(s) which should be freed from Hints.");
         this.tools = tools;
         setTitle("Select the Tool(s) which should be freed from Hints.");

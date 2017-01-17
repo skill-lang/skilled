@@ -30,13 +30,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.PlatformUI;
 
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
-import de.unistuttgart.iste.ps.skillls.tools.Tool;
-import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
-import de.ust.skill.common.java.api.SkillFile.Mode;
 
 
 /**
@@ -55,14 +50,14 @@ public class ExportTools {
 
     ArrayList<File> listofFiles = null;
     List<String> toolNameList = null;
-    ArrayList<Tool> toolList = null;
+//    ArrayList<Tool> toolList = null;
     List<String> toolPathList = null;
     IProject activeProject;
     String path;
-    SkillFile skillfile;
+//    SkillFile skillfile;
     String saveName = "";
 
-    private final ArrayList<Tool> allToolList = new ArrayList<Tool>();
+//    private final ArrayList<Tool> allToolList = new ArrayList<Tool>();
     private final ArrayList<String> pathList = new ArrayList<String>();
 
     // Location of the workspace the user is using
@@ -77,34 +72,34 @@ public class ExportTools {
         Shell shell = new Shell(display);
         shell.setText("Export Tool");
         shell.layout(true, true);
-        try {
-            IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                    .getActiveEditor().getEditorInput();
-            activeProject = file.getFile().getProject();
-
-            ToolUtil.indexing(activeProject);
-
-            path = activeProject.getLocation().toOSString() + File.separator + ".skills";
-            skillfile = SkillFile.open(path, Mode.ReadOnly);
-        } catch (@SuppressWarnings("unused") Exception e) {
-            ShowMessage("Could not read .skills-file!", "File Generation Error");
-            return;
-        }
-
-        // Get tool information directly from .skills file so that Toolview does not need to be open.S
-        if (skillfile.Tools() != null) {
-            skillfile.Tools().forEach(tool -> allToolList.add(tool));
-            skillfile.Tools().forEach(t -> pathList.add(path));
-        }
-
-        // List of all tools in the .skills file
-        if (allToolList.size() > 0) {
-            toolNameList = new ArrayList<String>();
-            for (int i = 0; i < allToolList.size(); i++) {
-                toolNameList.add(allToolList.get(i).getName());
-
-            }
-        }
+//        try {
+//            IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+//                    .getActiveEditor().getEditorInput();
+//            activeProject = file.getFile().getProject();
+//
+//            ToolUtil.indexing(activeProject);
+//
+//            path = activeProject.getLocation().toOSString() + File.separator + ".skills";
+//            skillfile = SkillFile.open(path, Mode.ReadOnly);
+//        } catch (@SuppressWarnings("unused") Exception e) {
+//            ShowMessage("Could not read .skills-file!", "File Generation Error");
+//            return;
+//        }
+//
+//        // Get tool information directly from .skills file so that Toolview does not need to be open.S
+//        if (skillfile.Tools() != null) {
+//            skillfile.Tools().forEach(tool -> allToolList.add(tool));
+//            skillfile.Tools().forEach(t -> pathList.add(path));
+//        }
+//
+//        // List of all tools in the .skills file
+//        if (allToolList.size() > 0) {
+//            toolNameList = new ArrayList<String>();
+//            for (int i = 0; i < allToolList.size(); i++) {
+//                toolNameList.add(allToolList.get(i).getName());
+//
+//            }
+//        }
 
         // List of the file paths for each of the tools
         if (pathList.size() > 0) {
@@ -215,76 +210,76 @@ public class ExportTools {
         lEmptyBlock.setLayoutData(new GridData());
 
         // Creates OK Button.
-        Button OK = new Button(shell, SWT.PUSH);
-
-        OK.setLayoutData(gridDataButtons);
-        OK.setText("OK");
-        OK.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent event) {
-
-                checkSave = new File(saveLocation);
-                // Check if exported file is a .skill file
-                if (!saveLocation.endsWith(".skill") || checkSave.isDirectory()) {
-                    ShowMessage("Invalid export format!", "Invalid Export Format");
-                    return;
-                }
-                // If file already exists in the export location, ask user if they want to overwrite the file. Clicking "No"
-                // will cancel the export.
-                else if (checkSave.exists()) {
-                    saveName = tSaveLocation.getText().substring(tSaveLocation.getText().lastIndexOf(File.separator) + 1);
-                    int overwrite = ShowMessageOption();
-                    if (overwrite == JOptionPane.YES_OPTION) {
-                        checkSave.delete();
-                        combineFiles();
-                        // Reset fields
-                        name = "";
-                        saveLocation = "";
-                        allToolList.clear();
-                        pathList.clear();
-                        toolNameList = null;
-                        toolPathList = null;
-                        cSelectTool.removeAll();
-                        skillfile = null;
-                        shell.dispose();
-                    }
-                }
-                // Create tool file
-                else {
-                    combineFiles();
-                    name = "";
-                    saveLocation = "";
-                    allToolList.clear();
-                    pathList.clear();
-                    toolNameList = null;
-                    toolPathList = null;
-                    cSelectTool.removeAll();
-                    skillfile = null;
-                    shell.dispose();
-
-                }
-
-            }
-        });
-
-        // Cancel button. Closes dialog window.
-        Button Cancel = new Button(shell, SWT.PUSH);
-        Cancel.setLayoutData(gridDataButtons);
-        Cancel.setText("Cancel");
-        Cancel.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent event) {
-                name = "";
-                saveLocation = "";
-                allToolList.clear();
-                pathList.clear();
-                toolNameList.clear();
-                toolPathList.clear();
-                cSelectTool.removeAll();
-                skillfile = null;
-                shell.dispose();
-            }
-        });
+//        Button OK = new Button(shell, SWT.PUSH);
+//
+//        OK.setLayoutData(gridDataButtons);
+//        OK.setText("OK");
+//        OK.addSelectionListener(new SelectionAdapter() {
+//            @Override
+//            public void widgetSelected(SelectionEvent event) {
+//
+//                checkSave = new File(saveLocation);
+//                // Check if exported file is a .skill file
+//                if (!saveLocation.endsWith(".skill") || checkSave.isDirectory()) {
+//                    ShowMessage("Invalid export format!", "Invalid Export Format");
+//                    return;
+//                }
+//                // If file already exists in the export location, ask user if they want to overwrite the file. Clicking "No"
+//                // will cancel the export.
+//                else if (checkSave.exists()) {
+//                    saveName = tSaveLocation.getText().substring(tSaveLocation.getText().lastIndexOf(File.separator) + 1);
+//                    int overwrite = ShowMessageOption();
+//                    if (overwrite == JOptionPane.YES_OPTION) {
+//                        checkSave.delete();
+//                        combineFiles();
+//                        // Reset fields
+//                        name = "";
+//                        saveLocation = "";
+//                        allToolList.clear();
+//                        pathList.clear();
+//                        toolNameList = null;
+//                        toolPathList = null;
+//                        cSelectTool.removeAll();
+//                        skillfile = null;
+//                        shell.dispose();
+//                    }
+//                }
+//                // Create tool file
+//                else {
+//                    combineFiles();
+//                    name = "";
+//                    saveLocation = "";
+//                    allToolList.clear();
+//                    pathList.clear();
+//                    toolNameList = null;
+//                    toolPathList = null;
+//                    cSelectTool.removeAll();
+//                    skillfile = null;
+//                    shell.dispose();
+//
+//                }
+//
+//            }
+//        });
+//
+//        // Cancel button. Closes dialog window.
+//        Button Cancel = new Button(shell, SWT.PUSH);
+//        Cancel.setLayoutData(gridDataButtons);
+//        Cancel.setText("Cancel");
+//        Cancel.addSelectionListener(new SelectionAdapter() {
+//            @Override
+//            public void widgetSelected(SelectionEvent event) {
+//                name = "";
+//                saveLocation = "";
+//                allToolList.clear();
+//                pathList.clear();
+//                toolNameList.clear();
+//                toolPathList.clear();
+//                cSelectTool.removeAll();
+//                skillfile = null;
+//                shell.dispose();
+//            }
+//        });
     }
 
     /**

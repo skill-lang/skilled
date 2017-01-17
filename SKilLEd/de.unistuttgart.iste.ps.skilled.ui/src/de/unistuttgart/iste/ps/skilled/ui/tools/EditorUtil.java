@@ -25,14 +25,15 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
+import de.unistuttgart.iste.ps.skilled.sir.FieldLike;
+import de.unistuttgart.iste.ps.skilled.sir.Tool;
+import de.unistuttgart.iste.ps.skilled.sir.Type;
+import de.unistuttgart.iste.ps.skilled.sir.UserdefinedType;
 import de.unistuttgart.iste.ps.skilled.skill.Declaration;
 import de.unistuttgart.iste.ps.skilled.skill.Field;
 import de.unistuttgart.iste.ps.skilled.skill.File;
 import de.unistuttgart.iste.ps.skilled.skill.SkillPackage;
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
-import de.unistuttgart.iste.ps.skillls.tools.Tool;
-import de.unistuttgart.iste.ps.skillls.tools.Type;
-
 
 /**
  * Useful methods for the ToolView to open the generated tool files.
@@ -93,7 +94,7 @@ public class EditorUtil {
      *            The project in which the tool is located.
      * @return true if everything went fine, otherwise false
      */
-    public boolean openTypeInEditor(Tool tool, Type type, IProject project) {
+    public boolean openTypeInEditor(Tool tool, UserdefinedType type, IProject project) {
         try {
             refreshToolFolder(tool, project);
         } catch (CoreException e1) {
@@ -145,7 +146,7 @@ public class EditorUtil {
      *            The project in which the tool is located.
      * @return true if everything went fine, otherwise false
      */
-    public boolean openFieldInEditor(Tool tool, de.unistuttgart.iste.ps.skillls.tools.Field field, IProject project) {
+    public boolean openFieldInEditor(Tool tool, FieldLike field, IProject project) {
         try {
             refreshToolFolder(tool, project);
         } catch (CoreException e1) {
@@ -163,10 +164,13 @@ public class EditorUtil {
         Declaration declaration = null;
 
         for (Declaration dec : file.getDeclarations()) {
-            if (dec.getName().equals(ToolUtil.getActualName(field.getType().getName()))) {
-                declaration = dec;
-                break;
-            }
+            throw new NoSuchMethodError("TBD");
+            // if
+            // (dec.getName().toLowerCase().equals(ToolUtil.getActualName(declaredIn(field)))))
+            // {
+            // declaration = dec;
+            // break;
+            // }
         }
 
         if (declaration == null) {
@@ -200,7 +204,9 @@ public class EditorUtil {
     }
 
     /**
-     * Returns the location of a generated toolfile in the project.
+     * Returns the location of the file that defines the given type for a given tool.
+     * 
+     * @note this method appears to be eroded and requires reimplementation and renaming 
      * 
      * @param tool
      *            The tool in which the needed file is located.
@@ -211,30 +217,32 @@ public class EditorUtil {
      * @return A URI of the needed toolfile.
      */
     public static URI getToolFileURI(Tool tool, Type type, IProject project) {
-        String originalFilePath = type.getFile().getPath();
-        URI originalFileUri = URI.createPlatformResourceURI(originalFilePath, true);
-        URI deresolvedOriginalFileUri = originalFileUri
-                .deresolve(URI.createPlatformResourceURI(project.getLocation().toString(), true));
-        String[] segments = deresolvedOriginalFileUri.segments();
-        String path = "";
-        if (segments[0].equals(project.getName())) {
-            for (int i = 0; i < segments.length; i++) {
-                if (i == 1) {
-                    path += "/.skillt" + "/" + tool.getName();
-                }
-                if (i == 0) {
-                    path += segments[i];
-                } else {
-                    path += "/" + segments[i];
-                }
-            }
-        }
-
-        return URI.createPlatformResourceURI(path, true);
+        throw new NoSuchMethodError();
+        
+//        URI originalFileUri = URI.createPlatformResourceURI(originalFilePath, true);
+//        URI deresolvedOriginalFileUri = originalFileUri
+//                .deresolve(URI.createPlatformResourceURI(project.getLocation().toString(), true));
+//        String[] segments = deresolvedOriginalFileUri.segments();
+//        String path = "";
+//        if (segments[0].equals(project.getName())) {
+//            for (int i = 0; i < segments.length; i++) {
+//                if (i == 1) {
+//                    path += "/.skillt" + "/" + tool.getName();
+//                }
+//                if (i == 0) {
+//                    path += segments[i];
+//                } else {
+//                    path += "/" + segments[i];
+//                }
+//            }
+//        }
+//
+//        return URI.createPlatformResourceURI(path, true);
     }
 
     /**
-     * Helping method which opens the editor and also moves the cursor at a specific location.
+     * Helping method which opens the editor and also moves the cursor at a
+     * specific location.
      * 
      * @param fileToOpen
      *            The file which should be opened.
@@ -246,7 +254,8 @@ public class EditorUtil {
      *            The end offset of the last char.
      * @return true if everything went fine, otherwise false
      */
-    public static boolean openFileAtSpecificLocation(IFile fileToOpen, int startLineNumber, int charStart, int charEnd) {
+    public static boolean openFileAtSpecificLocation(IFile fileToOpen, int startLineNumber, int charStart,
+            int charEnd) {
         IWorkbench wb = PlatformUI.getWorkbench();
         IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
         IWorkbenchPage page = win.getActivePage();

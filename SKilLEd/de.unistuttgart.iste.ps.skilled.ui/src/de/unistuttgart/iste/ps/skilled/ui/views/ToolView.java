@@ -3,9 +3,7 @@ package de.unistuttgart.iste.ps.skilled.ui.views;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -22,18 +20,21 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import de.unistuttgart.iste.ps.skilled.sir.ClassType;
+import de.unistuttgart.iste.ps.skilled.sir.FieldLike;
+import de.unistuttgart.iste.ps.skilled.sir.Hint;
+import de.unistuttgart.iste.ps.skilled.sir.Identifier;
+import de.unistuttgart.iste.ps.skilled.sir.Tool;
+import de.unistuttgart.iste.ps.skilled.sir.Type;
+import de.unistuttgart.iste.ps.skilled.sir.UserdefinedType;
+import de.unistuttgart.iste.ps.skilled.sir.api.SkillFile;
+import de.unistuttgart.iste.ps.skilled.tools.SIRCache;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
-import de.unistuttgart.iste.ps.skillls.tools.Field;
-import de.unistuttgart.iste.ps.skillls.tools.Hint;
-import de.unistuttgart.iste.ps.skillls.tools.Tool;
-import de.unistuttgart.iste.ps.skillls.tools.Type;
-import de.unistuttgart.iste.ps.skillls.tools.api.SkillFile;
-import de.ust.skill.common.java.api.SkillFile.Mode;
-
 
 /**
- * This class creates the SKilL-Tool-Overview which enables the user to create and organize {@link Tool tools} within a
- * SKilLEd-Project. It can be used to add, remove and rename tools, add and remove types/fields/hints.
+ * This class creates the SKilL-Tool-Overview which enables the user to create
+ * and organize {@link Tool tools} within a SKilLEd-Project. It can be used to
+ * add, remove and rename tools, add and remove types/fields/hints.
  * 
  * 
  * @author Ken Singer
@@ -41,6 +42,10 @@ import de.ust.skill.common.java.api.SkillFile.Mode;
  * @author Marco Link
  * @author Armin Hüneburg
  * @author Leslie Tso
+ * @author Timm Felden
+ * 
+ * @TODO iterate = update? dann müsste man die parameter weitgehend entfernen
+ *       und die methoden umbennen
  * 
  * @category GUI
  */
@@ -54,20 +59,17 @@ public class ToolView extends ViewPart {
     private CTabItem fieldTabItem = null;
     private Composite parent = null;
     private Shell shell;
-    // Memory
-    private SkillFile skillFile = null;
-    private Tool activeTool = null;
-    private Type selectedType = null;
-    private Field selectedField = null;
+
+    // State of the View
     private IProject activeProject = null;
-    private String path = "";
+    private SkillFile skillFile = null;
+
+    private Tool activeTool = null;
+    private ClassType selectedType = null;
+    private FieldLike selectedField = null;
+
     private Menu menu;
     private boolean doIndexing = true;
-    // Lists
-    private final ArrayList<Tool> allToolList = new ArrayList<Tool>();
-    private final ArrayList<Type> allTypeList = new ArrayList<Type>();
-    private ArrayList<Type> typeListOfActualTool = new ArrayList<Type>();
-    private ArrayList<Hint> typeHintListOfActualTool = new ArrayList<Hint>();
 
     @Override
     public void createPartControl(Composite parent) {
@@ -98,8 +100,9 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * refreshs the data shown in the {@link ToolView toolview} and sets the {@link CTabFolder tooltab} as the selected tab
-     * of the {@link CTabFolder tabfolder}.
+     * refreshs the data shown in the {@link ToolView toolview} and sets the
+     * {@link CTabFolder tooltab} as the selected tab of the {@link CTabFolder
+     * tabfolder}.
      * 
      * @category GUI
      */
@@ -117,57 +120,55 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * reload the typelist after adding a {@link Type type} or {@link Hint typehinthint} to a tool and sets the
-     * {@link CTabFolder typetab} as the selected tab of the {@link CTabFolder tabfolder}.
+     * reload the typelist after adding a {@link Type type} or {@link Hint
+     * typehinthint} to a tool and sets the {@link CTabFolder typetab} as the
+     * selected tab of the {@link CTabFolder tabfolder}.
      * 
      * @category GUI
      */
     void reloadTypelist() {
         refresh();
-        activeTool = skillFile.Tools().stream()
-                .filter(tool -> tool.getName().toLowerCase().equals(activeTool.getName().toLowerCase())).findFirst().get();
         buildTypeTree();
         tabFolder.setSelection(typeTabItem);
     }
 
     /**
-     * Reload the fieldlist after adding a {@link Field field} or {@link Hint fieldhint} to a {@link Tree fieldtab} and sets
-     * the {@link CTabFolder toolitem} as the selected tab of the {@link CTabFolder tabfolder}.
+     * Reload the fieldlist after adding a {@link FieldLike field} or
+     * {@link Hint fieldhint} to a {@link Tree fieldtab} and sets the
+     * {@link CTabFolder toolitem} as the selected tab of the {@link CTabFolder
+     * tabfolder}.
      * 
      * @category GUI
      * 
      */
     void reloadFieldList() {
         reloadTypelist();
-        selectedType = skillFile.Types().stream()
-                .filter(type -> type.getName().toLowerCase().equals(selectedType.getName().toLowerCase())).findFirst().get();
         buildFieldTree();
         tabFolder.setSelection(fieldTabItem);
     }
 
     /**
-     * clears the lists <code>allToolList</code>, <code>allTypeList</code>, <code>typeListOfActualTool</code> and
-     * <code>typeHintListOfActualTool</code>. sets <code>activeProject<\code> to null.
+     * clears the lists <code>allToolList</code>, <code>allTypeList</code>,
+     * <code>typeListOfActualTool</code> and
+     * <code>typeHintListOfActualTool</code>. sets <code>activeProject<\code> to
+     * null.
      * 
      * @category Data Handling
      */
     private void clearAll() {
         activeProject = null;
-        allToolList.clear();
-        allTypeList.clear();
-        typeListOfActualTool.clear();
-        typeHintListOfActualTool.clear();
     }
 
     /**
-     * Reads the .skills file of the current <code>{@link IProject activeProject}</code>.
+     * Reads the .skills file of the current
+     * <code>{@link IProject activeProject}</code>.
      * 
      * @category Data Handling
      */
     void readToolBinaryFile() {
         try {
-            IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                    .getActiveEditor().getEditorInput();
+            IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                    .getActivePage().getActiveEditor().getEditorInput();
             activeProject = file.getFile().getProject();
 
             if (doIndexing) {
@@ -175,25 +176,19 @@ public class ToolView extends ViewPart {
                 doIndexing = false;
             }
 
-            path = activeProject.getLocation().toOSString() + File.separator + ".skills";
-            skillFile = SkillFile.open(path, Mode.ReadOnly);
-        } catch (@SuppressWarnings("unused") Exception e) {
+            skillFile = SIRCache.ensureFile(activeProject);
+        } catch (Exception e) {
             // skillfile does not exist or no active project
             return;
         }
-
-        if (skillFile.Tools() != null)
-            skillFile.Tools().forEach(tool -> allToolList.add(tool));
-
-        if (skillFile.Types() != null)
-            skillFile.Types().stream().filter(t -> t.getOrig() == null).forEach(t -> allTypeList.add(t));
     }
 
     /**
-     * Builds up the {@link CTabItem tooltab} inside the {@link ToolView toolview} and a {@link List list} of all
-     * {@link Tools tools}.
+     * Builds up the {@link CTabItem tooltab} inside the {@link ToolView
+     * toolview} and a {@link List list} of all {@link Tools tools}.
      * 
-     * @return a {@link List} containing all the tools in the .skills file of the <code>{@link IProject activeProject}</code>
+     * @return a {@link List} containing all the tools in the .skills file of
+     *         the <code>{@link IProject activeProject}</code>
      * @category Data Handling
      */
     private List buildToollist() {
@@ -209,14 +204,14 @@ public class ToolView extends ViewPart {
 
         try {
             toolTabItem.setText("Tools - " + activeProject.getName());
-        } catch (@SuppressWarnings("unused") NullPointerException e) {
+        } catch (NullPointerException e) {
             toolTabItem.setText("Tools");
         }
         toolTabItem.setControl(toolViewList);
         toolTabItem.setData(toolViewList);
 
-        if (skillFile != null)
-            allToolList.forEach(t -> toolViewList.add((t).getName()));
+        for (Tool t : skillFile.Tools())
+            toolViewList.add((t).getName());
 
         ToolViewListener tvl = new ToolViewListener(this);
         tvl.initToolListListener(toolViewList);
@@ -226,7 +221,8 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Builds up the <code>{@link Tree typeTree}</code>, containing all types with their specific {@link Hint hints}.
+     * Builds up the <code>{@link Tree typeTree}</code>, containing all types
+     * with their specific {@link Hint hints}.
      * 
      * @param activeTool
      *            - the selected {@link Tool}
@@ -234,8 +230,6 @@ public class ToolView extends ViewPart {
      */
     void buildTypeTree() {
         Tree typeTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.SINGLE);
-        typeListOfActualTool = activeTool.getTypes().stream().filter(t -> t != null)
-                .collect(Collectors.toCollection(ArrayList<Type>::new));
 
         if (typeTabItem == null || typeTabItem.isDisposed())
             typeTabItem = new CTabItem(tabFolder, 0, 1);
@@ -253,32 +247,32 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * iterate over all the {@link Type types} and their {@link Hint hints} in the
-     * <code>{@link IProject activeProject}</code>.
+     * iterate over all the {@link Type types} and their {@link Hint hints} in
+     * the <code>{@link IProject activeProject}</code>.
      * 
      * @param typeTree
      *            - a {@link Tree} to hold the types and their hints
      */
     private void iterateTypesAndHints(Tree typeTree) {
         // add all types to the tree
-        for (Type type : allTypeList) {
+        for (UserdefinedType type : skillFile.UserdefinedTypes()) {
             TreeItem typeTreeItem = new TreeItem(typeTree, 0);
-            typeTreeItem.setText(type.getName().replaceAll(" %s", ""));
+            typeTreeItem.setText(nameToText(type.getName()));
             typeTreeItem.setData(type);
-            Type tooltype = null;
 
-            // set all the toolspecific types as checked
-            if (typeListOfActualTool != null) {
-                for (Type t : typeListOfActualTool) {
-                    if (t.getName().equals(type.getName())) {
-                        typeTreeItem.setChecked(true);
-                        tooltype = type;
-                        break;
-                    }
-                }
+            boolean selected = false;
+            if (null != activeTool && activeTool.getSelectedUserTypes().contains(type)) {
+                typeTreeItem.setChecked(selected = true);
             }
-            interateTypeHints(typeTreeItem, type, tooltype);
+            iterateTypeHints(typeTreeItem, type, selected);
         }
+    }
+
+    private String nameToText(Identifier name) {
+        StringBuilder sb = new StringBuilder();
+        for (String n : name.getParts())
+            sb.append(n);
+        return sb.toString();
     }
 
     /**
@@ -289,9 +283,10 @@ public class ToolView extends ViewPart {
      * @param type
      *            - the original {@link Type}
      * @param tooltype
-     *            - the {@link Tool tool} specific type or <code>null</code> if the type not in tool
+     *            - the {@link Tool tool} specific type or <code>null</code> if
+     *            the type not in tool
      */
-    private void interateTypeHints(TreeItem typeTreeItem, Type type, Type tooltype) {
+    private void iterateTypeHints(TreeItem typeTreeItem, UserdefinedType type, boolean selected) {
         // add all typeHints to the Tree
         for (Hint hint : type.getHints()) {
             TreeItem typeHintItem = new TreeItem(typeTreeItem, 0);
@@ -301,43 +296,38 @@ public class ToolView extends ViewPart {
             typeHintItem.setData(hint);
 
             // set all toolspecific typeHints as checked
-            if (tooltype == null || tooltype.getHints() == null)
+            if (!selected)
                 continue;
-            typeHintListOfActualTool = tooltype.getHints();
-            for (Hint toolhint : typeHintListOfActualTool) {
-                if (hint.getName().equals(toolhint.getName())) {
-                    typeHintItem.setChecked(true);
-                    break;
-                }
-            }
+
+            // TODO use customizations instead and make restrictions checkable
+            // as well
+
+            // typeHintListOfActualTool = tooltype.getHints();
+            // for (Hint toolhint : typeHintListOfActualTool) {
+            // if (hint.getName().equals(toolhint.getName())) {
+            // typeHintItem.setChecked(true);
+            // break;
+            // }
+            // }
         }
     }
 
     /**
-     * Build the <code>{@link Tree fieldTree}</code>, listing all {@link Field fields} with their specific {@link Hint hints}
-     * .
+     * Build the <code>{@link Tree fieldTree}</code>, listing all
+     * {@link FieldLike fields} with their specific {@link Hint hints} .
      * 
      * @category GUI
      */
     void buildFieldTree() {
         Tree fieldTree = new Tree(tabFolder, SWT.MULTI | SWT.CHECK | SWT.FULL_SELECTION);
-        Type tooltype;
-
-        try {
-            tooltype = typeListOfActualTool.stream().filter(t -> selectedType.getName().equals(t.getName())).findFirst()
-                    .get();
-        } catch (@SuppressWarnings("unused") NoSuchElementException e) {
-            // there is no tooltype
-            tooltype = null;
-        }
 
         if (fieldTabItem == null || fieldTabItem.isDisposed())
             fieldTabItem = new CTabItem(tabFolder, 0, 2);
-        fieldTabItem.setText("Fields - " + selectedType.getName().replaceAll(" %s", ""));
+        fieldTabItem.setText("Fields - " + nameToText(selectedType.getName()));
 
         if (skillFile != null && selectedType != null)
             // add all fields to the tree
-            iterateFieldsAndFieldHints(fieldTree, tooltype);
+            iterateFieldsAndFieldHints(fieldTree, selectedType);
 
         fieldTabItem.setControl(fieldTree);
         fieldTabItem.setData(fieldTree);
@@ -347,47 +337,46 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * iterate over all the {@link Field fields} and their {@link Hint hints}.
+     * iterate over all the {@link FieldLike fields} and their {@link Hint
+     * hints}.
      * 
      * @param fieldTree
      *            - {@link Tree}
      * @param tooltype
-     *            - the tool specific {@link Type} or <code>null</code> if not in tool
+     *            - the tool specific {@link Type} or <code>null</code> if not
+     *            in tool
      */
     private void iterateFieldsAndFieldHints(Tree fieldTree, Type tooltype) {
-        for (Field field : selectedType.getFields()) {
+        for (FieldLike field : selectedType.getFields()) {
             TreeItem fieldTreeItem = new TreeItem(fieldTree, 0);
-            fieldTreeItem.setText(field.getName());
+            fieldTreeItem.setText(nameToText(field.getName()));
             fieldTreeItem.setChecked(false);
             fieldTreeItem.setData(field);
             fieldTreeItem.setExpanded(true);
-            Field toolField = null;
 
             // check all the fields used by the actual tool
-            if (tooltype != null) {
-                for (Field f : tooltype.getFields()) {
-                    if (field.getName().equals(f.getName())) {
-                        fieldTreeItem.setChecked(true);
-                        toolField = f;
-                        break;
-                    }
+            for (HashMap<String, FieldLike> v : activeTool.getSelectedFields().values()) {
+                if (v.values().contains(field)) {
+                    fieldTreeItem.setChecked(true);
+                    break;
                 }
             }
-            iterateFieldHints(field, toolField, fieldTreeItem);
+            iterateFieldHints(field, null, fieldTreeItem);
         }
     }
 
     /**
-     * iterate over all the {@link Hint hints} of a {@link Field field}.
+     * iterate over all the {@link Hint hints} of a {@link FieldLike field}.
      * 
      * @param field
-     *            - the original {@link Field}
+     *            - the original {@link FieldLike}
      * @param toolField
-     *            - the tool specific {@link Field} or <code>null</code> if not in tool
+     *            - the tool specific {@link FieldLike} or <code>null</code> if
+     *            not in tool
      * @param fieldTreeItem
      *            - {@link TreeItem}
      */
-    private static void iterateFieldHints(Field field, Field toolField, TreeItem fieldTreeItem) {
+    private static void iterateFieldHints(FieldLike field, FieldLike toolField, TreeItem fieldTreeItem) {
         for (Hint hint : field.getHints()) {
             TreeItem fieldHintItem = new TreeItem(fieldTreeItem, 0);
             fieldHintItem.setText(hint.getName());
@@ -408,7 +397,8 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Creates the {@link ContextMenuToolView contextmenu} for the {@link ToolView toolview}.
+     * Creates the {@link ContextMenuToolView contextmenu} for the
+     * {@link ToolView toolview}.
      * 
      * @param toollist
      *            - {@link List} containing all the tools
@@ -455,21 +445,22 @@ public class ToolView extends ViewPart {
      * Return the selected .
      * 
      * @category Getter
-     * @return the selected {@link Field field}.
+     * @return the selected {@link FieldLike field}.
      */
-    Field getSelectedField() {
+    FieldLike getSelectedField() {
         return selectedField;
     }
 
     /**
-     * Set the selected {@link Field field}.
+     * Set the selected {@link FieldLike field}.
      * 
      * @category Setter
      * @param selectedField
-     *            the selected {@link Field field}.
+     *            the selected {@link FieldLike field}.
      */
-    void setSelectedField(Field selectedField) {
+    void setSelectedField(FieldLike selectedField) {
         this.selectedField = selectedField;
+        // TODO update???
     }
 
     /**
@@ -478,7 +469,7 @@ public class ToolView extends ViewPart {
      * @category Getter
      * @return the selected {@link Type type}
      */
-    Type getSelectedType() {
+    ClassType getSelectedType() {
         return selectedType;
     }
 
@@ -489,8 +480,9 @@ public class ToolView extends ViewPart {
      * @param selectedType
      *            the selected {@link Type type}.
      */
-    void setSelectedType(Type selectedType) {
+    void setSelectedType(ClassType selectedType) {
         this.selectedType = selectedType;
+        // TODO update???
     }
 
     /**
@@ -522,16 +514,6 @@ public class ToolView extends ViewPart {
      */
     IProject getActiveProject() {
         return activeProject;
-    }
-
-    /**
-     * Get a list of all tools.
-     * 
-     * @category Getter
-     * @return {@link ArrayList ArrayList} with all tools.
-     */
-    ArrayList<Tool> getAllToolList() {
-        return allToolList;
     }
 
     /**

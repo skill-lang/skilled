@@ -133,7 +133,7 @@ public class FileChangeAction {
         boolean back = false;
         if (toolview != null && toolview.getActiveProject() != null) {
             try {
-                ToolUtil.deleteReportToolErrors(toolview.getActiveProject());
+                // TODO? ToolUtil.deleteReportToolErrors(toolview.getActiveProject());
                 back = ToolUtil.indexing(toolview.getActiveProject());
             } catch (CoreException e) {
                 e.printStackTrace();

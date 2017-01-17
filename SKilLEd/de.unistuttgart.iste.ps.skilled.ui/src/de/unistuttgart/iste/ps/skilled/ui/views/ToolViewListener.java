@@ -18,7 +18,6 @@ import org.eclipse.ui.PlatformUI;
 import de.unistuttgart.iste.ps.skilled.ui.tools.EditorUtil;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 
-
 /**
  * This class is used to initialize listeners for the {@link ToolView toolview}
  * 
@@ -35,7 +34,8 @@ public class ToolViewListener {
     }
 
     /**
-     * initialize the listener for the {@link List toollist} used in the {@link ToolView toolview}
+     * initialize the listener for the {@link List toollist} used in the
+     * {@link ToolView toolview}
      * 
      * @param toolViewList
      */
@@ -45,7 +45,8 @@ public class ToolViewListener {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 if (toolViewList.getSelectionCount() != 0 && toolViewList.getItemCount() > 0) {
-                    toolview.setActiveTool(toolview.getAllToolList().get(toolViewList.getSelectionIndex()));
+                    toolview.setActiveTool(
+                            toolview.getSkillFile().Tools().getByID(1 + toolViewList.getSelectionIndex()));
                     toolview.buildTypeTree();
                 }
             }
@@ -72,7 +73,8 @@ public class ToolViewListener {
             @Override
             public void mouseDoubleClick(MouseEvent arg0) {
                 if (toolview.getActiveProject() != null && toolview.getActiveTool() != null) {
-                    ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(), toolview.getActiveProject());
+                    ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(),
+                            toolview.getActiveProject());
                     editorUtil.openToolInEditor(toolview.getActiveTool(), toolview.getActiveProject());
                 }
             }

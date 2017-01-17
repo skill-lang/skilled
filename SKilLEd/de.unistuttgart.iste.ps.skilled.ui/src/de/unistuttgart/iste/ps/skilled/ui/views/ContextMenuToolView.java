@@ -13,10 +13,10 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import de.unistuttgart.iste.ps.skilled.tools.ToolInfo;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.SKilLToolWizard;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
-
 
 /**
  * Extracted class to create the context menu for the toolview.
@@ -27,7 +27,7 @@ import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
  */
 public class ContextMenuToolView {
 
-    ToolView toolView = null;
+    private final ToolView toolView;
 
     public ContextMenuToolView(ToolView toolView) {
         this.toolView = toolView;
@@ -60,7 +60,8 @@ public class ContextMenuToolView {
                 cloneToolItem.addSelectionListener(new SelectionListener() {
                     @Override
                     public void widgetSelected(SelectionEvent arg0) {
-                        SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.CLONE, toolView.getAllToolList());
+                        SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.CLONE,
+                                ToolInfo.getTools(toolView.getActiveProject()));
                         WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), newWizard);
 
                         if (wizardDialog.open() == Window.OK)
@@ -103,7 +104,8 @@ public class ContextMenuToolView {
                 renameToolItem.addSelectionListener(new SelectionListener() {
                     @Override
                     public void widgetSelected(SelectionEvent arg0) {
-                        SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.RENAME, toollist.getItem(selected));
+                        SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.RENAME,
+                                toollist.getItem(selected));
                         WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), newWizard);
 
                         if (wizardDialog.open() == Window.OK)
