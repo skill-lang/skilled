@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.skill.Declaration
 import de.unistuttgart.iste.ps.skilled.skill.Field
 import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
+import de.unistuttgart.iste.ps.skilled.tools.ToolInfo
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.validation.Check
@@ -21,40 +22,37 @@ class UnusedDeclarationValidator extends AbstractSKilLComposedValidatorPart {
 	 */
 	@Check
 	def checkType(Declaration declaration) {
-		if (services.getProject(declaration.eResource) == null) {
+		val project = services.getProject(declaration.eResource)
+		if (project == null) {
 			return
 		}
+		val tools = ToolInfo.getTools(project)
+		// do not warn if there are no tools at all
+		if (tools.isEmpty) {
+			return
+		}
+
 		if (services.isToolFile(declaration.eResource.URI)) {
 			return
 		}
-//		val platformString = declaration.eResource.URI.toPlatformString(true);
-//		val myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString))
-//		val project = myFile.project
-//		val file = project.getFile(File.separator + ".sir")
-//    var SkillFile skillFile = SIRFileCache.open(file.rawLocation.toString());
-//    try {
-//    	skillFile = SkillFile.open(file.rawLocation.toString(), Read, ReadOnly);
-//    } catch (Throwable e) {
-//      e.printStackTrace
-//      skillFile = SkillFile.open(file.rawLocation.toString(), Create, ReadOnly);
-//    }
-//    skillFile = SkillFileOpener.getFile()
-//		var name = declaration.name
-		var found = false
-//    for (Tool tool : skillFile.Tools) {
-//      for (Type type : tool.types) {
-//        if (type.name.startsWith(name)) {
-//          found = true
-//        }
-//      }
-//    }
-		if (!found) {
-			var node = NodeModelUtils.getNode(declaration);
-			var offset = node.totalOffset;
-			var length = node.totalLength;
-			warning("Type is not used in Tool", declaration, SkillPackage.Literals.DECLARATION__NAME, UNUSED_TYPE,
-				#[offset.toString, length.toString]);
+
+		val name = declaration.name.toLowerCase
+
+		for (tool : tools) {
+			for (type : tool.selectedUserTypes) {
+				if (type.name.equals(name)) {
+					return
+				}
+			}
 		}
+
+		// we could not find the name but there are tools
+		val node = NodeModelUtils.getNode(declaration);
+		val offset = node.totalOffset;
+		val length = node.totalLength;
+		warning("Type is not used in Tool", declaration, SkillPackage.Literals.DECLARATION__NAME, UNUSED_TYPE,
+			#[offset.toString, length.toString]);
+
 	}
 
 	/**
@@ -63,42 +61,35 @@ class UnusedDeclarationValidator extends AbstractSKilLComposedValidatorPart {
 	 */
 	@Check
 	def checkField(Field field) {
-		if (services.getProject(field.eResource) == null) {
+		val project = services.getProject(field.eResource)
+		if (project == null) {
 			return
 		}
+		val tools = ToolInfo.getTools(project)
+		// do not warn if there are no tools at all
+		if (tools.isEmpty) {
+			return
+		}
+
 		if (services.isToolFile(field.eResource.URI)) {
 			return
 		}
-//		val platformString = field.eResource.URI.toPlatformString(true);
-//		val myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString))
-//		val project = myFile.project
-//		val file = project.getFile(File.separator + ".skills")
-//		var SkillFile skillFile = null
-//    try {
-//      SkillFileOpener.path = file.rawLocation.toString()
-//    } catch (Throwable e) {
-//      e.printStackTrace
-//    }
-//    skillFile = SkillFileOpener.file
-//		val content = field.fieldcontent
-//		val name = content.name
-		var found = false
-//    for (Tool tool : skillFile.Tools) {
-//      for (Type type : tool.types) {
-//        for (de.unistuttgart.iste.ps.skillls.tools.Field f : type.fields) {
-//          if (f.name.toLowerCase.substring(f.name.lastIndexOf(' ') + 1).equals(name)) {
-//            found = true
-//          }
-//        }
-//      }
-//    }
-		if (!found) {
-			var node = NodeModelUtils.getNode(field);
-			var offset = node.totalOffset;
-			var length = node.totalLength;
-			warning("Field is not used in Tool", field.fieldcontent, SkillPackage.Literals.FIELDCONTENT__NAME,
-				UNUSED_FIELD, #[offset.toString, length.toString])
+
+		val name = field.fieldcontent.name.toLowerCase
+
+		for (tool : tools) {
+			for (fields : tool.selectedFields.values) {
+				if (fields.keySet.contains(name)) {
+					return
+				}
+			}
 		}
+
+		val node = NodeModelUtils.getNode(field);
+		val offset = node.totalOffset;
+		val length = node.totalLength;
+		warning("Field is not used in Tool", field.fieldcontent, SkillPackage.Literals.FIELDCONTENT__NAME, UNUSED_FIELD,
+			#[offset.toString, length.toString])
 	}
 
 }
