@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -24,10 +24,10 @@ import de.ust.skill.common.jvm.streams.MappedOutStream;
 
 
 /**
- * groundtype SingleBaseTypeContainer.base
+ * type SingleBaseTypeContainer.base
  */
 final class KnownField_SingleBaseTypeContainer_base extends FieldDeclaration<de.unistuttgart.iste.ps.skilled.sir.GroundType, de.unistuttgart.iste.ps.skilled.sir.SingleBaseTypeContainer> implements
-               KnownField<de.unistuttgart.iste.ps.skilled.sir.GroundType, de.unistuttgart.iste.ps.skilled.sir.SingleBaseTypeContainer>, InterfaceField {
+               KnownField<de.unistuttgart.iste.ps.skilled.sir.GroundType, de.unistuttgart.iste.ps.skilled.sir.SingleBaseTypeContainer> {
 
     public KnownField_SingleBaseTypeContainer_base(FieldType<de.unistuttgart.iste.ps.skilled.sir.GroundType> type, int index, SingleBaseTypeContainerAccess owner) {
         super(type, "base", index, owner);
@@ -61,12 +61,12 @@ final class KnownField_SingleBaseTypeContainer_base extends FieldDeclaration<de.
         int i = null == range ? 0 : (int) range.bpo;
         final int high = null == range ? data.length : (int) (range.bpo + range.count);
         for (; i < high; i++) {
-            final de.unistuttgart.iste.ps.skilled.sir.GroundType instance = ((de.unistuttgart.iste.ps.skilled.sir.SingleBaseTypeContainer)data[i]).getBase();
+            final de.unistuttgart.iste.ps.skilled.sir.Type instance = ((de.unistuttgart.iste.ps.skilled.sir.SingleBaseTypeContainer)data[i]).getBase().self();
             if (null == instance) {
                 result += 1;
                 continue;
             }
-            long v = instance.self().getSkillID();
+            long v = instance.getSkillID();
 
             if (0L == (v & 0xFFFFFFFFFFFFFF80L)) {
                 result += 1;

@@ -24,13 +24,13 @@ import de.ust.skill.common.jvm.streams.MappedOutStream;
 
 
 /**
- * comment FieldLike.comment
+ * hint[] FieldLike.hints
  */
-final class KnownField_FieldLike_comment extends FieldDeclaration<de.unistuttgart.iste.ps.skilled.sir.Comment, de.unistuttgart.iste.ps.skilled.sir.FieldLike> implements
-               KnownField<de.unistuttgart.iste.ps.skilled.sir.Comment, de.unistuttgart.iste.ps.skilled.sir.FieldLike> {
+final class KnownField_FieldLike_hints extends FieldDeclaration<java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint>, de.unistuttgart.iste.ps.skilled.sir.FieldLike> implements
+               KnownField<java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint>, de.unistuttgart.iste.ps.skilled.sir.FieldLike> {
 
-    public KnownField_FieldLike_comment(FieldType<de.unistuttgart.iste.ps.skilled.sir.Comment> type, int index, FieldLikeAccess owner) {
-        super(type, "comment", index, owner);
+    public KnownField_FieldLike_hints(FieldType<java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint>> type, int index, FieldLikeAccess owner) {
+        super(type, "hints", index, owner);
             // TODO insert known restrictions?
     }
 
@@ -45,46 +45,29 @@ final class KnownField_FieldLike_comment extends FieldDeclaration<de.unistuttgar
         } else
             is = owner.iterator();
 
-        final CommentAccess target = (CommentAccess)type;
         int count = (int) last.count;
         while (0 != count--) {
-            is.next().setComment(target.getByID(in.v64()));
+            is.next().setHints(type.readSingleField(in));
         }
     }
 
     @Override
     public long offset() {
         final Block range = owner.lastBlock();
+        final SingleArgumentType<java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint>, de.unistuttgart.iste.ps.skilled.sir.Hint> t = (SingleArgumentType<java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint>, de.unistuttgart.iste.ps.skilled.sir.Hint>) type;
+
+        final FieldType<de.unistuttgart.iste.ps.skilled.sir.Hint> baseType = t.groundType;
         final de.unistuttgart.iste.ps.skilled.sir.FieldLike[] data = ((FieldLikeAccess) owner.basePool()).data();
         long result = 0L;
         int i = null == range ? 0 : (int) range.bpo;
         final int high = null == range ? data.length : (int) (range.bpo + range.count);
         for (; i < high; i++) {
-            final de.unistuttgart.iste.ps.skilled.sir.Comment instance = data[i].getComment();
-            if (null == instance) {
-                result += 1;
-                continue;
-            }
-            long v = instance.getSkillID();
-
-            if (0L == (v & 0xFFFFFFFFFFFFFF80L)) {
-                result += 1;
-            } else if (0L == (v & 0xFFFFFFFFFFFFC000L)) {
-                result += 2;
-            } else if (0L == (v & 0xFFFFFFFFFFE00000L)) {
-                result += 3;
-            } else if (0L == (v & 0xFFFFFFFFF0000000L)) {
-                result += 4;
-            } else if (0L == (v & 0xFFFFFFF800000000L)) {
-                result += 5;
-            } else if (0L == (v & 0xFFFFFC0000000000L)) {
-                result += 6;
-            } else if (0L == (v & 0xFFFE000000000000L)) {
-                result += 7;
-            } else if (0L == (v & 0xFF00000000000000L)) {
-                result += 8;
-            } else {
-                result += 9;
+            final java.util.ArrayList<? extends de.unistuttgart.iste.ps.skilled.sir.Hint> v = (java.util.ArrayList<? extends de.unistuttgart.iste.ps.skilled.sir.Hint>)(data[i]).getHints();
+            if(null==v || v.isEmpty())
+                result++;
+            else {
+                result += V64.singleV64Offset(v.size());
+                result += baseType.calculateOffset((java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint>)v);
             }
         }
         return result;
@@ -107,31 +90,27 @@ final class KnownField_FieldLike_comment extends FieldDeclaration<de.unistuttgar
         }
 
         for (; i < high; i++) {
-            de.unistuttgart.iste.ps.skilled.sir.Comment v = data[i].getComment();
-            if (null == v)
-                out.i8((byte) 0);
-            else
-                out.v64(v.getSkillID());
+            type.writeSingleField(data[i].getHints(), out);
         }
     }
 
     @Override
-    public de.unistuttgart.iste.ps.skilled.sir.Comment getR(SkillObject ref) {
-        return ((de.unistuttgart.iste.ps.skilled.sir.FieldLike) ref).getComment();
+    public java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint> getR(SkillObject ref) {
+        return ((de.unistuttgart.iste.ps.skilled.sir.FieldLike) ref).getHints();
     }
 
     @Override
-    public void setR(SkillObject ref, de.unistuttgart.iste.ps.skilled.sir.Comment value) {
-        ((de.unistuttgart.iste.ps.skilled.sir.FieldLike) ref).setComment(value);
+    public void setR(SkillObject ref, java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint> value) {
+        ((de.unistuttgart.iste.ps.skilled.sir.FieldLike) ref).setHints(value);
     }
 
     @Override
-    public de.unistuttgart.iste.ps.skilled.sir.Comment get(de.unistuttgart.iste.ps.skilled.sir.FieldLike ref) {
-        return ref.getComment();
+    public java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint> get(de.unistuttgart.iste.ps.skilled.sir.FieldLike ref) {
+        return ref.getHints();
     }
 
     @Override
-    public void set(de.unistuttgart.iste.ps.skilled.sir.FieldLike ref, de.unistuttgart.iste.ps.skilled.sir.Comment value) {
-        ref.setComment(value);
+    public void set(de.unistuttgart.iste.ps.skilled.sir.FieldLike ref, java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint> value) {
+        ref.setHints(value);
     }
 }

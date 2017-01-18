@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.api;

@@ -43,7 +43,7 @@ public class ToolViewListener {
         // selection listener to set the active tool
         toolViewList.addSelectionListener(new SelectionListener() {
             @Override
-            public void widgetSelected(SelectionEvent arg0) {
+            public void widgetSelected(SelectionEvent e) {
                 if (toolViewList.getSelectionCount() != 0 && toolViewList.getItemCount() > 0) {
                     toolview.setActiveTool(
                             toolview.getSkillFile().Tools().getByID(1 + toolViewList.getSelectionIndex()));
@@ -52,7 +52,7 @@ public class ToolViewListener {
             }
 
             @Override
-            public void widgetDefaultSelected(SelectionEvent arg0) {
+            public void widgetDefaultSelected(SelectionEvent e) {
                 // not used
             }
         });

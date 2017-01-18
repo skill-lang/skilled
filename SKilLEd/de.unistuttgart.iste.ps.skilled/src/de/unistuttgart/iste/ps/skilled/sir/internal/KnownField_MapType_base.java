@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -24,7 +24,7 @@ import de.ust.skill.common.jvm.streams.MappedOutStream;
 
 
 /**
- * groundtype[] MapType.base
+ * type[] MapType.base
  */
 final class KnownField_MapType_base extends FieldDeclaration<java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.GroundType>, de.unistuttgart.iste.ps.skilled.sir.MapType> implements
                KnownField<java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.GroundType>, de.unistuttgart.iste.ps.skilled.sir.MapType> {
@@ -62,12 +62,12 @@ final class KnownField_MapType_base extends FieldDeclaration<java.util.ArrayList
         int i = null == range ? 0 : (int) range.bpo;
         final int high = null == range ? data.length : (int) (range.bpo + range.count);
         for (; i < high; i++) {
-            final java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.GroundType> v = ((de.unistuttgart.iste.ps.skilled.sir.MapType)data[i]).getBase();
-            if(null==v)
+            final java.util.ArrayList<? extends de.unistuttgart.iste.ps.skilled.sir.Type> v = (java.util.ArrayList<? extends de.unistuttgart.iste.ps.skilled.sir.Type>)((de.unistuttgart.iste.ps.skilled.sir.MapType)data[i]).getBase();
+            if(null==v || v.isEmpty())
                 result++;
             else {
                 result += V64.singleV64Offset(v.size());
-                result += baseType.calculateOffset(v);
+                result += baseType.calculateOffset((java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.GroundType>)v);
             }
         }
         return result;

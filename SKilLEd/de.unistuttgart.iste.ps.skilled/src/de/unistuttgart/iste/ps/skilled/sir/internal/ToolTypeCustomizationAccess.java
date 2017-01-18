@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -30,7 +30,7 @@ public class ToolTypeCustomizationAccess extends BasePool<de.unistuttgart.iste.p
      * Can only be constructed by the SkillFile in this package.
      */
     ToolTypeCustomizationAccess(int poolIndex) {
-        super(poolIndex, "tooltypecustomization", new HashSet<String>(Arrays.asList(new String[] {  })), noAutoFields());
+        super(poolIndex, "tooltypecustomization", new HashSet<String>(Arrays.asList(new String[] { "hints", "restrictions" })), noAutoFields());
     }
 
     final de.unistuttgart.iste.ps.skilled.sir.ToolTypeCustomization[] data() {
@@ -54,6 +54,54 @@ public class ToolTypeCustomizationAccess extends BasePool<de.unistuttgart.iste.p
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public void addKnownField(
+        String name,
+        de.ust.skill.common.java.internal.fieldTypes.StringType string,
+        de.ust.skill.common.java.internal.fieldTypes.Annotation annotation) {
+
+        final FieldDeclaration<?, de.unistuttgart.iste.ps.skilled.sir.ToolTypeCustomization> f;
+        switch (name) {
+        case "hints":
+            f = new KnownField_ToolTypeCustomization_hints(new VariableLengthArray<>((FieldType<de.unistuttgart.iste.ps.skilled.sir.Hint>)(owner().poolByName().get("hint"))), 1 + dataFields.size(), this);
+            break;
+
+        case "restrictions":
+            f = new KnownField_ToolTypeCustomization_restrictions(new VariableLengthArray<>((FieldType<de.unistuttgart.iste.ps.skilled.sir.Restriction>)(owner().poolByName().get("restriction"))), 1 + dataFields.size(), this);
+            break;
+
+        default:
+            super.addKnownField(name, string, annotation);
+            return;
+        }
+        if (!(f instanceof AutoField))
+            dataFields.add(f);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <R> FieldDeclaration<R, de.unistuttgart.iste.ps.skilled.sir.ToolTypeCustomization> addField(int ID, FieldType<R> type, String name,
+            HashSet<FieldRestriction<?>> restrictions) {
+        final FieldDeclaration<R, de.unistuttgart.iste.ps.skilled.sir.ToolTypeCustomization> f;
+        switch (name) {
+        case "hints":
+            f = (FieldDeclaration<R, de.unistuttgart.iste.ps.skilled.sir.ToolTypeCustomization>) new KnownField_ToolTypeCustomization_hints((FieldType<java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint>>) type, ID, this);
+            break;
+
+        case "restrictions":
+            f = (FieldDeclaration<R, de.unistuttgart.iste.ps.skilled.sir.ToolTypeCustomization>) new KnownField_ToolTypeCustomization_restrictions((FieldType<java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Restriction>>) type, ID, this);
+            break;
+
+        default:
+            return super.addField(ID, type, name, restrictions);
+        }
+
+        for (FieldRestriction<?> r : restrictions)
+            f.addRestriction(r);
+        dataFields.add(f);
+        return f;
+    }
 
     /**
      * @return a new ToolTypeCustomization instance with default field values

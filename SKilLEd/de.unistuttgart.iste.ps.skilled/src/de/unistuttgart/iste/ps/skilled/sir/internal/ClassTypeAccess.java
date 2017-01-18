@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -149,26 +149,6 @@ public class ClassTypeAccess extends SubPool<de.unistuttgart.iste.ps.skilled.sir
 
         public ClassTypeBuilder Zsuper(de.unistuttgart.iste.ps.skilled.sir.ClassType Zsuper) {
             instance.setSuper(Zsuper);
-            return this;
-        }
-
-        public ClassTypeBuilder comment(de.unistuttgart.iste.ps.skilled.sir.Comment comment) {
-            instance.setComment(comment);
-            return this;
-        }
-
-        public ClassTypeBuilder hints(java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint> hints) {
-            instance.setHints(hints);
-            return this;
-        }
-
-        public ClassTypeBuilder restrictions(java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Restriction> restrictions) {
-            instance.setRestrictions(restrictions);
-            return this;
-        }
-
-        public ClassTypeBuilder name(de.unistuttgart.iste.ps.skilled.sir.Identifier name) {
-            instance.setName(name);
             return this;
         }
 

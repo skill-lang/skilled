@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -149,31 +149,6 @@ public class CustomFieldAccess extends SubPool<de.unistuttgart.iste.ps.skilled.s
 
         public CustomFieldBuilder typename(java.lang.String typename) {
             instance.setTypename(typename);
-            return this;
-        }
-
-        public CustomFieldBuilder comment(de.unistuttgart.iste.ps.skilled.sir.Comment comment) {
-            instance.setComment(comment);
-            return this;
-        }
-
-        public CustomFieldBuilder name(de.unistuttgart.iste.ps.skilled.sir.Identifier name) {
-            instance.setName(name);
-            return this;
-        }
-
-        public CustomFieldBuilder type(de.unistuttgart.iste.ps.skilled.sir.Type type) {
-            instance.setType(type);
-            return this;
-        }
-
-        public CustomFieldBuilder hints(java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint> hints) {
-            instance.setHints(hints);
-            return this;
-        }
-
-        public CustomFieldBuilder restrictions(java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Restriction> restrictions) {
-            instance.setRestrictions(restrictions);
             return this;
         }
 

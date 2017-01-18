@@ -24,13 +24,13 @@ import de.ust.skill.common.jvm.streams.MappedOutStream;
 
 
 /**
- * classtype InterfaceType.super
+ * identifier UserdefinedType.name
  */
-final class KnownField_InterfaceType_Zsuper extends FieldDeclaration<de.unistuttgart.iste.ps.skilled.sir.ClassType, de.unistuttgart.iste.ps.skilled.sir.InterfaceType> implements
-               KnownField<de.unistuttgart.iste.ps.skilled.sir.ClassType, de.unistuttgart.iste.ps.skilled.sir.InterfaceType> {
+final class KnownField_UserdefinedType_name extends FieldDeclaration<de.unistuttgart.iste.ps.skilled.sir.Identifier, de.unistuttgart.iste.ps.skilled.sir.UserdefinedType> implements
+               KnownField<de.unistuttgart.iste.ps.skilled.sir.Identifier, de.unistuttgart.iste.ps.skilled.sir.UserdefinedType> {
 
-    public KnownField_InterfaceType_Zsuper(FieldType<de.unistuttgart.iste.ps.skilled.sir.ClassType> type, int index, InterfaceTypeAccess owner) {
-        super(type, "super", index, owner);
+    public KnownField_UserdefinedType_name(FieldType<de.unistuttgart.iste.ps.skilled.sir.Identifier> type, int index, UserdefinedTypeAccess owner) {
+        super(type, "name", index, owner);
             // TODO insert known restrictions?
     }
 
@@ -38,17 +38,17 @@ final class KnownField_InterfaceType_Zsuper extends FieldDeclaration<de.unistutt
     public void read(ChunkEntry ce) {
         final MappedInStream in = ce.in;
         final Chunk last = ce.c;
-        final Iterator<de.unistuttgart.iste.ps.skilled.sir.InterfaceType> is;
+        final Iterator<de.unistuttgart.iste.ps.skilled.sir.UserdefinedType> is;
         if (last instanceof SimpleChunk) {
             SimpleChunk c = (SimpleChunk) last;
-            is = ((InterfaceTypeAccess) owner).dataViewIterator((int) c.bpo, (int) (c.bpo + c.count));
+            is = ((UserdefinedTypeAccess) owner).dataViewIterator((int) c.bpo, (int) (c.bpo + c.count));
         } else
             is = owner.iterator();
 
-        final ClassTypeAccess target = (ClassTypeAccess)type;
+        final IdentifierAccess target = (IdentifierAccess)type;
         int count = (int) last.count;
         while (0 != count--) {
-            is.next().setSuper(target.getByID(in.v64()));
+            is.next().setName(target.getByID(in.v64()));
         }
     }
 
@@ -60,7 +60,7 @@ final class KnownField_InterfaceType_Zsuper extends FieldDeclaration<de.unistutt
         int i = null == range ? 0 : (int) range.bpo;
         final int high = null == range ? data.length : (int) (range.bpo + range.count);
         for (; i < high; i++) {
-            final de.unistuttgart.iste.ps.skilled.sir.ClassType instance = ((de.unistuttgart.iste.ps.skilled.sir.InterfaceType)data[i]).getSuper();
+            final de.unistuttgart.iste.ps.skilled.sir.Identifier instance = ((de.unistuttgart.iste.ps.skilled.sir.UserdefinedType)data[i]).getName();
             if (null == instance) {
                 result += 1;
                 continue;
@@ -107,7 +107,7 @@ final class KnownField_InterfaceType_Zsuper extends FieldDeclaration<de.unistutt
         }
 
         for (; i < high; i++) {
-            de.unistuttgart.iste.ps.skilled.sir.ClassType v = ((de.unistuttgart.iste.ps.skilled.sir.InterfaceType)data[i]).getSuper();
+            de.unistuttgart.iste.ps.skilled.sir.Identifier v = ((de.unistuttgart.iste.ps.skilled.sir.UserdefinedType)data[i]).getName();
             if (null == v)
                 out.i8((byte) 0);
             else
@@ -116,22 +116,22 @@ final class KnownField_InterfaceType_Zsuper extends FieldDeclaration<de.unistutt
     }
 
     @Override
-    public de.unistuttgart.iste.ps.skilled.sir.ClassType getR(SkillObject ref) {
-        return ((de.unistuttgart.iste.ps.skilled.sir.InterfaceType) ref).getSuper();
+    public de.unistuttgart.iste.ps.skilled.sir.Identifier getR(SkillObject ref) {
+        return ((de.unistuttgart.iste.ps.skilled.sir.UserdefinedType) ref).getName();
     }
 
     @Override
-    public void setR(SkillObject ref, de.unistuttgart.iste.ps.skilled.sir.ClassType value) {
-        ((de.unistuttgart.iste.ps.skilled.sir.InterfaceType) ref).setSuper(value);
+    public void setR(SkillObject ref, de.unistuttgart.iste.ps.skilled.sir.Identifier value) {
+        ((de.unistuttgart.iste.ps.skilled.sir.UserdefinedType) ref).setName(value);
     }
 
     @Override
-    public de.unistuttgart.iste.ps.skilled.sir.ClassType get(de.unistuttgart.iste.ps.skilled.sir.InterfaceType ref) {
-        return ref.getSuper();
+    public de.unistuttgart.iste.ps.skilled.sir.Identifier get(de.unistuttgart.iste.ps.skilled.sir.UserdefinedType ref) {
+        return ref.getName();
     }
 
     @Override
-    public void set(de.unistuttgart.iste.ps.skilled.sir.InterfaceType ref, de.unistuttgart.iste.ps.skilled.sir.ClassType value) {
-        ref.setSuper(value);
+    public void set(de.unistuttgart.iste.ps.skilled.sir.UserdefinedType ref, de.unistuttgart.iste.ps.skilled.sir.Identifier value) {
+        ref.setName(value);
     }
 }

@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -25,7 +25,7 @@ public class SimpleTypeAccess extends SubPool<de.unistuttgart.iste.ps.skilled.si
      * Can only be constructed by the SkillFile in this package.
      */
     SimpleTypeAccess(int poolIndex, BuiltinTypeAccess superPool) {
-        super(poolIndex, "simpletype", superPool, new HashSet<String>(Arrays.asList(new String[] {  })), noAutoFields());
+        super(poolIndex, "simpletype", superPool, new HashSet<String>(Arrays.asList(new String[] { "name" })), noAutoFields());
     }
 
     @Override
@@ -46,6 +46,46 @@ public class SimpleTypeAccess extends SubPool<de.unistuttgart.iste.ps.skilled.si
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public void addKnownField(
+        String name,
+        de.ust.skill.common.java.internal.fieldTypes.StringType string,
+        de.ust.skill.common.java.internal.fieldTypes.Annotation annotation) {
+
+        final FieldDeclaration<?, de.unistuttgart.iste.ps.skilled.sir.SimpleType> f;
+        switch (name) {
+        case "name":
+            f = new KnownField_SimpleType_name((FieldType<de.unistuttgart.iste.ps.skilled.sir.Identifier>)(owner().poolByName().get("identifier")), 1 + dataFields.size(), this);
+            break;
+
+        default:
+            super.addKnownField(name, string, annotation);
+            return;
+        }
+        if (!(f instanceof AutoField))
+            dataFields.add(f);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <R> FieldDeclaration<R, de.unistuttgart.iste.ps.skilled.sir.SimpleType> addField(int ID, FieldType<R> type, String name,
+            HashSet<FieldRestriction<?>> restrictions) {
+        final FieldDeclaration<R, de.unistuttgart.iste.ps.skilled.sir.SimpleType> f;
+        switch (name) {
+        case "name":
+            f = (FieldDeclaration<R, de.unistuttgart.iste.ps.skilled.sir.SimpleType>) new KnownField_SimpleType_name((FieldType<de.unistuttgart.iste.ps.skilled.sir.Identifier>) type, ID, this);
+            break;
+
+        default:
+            return super.addField(ID, type, name, restrictions);
+        }
+
+        for (FieldRestriction<?> r : restrictions)
+            f.addRestriction(r);
+        dataFields.add(f);
+        return f;
+    }
 
     /**
      * @return a new SimpleType instance with default field values

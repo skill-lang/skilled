@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -124,31 +124,6 @@ public class FieldViewAccess extends SubPool<de.unistuttgart.iste.ps.skilled.sir
 
         public FieldViewBuilder target(de.unistuttgart.iste.ps.skilled.sir.FieldLike target) {
             instance.setTarget(target);
-            return this;
-        }
-
-        public FieldViewBuilder comment(de.unistuttgart.iste.ps.skilled.sir.Comment comment) {
-            instance.setComment(comment);
-            return this;
-        }
-
-        public FieldViewBuilder name(de.unistuttgart.iste.ps.skilled.sir.Identifier name) {
-            instance.setName(name);
-            return this;
-        }
-
-        public FieldViewBuilder type(de.unistuttgart.iste.ps.skilled.sir.Type type) {
-            instance.setType(type);
-            return this;
-        }
-
-        public FieldViewBuilder hints(java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint> hints) {
-            instance.setHints(hints);
-            return this;
-        }
-
-        public FieldViewBuilder restrictions(java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Restriction> restrictions) {
-            instance.setRestrictions(restrictions);
             return this;
         }
 

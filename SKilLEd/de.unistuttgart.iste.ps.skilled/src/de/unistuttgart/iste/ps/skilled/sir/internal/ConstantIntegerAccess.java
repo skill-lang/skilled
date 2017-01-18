@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -123,11 +123,6 @@ public class ConstantIntegerAccess extends SubPool<de.unistuttgart.iste.ps.skill
 
         public ConstantIntegerBuilder value(long value) {
             instance.setValue(value);
-            return this;
-        }
-
-        public ConstantIntegerBuilder name(de.unistuttgart.iste.ps.skilled.sir.Identifier name) {
-            instance.setName(name);
             return this;
         }
 

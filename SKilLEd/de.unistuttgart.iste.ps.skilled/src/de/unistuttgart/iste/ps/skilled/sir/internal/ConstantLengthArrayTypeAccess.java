@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -124,16 +124,6 @@ public class ConstantLengthArrayTypeAccess extends SubPool<de.unistuttgart.iste.
 
         public ConstantLengthArrayTypeBuilder length(long length) {
             instance.setLength(length);
-            return this;
-        }
-
-        public ConstantLengthArrayTypeBuilder base(de.unistuttgart.iste.ps.skilled.sir.GroundType base) {
-            instance.setBase(base);
-            return this;
-        }
-
-        public ConstantLengthArrayTypeBuilder kind(java.lang.String kind) {
-            instance.setKind(kind);
             return this;
         }
 

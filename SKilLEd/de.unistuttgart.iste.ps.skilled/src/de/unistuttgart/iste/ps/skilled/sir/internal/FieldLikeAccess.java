@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -27,7 +27,7 @@ public class FieldLikeAccess extends BasePool<de.unistuttgart.iste.ps.skilled.si
      * Can only be constructed by the SkillFile in this package.
      */
     FieldLikeAccess(int poolIndex) {
-        super(poolIndex, "fieldlike", new HashSet<String>(Arrays.asList(new String[] { "comment", "name", "type" })), noAutoFields());
+        super(poolIndex, "fieldlike", new HashSet<String>(Arrays.asList(new String[] { "comment", "name", "type", "hints", "restrictions" })), noAutoFields());
     }
 
     final de.unistuttgart.iste.ps.skilled.sir.FieldLike[] data() {
@@ -72,6 +72,14 @@ public class FieldLikeAccess extends BasePool<de.unistuttgart.iste.ps.skilled.si
             f = new KnownField_FieldLike_type((FieldType<de.unistuttgart.iste.ps.skilled.sir.Type>)(owner().poolByName().get("type")), 1 + dataFields.size(), this);
             break;
 
+        case "hints":
+            f = new KnownField_FieldLike_hints(new VariableLengthArray<>((FieldType<de.unistuttgart.iste.ps.skilled.sir.Hint>)(owner().poolByName().get("hint"))), 1 + dataFields.size(), this);
+            break;
+
+        case "restrictions":
+            f = new KnownField_FieldLike_restrictions(new VariableLengthArray<>((FieldType<de.unistuttgart.iste.ps.skilled.sir.Restriction>)(owner().poolByName().get("restriction"))), 1 + dataFields.size(), this);
+            break;
+
         default:
             super.addKnownField(name, string, annotation);
             return;
@@ -96,6 +104,14 @@ public class FieldLikeAccess extends BasePool<de.unistuttgart.iste.ps.skilled.si
 
         case "type":
             f = (FieldDeclaration<R, de.unistuttgart.iste.ps.skilled.sir.FieldLike>) new KnownField_FieldLike_type((FieldType<de.unistuttgart.iste.ps.skilled.sir.Type>) type, ID, this);
+            break;
+
+        case "hints":
+            f = (FieldDeclaration<R, de.unistuttgart.iste.ps.skilled.sir.FieldLike>) new KnownField_FieldLike_hints((FieldType<java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Hint>>) type, ID, this);
+            break;
+
+        case "restrictions":
+            f = (FieldDeclaration<R, de.unistuttgart.iste.ps.skilled.sir.FieldLike>) new KnownField_FieldLike_restrictions((FieldType<java.util.ArrayList<de.unistuttgart.iste.ps.skilled.sir.Restriction>>) type, ID, this);
             break;
 
         default:

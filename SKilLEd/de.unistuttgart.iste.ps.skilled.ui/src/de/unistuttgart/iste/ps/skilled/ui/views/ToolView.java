@@ -237,7 +237,7 @@ public class ToolView extends ViewPart {
         typeTabItem.setText("Types - " + activeTool.getName());
 
         if (skillFile != null)
-            iterateTypesAndHints(typeTree);
+            updateTypes(typeTree);
 
         typeTabItem.setControl(typeTree);
         typeTabItem.setData(typeTree);
@@ -253,18 +253,18 @@ public class ToolView extends ViewPart {
      * @param typeTree
      *            - a {@link Tree} to hold the types and their hints
      */
-    private void iterateTypesAndHints(Tree typeTree) {
+    private void updateTypes(Tree typeTree) {
         // add all types to the tree
         for (UserdefinedType type : skillFile.UserdefinedTypes()) {
             TreeItem typeTreeItem = new TreeItem(typeTree, 0);
             typeTreeItem.setText(nameToText(type.getName()));
             typeTreeItem.setData(type);
 
-            boolean selected = false;
-            if (null != activeTool && activeTool.getSelectedUserTypes().contains(type)) {
-                typeTreeItem.setChecked(selected = true);
-            }
-            iterateTypeHints(typeTreeItem, type, selected);
+//            boolean selected = false;
+//            if (null != activeTool && activeTool.getSelectedUserTypes().contains(type)) {
+//                typeTreeItem.setChecked(selected = true);
+//            }
+            // TODO iterateTypeHints(typeTreeItem, type, selected);
         }
     }
 

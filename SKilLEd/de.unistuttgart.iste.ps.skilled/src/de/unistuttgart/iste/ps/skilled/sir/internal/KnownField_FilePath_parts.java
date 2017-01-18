@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -62,12 +62,12 @@ final class KnownField_FilePath_parts extends FieldDeclaration<java.util.ArrayLi
         int i = null == range ? 0 : (int) range.bpo;
         final int high = null == range ? data.length : (int) (range.bpo + range.count);
         for (; i < high; i++) {
-            final java.util.ArrayList<java.lang.String> v = (data[i]).getParts();
-            if(null==v)
+            final java.util.ArrayList<? extends java.lang.String> v = (java.util.ArrayList<? extends java.lang.String>)(data[i]).getParts();
+            if(null==v || v.isEmpty())
                 result++;
             else {
                 result += V64.singleV64Offset(v.size());
-                result += baseType.calculateOffset(v);
+                result += baseType.calculateOffset((java.util.ArrayList<java.lang.String>)v);
             }
         }
         return result;

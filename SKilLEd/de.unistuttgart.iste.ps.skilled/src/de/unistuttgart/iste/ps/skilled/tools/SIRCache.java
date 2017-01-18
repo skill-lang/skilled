@@ -13,8 +13,8 @@ import de.unistuttgart.iste.ps.skilled.sir.api.SkillFile;
 import de.ust.skill.common.java.api.SkillException;
 
 /**
- * Holds open sir files for each project.
- * Files are opened in write mode and flushed on change.
+ * Holds open sir files for each project. Files are opened in write mode and
+ * flushed on change.
  * 
  * @author Timm Felden
  */
@@ -23,7 +23,7 @@ public enum SIRCache {
 
     private HashMap<IProject, SkillFile> sirFiles = new HashMap<>();
 
-    public static SkillFile ensureFile(IProject p) {
+    public static synchronized SkillFile ensureFile(IProject p) {
         SkillFile rval = instance.sirFiles.get(p);
         if (null == rval) {
             try {

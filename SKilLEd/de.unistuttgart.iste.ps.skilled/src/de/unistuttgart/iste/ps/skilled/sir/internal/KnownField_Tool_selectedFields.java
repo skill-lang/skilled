@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -62,8 +62,8 @@ final class KnownField_Tool_selectedFields extends FieldDeclaration<java.util.Ha
         int i = null == range ? 0 : (int) range.bpo;
         final int high = null == range ? data.length : (int) (range.bpo + range.count);
         for (; i < high; i++) {
-            final java.util.HashMap<de.unistuttgart.iste.ps.skilled.sir.UserdefinedType, java.util.HashMap<java.lang.String, de.unistuttgart.iste.ps.skilled.sir.FieldLike>> v = (data[i]).getSelectedFields();
-            if(null==v)
+            final java.util.HashMap<? extends de.unistuttgart.iste.ps.skilled.sir.UserdefinedType, java.util.HashMap<? extends java.lang.String, ? extends de.unistuttgart.iste.ps.skilled.sir.FieldLike>> v = castMap((data[i]).getSelectedFields());
+            if(null==v || v.isEmpty())
                 result++;
             else {
                 result += V64.singleV64Offset(v.size());

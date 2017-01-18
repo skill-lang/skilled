@@ -1,6 +1,6 @@
 /*  ___ _  ___ _ _                                                            *\
  * / __| |/ (_) | |       Your SKilL Java 8 Binding                           *
- * \__ \ ' <| | | |__     generated: 16.01.2017                               *
+ * \__ \ ' <| | | |__     generated: 18.01.2017                               *
  * |___/_|\_\_|_|____|    by: feldentm                                        *
 \*                                                                            */
 package de.unistuttgart.iste.ps.skilled.sir.internal;
@@ -62,8 +62,8 @@ final class KnownField_Tool_customTypeAnnotations extends FieldDeclaration<java.
         int i = null == range ? 0 : (int) range.bpo;
         final int high = null == range ? data.length : (int) (range.bpo + range.count);
         for (; i < high; i++) {
-            final java.util.HashMap<de.unistuttgart.iste.ps.skilled.sir.UserdefinedType, de.unistuttgart.iste.ps.skilled.sir.ToolTypeCustomization> v = (data[i]).getCustomTypeAnnotations();
-            if(null==v)
+            final java.util.HashMap<? extends de.unistuttgart.iste.ps.skilled.sir.UserdefinedType, ? extends de.unistuttgart.iste.ps.skilled.sir.ToolTypeCustomization> v = castMap((data[i]).getCustomTypeAnnotations());
+            if(null==v || v.isEmpty())
                 result++;
             else {
                 result += V64.singleV64Offset(v.size());
