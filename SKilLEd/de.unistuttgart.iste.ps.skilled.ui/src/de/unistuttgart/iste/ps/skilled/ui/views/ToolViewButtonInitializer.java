@@ -9,7 +9,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IActionBars;
 
 import de.unistuttgart.iste.ps.skilled.sir.Tool;
-import de.unistuttgart.iste.ps.skilled.tools.ToolInfo;
+import de.unistuttgart.iste.ps.skilled.tools.SIRHelper;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.SKilLToolWizard;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
@@ -28,10 +28,10 @@ public class ToolViewButtonInitializer {
     private Action cloneToolAction;
     private Action removeHintAction;
 
-    private ToolView toolview;
+    private ToolView toolView;
 
     public ToolViewButtonInitializer(ToolView toolview) {
-        this.toolview = toolview;
+        this.toolView = toolview;
     }
 
     /**
@@ -44,7 +44,7 @@ public class ToolViewButtonInitializer {
         createToolAction = new Action() {
             @Override
             public void run() {
-                createToolDialog();
+                runCreateToolDialog();
             }
         };
         createToolAction.setText("Create Tool");
@@ -74,29 +74,20 @@ public class ToolViewButtonInitializer {
      * 
      * @category Dialog
      */
-    private void createToolDialog() {
+    private void runCreateToolDialog() {
         final SKilLToolWizard sKilLToolWizard = new SKilLToolWizard(WizardOption.CREATE,
-                ToolInfo.getTools(toolview.getActiveProject()));
-        WizardDialog wizardDialog = new WizardDialog(toolview.getShell(), sKilLToolWizard);
+                SIRHelper.getTools(toolView.getActiveProject()));
+        WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), sKilLToolWizard);
         if (wizardDialog.open() == Window.OK) {
             String newToolName = sKilLToolWizard.getToolNewName();
             if (newToolName == null)
                 return;
-            if (!ToolUtil.createTool(newToolName, toolview.getActiveProject()))
-                toolview.showMessage("Could not create tool.");
 
-            toolview.readToolBinaryFile();
-            if (sKilLToolWizard.getAddAllCheckboxState()) {
-                try {
-                    Tool tool = toolview.getSkillFile().Tools().stream().filter(t -> t.getName().equals(newToolName))
-                            .findFirst().get();
-                    ToolUtil.addAllToTool(toolview.getSkillFile(), toolview.getActiveProject(), tool);
-                } catch (@SuppressWarnings("unused") NoSuchElementException e) {
-                    // no such tool
-                    return;
-                }
-            }
-            toolview.refresh();
+            Tool t = ToolUtil.createNewTool(toolView.getActiveProject(), newToolName,
+                    sKilLToolWizard.getAddAllCheckboxState());
+
+            toolView.refresh();
+            toolView.setActiveTool(t);
         }
     }
 
@@ -107,25 +98,25 @@ public class ToolViewButtonInitializer {
      */
     private void cloneToolDialog() {
         final SKilLToolWizard skillToolWizard = new SKilLToolWizard(WizardOption.CLONE,
-                toolview.getSkillFile().Tools());
-        WizardDialog wizardDialog = new WizardDialog(toolview.getShell(), skillToolWizard);
+                toolView.getSkillFile().Tools());
+        WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), skillToolWizard);
         if (wizardDialog.open() == Window.OK) {
             String newToolName = skillToolWizard.getToolNewName();
             Tool cloneTool;
             try {
-                cloneTool = toolview.getSkillFile().Tools().stream()
+                cloneTool = toolView.getSkillFile().Tools().stream()
                         .filter(t -> t.getName().equals(skillToolWizard.getCloneToolName())).findFirst().get();
-            } catch (@SuppressWarnings("unused") NoSuchElementException e) {
-                toolview.showMessage("Could not create tool.");
+            } catch (NoSuchElementException e) {
+                toolView.showMessage("Could not create tool.");
                 return;
             }
             if (newToolName == null)
                 return;
-            if (!ToolUtil.cloneTool(toolview.getActiveProject(), cloneTool, newToolName, toolview.getSkillFile())) {
-                toolview.showMessage("Could not create tool.");
+            if (!ToolUtil.cloneTool(toolView.getActiveProject(), cloneTool, newToolName, toolView.getSkillFile())) {
+                toolView.showMessage("Could not create tool.");
                 return;
             }
-            toolview.refresh();
+            toolView.refresh();
         }
     }
 
@@ -167,7 +158,7 @@ public class ToolViewButtonInitializer {
      * @category GUI
      */
     private void fillLocalToolBar() {
-        IActionBars bars = toolview.getViewSite().getActionBars();
+        IActionBars bars = toolView.getViewSite().getActionBars();
         IToolBarManager manager = bars.getToolBarManager();
         manager.add(createToolAction);
         manager.add(cloneToolAction);

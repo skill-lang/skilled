@@ -500,7 +500,7 @@ class ImportCombine {
 		}
 
 		// Create tool
-		ToolUtil.createTool(ImportTools.getFileName(), project);
+		//TODO ToolUtil.createTool(ImportTools.getFileName(), project);
 		ImportTools.addAllToNewTool(fProjectPath, project);
 
 	}

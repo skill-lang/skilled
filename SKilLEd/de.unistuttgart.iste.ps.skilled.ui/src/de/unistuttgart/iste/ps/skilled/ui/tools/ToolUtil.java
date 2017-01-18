@@ -1,5 +1,8 @@
 package de.unistuttgart.iste.ps.skilled.ui.tools;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 import javax.xml.crypto.NoSuchMechanismException;
 
 import org.eclipse.core.resources.IProject;
@@ -11,19 +14,23 @@ import de.unistuttgart.iste.ps.skilled.sir.Tool;
 import de.unistuttgart.iste.ps.skilled.sir.Type;
 import de.unistuttgart.iste.ps.skilled.sir.UserdefinedType;
 import de.unistuttgart.iste.ps.skilled.sir.api.SkillFile;
+import de.unistuttgart.iste.ps.skilled.sir.internal.ToolAccess.ToolBuilder;
+import de.unistuttgart.iste.ps.skilled.tools.SIRCache;
+import de.unistuttgart.iste.ps.skilled.tools.SIRHelper;
 
 /**
- * Class for executing SKilLls commands.
+ * This class encapsulates common modifications of tools.
  * 
  * @author Armin Hüneburg
  * @author Marco Link
  * @author Ken Singer
+ * @author Timm Felden
  */
 public final class ToolUtil {
     static String addendum = "";
 
     /**
-     * Tries to create a new Tool.
+     * Create a tool and ensure that it is persisted.
      * 
      * @param name
      *            name of the tool
@@ -31,17 +38,29 @@ public final class ToolUtil {
      *            the project the tool should be created in
      * @return true if creation was successful
      */
-    public static boolean createTool(String name, IProject project) {
-        String[] arguments = null;
-        if (project != null)
-            arguments = new String[] { "-e", project.getLocation().toPortableString(), "&n:" + name };
+    public static Tool createNewTool(IProject project, String name, boolean addTypes) {
+        SkillFile sf = SIRCache.ensureFile(project);
 
-        try {
-            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
-            return true;
-        } catch (@SuppressWarnings("unused") Throwable t) {
-            return false;
+        ToolBuilder t = sf.Tools().build();
+        t.name(name);
+        if (addTypes) {
+            HashSet<UserdefinedType> types = new HashSet<UserdefinedType>();
+            HashMap<UserdefinedType, HashMap<String, FieldLike>> selectedFields = new HashMap<>();
+            for (UserdefinedType type : sf.UserdefinedTypes()) {
+                types.add(type);
+                HashMap<String, FieldLike> fields = new HashMap<>();
+                for (FieldLike f : SIRHelper.fieldsOf(type)) {
+                    fields.put(f.getName().skillName(), f);
+                }
+                selectedFields.put(type, fields);
+            }
+            t.selectedUserTypes(types);
+            t.selectedFields(selectedFields);
         }
+        Tool rval = t.make();
+        sf.flush();
+        return rval;
+
     }
 
     /**

@@ -18,6 +18,7 @@ import de.unistuttgart.iste.ps.skilled.sir.Tool;
  * 
  * @author Nico Rusam
  * @author Ken Singer
+ * @author Timm Felden
  *
  */
 public class SKilLNewToolWizardPage extends WizardPage {
@@ -30,7 +31,7 @@ public class SKilLNewToolWizardPage extends WizardPage {
     public SKilLNewToolWizardPage(Iterable<Tool> allToolList) {
         super("Create a new tool");
         setTitle("Create a new tool");
-        setDescription("In this page you can insert a name for the new tool.");
+        setDescription("Add a new tool to your project.");
         this.tools = allToolList;
     }
 
@@ -41,30 +42,22 @@ public class SKilLNewToolWizardPage extends WizardPage {
         layout.numColumns = 1;
         container.setLayout(layout);
         Label label1 = new Label(container, SWT.NONE);
-        label1.setText("Put a value here.");
+        label1.setText("Specify a name:");
 
         this.tbName = new Text(container, SWT.BORDER | SWT.SINGLE);
         this.tbName.setText("");
-        this.tbName.addKeyListener(new KeyListener() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                // not used
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
+        this.tbName.addModifyListener(e -> {
+            if (tbName.getText().isEmpty()) {
                 setPageComplete(false);
-                if (!tbName.getText().isEmpty()) {
-                    boolean match = false;
-                    for (Tool t : tools) {
-                        if (t.getName().toLowerCase().equals(tbName.getText().toLowerCase())) {
-                            match = true;
-                            break;
-                        }
+            } else {
+                final String name = tbName.getText().toLowerCase();
+                for (Tool t : tools) {
+                    if (t.getName().toLowerCase().equals(name)) {
+                        setPageComplete(false);
+                        return;
                     }
-                    if (!match)
-                        setPageComplete(true);
                 }
+                setPageComplete(true);
             }
         });
         checkbox = new Button(container, SWT.CHECK);

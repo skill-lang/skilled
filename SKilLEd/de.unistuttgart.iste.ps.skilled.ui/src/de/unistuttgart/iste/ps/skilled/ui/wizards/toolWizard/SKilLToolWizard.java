@@ -14,7 +14,7 @@ import de.unistuttgart.iste.ps.skilled.sir.internal.ToolAccess;
  */
 public class SKilLToolWizard extends Wizard {
 
-    private WizardOption wizardOption;
+    final private WizardOption wizardOption;
     protected SKilLNewToolWizardPage pageNewTool;
     protected boolean addAllcheckboxState;
     protected SKilLCloneToolWizardPage cloneTool;
@@ -24,17 +24,8 @@ public class SKilLToolWizard extends Wizard {
     private ToolAccess toolList;
     private String cloneToolName;
 
-    /**
-     * Default Wizard with create new tool option.
-     */
-    public SKilLToolWizard() {
-        super();
-        setNeedsProgressMonitor(true);
-        this.wizardOption = WizardOption.CREATE;
-    }
-
     public SKilLToolWizard(WizardOption option, String name) {
-        this();
+        setNeedsProgressMonitor(true);
         this.wizardOption = option;
         this.name = name;
     }
@@ -47,9 +38,9 @@ public class SKilLToolWizard extends Wizard {
      * @param toolList
      */
     public SKilLToolWizard(WizardOption option, ToolAccess toolList) {
-        this();
-        this.toolList = toolList;
+        setNeedsProgressMonitor(true);
         this.wizardOption = option;
+        this.toolList = toolList;
     }
 
     @Override

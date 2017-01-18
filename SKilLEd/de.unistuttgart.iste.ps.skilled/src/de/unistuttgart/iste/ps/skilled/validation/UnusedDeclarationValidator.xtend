@@ -4,10 +4,10 @@ import com.google.inject.Inject
 import de.unistuttgart.iste.ps.skilled.skill.Declaration
 import de.unistuttgart.iste.ps.skilled.skill.Field
 import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
-import de.unistuttgart.iste.ps.skilled.tools.ToolInfo
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.validation.Check
+import de.unistuttgart.iste.ps.skilled.tools.SIRHelper
 
 class UnusedDeclarationValidator extends AbstractSKilLComposedValidatorPart {
 
@@ -26,7 +26,7 @@ class UnusedDeclarationValidator extends AbstractSKilLComposedValidatorPart {
 		if (project == null) {
 			return
 		}
-		val tools = ToolInfo.getTools(project)
+		val tools = SIRHelper.getTools(project)
 		// do not warn if there are no tools at all
 		if (tools.isEmpty) {
 			return
@@ -65,7 +65,7 @@ class UnusedDeclarationValidator extends AbstractSKilLComposedValidatorPart {
 		if (project == null) {
 			return
 		}
-		val tools = ToolInfo.getTools(project)
+		val tools = SIRHelper.getTools(project)
 		// do not warn if there are no tools at all
 		if (tools.isEmpty) {
 			return

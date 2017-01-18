@@ -4,9 +4,9 @@ import de.unistuttgart.iste.ps.skilled.skill.Field
 import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
 import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration
 import de.unistuttgart.iste.ps.skilled.tools.SIRCache
-import de.unistuttgart.iste.ps.skilled.tools.ToolInfo
 import de.unistuttgart.iste.ps.skilled.util.KeywordCheckEscaping
 import org.eclipse.xtext.validation.Check
+import de.unistuttgart.iste.ps.skilled.tools.SIRHelper
 
 /**
  * This Class checks if a name is a keyword that requires escaping in the target 
@@ -22,7 +22,7 @@ class KeywordWarning extends AbstractSKilLComposedValidatorPart {
 	 */
 	@Check
 	def KeywordWarning(TypeDeclaration dec) {
-		val languages = ToolInfo.usedLanguages(SIRCache.getProject(dec));
+		val languages = SIRHelper.usedLanguages(SIRCache.getProject(dec));
 		if (!languages.isEmpty) {
 			val requiresEscaping = KeywordCheckEscaping.requiresEscaping(dec.name).filter([ String s |
 				languages.contains(s)
@@ -39,7 +39,7 @@ class KeywordWarning extends AbstractSKilLComposedValidatorPart {
 	 */
 	@Check
 	def void fieldCheck(Field field) {
-		val languages = ToolInfo.usedLanguages(SIRCache.getProject(field));
+		val languages = SIRHelper.usedLanguages(SIRCache.getProject(field));
 		if (!languages.isEmpty) {
 			val requiresEscaping = KeywordCheckEscaping.requiresEscaping(field.fieldcontent.name).filter([ String s |
 				languages.contains(s)

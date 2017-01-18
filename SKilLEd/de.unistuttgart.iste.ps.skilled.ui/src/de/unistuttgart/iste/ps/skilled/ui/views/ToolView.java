@@ -29,7 +29,6 @@ import de.unistuttgart.iste.ps.skilled.sir.Type;
 import de.unistuttgart.iste.ps.skilled.sir.UserdefinedType;
 import de.unistuttgart.iste.ps.skilled.sir.api.SkillFile;
 import de.unistuttgart.iste.ps.skilled.tools.SIRCache;
-import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 
 /**
  * This class creates the SKilL-Tool-Overview which enables the user to create
@@ -160,22 +159,17 @@ public class ToolView extends ViewPart {
     }
 
     /**
-     * Reads the .skills file of the current
+     * Ensures that the .sir file used by this dialog is connected to
      * <code>{@link IProject activeProject}</code>.
      * 
      * @category Data Handling
      */
-    void readToolBinaryFile() {
+    void ensureActiveProjectandSIR() {
         try {
             IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                     .getActivePage().getActiveEditor().getEditorInput();
+
             activeProject = file.getFile().getProject();
-
-            if (doIndexing) {
-                ToolUtil.indexing(activeProject);
-                doIndexing = false;
-            }
-
             skillFile = SIRCache.ensureFile(activeProject);
         } catch (Exception e) {
             // skillfile does not exist or no active project
@@ -192,7 +186,7 @@ public class ToolView extends ViewPart {
      * @category Data Handling
      */
     private List buildToollist() {
-        readToolBinaryFile();
+        ensureActiveProjectandSIR();
 
         if (tabFolder.isDisposed())
             tabFolder = new CTabFolder(parent, SWT.BORDER);
@@ -260,10 +254,11 @@ public class ToolView extends ViewPart {
             typeTreeItem.setText(nameToText(type.getName()));
             typeTreeItem.setData(type);
 
-//            boolean selected = false;
-//            if (null != activeTool && activeTool.getSelectedUserTypes().contains(type)) {
-//                typeTreeItem.setChecked(selected = true);
-//            }
+            // boolean selected = false;
+            // if (null != activeTool &&
+            // activeTool.getSelectedUserTypes().contains(type)) {
+            // typeTreeItem.setChecked(selected = true);
+            // }
             // TODO iterateTypeHints(typeTreeItem, type, selected);
         }
     }

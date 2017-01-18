@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-import de.unistuttgart.iste.ps.skilled.tools.ToolInfo;
+import de.unistuttgart.iste.ps.skilled.tools.SIRHelper;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.SKilLToolWizard;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
@@ -61,7 +61,7 @@ public class ContextMenuToolView {
                     @Override
                     public void widgetSelected(SelectionEvent arg0) {
                         SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.CLONE,
-                                ToolInfo.getTools(toolView.getActiveProject()));
+                                SIRHelper.getTools(toolView.getActiveProject()));
                         WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), newWizard);
 
                         if (wizardDialog.open() == Window.OK)
