@@ -164,17 +164,21 @@ public class ToolView extends ViewPart {
      * 
      * @category Data Handling
      */
-    void ensureActiveProjectandSIR() {
+    boolean ensureActiveProjectandSIR() {
         try {
             IFileEditorInput file = (IFileEditorInput) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                     .getActivePage().getActiveEditor().getEditorInput();
 
             activeProject = file.getFile().getProject();
-            skillFile = SIRCache.ensureFile(activeProject);
-        } catch (Exception e) {
-            // skillfile does not exist or no active project
-            return;
+            if (null == activeProject)
+                return false;
+        } catch (NullPointerException e) {
+            // some of the components is not yet available
+            return false;
         }
+
+        skillFile = SIRCache.ensureFile(activeProject);
+        return true;
     }
 
     /**
@@ -186,7 +190,7 @@ public class ToolView extends ViewPart {
      * @category Data Handling
      */
     private List buildToollist() {
-        ensureActiveProjectandSIR();
+        boolean hasProject = ensureActiveProjectandSIR();
 
         if (tabFolder.isDisposed())
             tabFolder = new CTabFolder(parent, SWT.BORDER);
@@ -196,16 +200,17 @@ public class ToolView extends ViewPart {
         if (toolTabItem.isDisposed())
             toolTabItem = new CTabItem(tabFolder, 0, 0);
 
-        try {
+        if (hasProject)
             toolTabItem.setText("Tools - " + activeProject.getName());
-        } catch (NullPointerException e) {
+        else
             toolTabItem.setText("Tools");
-        }
+
         toolTabItem.setControl(toolViewList);
         toolTabItem.setData(toolViewList);
 
-        for (Tool t : skillFile.Tools())
-            toolViewList.add((t).getName());
+        if (hasProject)
+            for (Tool t : skillFile.Tools())
+                toolViewList.add((t).getName());
 
         ToolViewListener tvl = new ToolViewListener(this);
         tvl.initToolListListener(toolViewList);
