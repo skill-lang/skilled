@@ -9,6 +9,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
+import de.unistuttgart.iste.ps.skilled.sir.BuildInformation;
+import de.unistuttgart.iste.ps.skilled.sir.Tool;
 import de.unistuttgart.iste.ps.skilled.sir.api.SkillFile;
 import de.ust.skill.common.java.api.SkillException;
 
@@ -46,5 +48,16 @@ public enum SIRCache {
         } catch (IllegalStateException e) {
             return null;
         }
+    }
+
+    public static void deleteTool(IProject p, Tool activeTool) {
+        SkillFile sf = ensureFile(p);
+        // delete tool
+        sf.delete(activeTool);
+        // delete its build targets
+        for (BuildInformation b : activeTool.getBuildTargets()) {
+            sf.delete(b);
+        }
+        sf.flush();
     }
 }

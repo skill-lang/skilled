@@ -25,9 +25,9 @@ import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
  * @category GUI
  */
 public class ToolViewListener {
-    private ToolView toolview;
+    final private ToolView toolview;
 
-    private EditorUtil editorUtil = new EditorUtil();
+    final private EditorUtil editorUtil = new EditorUtil();
 
     public ToolViewListener(ToolView toolView) {
         this.toolview = toolView;

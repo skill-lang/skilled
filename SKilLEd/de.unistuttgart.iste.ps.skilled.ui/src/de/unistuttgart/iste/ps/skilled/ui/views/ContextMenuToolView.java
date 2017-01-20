@@ -13,7 +13,11 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import de.unistuttgart.iste.ps.skilled.sir.Tool;
+import de.unistuttgart.iste.ps.skilled.sir.api.SkillFile;
+import de.unistuttgart.iste.ps.skilled.tools.SIRCache;
 import de.unistuttgart.iste.ps.skilled.tools.SIRHelper;
+import de.unistuttgart.iste.ps.skilled.ui.tools.ToolConfigurationDialog;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.SKilLToolWizard;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
@@ -24,13 +28,12 @@ import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
  * @category GUI
  * @author Nico Rusam
  * @author Ken Singer
+ * @author Timm Felden
  */
-public class ContextMenuToolView {
+final class ContextMenuToolView {
 
-    private final ToolView toolView;
-
-    public ContextMenuToolView(ToolView toolView) {
-        this.toolView = toolView;
+    // no instances
+    private ContextMenuToolView() {
     }
 
     /**
@@ -40,7 +43,7 @@ public class ContextMenuToolView {
      * @param menu
      *            - {@link Menu}
      */
-    void initContextMenu(List toollist, final Menu menu) {
+    static void make(ToolView toolView, List toollist, final Menu menu) {
 
         toollist.setMenu(menu);
         menu.addMenuListener(new MenuAdapter() {
@@ -54,72 +57,102 @@ public class ContextMenuToolView {
                 for (MenuItem mI : menu.getItems())
                     mI.dispose();
 
+                // Create contextmenu for 'Build'.
+                {
+                    MenuItem item = new MenuItem(menu, SWT.NONE);
+                    item.setText("Build");
+                    item.addSelectionListener(new SelectionListener() {
+                        @Override
+                        public void widgetSelected(SelectionEvent arg0) {
+                            SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.RENAME,
+                                    toollist.getItem(selected));
+                            WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), newWizard);
+
+                            if (wizardDialog.open() == Window.OK)
+                                ToolUtil.renameTool(toolView.getActiveTool().getName(), newWizard.getToolNewName(),
+                                        toolView.getActiveProject());
+
+                            toolView.refresh();
+                        }
+
+                        @Override
+                        public void widgetDefaultSelected(SelectionEvent arg0) {
+                            // no default
+                        }
+                    });
+                }
+
+                // Create contextmenu for 'configure'.
+                {
+                    MenuItem item = new MenuItem(menu, SWT.NONE);
+                    item.setText("Configure");
+                    item.addSelectionListener(new SelectionListener() {
+                        @Override
+                        public void widgetSelected(SelectionEvent e) {
+
+                            ToolConfigurationDialog dialog = new ToolConfigurationDialog(toolView.getShell(),
+                                    toolView.getActiveTool());
+
+                            if (dialog.open() == Window.OK) {
+                                SIRCache.ensureFile(toolView.getActiveProject()).flush();
+
+                                toolView.refresh();
+                            }
+
+                        }
+
+                        @Override
+                        public void widgetDefaultSelected(SelectionEvent arg0) {
+                            // no default
+                        }
+                    });
+                }
+
                 // Create contextmenu for 'Clone Tool'.
-                MenuItem cloneToolItem = new MenuItem(menu, SWT.NONE);
-                cloneToolItem.setText("Clone Tool");
-                cloneToolItem.addSelectionListener(new SelectionListener() {
-                    @Override
-                    public void widgetSelected(SelectionEvent arg0) {
-                        SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.CLONE,
-                                SIRHelper.getTools(toolView.getActiveProject()));
-                        WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), newWizard);
+                {
+                    MenuItem item = new MenuItem(menu, SWT.NONE);
+                    item.setText("Clone Tool");
+                    item.addSelectionListener(new SelectionListener() {
+                        @Override
+                        public void widgetSelected(SelectionEvent arg0) {
+                            SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.CLONE,
+                                    SIRHelper.getTools(toolView.getActiveProject()));
+                            WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), newWizard);
 
-                        if (wizardDialog.open() == Window.OK)
-                            ToolUtil.cloneTool(toolView.getActiveProject(), toolView.getActiveTool(),
-                                    newWizard.getToolNewName(), toolView.getSkillFile());
+                            if (wizardDialog.open() == Window.OK)
+                                ToolUtil.cloneTool(toolView.getActiveProject(), toolView.getActiveTool(),
+                                        newWizard.getToolNewName(), toolView.getSkillFile());
 
-                        toolView.refresh();
-                    }
+                            toolView.refresh();
+                        }
 
-                    @Override
-                    public void widgetDefaultSelected(SelectionEvent arg0) {
-                        // no default
-                    }
-                });
+                        @Override
+                        public void widgetDefaultSelected(SelectionEvent arg0) {
+                            // no default
+                        }
+                    });
+                }
 
                 // Create contextmenu for 'Delete Tool'.
                 // Delete is currently not implemented in skill (08.10.2015).
-                MenuItem deleteToolItem = new MenuItem(menu, SWT.NONE);
-                deleteToolItem.setText("Delete Tool");
-                deleteToolItem.addSelectionListener(new SelectionListener() {
-                    @Override
-                    public void widgetSelected(SelectionEvent arg0) {
-                        ToolUtil.cleanUpAfterDeletion(toolView.getActiveProject(), toolView.getActiveTool());
-                        ToolUtil.removeTool(toolView.getActiveProject(), toolView.getActiveTool().getName());
-                        File toDelete = new File(toolView.getActiveProject().getLocationURI().getPath().toString()
-                                + File.separator + ".skillt" + File.separator + toolView.getActiveTool().getName());
-                        toolView.deleteDirectoryRecursivly(toDelete);
-                        toolView.refresh();
-                    }
+                {
+                    MenuItem item = new MenuItem(menu, SWT.NONE);
+                    item.setText("Delete");
+                    item.addSelectionListener(new SelectionListener() {
+                        @Override
+                        public void widgetSelected(SelectionEvent arg0) {
+                            SIRCache.deleteTool(toolView.getActiveProject(), toolView.getActiveTool());
 
-                    @Override
-                    public void widgetDefaultSelected(SelectionEvent arg0) {
-                        // no default
-                    }
-                });
+                            toolView.setActiveTool(null);
+                            toolView.refresh();
+                        }
 
-                // Create contextmenu for 'Rename Tool'.
-                MenuItem renameToolItem = new MenuItem(menu, SWT.NONE);
-                renameToolItem.setText("Rename Tool");
-                renameToolItem.addSelectionListener(new SelectionListener() {
-                    @Override
-                    public void widgetSelected(SelectionEvent arg0) {
-                        SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.RENAME,
-                                toollist.getItem(selected));
-                        WizardDialog wizardDialog = new WizardDialog(toolView.getShell(), newWizard);
-
-                        if (wizardDialog.open() == Window.OK)
-                            ToolUtil.renameTool(toolView.getActiveTool().getName(), newWizard.getToolNewName(),
-                                    toolView.getActiveProject());
-
-                        toolView.refresh();
-                    }
-
-                    @Override
-                    public void widgetDefaultSelected(SelectionEvent arg0) {
-                        // no default
-                    }
-                });
+                        @Override
+                        public void widgetDefaultSelected(SelectionEvent arg0) {
+                            // no default
+                        }
+                    });
+                }
             }
         });
     }

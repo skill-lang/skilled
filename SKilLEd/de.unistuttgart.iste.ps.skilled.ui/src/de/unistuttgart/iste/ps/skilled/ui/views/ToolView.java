@@ -407,9 +407,8 @@ public class ToolView extends ViewPart {
     private void buildToolContextMenu(List toollist) {
         if (menu != null)
             menu.dispose();
-        menu = new Menu(toollist);
-        ContextMenuToolView cmtv = new ContextMenuToolView(this);
-        cmtv.initContextMenu(toollist, menu);
+
+        ContextMenuToolView.make(this, toollist, menu = new Menu(toollist));
     }
 
     /**
