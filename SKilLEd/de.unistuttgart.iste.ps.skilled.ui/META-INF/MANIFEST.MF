@@ -90,6 +90,4 @@ Export-Package: de.unistuttgart.iste.ps.skilled.ui;
    org.eclipse.jface.viewers",
  de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard;uses:="de.unistuttgart.iste.ps.skilled.sir.internal,org.eclipse.swt.widgets,org.eclipse.jface.wizard"
 Bundle-Activator: de.unistuttgart.iste.ps.skilled.ui.internal.SkillActivator
-Bundle-ClassPath: .,
- lib/skill.java.common.jar,
- lib/skill.jvm.common.jar
+Bundle-ClassPath: .
