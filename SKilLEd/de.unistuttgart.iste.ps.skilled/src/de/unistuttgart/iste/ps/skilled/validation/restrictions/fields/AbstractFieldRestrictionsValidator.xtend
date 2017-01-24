@@ -4,7 +4,7 @@ import de.unistuttgart.iste.ps.skilled.skill.Field
 import de.unistuttgart.iste.ps.skilled.skill.Fieldtype
 import de.unistuttgart.iste.ps.skilled.skill.Restriction
 import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
-import de.unistuttgart.iste.ps.skilled.validation.AbstractSKilLValidator
+import de.unistuttgart.iste.ps.skilled.validation.AbstractSkillValidator
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.FieldRestrictionErrorMessages
 import org.eclipse.xtext.validation.Check
 
@@ -16,7 +16,7 @@ import org.eclipse.xtext.validation.Check
  * @author Daniel Ryan Degutis
  * @author Tobias Heck
  */
-abstract class AbstractFieldRestrictionsValidator extends AbstractSKilLValidator {
+abstract class AbstractFieldRestrictionsValidator extends AbstractSkillValidator {
 	
 	var protected wasNonNullUsed = false
 	var protected wasDefaultUsed = false

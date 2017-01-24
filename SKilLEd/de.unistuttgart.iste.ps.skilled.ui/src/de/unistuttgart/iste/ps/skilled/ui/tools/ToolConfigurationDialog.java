@@ -1,5 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.ui.tools;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,8 +10,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Text;
 import de.unistuttgart.iste.ps.skilled.sir.BuildInformation;
 import de.unistuttgart.iste.ps.skilled.sir.FilePath;
 import de.unistuttgart.iste.ps.skilled.sir.Tool;
-import org.eclipse.swt.layout.FillLayout;
+import de.unistuttgart.iste.ps.skilled.sir.api.SkillFile;
 
 /**
  * Manages tool configuration. The configuration is automatically persisted if
@@ -136,14 +136,16 @@ final public class ToolConfigurationDialog extends Dialog {
 
     }
 
+    final private SkillFile sf;
     final private Tool target;
     final private HashMap<BuildData, BuildConfigDialog> builds = new HashMap<>();
 
     private Text newNameField;
 
-    public ToolConfigurationDialog(Shell parentShell, Tool target) {
+    public ToolConfigurationDialog(Shell parentShell, Tool target, SkillFile sf) {
         super(parentShell);
         this.target = target;
+        this.sf = sf;
     }
 
     @Override
@@ -218,8 +220,48 @@ final public class ToolConfigurationDialog extends Dialog {
 
         // copy build info from dialog to target
         for (BuildData b : builds.keySet()) {
-            // TBD
+            if (b.isDeleted && null != b.src) {
+                // delete
+                sf.delete(b.src);
+                target.getBuildTargets().remove(b.src);
+            } else if (null != b.src) {
+                // update
+                b.src.setLanguage(b.language);
+                b.src.setOutput(mkFilePath(b.output));
+                b.src.setOptions(mkOptions(b.options));
+            } else {
+                // create
+                BuildInformation info = sf.BuildInformations().make(b.language, mkOptions(b.options),
+                        mkFilePath(b.output));
+                target.getBuildTargets().add(info);
+            }
         }
+        sf.flush();
+    }
 
+    private ArrayList<String> mkOptions(String options) {
+        ArrayList<String> rval = new ArrayList<>();
+        for (String s : options.split("\\s+")) {
+            rval.add(s);
+        }
+        return rval;
+    }
+
+    private FilePath mkFilePath(String output) {
+        File f = Paths.get(output).toFile();
+        ArrayList<String> parts = new ArrayList<>();
+        addParts(f, parts);
+        sf.FilePaths().make(f.isAbsolute(), parts);
+        return null;
+    }
+
+    /**
+     * recursive reverse unpack of file structure
+     */
+    private void addParts(File f, ArrayList<String> parts) {
+        if (null != f.getParentFile()) {
+            addParts(f.getParentFile(), parts);
+        }
+        parts.add(f.getName());
     }
 }

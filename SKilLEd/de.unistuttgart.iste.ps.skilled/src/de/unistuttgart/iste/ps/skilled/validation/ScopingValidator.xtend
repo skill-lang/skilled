@@ -1,7 +1,6 @@
 package de.unistuttgart.iste.ps.skilled.validation
 
 import com.google.inject.Inject
-import de.unistuttgart.iste.ps.skilled.formatting2.SKilLImportOrganizer
 import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference
 import de.unistuttgart.iste.ps.skilled.skill.File
 import de.unistuttgart.iste.ps.skilled.skill.IncludeFile
@@ -15,6 +14,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
+import de.unistuttgart.iste.ps.skilled.formatting2.SkillImportOrganizer
 
 /**
  * Validation for the correct usage of linked declaration. It checks whether the needed skill file is included, 
@@ -67,13 +67,13 @@ class ScopingValidator extends AbstractSKilLComposedValidatorPart {
 			}
 		}
 
-		var imp = new SKilLImportOrganizer(dependencyGraph);
+		var imp = new SkillImportOrganizer(dependencyGraph);
 		var String mainFileRelative = null;
 		if (mainFile != null) {
 			mainFileRelative = EcoreUtil2.getURI(mainFile).deresolve(EcoreUtil2.getURI(file)).path;
 		}
 
-		var duplicate = SKilLImportOrganizer.getDuplicateIncludes(file);
+		var duplicate = SkillImportOrganizer.getDuplicateIncludes(file);
 		for (IncludeFile f : duplicate) {
 			if (!f.importURI.equals(mainFileRelative)) {
 				warning("Duplicate include.", f, SkillPackage.Literals.INCLUDE_FILE__IMPORT_URI,

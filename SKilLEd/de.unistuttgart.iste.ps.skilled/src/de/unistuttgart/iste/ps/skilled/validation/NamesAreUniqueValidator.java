@@ -16,7 +16,7 @@ import org.eclipse.xtext.validation.NamesAreUniqueValidationHelper;
 
 import com.google.inject.Inject;
 
-import de.unistuttgart.iste.ps.skilled.converter.SKilLQualifiedNameProvider;
+import de.unistuttgart.iste.ps.skilled.converter.SkillQualifiedNameProvider;
 import de.unistuttgart.iste.ps.skilled.skill.Declaration;
 import de.unistuttgart.iste.ps.skilled.skill.SkillPackage;
 import de.unistuttgart.iste.ps.skilled.util.SKilLServices;
@@ -67,11 +67,11 @@ public class NamesAreUniqueValidator extends org.eclipse.xtext.validation.NamesA
     public boolean doCheckUniqueTypeNames(Declaration declaration) {
         Iterable<IEObjectDescription> descriptions = getAllDeclarationDescriptions(declaration);
         IEObjectDescription declarationDescription = EObjectDescription
-                .create(SKilLQualifiedNameProvider.qualifiedName(declaration), declaration);
+                .create(SkillQualifiedNameProvider.qualifiedName(declaration), declaration);
         URI eObjectURI = declarationDescription.getEObjectURI();
 
         for (IEObjectDescription eobjectDescription : descriptions) {
-            if (eobjectDescription.getName().equals(SKilLQualifiedNameProvider.qualifiedName(declaration))) {
+            if (eobjectDescription.getName().equals(SkillQualifiedNameProvider.qualifiedName(declaration))) {
                 if (!eobjectDescription.getEObjectURI().equals(eObjectURI)) {
                     if ((!services.isToolFile(eObjectURI)) && (!services.isToolFile(eobjectDescription.getEObjectURI()))) {
                         String errorMessage = helper.getDuplicateNameErrorMessage(declarationDescription,

@@ -91,7 +91,7 @@ final class ContextMenuToolView {
                         public void widgetSelected(SelectionEvent e) {
 
                             ToolConfigurationDialog dialog = new ToolConfigurationDialog(toolView.getShell(),
-                                    toolView.getActiveTool());
+                                    toolView.getActiveTool(), toolView.getSkillFile());
 
                             if (dialog.open() == Window.OK) {
                                 SIRCache.ensureFile(toolView.getActiveProject()).flush();

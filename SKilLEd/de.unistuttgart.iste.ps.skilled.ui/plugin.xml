@@ -6,18 +6,18 @@
     <extension
             point="org.eclipse.ui.editors">
         <editor
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
             extensions="skill"
-            id="de.unistuttgart.iste.ps.skilled.SKilL"
-            name="SKilL Editor">
+            id="de.unistuttgart.iste.ps.skilled.Skill"
+            name="Skill Editor">
         </editor>
     </extension>
     <extension
         point="org.eclipse.ui.handlers">
         <handler
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
             commandId="org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclaration">
             <activeWhen>
                 <reference
@@ -26,7 +26,7 @@
             </activeWhen>
         </handler>
         <handler
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
             commandId="de.unistuttgart.iste.ps.skilled.skill.validate">
          <activeWhen>
             <reference
@@ -36,14 +36,14 @@
       	</handler>
       	<!-- copy qualified name -->
         <handler
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedNameHandler"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedNameHandler"
             commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName">
             <activeWhen>
 				<reference definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened" />
             </activeWhen>
         </handler>
         <handler
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedNameHandler"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedNameHandler"
             commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedName">
             <activeWhen>
             	<and>
@@ -61,7 +61,7 @@
                 <reference definitionId="isActiveEditorAnInstanceOfXtextEditor"/>
                 <with variable="activeEditor">
                     <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-                        value="de.unistuttgart.iste.ps.skilled.SKilL" 
+                        value="de.unistuttgart.iste.ps.skilled.Skill" 
                         forcePluginActivation="true"/>
                 </with>        
             </and>
@@ -71,7 +71,7 @@
                 <reference definitionId="isXtextEditorActive"/>
                 <with variable="activeEditor">
                     <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-                        value="de.unistuttgart.iste.ps.skilled.SKilL" 
+                        value="de.unistuttgart.iste.ps.skilled.Skill" 
                         forcePluginActivation="true"/>
                 </with>        
             </and>
@@ -80,52 +80,52 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="de.unistuttgart.iste.ps.skilled.SKilL"
-            name="SKilL">
-            <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+            id="de.unistuttgart.iste.ps.skilled.Skill"
+            name="Skill">
+            <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_Skill"/>
         </page>
         <page
-            category="de.unistuttgart.iste.ps.skilled.SKilL"
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
+            category="de.unistuttgart.iste.ps.skilled.Skill"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
             id="de.unistuttgart.iste.ps.skilled.skill.coloring"
             name="Syntax Coloring">
-            <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
+            <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_Skill"/>
         </page>
         <page
-            category="de.unistuttgart.iste.ps.skilled.SKilL"
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
+            category="de.unistuttgart.iste.ps.skilled.Skill"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
             id="de.unistuttgart.iste.ps.skilled.skill.templates"
             name="Templates">
-            <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
+            <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_Skill"/>
         </page>
         <page
-             category="de.unistuttgart.iste.ps.skilled.SKilL"
-              class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.preferences.SKilLPreferencePage"
-              id="de.unistuttgart.iste.ps.skilled.SKilLls"
-              name="SKilLls">
-                          <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
+             category="de.unistuttgart.iste.ps.skilled.Skill"
+              class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.preferences.SkillPreferencePage"
+              id="de.unistuttgart.iste.ps.skilled.Skillls"
+              name="Skillls">
+                          <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_Skill"/>
               
         </page>
     </extension>
     <extension
             point="org.eclipse.ui.propertyPages">
         <page
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="de.unistuttgart.iste.ps.skilled.SKilL"
-            name="SKilL">
-            <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+            id="de.unistuttgart.iste.ps.skilled.Skill"
+            name="Skill">
+            <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_Skill"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
 			</enabledWhen>
 	        <filter name="projectNature" value="org.eclipse.xtext.ui.shared.xtextNature"/>
         </page>
         <page
-             category="de.unistuttgart.iste.ps.skilled.SKilL"
-              class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.preferences.SKilLPreferencePage"
-              id="de.unistuttgart.iste.ps.skilled.SKilLls"
-              name="SKilLls">
-              <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
+             category="de.unistuttgart.iste.ps.skilled.Skill"
+              class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.preferences.SkillPreferencePage"
+              id="de.unistuttgart.iste.ps.skilled.Skillls"
+              name="Skillls">
+              <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_Skill"/>
               <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
 			</enabledWhen>
@@ -134,8 +134,8 @@
     <extension
         point="org.eclipse.ui.keywords">
         <keyword
-            id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"
-            label="SKilL"/>
+            id="de.unistuttgart.iste.ps.skilled.ui.keyword_Skill"
+            label="Skill"/>
     </extension>
     <extension
          point="org.eclipse.ui.commands">
@@ -215,7 +215,7 @@
 	</extension>
 	<extension point="org.eclipse.ui.handlers">
 	    <handler
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
             commandId="org.eclipse.xtext.ui.editor.FindReferences">
             <activeWhen>
                 <reference
@@ -230,36 +230,36 @@
 	<extension
 		point="org.eclipse.emf.ecore.extension_parser">
 		<parser
-			class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
+			class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
 			type="skill">
 		</parser>
 	</extension>
 	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
         <resourceServiceProvider
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
             uriExtension="skill">
         </resourceServiceProvider>
     </extension>
 
 
-	<!-- marker definitions for de.unistuttgart.iste.ps.skilled.SKilL -->
+	<!-- marker definitions for de.unistuttgart.iste.ps.skilled.Skill -->
 	<extension
 	        id="skill.check.fast"
-	        name="SKilL Problem"
+	        name="Skill Problem"
 	        point="org.eclipse.core.resources.markers">
 	    <super type="org.eclipse.xtext.ui.check.fast"/>
 	    <persistent value="true"/>
 	</extension>
 	<extension
 	        id="skill.check.normal"
-	        name="SKilL Problem"
+	        name="Skill Problem"
 	        point="org.eclipse.core.resources.markers">
 	    <super type="org.eclipse.xtext.ui.check.normal"/>
 	    <persistent value="true"/>
 	</extension>
 	<extension
 	        id="skill.check.expensive"
-	        name="SKilL Problem"
+	        name="Skill Problem"
 	        point="org.eclipse.core.resources.markers">
 	    <super type="org.eclipse.xtext.ui.check.expensive"/>
 	    <persistent value="true"/>
@@ -268,7 +268,7 @@
    <extension
          point="org.eclipse.xtext.builder.participant">
       <participant
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
             fileExtensions="skill"
             >
       </participant>
@@ -276,21 +276,21 @@
    <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            category="de.unistuttgart.iste.ps.skilled.SKilL"
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            category="de.unistuttgart.iste.ps.skilled.Skill"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
             id="de.unistuttgart.iste.ps.skilled.skill.compiler.preferencePage"
             name="Compiler">
-            <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
+            <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_Skill"/>
         </page>
     </extension>
     <extension
             point="org.eclipse.ui.propertyPages">
         <page
-            category="de.unistuttgart.iste.ps.skilled.SKilL"
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            category="de.unistuttgart.iste.ps.skilled.Skill"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
             id="de.unistuttgart.iste.ps.skilled.skill.compiler.propertyPage"
             name="Compiler">
-            <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
+            <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_Skill"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
 			</enabledWhen>
@@ -311,7 +311,7 @@
 	</extension>
 	<extension point="org.eclipse.ui.handlers">
 		<handler
-			class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.generator.trace.OpenGeneratedFileHandler"
+			class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.generator.trace.OpenGeneratedFileHandler"
 			commandId="org.eclipse.xtext.ui.OpenGeneratedFileCommand">
 				<activeWhen>
 					<reference definitionId="de.unistuttgart.iste.ps.skilled.skill.Editor.opened" />
@@ -323,7 +323,7 @@
 	<extension
 		point="org.eclipse.ui.handlers">
 		<handler 
-			class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
+			class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
 			commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
 			<activeWhen>
 				<reference
@@ -352,11 +352,11 @@
 			</command>
 		</menuContribution>
 	</extension>
-    <!-- quickfix marker resolution generator for de.unistuttgart.iste.ps.skilled.SKilL -->
+    <!-- quickfix marker resolution generator for de.unistuttgart.iste.ps.skilled.Skill -->
     <extension
             point="org.eclipse.ui.ide.markerResolution">
         <markerResolutionGenerator
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
             markerType="de.unistuttgart.iste.ps.skilled.ui.skill.check.fast">
             <attribute
                 name="FIXABLE_KEY"
@@ -364,7 +364,7 @@
             </attribute>
         </markerResolutionGenerator>
         <markerResolutionGenerator
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
             markerType="de.unistuttgart.iste.ps.skilled.ui.skill.check.normal">
             <attribute
                 name="FIXABLE_KEY"
@@ -372,7 +372,7 @@
             </attribute>
         </markerResolutionGenerator>
         <markerResolutionGenerator
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
             markerType="de.unistuttgart.iste.ps.skilled.ui.skill.check.expensive">
             <attribute
                 name="FIXABLE_KEY"
@@ -383,7 +383,7 @@
    	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
 		<handler 
-			class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
+			class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
 			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
 			<activeWhen>
 				<reference
@@ -407,29 +407,29 @@
    </extension>
    <extension point="org.eclipse.ui.preferencePages">
 	    <page
-	        category="de.unistuttgart.iste.ps.skilled.SKilL"
-	        class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
+	        category="de.unistuttgart.iste.ps.skilled.Skill"
+	        class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
 	        id="de.unistuttgart.iste.ps.skilled.skill.refactoring"
 	        name="Refactoring">
-	        <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_SKilL"/>
+	        <keywordReference id="de.unistuttgart.iste.ps.skilled.ui.keyword_Skill"/>
 	    </page>
 	</extension>
 
   <extension point="org.eclipse.compare.contentViewers">
     <viewer id="de.unistuttgart.iste.ps.skilled.skill.compare.contentViewers"
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
             extensions="skill">
     </viewer>
   </extension>
   <extension point="org.eclipse.compare.contentMergeViewers">
     <viewer id="de.unistuttgart.iste.ps.skilled.skill.compare.contentMergeViewers"
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="skill" label="SKilL Compare">
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
+            extensions="skill" label="Skill Compare">
      </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
     <provider id="de.unistuttgart.iste.ps.skilled.skill.editors.documentProviders"
-            class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
+            class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
             extensions="skill">
     </provider>
   </extension>
@@ -443,21 +443,21 @@
         point="org.eclipse.ui.newWizards">
      <category
            id="de.unistuttgart.iste.ps.skilled.ui.category.wizards"
-           name="SKilL">
+           name="Skill">
      </category>
      <wizard
            category="de.unistuttgart.iste.ps.skilled.ui.category.wizards"
-           class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.wizards.SKilLNewProjectWizard"
-           id="de.unistuttgart.iste.ps.skilled.ui.wizard.new.SKilL"
-           name="SKilL Project"
+           class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.wizards.SkillNewProjectWizard"
+           id="de.unistuttgart.iste.ps.skilled.ui.wizard.new.Skill"
+           name="Skill Project"
            project="true">
      </wizard>
      <wizard
            category="de.unistuttgart.iste.ps.skilled.ui.category.wizards"
-           class="de.unistuttgart.iste.ps.skilled.ui.wizards.SKilLNewFileWizard"
+           class="de.unistuttgart.iste.ps.skilled.ui.wizards.SkillNewFileWizard"
            icon="$nl$/icons/sample.gif"
-           id="de.unistuttgart.iste.ps.skilled.ui.wizards.SKilLNewFileWizard"
-           name="SKilL file"
+           id="de.unistuttgart.iste.ps.skilled.ui.wizards.SkillNewFileWizard"
+           name="Skill file"
            project="false">
      </wizard>
   </extension>
@@ -465,12 +465,12 @@
         point="org.eclipse.ui.views">
      <category
            id="de.unistuttgart.iste.ps.skilled.ui"
-           name="SKilLEd">
+           name="SkillEd">
      </category>
      <view
            allowMultiple="false"
            category="de.unistuttgart.iste.ps.skilled.ui"
-           class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.views.ToolView"
+           class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.views.ToolView"
            icon="$nl$/icons/sample.gif"
            id="de.unistuttgart.iste.ps.skilled.ui.views.ToolView"
            name="ToolView">
@@ -481,10 +481,10 @@
      <perspectiveExtension
            targetID="*">
         <newWizardShortcut
-              id="de.unistuttgart.iste.ps.skilled.ui.wizard.new.SKilL">
+              id="de.unistuttgart.iste.ps.skilled.ui.wizard.new.Skill">
         </newWizardShortcut>
         <newWizardShortcut
-              id="de.unistuttgart.iste.ps.skilled.ui.wizards.SKilLNewFileWizard">
+              id="de.unistuttgart.iste.ps.skilled.ui.wizards.SkillNewFileWizard">
         </newWizardShortcut>
      </perspectiveExtension>
 
@@ -503,8 +503,8 @@
            allPopups="false"
            locationURI="menu:org.eclipse.ui.main.menu">
         <menu
-              id="SKilLEdMenu"
-              label="SKilLEd">
+              id="SkillEdMenu"
+              label="SkillEd">
            <command
                  commandId="de.unistuttgart.iste.ps.skilled.ui.tools.import2"
                  label="Import Binary File"
@@ -574,8 +574,8 @@
 	   		 allPopups="false"
 	   		 locationURI="menu:org.eclipse.ui.main.menu">
 	   	  <menu
-	   	  		id="SKilLEdMenu"
-	   	  		label="SKilLEd">
+	   	  		id="SkillEdMenu"
+	   	  		label="SkillEd">
           <command
                 commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinedfiles.command"
                 label="Combine .skill-files"
@@ -667,7 +667,7 @@
        </command>
        <command
              commandId="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinefiles.command"
-             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinefiles.SKilLCombineHandler"
+             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinefiles.SkillCombineHandler"
              id="de.unistuttgart.iste.ps.skilled.ui.refactoring.combinedfiles.command"
              label="Combine .skill-files"
              name="Combine .skill-files"
@@ -692,12 +692,12 @@
     <extension
           point="org.eclipse.ui.commands">
        <command
-             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints.SKilLRemoveHintsHandler"
+             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints.SkillRemoveHintsHandler"
              id="de.unistuttgart.iste.ps.skilled.ui.refactoring.removehints"
              name="Remove Hints">
        </command>
        <command
-             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.removeprojecthints.SKilLRemoveProjectHintsHandler"
+             defaultHandler="de.unistuttgart.iste.ps.skilled.ui.refactoring.removeprojecthints.SkillRemoveProjectHintsHandler"
              id="de.unistuttgart.iste.ps.skilled.ui.refactoring.removeprojecthints"
              name="Remove Project Hints">
        </command>
@@ -728,8 +728,8 @@
            allPopups="false"
            locationURI="menu:org.eclipse.ui.main.menu">
         <menu
-              id="SKilLEdMenu"
-              label="SKilLEd">
+              id="SkillEdMenu"
+              label="SkillEd">
            <command
                  commandId="de.unistuttgart.iste.ps.skilled.ui.views"
                  label="Tool View"
@@ -766,7 +766,7 @@
                <with
                      variable="activeWorkbenchWindow.activePerspective">
                   <equals
-                        value="de.unistuttgart.iste.ps.skilled.ui.SKilLPerspective">
+                        value="de.unistuttgart.iste.ps.skilled.ui.SkillPerspective">
                   </equals>
                </with>
             </visibleWhen>
@@ -776,14 +776,14 @@
   <extension
         point="org.eclipse.ui.commands">
      <command
-           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.wizards.handler.SKilLNewProjectHandler"
-           id="de.unistuttgart.iste.ps.skilled.ui.SKilLNewProjectHandler"
-           name="New SKilL Project">
+           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.wizards.handler.SkillNewProjectHandler"
+           id="de.unistuttgart.iste.ps.skilled.ui.SkillNewProjectHandler"
+           name="New Skill Project">
      </command>
      <command
-           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.wizards.handler.SKilLNewFileHandler"
-           id="de.unistuttgart.iste.ps.skilled.ui.SKilLNewFileHandler"
-           name="New SKilL File">
+           defaultHandler="de.unistuttgart.iste.ps.skilled.ui.wizards.handler.SkillNewFileHandler"
+           id="de.unistuttgart.iste.ps.skilled.ui.SkillNewFileHandler"
+           name="New Skill File">
      </command>"de.unistuttgart.iste.ps.skilled.ui.tools.imprt.ImportToolsHandler"
            id="de.unistuttgart.iste.ps.skilled.ui.tools.imprt"
            name="Import Tools">
@@ -791,9 +791,9 @@
   <extension
         point="org.eclipse.ui.perspectives">
      <perspective
-           class="de.unistuttgart.iste.ps.skilled.ui.SKilLExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.SKilLPerspectiveFactory"
-           id="de.unistuttgart.iste.ps.skilled.ui.SKilLPerspective"
-           name="SKilL">
+           class="de.unistuttgart.iste.ps.skilled.ui.SkillExecutableExtensionFactory:de.unistuttgart.iste.ps.skilled.ui.SkillPerspectiveFactory"
+           id="de.unistuttgart.iste.ps.skilled.ui.SkillPerspective"
+           name="Skill">
      </perspective>
   </extension>
   <extension
@@ -801,10 +801,10 @@
      <perspectiveExtension
            targetID="org.eclipse.ui.resourcePerspective">
         <newWizardShortcut
-              id="de.unistuttgart.iste.ps.skilled.ui.wizard.new.SKilL">
+              id="de.unistuttgart.iste.ps.skilled.ui.wizard.new.Skill">
         </newWizardShortcut>
         <newWizardShortcut
-              id="de.unistuttgart.iste.ps.skilled.ui.wizards.SKilLNewFileWizard">
+              id="de.unistuttgart.iste.ps.skilled.ui.wizards.SkillNewFileWizard">
         </newWizardShortcut>
      </perspectiveExtension>
   </extension>
@@ -813,31 +813,31 @@
       <menuContribution
             locationURI="popup:common.new.menu?after=new">
          <command
-               commandId="de.unistuttgart.iste.ps.skilled.ui.SKilLNewProjectHandler"
+               commandId="de.unistuttgart.iste.ps.skilled.ui.SkillNewProjectHandler"
                icon="icons/sample.gif"
-               label="SKilL Project"
+               label="Skill Project"
                style="push">
             <visibleWhen
                   checkEnabled="false">
                <with
                      variable="activeWorkbenchWindow.activePerspective">
                   <equals
-                        value="de.unistuttgart.iste.ps.skilled.ui.SKilLPerspective">
+                        value="de.unistuttgart.iste.ps.skilled.ui.SkillPerspective">
                   </equals>
                </with>
             </visibleWhen>
          </command>
          <command
-               commandId="de.unistuttgart.iste.ps.skilled.ui.SKilLNewFileHandler"
+               commandId="de.unistuttgart.iste.ps.skilled.ui.SkillNewFileHandler"
                icon="icons/sample.gif"
-               label="New SKilL File"
+               label="New Skill File"
                style="push">
             <visibleWhen
                   checkEnabled="false">
                <with
                      variable="activeWorkbenchWindow.activePerspective">
                   <equals
-                        value="de.unistuttgart.iste.ps.skilled.ui.SKilLPerspective">
+                        value="de.unistuttgart.iste.ps.skilled.ui.SkillPerspective">
                   </equals>
                </with>
             </visibleWhen>

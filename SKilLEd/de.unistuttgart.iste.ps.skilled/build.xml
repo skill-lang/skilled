@@ -19,22 +19,16 @@
         <unzip src="lib/buckminster.zip" dest="../.."/>
     </target>
 
-    <target name="build-skillls" depends="unpack-scala">
-        <exec executable="bash" dir="../de.unistuttgart.iste.ps.skillls">
-            <arg value="launch_build-SKilLls.sh"/>
-        </exec>
-    </target>
-
     <target name="build-skilled">
-        <ant antfile="build-SKilLEd.xml"/>
+        <ant antfile="build-skilled.xml"/>
     </target>
 
     <target name="build-skilled-ui">
-        <ant antfile="build-SKilLEd-ui.xml"/>
+        <ant antfile="build-skilled-ui.xml"/>
     </target>
 
     <target name="build-skilled-tests">
-        <ant antfile="build-SKilLEd-tests.xml"/>
+        <ant antfile="build-skilled-tests.xml"/>
     </target>
 
     <target name="create-javadoc">
@@ -45,6 +39,6 @@
         <ant antfile="build.ant" dir="../de.unistuttgart.iste.ps.skilled.buckminster"/>
     </target>
 
-    <target name="complete-build" depends="build-skillls,build-skilled,build-skilled-ui,build-skilled-tests,create-javadoc"/>
+    <target name="complete-build" depends="build-skilled,build-skilled-ui,build-skilled-tests,create-javadoc"/>
 
 </project>

@@ -47,7 +47,7 @@ import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration;
 import de.unistuttgart.iste.ps.skilled.skill.TypeDeclarationReference;
 import de.unistuttgart.iste.ps.skilled.skill.Usertype;
 import de.unistuttgart.iste.ps.skilled.skill.View;
-import de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider;
+import de.unistuttgart.iste.ps.skilled.ui.quickfix.SkillQuickfixProvider;
 
 
 public class ExtractSpecification {
@@ -215,7 +215,7 @@ public class ExtractSpecification {
             @Override
             public java.lang.Void exec(XtextResource state) throws Exception {
                 SKilLFile = (de.unistuttgart.iste.ps.skilled.skill.File) state.getContents().get(0);
-                new SKilLQuickfixProvider().organizeImports(SKilLFile);
+                new SkillQuickfixProvider().organizeImports(SKilLFile);
                 return null;
             }
         });

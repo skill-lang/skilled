@@ -20,7 +20,7 @@ public class SkillInstallation {
 
     public static String[] allGeneratorNames() {
         if (null == instance.generatorNames) {
-            instance.generatorNames = CommandLine.getKnownGeneratorNames();
+            instance.generatorNames = CommandLine.allGeneratorNames();
         }
         return instance.generatorNames;
     }

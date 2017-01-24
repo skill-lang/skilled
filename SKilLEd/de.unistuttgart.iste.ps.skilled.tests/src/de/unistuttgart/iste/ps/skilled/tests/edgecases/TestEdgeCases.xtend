@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.tests.edgecases;
 
 import com.google.inject.Inject
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
+import de.unistuttgart.iste.ps.skilled.SkillInjectorProvider
 import de.unistuttgart.iste.ps.skilled.skill.DeclarationReference
 import de.unistuttgart.iste.ps.skilled.skill.Enumtype
 import de.unistuttgart.iste.ps.skilled.skill.File
@@ -21,7 +21,7 @@ import org.junit.runner.RunWith
  * @author Tobias Heck
  * 
  */
-@InjectWith(SKilLInjectorProvider)
+@InjectWith(SkillInjectorProvider)
 @RunWith(XtextRunner)
 class TestEdgeCases {
 	

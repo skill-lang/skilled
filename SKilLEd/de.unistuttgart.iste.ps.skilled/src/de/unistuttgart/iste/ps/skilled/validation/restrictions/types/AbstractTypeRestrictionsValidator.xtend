@@ -6,7 +6,7 @@ import de.unistuttgart.iste.ps.skilled.skill.Restriction
 import de.unistuttgart.iste.ps.skilled.skill.SkillPackage
 import de.unistuttgart.iste.ps.skilled.skill.Typedef
 import de.unistuttgart.iste.ps.skilled.skill.Usertype
-import de.unistuttgart.iste.ps.skilled.validation.AbstractSKilLValidator
+import de.unistuttgart.iste.ps.skilled.validation.AbstractSkillValidator
 import de.unistuttgart.iste.ps.skilled.validation.errormessages.TypeRestrictionsErrorMessages
 import org.eclipse.emf.common.util.EList
 import org.eclipse.xtext.validation.Check
@@ -16,7 +16,7 @@ import org.eclipse.xtext.validation.Check
  * @author Moritz Platzer
  * @author Daniel Ryan Degutis
  */
-class AbstractTypeRestrictionsValidator extends AbstractSKilLValidator {
+class AbstractTypeRestrictionsValidator extends AbstractSkillValidator {
 
 	var protected Usertype underlyingUsertype = null
 	var protected wasUniqueUsed = false

@@ -1,22 +1,23 @@
 package de.unistuttgart.iste.ps.skilled.tests.validation.restrictions.fieldrestrictions;
 
 import com.google.inject.Inject
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
+import de.unistuttgart.iste.ps.skilled.SkillInjectorProvider
 import de.unistuttgart.iste.ps.skilled.skill.File
+import java.util.List
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
-import static org.junit.Assert.*
-import java.util.List
 import org.eclipse.xtext.validation.Issue
-import org.junit.runner.RunWith
 import org.junit.Test
+import org.junit.runner.RunWith
+
+import static org.junit.Assert.*
 
 /**
  * @author Nikolay Fateev
  */
-@InjectWith(SKilLInjectorProvider)
+@InjectWith(SkillInjectorProvider)
 @RunWith(XtextRunner)
 class TestCodingFieldRestriction {
 	

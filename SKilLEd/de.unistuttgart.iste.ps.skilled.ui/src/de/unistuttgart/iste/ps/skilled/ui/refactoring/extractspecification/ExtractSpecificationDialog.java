@@ -58,7 +58,7 @@ import com.google.inject.Inject;
 
 import de.unistuttgart.iste.ps.skilled.skill.Declaration;
 import de.unistuttgart.iste.ps.skilled.skill.TypeDeclaration;
-import de.unistuttgart.iste.ps.skilled.ui.quickfix.SKilLQuickfixProvider;
+import de.unistuttgart.iste.ps.skilled.ui.quickfix.SkillQuickfixProvider;
 
 
 /**
@@ -377,7 +377,7 @@ public class ExtractSpecificationDialog {
                 xtextDocument.modify(new IUnitOfWork<Void, XtextResource>() {
                     @Override
                     public java.lang.Void exec(XtextResource state) throws Exception {
-                        new SKilLQuickfixProvider().organizeImports(ExtractSpecificationDialog.file);
+                        new SkillQuickfixProvider().organizeImports(ExtractSpecificationDialog.file);
                         return null;
                     }
                 });

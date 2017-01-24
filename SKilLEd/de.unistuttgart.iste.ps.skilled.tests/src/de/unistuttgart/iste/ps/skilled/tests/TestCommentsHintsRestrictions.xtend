@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.tests;
 
 import com.google.inject.Inject
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
+import de.unistuttgart.iste.ps.skilled.SkillInjectorProvider
 import de.unistuttgart.iste.ps.skilled.skill.Annotationtype
 import de.unistuttgart.iste.ps.skilled.skill.Arraytype
 import de.unistuttgart.iste.ps.skilled.skill.Data
@@ -35,7 +35,7 @@ import org.junit.runner.RunWith
 /**
  * @author Tobias Heck
  */
-@InjectWith(SKilLInjectorProvider)
+@InjectWith(SkillInjectorProvider)
 @RunWith(XtextRunner)
 class TestCommentsHintsRestrictions {
 

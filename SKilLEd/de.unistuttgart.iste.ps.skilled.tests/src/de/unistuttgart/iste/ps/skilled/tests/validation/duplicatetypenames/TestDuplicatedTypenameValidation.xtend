@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.tests.validation.duplicatetypenames;
 
 import com.google.inject.Inject
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
+import de.unistuttgart.iste.ps.skilled.SkillInjectorProvider
 import de.unistuttgart.iste.ps.skilled.skill.File
 import de.unistuttgart.iste.ps.skilled.tests.utils.FileLoader
 import org.eclipse.xtext.junit4.InjectWith
@@ -19,7 +19,7 @@ import static org.junit.Assert.*
  * @author Jan Berberich
  * @author Tobias Heck
  */
-@InjectWith(SKilLInjectorProvider)
+@InjectWith(SkillInjectorProvider)
 @RunWith(XtextRunner)
 class TestDuplicatedTypenameValidation {
 	@Inject extension ParseHelper<File> parser;

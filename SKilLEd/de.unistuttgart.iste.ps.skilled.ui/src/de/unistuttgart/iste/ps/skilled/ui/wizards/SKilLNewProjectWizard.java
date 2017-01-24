@@ -19,7 +19,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
-import de.unistuttgart.iste.ps.skilled.ui.SKilLPerspectiveFactory;
+import de.unistuttgart.iste.ps.skilled.ui.SkillPerspectiveFactory;
 
 
 /**
@@ -118,7 +118,7 @@ public class SKilLNewProjectWizard extends Wizard implements INewWizard {
             return false;
         }
 
-        SKilLPerspectiveFactory.openSKilLPerspective();
+        SkillPerspectiveFactory.openSKilLPerspective();
         return true;
     }
 }

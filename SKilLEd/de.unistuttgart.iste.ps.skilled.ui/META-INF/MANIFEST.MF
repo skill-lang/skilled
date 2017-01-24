@@ -59,9 +59,8 @@ Export-Package: de.unistuttgart.iste.ps.skilled.ui;
    org.eclipse.jface.wizard,
    org.eclipse.jface.viewers",
  de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard
-Bundle-Activator: de.unistuttgart.iste.ps.skilled.ui.internal.SKilLActivator
-Bundle-ClassPath: lib/skill.java.common.jar,
- lib/skill.jvm.common.jar,
- lib/SKilLls.jar,
- .,
- swing2swt.jar
+Bundle-Activator: de.unistuttgart.iste.ps.skilled.ui.internal.SkillActivator
+Bundle-ClassPath: .,
+ swing2swt.jar,
+ lib/skill.java.common.jar,
+ lib/skill.jvm.common.jar

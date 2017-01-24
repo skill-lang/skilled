@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="de.unistuttgart.iste.ps.skilled" default="build-skilled">
+    <property name="workflow" value="src/de/unistuttgart/iste/ps/skilled/GenerateSkill.mwe2"/>
+    <property name="tests-project-path" value="../de.unistuttgart.iste.ps.skilled.tests" />
+    <property name="ui-project-path" value="../de.unistuttgart.iste.ps.skilled.ui" />
+    <property name="source" value="1.8" />
+    <property name="target" value="1.8" />
+
+    <path id="classpath">
+        <fileset dir="lib">
+            <patternset>
+                <include name="*.jar"/>
+                <include name="deps/*.jar"/>
+                <exclude name="*antlr*4*.jar"/>
+            </patternset>
+        </fileset>
+        <fileset dir="." includes=".antlr-generator-3.2.0.jar"/>
+    </path>
+    
+    <target name="generate-xtext-artifacts">
+        <java classpathref="classpath" 
+              classname="org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher" 
+              fork="true">
+            <arg value="${workflow}"/>
+        </java>
+    </target>
+    
+    <target name="compile-xtend">
+        <pathconvert pathsep="${path.separator}" 
+                     property="classpath-string" 
+                     refid="classpath">
+        </pathconvert>
+        <java classpathref="classpath"
+              classname="org.eclipse.xtend.core.compiler.batch.Main"
+              fork="true"
+              failonerror="yes">
+            <arg value="-cp" />
+            <arg value="${classpath-string}" />
+            <arg value="-d" />
+            <arg value="${basedir}/ant/xtend-gen" />
+            <arg value="${basedir}/src-gen${path.separator}${basedir}/src" />
+        </java>
+    </target>   
+    
+    <target name="compile-java" depends="compile-xtend">
+        <mkdir dir="ant/bin"/>
+        <javac classpathref="classpath" destdir="ant/bin" source="${source}" target="${target}" includeantruntime="true">
+            <src path="src" />
+            <src path="src-gen" />
+            <src path="ant/xtend-gen" />
+        </javac>
+        <copy todir="ant/bin">
+            <fileset dir="src" excludes="**/*.java,**/*.xtend" />
+            <fileset dir="src-gen" excludes="**/*.java,**/*.xtend" />
+            <fileset dir="ant/xtend-gen" excludes="**/*.java,**/*.xtend" />
+        </copy>
+    </target>
+
+    <target name="make-jar-skilled" depends="compile-java">
+        <jar destfile="lib2/de.unistuttgart.iste.ps.skilled.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Class-Path" value="../lib"/>
+            </manifest>
+            <fileset dir="ant/bin"/>
+        </jar>
+    </target>
+
+    <target name="prepare-xtend-gen">
+        <mkdir dir="xtend-gen"/>
+        <copy todir="xtend-gen">
+            <fileset dir="ant/xtend-gen"/>
+        </copy>
+    </target>
+
+    <target name="setup-project-libs">
+        <copy todir="lib">
+            <fileset dir="../../scala/lib">
+                <include name="scala-library.jar"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="build-skilled" depends="setup-project-libs,generate-xtext-artifacts,compile-java,make-jar-skilled,prepare-xtend-gen"/>
+
+</project>

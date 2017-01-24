@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.tests.validation.restrictions.fieldrestrictions;
 
 import com.google.inject.Inject
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
+import de.unistuttgart.iste.ps.skilled.SkillInjectorProvider
 import de.unistuttgart.iste.ps.skilled.skill.File
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -16,7 +16,7 @@ import static org.junit.Assert.*
  * @author Nikolay Fateev
  * @author Tobias Heck
  */
-@InjectWith(SKilLInjectorProvider)
+@InjectWith(SkillInjectorProvider)
 @RunWith(XtextRunner)
 class TestDefaultFieldRestriction {
 	

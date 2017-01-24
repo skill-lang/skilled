@@ -120,66 +120,6 @@
         <delete dir="${libs.location}/temp"/>
     </target>
 
-    <target name="compile-skillls" depends="build-skill-binding">
-        <mkdir dir="out/production/SKilLls"/>
-        <javac srcdir="src" fork="true" debug="true" debuglevel="${debuglevel}" destdir="out/production/SKilLls" includeantruntime="false" source="${source}" target="${target}" encoding="UTF8">
-            <classpath refid="SKilLls.classpath"/>
-        </javac>
-    </target>
-
-    <target name="compile-tests" depends="compile-skillls">
-        <javac srcdir="test" fork="true" debug="true" debuglevel="${debuglevel}" destdir="out/production/SKilLls" includeantruntime="false" source="${source}" target="${target}" encoding="UTF8">
-            <classpath refid="SKilLls.classpath"/>
-        </javac>
-    </target>
-
-    <target name="run-tests" depends="compile-tests">
-        <jacoco:coverage destfile="out/test/SKilLls/jacoco_SKilLls.exec">
-        <junit fork="yes" forkmode="once" printsummary="on" haltonerror="false" haltonfailure="false">
-            <classpath>
-                <path refid="SKilLls.classpath"/>
-            </classpath>
-            <formatter type="xml"/>
-            <batchtest todir="out/test/SKilLls">
-                <fileset dir="test">
-                    <include name="de/unistuttgart/iste/ps/skillls/test/**/*.java"/>
-                </fileset>
-            </batchtest>
-        </junit>
-       </jacoco:coverage>
-    </target>
-
-    <target name="create-jar" depends="run-tests">
-        <jar destfile="out/SKilLls.jar" filesetmanifest="mergewithoutmain">
-            <manifest>
-                <attribute name="Main-Class" value="de.unistuttgart.iste.ps.skillls.main.MainClass"/>
-                <attribute name="Class-Path" value="."/>
-            </manifest>
-            <fileset dir="out/production/SKilLls"/>
-            <zipfileset excludes="META-INF/*.SF" src="${libs.location}/antlr4-runtime-4.5.1-1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${libs.location}/hamcrest-core-1.3.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${libs.location}/skill.java.common.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${libs.location}/skill.jvm.common.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${libs.location}/junit-4.12.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${libs.location}/hamcrest-core-1.3.jar"/>
-        </jar>
-        <copy todir="../de.unistuttgart.iste.ps.skilled.ui/lib">
-            <fileset dir="out">
-                <include name="SKilLls.jar"/>
-            </fileset>
-        </copy>
-        <copy todir="../de.unistuttgart.iste.ps.skilled.tests/lib">
-            <fileset dir="out">
-                <include name="SKilLls.jar"/>
-            </fileset>
-        </copy>
-        <copy todir="../de.unistuttgart.iste.ps.skilled/lib">
-            <fileset dir="out">
-                <include name="SKilLls.jar"/>
-            </fileset>
-        </copy>
-    </target>
-
     <target name="teardown">
         <delete dir="lib"/>
         <delete dir="generated"/>
@@ -188,6 +128,6 @@
         <delete file="${libs.location}/skill.jvm.common.jar"/>
     </target>
 
-    <target depends="clean,gensrc-skill-antlr-parser-post,gen-empty-skill-binding,compile-skillls,run-tests,create-jar" name="build-skillls"/>
+    <target depends="clean,gensrc-skill-antlr-parser-post,gen-empty-skill-binding,create-jar" name="build-skillls"/>
 
 </project>

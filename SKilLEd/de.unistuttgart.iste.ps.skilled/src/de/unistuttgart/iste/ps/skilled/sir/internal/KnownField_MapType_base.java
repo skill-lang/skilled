@@ -62,7 +62,7 @@ final class KnownField_MapType_base extends FieldDeclaration<java.util.ArrayList
         int i = null == range ? 0 : (int) range.bpo;
         final int high = null == range ? data.length : (int) (range.bpo + range.count);
         for (; i < high; i++) {
-            final java.util.ArrayList<? extends de.unistuttgart.iste.ps.skilled.sir.Type> v = (java.util.ArrayList<? extends de.unistuttgart.iste.ps.skilled.sir.Type>)((de.unistuttgart.iste.ps.skilled.sir.MapType)data[i]).getBase();
+            final java.util.ArrayList<?> v = (java.util.ArrayList<?>)((de.unistuttgart.iste.ps.skilled.sir.MapType)data[i]).getBase();
             if(null==v || v.isEmpty())
                 result++;
             else {

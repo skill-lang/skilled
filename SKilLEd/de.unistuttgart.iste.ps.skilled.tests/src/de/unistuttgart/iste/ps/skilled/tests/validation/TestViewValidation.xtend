@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.tests.validation
 
 import com.google.inject.Inject
-import de.unistuttgart.iste.ps.skilled.SKilLInjectorProvider
+import de.unistuttgart.iste.ps.skilled.SkillInjectorProvider
 import de.unistuttgart.iste.ps.skilled.skill.File
 import de.unistuttgart.iste.ps.skilled.tests.utils.FileLoader
 import org.eclipse.xtext.junit4.InjectWith
@@ -19,7 +19,7 @@ import static org.junit.Assert.*
  * This Class tests View Validation from the ViewValidator.
  * @author Jan Berberich 
  */
-@InjectWith(SKilLInjectorProvider)
+@InjectWith(SkillInjectorProvider)
 @RunWith(XtextRunner)
 class TestViewValidation {
 	@Inject extension ParseHelper<File> parser;
