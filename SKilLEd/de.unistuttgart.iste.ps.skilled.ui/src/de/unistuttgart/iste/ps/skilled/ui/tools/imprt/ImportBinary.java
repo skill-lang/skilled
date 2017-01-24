@@ -1,32 +1,19 @@
 package de.unistuttgart.iste.ps.skilled.ui.tools.imprt;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -44,22 +31,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.FileEditorInput;
-
-import com.google.common.base.Strings;
-
-import de.ust.skill.common.java.api.Access;
-import de.ust.skill.common.java.api.FieldDeclaration;
-import de.ust.skill.common.java.api.SkillException;
-import de.ust.skill.common.java.api.SkillFile;
-import de.ust.skill.common.java.api.SkillFile.Mode;
-import de.ust.skill.common.java.internal.LazyField;
-import de.ust.skill.common.java.internal.SkillObject;
 
 /**
  * This class provides the dialog window for "Import Binary File" which allows
@@ -228,222 +199,222 @@ public class ImportBinary {
 
         OK.setLayoutData(gridDataButtons);
         OK.setText("OK");
-        OK.addSelectionListener(new SelectionAdapter() {
-            @SuppressWarnings({ "restriction", "unchecked" })
-            @Override
-            public void widgetSelected(SelectionEvent event) {
-
-                String fCheckEmptyImportRename = fImportRenamed.replace("/s+", "");
-                // Use binary file name as imported file name if rename field is
-                // empty
-                if (fCheckEmptyImportRename.length() == 0) {
-                    fBinaryName = fSelectedBinary.substring(fSelectedBinary.lastIndexOf(File.separator) + 1,
-                            fSelectedBinary.indexOf(".sf"));
-                } else {
-                    fBinaryName = tImportRename.getText();
-                }
-
-                try {
-                    SkillFile skillFile = null;
-                    if (null == skillFile)
-                        throw new NoSuchMethodError("not implemented");
-                    Iterator<? extends Access<? extends SkillObject>> it = skillFile.allTypes().iterator();
-                    LinkedList<String> strings = new LinkedList<String>();
-                    while (it.hasNext()) {
-                        Access<? extends SkillObject> type = it.next();
-                        strings.add(type.name()
-                                + (!Strings.isNullOrEmpty(type.superName()) ? (" : " + type.superName()) : "") + " {");
-                        Iterator<? extends FieldDeclaration<?>> it2 = type.fields();
-                        while (it2.hasNext()) {
-                            FieldDeclaration<?> declaration = it2.next();
-                            LazyField<?, ?> lazyField = (LazyField<?, ?>) declaration;
-                            strings.add("  " + lazyField.toString() + ";");
-                        }
-                        strings.add("}");
-                        strings.add("");
-                    }
-                    FileWriter writer = new FileWriter("TemporaryFileBySKilLEd.skill", true);
-                    for (String s : strings) {
-                        writer.write(s + System.lineSeparator());
-                    }
-                    writer.close();
-                    fSelectedBinary = "TemporaryFileBySKilLEd.skill";
-
-                } catch (SkillException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                File fCheckImportLocation = new File(tSaveLocation.getText());
-                fToolFilePath = tSaveLocation.getText() + File.separator + fBinaryName + ".skill";
-                fTempFileForCombining = tSaveLocation.getText() + File.separator + "TempFileBySKilLEd.skill";
-                File fCheckDuplicate = new File(fToolFilePath);
-                String fRename = fSaveLocation + File.separator + fBinaryName + "_RenamedBySKilLEd.skill";
-                File fRenamedFile = new File(fRename);
-                fStartDirectoryForChecker = tSaveLocation.getText();
-                File makeDirectory = new File(fStartDirectoryForChecker);
-                if (!makeDirectory.exists()) {
-                    makeDirectory.mkdirs();
-                }
-
-                // error if save location is not a directory
-                if (!fCheckImportLocation.isDirectory()) {
-                    JOptionPane.showMessageDialog(null, "Import location is not a folder!", "Invalid Import Location",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                // error if selected file to import does not end with .sf
-                else if (!tSelectBinary.getText().endsWith(".sf")) {
-                    JOptionPane.showMessageDialog(null, "Invalid file type!", "Invalid File Type",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                // Check if import location is in a .tool folder in the
-                // workspace
-                else if (!tSaveLocation.getText().contains(".tools")
-                        && !tSaveLocation.getText().contains(workspaceDirectory.getAbsolutePath())) {
-                    JOptionPane.showMessageDialog(null,
-                            "Import location is not in the workspace or a child of the .tools folder!",
-                            "Invalid Import Location", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                // Check if file to import already exists
-                else if (fCheckDuplicate.exists()) {
-                    int overwrite = JOptionPane.showOptionDialog(null,
-                            fBinaryName + ".skill already exists!"
-                                    + " Do you want to merge them? (Clicking \"No\" will overwrite the new file with the existing file.)",
-                            "Existing File", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null,
-                            null);
-                    // Deletes existing duplicate tool file if the user clicks
-                    // "no"
-                    if (overwrite == JOptionPane.NO_OPTION) {
-                        fCheckDuplicate.delete();
-                    }
-                    // Renames existing duplicate tool file so that it can be
-                    // merged with the imported file if the user clicks "yes"
-                    else if (overwrite == JOptionPane.YES_OPTION) {
-                        fCheckDuplicate.renameTo(fRenamedFile);
-                    }
-
-                }
-                // Create tool file
-                else {
-                    // Creates a file with the name of the tool if \.tools
-                    // folder is selected
-                    if (fSaveLocation.endsWith(".tools")) {
-                        fToolFilePath = fSaveLocation + File.separator + fBinaryName + File.separator + fBinaryName
-                                + ".skill";
-                        fTempFileForCombining = tSaveLocation.getText() + File.separator + fBinaryName + File.separator
-                                + "TempFileBySKilLEd.skill";
-                        fStartDirectoryForChecker = fSaveLocation + File.separator + fBinaryName;
-                        File makeDirectory2 = new File(fStartDirectoryForChecker);
-                        if (!makeDirectory2.exists()) {
-                            makeDirectory2.mkdirs();
-                        }
-                    } else if (fSaveLocation.endsWith(".tools" + File.separator)) {
-                        fToolFilePath = fSaveLocation + fBinaryName + File.separator + fBinaryName + ".skill";
-                        fTempFileForCombining = tSaveLocation.getText() + fBinaryName + File.separator
-                                + "TempFileBySKilLEd.skill";
-                        fStartDirectoryForChecker = fSaveLocation + fBinaryName;
-                        File makeDirectory2 = new File(fStartDirectoryForChecker);
-                        if (!makeDirectory2.exists()) {
-                            makeDirectory2.mkdirs();
-                        }
-                    }
-                }
-                // Converts string filepaths to paths
-                tSelectBinary.setText(new File("TemporaryFileBySKilLEd.skill").getAbsolutePath());
-                Path fSelectedToolPath = Paths.get(tSelectBinary.getText());
-                Path fImportLocationPath = Paths.get(fToolFilePath);
-                // Moves to-be-imported tool from original location to its
-                // import location
-                try {
-                    Files.move(fSelectedToolPath, fImportLocationPath, REPLACE_EXISTING);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    checkForDuplicateTypes(fToolFilePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                combineFiles();
-                fSaveLocation = "";
-                fSelectedBinary = "";
-
-                /*
-                 * IWorkspace workspace = ResourcesPlugin.getWorkspace();
-                 * IWorkspaceRoot root = workspace.getRoot(); IProject project =
-                 * root.getProject("NewProject"); IFolder folder =
-                 * project.getFolder("NewFolder"); IFile file =
-                 * folder.getFile("hell.MyDsl"); if (!project.exists()) try {
-                 * project.create(null); } catch (CoreException e1) {
-                 * e1.printStackTrace(); } if (!project.isOpen()) try {
-                 * project.open(null); } catch (CoreException e1) {
-                 * e1.printStackTrace(); } if (!folder.exists()) try {
-                 * folder.create(IResource.NONE, true, null); } catch
-                 * (CoreException e1) { e1.printStackTrace(); } byte[] bytes =
-                 * "File contents".getBytes(); ByteArrayInputStream source = new
-                 * ByteArrayInputStream(bytes); try { file.create(source,
-                 * IResource.NONE, null);
-                 * 
-                 * } catch (CoreException e) { e.printStackTrace(); } IWorkbench
-                 * wb = PlatformUI.getWorkbench(); IWorkbenchWindow win =
-                 * wb.getActiveWorkbenchWindow(); IWorkbenchPage page =
-                 * win.getActivePage(); try { IDE.openEditor(page, file); }
-                 * catch (PartInitException e) { e.printStackTrace(); }
-                 */
-
-                // Get the active page.
-                IWorkbench wb = PlatformUI.getWorkbench();
-                IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
-                IWorkbenchPage page = win.getActivePage();
-                // Figure out the default editor for the file type based on
-                // extension.
-                IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor("a.skill");
-                if (desc == null) {
-                    // MyHLMUtils.popupError("Editor open error", "Unable to
-                    // find a suitable editor to open file.");
-                } else {
-                    Constructor<org.eclipse.core.internal.resources.File> constructor = (Constructor<org.eclipse.core.internal.resources.File>) org.eclipse.core.internal.resources.File.class
-                            .getDeclaredConstructors()[0];
-                    constructor.setAccessible(true);
-                    try {
-                        IWorkspaceRoot root = workspace.getRoot();
-                        IPath path = root.getLocation();
-                        String shortPath = fImportLocationPath.toString().split(path.lastSegment())[1];
-                        org.eclipse.core.internal.resources.File file = constructor.newInstance(
-                                new org.eclipse.core.runtime.Path(shortPath), ResourcesPlugin.getWorkspace());
-                        File rename = new File(fImportLocationPath.toString());
-                        File deleteLater = new File(fImportLocationPath.toString() + "asdf");
-                        rename.renameTo(deleteLater);
-                        IProject currentProject = null;
-                        for (IProject p : root.getProjects()) {
-                            if (fImportLocationPath.toString().contains(p.getName())) {
-                                currentProject = p;
-                            }
-                        }
-                        if (currentProject == null) {
-                            return;
-                        }
-                        currentProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-                        file.create(new FileInputStream(fImportLocationPath.toString() + "asdf"), true,
-                                new NullProgressMonitor());
-                        deleteLater.delete();
-                        currentProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-                        page.openEditor(new FileEditorInput(file), desc.getId());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                shell.dispose();
-
-            }
-        });
+//        OK.addSelectionListener(new SelectionAdapter() {
+//            @SuppressWarnings({ "restriction", "unchecked" })
+//            @Override
+//            public void widgetSelected(SelectionEvent event) {
+//
+//                String fCheckEmptyImportRename = fImportRenamed.replace("/s+", "");
+//                // Use binary file name as imported file name if rename field is
+//                // empty
+//                if (fCheckEmptyImportRename.length() == 0) {
+//                    fBinaryName = fSelectedBinary.substring(fSelectedBinary.lastIndexOf(File.separator) + 1,
+//                            fSelectedBinary.indexOf(".sf"));
+//                } else {
+//                    fBinaryName = tImportRename.getText();
+//                }
+//
+//                try {
+//                    SkillFile skillFile = null;
+//                    if (null == skillFile)
+//                        throw new NoSuchMethodError("not implemented");
+//                    Iterator<? extends Access<? extends SkillObject>> it = skillFile.allTypes().iterator();
+//                    LinkedList<String> strings = new LinkedList<String>();
+//                    while (it.hasNext()) {
+//                        Access<? extends SkillObject> type = it.next();
+//                        strings.add(type.name()
+//                                + (!Strings.isNullOrEmpty(type.superName()) ? (" : " + type.superName()) : "") + " {");
+//                        Iterator<? extends FieldDeclaration<?>> it2 = type.fields();
+//                        while (it2.hasNext()) {
+//                            FieldDeclaration<?> declaration = it2.next();
+//                            LazyField<?, ?> lazyField = (LazyField<?, ?>) declaration;
+//                            strings.add("  " + lazyField.toString() + ";");
+//                        }
+//                        strings.add("}");
+//                        strings.add("");
+//                    }
+//                    FileWriter writer = new FileWriter("TemporaryFileBySKilLEd.skill", true);
+//                    for (String s : strings) {
+//                        writer.write(s + System.lineSeparator());
+//                    }
+//                    writer.close();
+//                    fSelectedBinary = "TemporaryFileBySKilLEd.skill";
+//
+//                } catch (SkillException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                File fCheckImportLocation = new File(tSaveLocation.getText());
+//                fToolFilePath = tSaveLocation.getText() + File.separator + fBinaryName + ".skill";
+//                fTempFileForCombining = tSaveLocation.getText() + File.separator + "TempFileBySKilLEd.skill";
+//                File fCheckDuplicate = new File(fToolFilePath);
+//                String fRename = fSaveLocation + File.separator + fBinaryName + "_RenamedBySKilLEd.skill";
+//                File fRenamedFile = new File(fRename);
+//                fStartDirectoryForChecker = tSaveLocation.getText();
+//                File makeDirectory = new File(fStartDirectoryForChecker);
+//                if (!makeDirectory.exists()) {
+//                    makeDirectory.mkdirs();
+//                }
+//
+//                // error if save location is not a directory
+//                if (!fCheckImportLocation.isDirectory()) {
+//                    JOptionPane.showMessageDialog(null, "Import location is not a folder!", "Invalid Import Location",
+//                            JOptionPane.ERROR_MESSAGE);
+//                    return;
+//                }
+//                // error if selected file to import does not end with .sf
+//                else if (!tSelectBinary.getText().endsWith(".sf")) {
+//                    JOptionPane.showMessageDialog(null, "Invalid file type!", "Invalid File Type",
+//                            JOptionPane.ERROR_MESSAGE);
+//                    return;
+//                }
+//                // Check if import location is in a .tool folder in the
+//                // workspace
+//                else if (!tSaveLocation.getText().contains(".tools")
+//                        && !tSaveLocation.getText().contains(workspaceDirectory.getAbsolutePath())) {
+//                    JOptionPane.showMessageDialog(null,
+//                            "Import location is not in the workspace or a child of the .tools folder!",
+//                            "Invalid Import Location", JOptionPane.ERROR_MESSAGE);
+//                    return;
+//                }
+//                // Check if file to import already exists
+//                else if (fCheckDuplicate.exists()) {
+//                    int overwrite = JOptionPane.showOptionDialog(null,
+//                            fBinaryName + ".skill already exists!"
+//                                    + " Do you want to merge them? (Clicking \"No\" will overwrite the new file with the existing file.)",
+//                            "Existing File", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null,
+//                            null);
+//                    // Deletes existing duplicate tool file if the user clicks
+//                    // "no"
+//                    if (overwrite == JOptionPane.NO_OPTION) {
+//                        fCheckDuplicate.delete();
+//                    }
+//                    // Renames existing duplicate tool file so that it can be
+//                    // merged with the imported file if the user clicks "yes"
+//                    else if (overwrite == JOptionPane.YES_OPTION) {
+//                        fCheckDuplicate.renameTo(fRenamedFile);
+//                    }
+//
+//                }
+//                // Create tool file
+//                else {
+//                    // Creates a file with the name of the tool if \.tools
+//                    // folder is selected
+//                    if (fSaveLocation.endsWith(".tools")) {
+//                        fToolFilePath = fSaveLocation + File.separator + fBinaryName + File.separator + fBinaryName
+//                                + ".skill";
+//                        fTempFileForCombining = tSaveLocation.getText() + File.separator + fBinaryName + File.separator
+//                                + "TempFileBySKilLEd.skill";
+//                        fStartDirectoryForChecker = fSaveLocation + File.separator + fBinaryName;
+//                        File makeDirectory2 = new File(fStartDirectoryForChecker);
+//                        if (!makeDirectory2.exists()) {
+//                            makeDirectory2.mkdirs();
+//                        }
+//                    } else if (fSaveLocation.endsWith(".tools" + File.separator)) {
+//                        fToolFilePath = fSaveLocation + fBinaryName + File.separator + fBinaryName + ".skill";
+//                        fTempFileForCombining = tSaveLocation.getText() + fBinaryName + File.separator
+//                                + "TempFileBySKilLEd.skill";
+//                        fStartDirectoryForChecker = fSaveLocation + fBinaryName;
+//                        File makeDirectory2 = new File(fStartDirectoryForChecker);
+//                        if (!makeDirectory2.exists()) {
+//                            makeDirectory2.mkdirs();
+//                        }
+//                    }
+//                }
+//                // Converts string filepaths to paths
+//                tSelectBinary.setText(new File("TemporaryFileBySKilLEd.skill").getAbsolutePath());
+//                Path fSelectedToolPath = Paths.get(tSelectBinary.getText());
+//                Path fImportLocationPath = Paths.get(fToolFilePath);
+//                // Moves to-be-imported tool from original location to its
+//                // import location
+//                try {
+//                    Files.move(fSelectedToolPath, fImportLocationPath, REPLACE_EXISTING);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                try {
+//                    checkForDuplicateTypes(fToolFilePath);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                combineFiles();
+//                fSaveLocation = "";
+//                fSelectedBinary = "";
+//
+//                /*
+//                 * IWorkspace workspace = ResourcesPlugin.getWorkspace();
+//                 * IWorkspaceRoot root = workspace.getRoot(); IProject project =
+//                 * root.getProject("NewProject"); IFolder folder =
+//                 * project.getFolder("NewFolder"); IFile file =
+//                 * folder.getFile("hell.MyDsl"); if (!project.exists()) try {
+//                 * project.create(null); } catch (CoreException e1) {
+//                 * e1.printStackTrace(); } if (!project.isOpen()) try {
+//                 * project.open(null); } catch (CoreException e1) {
+//                 * e1.printStackTrace(); } if (!folder.exists()) try {
+//                 * folder.create(IResource.NONE, true, null); } catch
+//                 * (CoreException e1) { e1.printStackTrace(); } byte[] bytes =
+//                 * "File contents".getBytes(); ByteArrayInputStream source = new
+//                 * ByteArrayInputStream(bytes); try { file.create(source,
+//                 * IResource.NONE, null);
+//                 * 
+//                 * } catch (CoreException e) { e.printStackTrace(); } IWorkbench
+//                 * wb = PlatformUI.getWorkbench(); IWorkbenchWindow win =
+//                 * wb.getActiveWorkbenchWindow(); IWorkbenchPage page =
+//                 * win.getActivePage(); try { IDE.openEditor(page, file); }
+//                 * catch (PartInitException e) { e.printStackTrace(); }
+//                 */
+//
+//                // Get the active page.
+//                IWorkbench wb = PlatformUI.getWorkbench();
+//                IWorkbenchWindow win = wb.getActiveWorkbenchWindow();
+//                IWorkbenchPage page = win.getActivePage();
+//                // Figure out the default editor for the file type based on
+//                // extension.
+//                IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor("a.skill");
+//                if (desc == null) {
+//                    // MyHLMUtils.popupError("Editor open error", "Unable to
+//                    // find a suitable editor to open file.");
+//                } else {
+//                    Constructor<org.eclipse.core.internal.resources.File> constructor = (Constructor<org.eclipse.core.internal.resources.File>) org.eclipse.core.internal.resources.File.class
+//                            .getDeclaredConstructors()[0];
+//                    constructor.setAccessible(true);
+//                    try {
+//                        IWorkspaceRoot root = workspace.getRoot();
+//                        IPath path = root.getLocation();
+//                        String shortPath = fImportLocationPath.toString().split(path.lastSegment())[1];
+//                        org.eclipse.core.internal.resources.File file = constructor.newInstance(
+//                                new org.eclipse.core.runtime.Path(shortPath), ResourcesPlugin.getWorkspace());
+//                        File rename = new File(fImportLocationPath.toString());
+//                        File deleteLater = new File(fImportLocationPath.toString() + "asdf");
+//                        rename.renameTo(deleteLater);
+//                        IProject currentProject = null;
+//                        for (IProject p : root.getProjects()) {
+//                            if (fImportLocationPath.toString().contains(p.getName())) {
+//                                currentProject = p;
+//                            }
+//                        }
+//                        if (currentProject == null) {
+//                            return;
+//                        }
+//                        currentProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+//                        file.create(new FileInputStream(fImportLocationPath.toString() + "asdf"), true,
+//                                new NullProgressMonitor());
+//                        deleteLater.delete();
+//                        currentProject.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+//                        page.openEditor(new FileEditorInput(file), desc.getId());
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//
+//                shell.dispose();
+//
+//            }
+//        });
 
         Label emptyCell2 = new Label(shell, SWT.NONE);
         emptyCell2.setText("                                           ");

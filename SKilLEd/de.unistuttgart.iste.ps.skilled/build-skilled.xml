@@ -2,7 +2,7 @@
 <project name="de.unistuttgart.iste.ps.skilled" default="build-skilled">
     <property name="workflow" value="src/de/unistuttgart/iste/ps/skilled/GenerateSkill.mwe2"/>
     <property name="tests-project-path" value="../de.unistuttgart.iste.ps.skilled.tests" />
-    <property name="ui-project-path" value="../de.unistuttgart.iste.ps.skilled.ui" />
+    <property name="sfparser.src.location" value="src/de/unistuttgart/iste/ps/skilled"/>
     <property name="source" value="1.8" />
     <property name="target" value="1.8" />
 
@@ -16,6 +16,28 @@
         </fileset>
         <fileset dir="." includes=".antlr-generator-3.2.0.jar"/>
     </path>
+
+
+    <target name="clean">
+        <delete file="${libs.location}/empty.skill"/>
+        <delete dir="${sfparser.src.location}/sfparser"/>
+    </target>
+
+	<target name="gen-sfparser">
+        <mkdir dir="lib/temp-esb"/>
+        <touch file="lib/empty.skill"/>
+        <java dir="lib" jar="lib/skill-0.3.jar" fork="true">
+            <arg line="empty.skill"/>
+            <arg line="-p de.unistuttgart.iste.ps.skilled.sfparser"/>
+            <arg line="-L Java"/>
+            <arg line="-o temp-esb"/>
+        </java>
+        <copy todir="${sfparser.src.location}/sfparser">
+            <fileset dir="lib/temp-esb/de/unistuttgart/iste/ps/skilled/ui/sfparser"/>
+        </copy>
+        <delete file="lib/empty.skill"/>
+        <delete dir="lib/temp-esb"/>
+    </target>
     
     <target name="generate-xtext-artifacts">
         <java classpathref="classpath" 

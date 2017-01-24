@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="de.unistuttgart.iste.ps.skilled.ui" default="build-skilled-ui">
     <property name="libs.location" value="../de.unistuttgart.iste.ps.skilled/lib"/>
-    <property name="ui.src.location" value="../de.unistuttgart.iste.ps.skilled.ui/src/de/unistuttgart/iste/ps/skilled/ui"/>
     <property name="ui-project-path" value="../de.unistuttgart.iste.ps.skilled.ui" />
     <property name="source" value="1.8" />
     <property name="target" value="1.8" />
@@ -10,34 +9,11 @@
         <fileset dir="lib">
             <patternset>
                 <include name="*.jar"/>
-                <include name="deps/*.jar"/>
                 <exclude name="*antlr*4*.jar"/>
             </patternset>
         </fileset>
         <pathelement location="ant/bin"/>
     </path>
-
-
-    <target name="clean">
-        <delete file="${libs.location}/empty.skill"/>
-        <delete dir="${ui.src.location}/sfparser"/>
-    </target>
-
-	<target name="gen-sfparser">
-        <mkdir dir="${libs.location}/temp-esb"/>
-        <touch file="${libs.location}/empty.skill"/>
-        <java dir="${libs.location}" jar="lib/skill-0.3.jar" fork="true">
-            <arg line="empty.skill"/>
-            <arg line="-p de.unistuttgart.iste.ps.skilled.ui.sfparser"/>
-            <arg line="-L Java"/>
-            <arg line="-o temp-esb"/>
-        </java>
-        <copy todir="${ui.src.location}/sfparser">
-            <fileset dir="${libs.location}/temp-esb/de/unistuttgart/iste/ps/skilled/ui/sfparser"/>
-        </copy>
-        <delete file="${libs.location}/empty.skill"/>
-        <delete dir="${libs.location}/temp-esb"/>
-    </target>
     
     <target name="compile-xtend-ui">
         <pathconvert pathsep="${path.separator}" 
@@ -77,21 +53,6 @@
             </manifest>
             <fileset dir="${ui-project-path}/ant/bin"/>
         </jar>
-    </target>    
-
-    <target name="setup-UI-project-libs">
-        <copy todir="${ui-project-path}/lib">
-            <fileset dir="lib">
-                <include name="skill_2.11-0.3.jar"/>
-            </fileset>
-            <fileset dir="lib/deps">
-                <include name="skill.java.common.jar"/>
-                <include name="skill.jvm.common.jar"/>
-            </fileset>
-            <fileset dir="../../scala/lib">
-                <include name="scala-library.jar"/>
-            </fileset>
-        </copy>
     </target>
 
     <target name="prepare-xtend-gen">
@@ -101,6 +62,6 @@
         </copy>
     </target>
 
-    <target name="build-skilled-ui" depends="clean,setup-UI-project-libs,gen-sfparser,compile-java-ui,make-jar-skilled-ui,prepare-xtend-gen"/>
+    <target name="build-skilled-ui" depends="compile-java-ui,make-jar-skilled-ui,prepare-xtend-gen"/>
 
 </project>
