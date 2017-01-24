@@ -54,6 +54,9 @@ final public class ToolConfigurationDialog extends Dialog {
         }
 
         private String toString(ArrayList<String> options) {
+            if (null == options)
+                return "";
+
             StringBuilder sb = new StringBuilder();
             boolean first = true;
             for (String s : options) {
@@ -67,6 +70,9 @@ final public class ToolConfigurationDialog extends Dialog {
         }
 
         private String toString(FilePath output) {
+            if (null == output)
+                return "";
+
             StringBuilder sb = new StringBuilder(output.getIsAbsolut() ? "/" : "");
             for (String s : output.getParts()) {
                 sb.append(s).append('/');
@@ -226,12 +232,12 @@ final public class ToolConfigurationDialog extends Dialog {
                 target.getBuildTargets().remove(b.src);
             } else if (null != b.src) {
                 // update
-                b.src.setLanguage(b.language);
+                b.src.setLanguage(b.language.toLowerCase());
                 b.src.setOutput(mkFilePath(b.output));
                 b.src.setOptions(mkOptions(b.options));
             } else {
                 // create
-                BuildInformation info = sf.BuildInformations().make(b.language, mkOptions(b.options),
+                BuildInformation info = sf.BuildInformations().make(b.language.toLowerCase(), mkOptions(b.options),
                         mkFilePath(b.output));
                 target.getBuildTargets().add(info);
             }
@@ -251,8 +257,7 @@ final public class ToolConfigurationDialog extends Dialog {
         File f = Paths.get(output).toFile();
         ArrayList<String> parts = new ArrayList<>();
         addParts(f, parts);
-        sf.FilePaths().make(f.isAbsolute(), parts);
-        return null;
+        return sf.FilePaths().make(f.isAbsolute(), parts);
     }
 
     /**
@@ -261,7 +266,7 @@ final public class ToolConfigurationDialog extends Dialog {
     private void addParts(File f, ArrayList<String> parts) {
         if (null != f.getParentFile()) {
             addParts(f.getParentFile(), parts);
+            parts.add(f.getName());
         }
-        parts.add(f.getName());
     }
 }
