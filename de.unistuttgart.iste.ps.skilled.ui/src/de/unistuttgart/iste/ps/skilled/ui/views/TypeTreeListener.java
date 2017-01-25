@@ -104,9 +104,9 @@ public class TypeTreeListener {
                         // toolview.getActiveTool(), type);
 
                         // add all fields by default
-                        for (FieldLike f : SIRHelper.fields(type)) {
-                            ToolUtil.addFieldToTool(f, type, tool);
-                        }
+//                        for (FieldLike f : SIRHelper.fields(type)) {
+//                            ToolUtil.addFieldToTool(f, type, tool);
+//                        }
                         // ToolUtil.addAllFields(toolview.getActiveProject(),
                         // toolview.getActiveTool(), type);
                         toolview.refreshTools();
