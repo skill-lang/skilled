@@ -94,14 +94,6 @@
         </copy>
     </target>
 
-    <target name="setup-project-libs">
-        <copy todir="lib">
-            <fileset dir="../../scala/lib">
-                <include name="scala-library.jar"/>
-            </fileset>
-        </copy>
-    </target>
-
-    <target name="build-skilled" depends="setup-project-libs,generate-xtext-artifacts,compile-java,make-jar-skilled,prepare-xtend-gen"/>
+    <target name="build-skilled" depends="generate-xtext-artifacts,compile-java,make-jar-skilled,prepare-xtend-gen"/>
 
 </project>

@@ -2,18 +2,10 @@
 <project name="de.unistuttgart.iste.ps.skilled" default="complete-build">
 
     <property name="buckminster.home" value="../../buckminster"/>
-    
-    <condition property="scala.exists">
-        <available file="../../scala" type="dir"/>
-    </condition>
 
     <condition property="buckminster.exists">
         <available file="../../buckminster"/>
     </condition>
-
-    <target name="unpack-scala" unless="scala.exists">
-        <unzip src="lib/scala.zip" dest="../.."/>
-    </target>
 
     <target name="unpack-buckminster" unless="buckminster.exists">
         <unzip src="lib/buckminster.zip" dest="../.."/>

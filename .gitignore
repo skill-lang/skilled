@@ -3,8 +3,8 @@
 ### Java ###
 *.class
 
-### Scala ###
-scala/
+## generated products
+javadoc/
 buckminster/
 
 # Mobile Tools for Java (J2ME)

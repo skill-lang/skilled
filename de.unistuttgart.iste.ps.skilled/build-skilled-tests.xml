@@ -89,11 +89,8 @@
                 <include name="skill.java.common.jar"/>
                 <include name="skill.jvm.common.jar"/>
             </fileset>
-            <fileset dir="../../scala/lib">
-                <include name="scala-library.jar"/>
-            </fileset>
             <fileset dir="lib">
-                <include name="skill_2.11-0.3.jar"/>
+                <include name="skill-0.3.jar"/>
             </fileset>
         </copy>
     </target>
