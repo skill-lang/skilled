@@ -84,7 +84,6 @@ Export-Package: de.unistuttgart.iste.ps.skilled;uses:="com.google.inject,org.ecl
  de.ust.skill.common.java.internal
 Import-Package: org.apache.log4j
 Bundle-ClassPath: .,
- lib/scala-library.jar,
- lib/skill_2.11-0.3.jar,
  lib/deps/skill.java.common.jar,
- lib/deps/skill.jvm.common.jar
+ lib/deps/skill.jvm.common.jar,
+ lib/skill-0.3.jar

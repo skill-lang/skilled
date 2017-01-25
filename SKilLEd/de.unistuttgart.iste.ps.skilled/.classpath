@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/skill-0.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/deps/skill.jvm.common.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/deps/skill.java.common.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/scala-library.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/skill_2.11-0.3.jar"/>
 	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-4.5.1-complete.jar"/>
 	<classpathentry kind="lib" path="lib/antlr4-runtime-4.5.1-1-javadoc.jar"/>

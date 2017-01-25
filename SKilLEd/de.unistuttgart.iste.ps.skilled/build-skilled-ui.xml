@@ -9,6 +9,7 @@
         <fileset dir="lib">
             <patternset>
                 <include name="*.jar"/>
+                <include name="deps/*.jar"/>
                 <exclude name="*antlr*4*.jar"/>
             </patternset>
         </fileset>
