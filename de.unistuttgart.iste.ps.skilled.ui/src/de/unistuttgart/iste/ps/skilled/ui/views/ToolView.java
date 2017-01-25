@@ -85,7 +85,7 @@ public final class ToolView extends ViewPart {
             tvl.initToolListListener(tools);
             tvl.initPartListener(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage());
 
-            new ContextMenuToolView(this, tools);
+            new ToolViewContextMenu(this, tools);
         }
 
         // type selection

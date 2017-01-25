@@ -22,12 +22,12 @@ import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
  * 
  * @category GUI
  */
-final class ContextMenuToolView {
+final class ToolViewContextMenu {
     private final ToolView view;
     private final Menu menu;
 
     // no instances
-    ContextMenuToolView(ToolView view, final List toollist) {
+    ToolViewContextMenu(ToolView view, final List toollist) {
         this.view = view;
         menu = new Menu(toollist);
 
