@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: de.unistuttgart.iste.ps.skilled.ui
-Bundle-Vendor: My Company
-Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Stuttgart
+Bundle-Version: 1.0.2.qualifier
 Bundle-SymbolicName: de.unistuttgart.iste.ps.skilled.ui;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.unistuttgart.iste.ps.skilled;visibility:=reexport,

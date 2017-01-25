@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IActionBars;
@@ -107,17 +108,28 @@ public class ToolViewButtonInitializer {
                 cloneTool = toolView.getSkillFile().Tools().stream()
                         .filter(t -> t.getName().equals(skillToolWizard.getCloneToolName())).findFirst().get();
             } catch (NoSuchElementException e) {
-                toolView.showMessage("Could not create tool.");
+                showMessage("Could not create tool.");
                 return;
             }
             if (newToolName == null)
                 return;
             if (!ToolUtil.cloneTool(toolView.getActiveProject(), cloneTool, newToolName, toolView.getSkillFile())) {
-                toolView.showMessage("Could not create tool.");
+                showMessage("Could not create tool.");
                 return;
             }
             toolView.refresh();
         }
+    }
+
+    /**
+     * Show a message window with the passed string.
+     * 
+     * @param message
+     *            - {@link String Message} which should be displayed.
+     * @category Dialog
+     */
+    private static void showMessage(String message) {
+        MessageDialog.openInformation(null, "Tool View", message);
     }
 
     /**

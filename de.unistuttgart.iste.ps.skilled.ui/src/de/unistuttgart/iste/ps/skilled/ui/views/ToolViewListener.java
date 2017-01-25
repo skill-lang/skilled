@@ -47,7 +47,6 @@ public class ToolViewListener {
                 if (toolViewList.getSelectionCount() != 0 && toolViewList.getItemCount() > 0) {
                     toolview.setActiveTool(
                             toolview.getSkillFile().Tools().getByID(1 + toolViewList.getSelectionIndex()));
-                    toolview.buildTypeTree();
                 }
             }
 
@@ -118,7 +117,7 @@ public class ToolViewListener {
 
             @Override
             public void partClosed(IWorkbenchPart part) {
-                toolview.setdoIndexing(true);
+//                toolview.setdoIndexing(true);
                 toolview.refresh();
             }
 
@@ -143,7 +142,7 @@ public class ToolViewListener {
 
                     if (toolview.getActiveProject() == null
                             || !toolview.getActiveProject().getName().equals(newActiveProject.getName())) {
-                        toolview.setdoIndexing(true);
+//                        toolview.setdoIndexing(true);
                         toolview.refresh();
                     }
                 }

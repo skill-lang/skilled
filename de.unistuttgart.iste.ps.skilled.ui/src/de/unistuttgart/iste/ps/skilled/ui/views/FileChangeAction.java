@@ -139,11 +139,11 @@ public class FileChangeAction {
                 e.printStackTrace();
             }
 
-            if (toolview.getTabFolder().getSelectionIndex() == 1)
-                toolview.reloadTypelist();
-            else if (toolview.getTabFolder().getSelectionIndex() == 2)
-                toolview.reloadFieldList();
-            else
+//            if (toolview.getTabFolder().getSelectionIndex() == 1)
+//                toolview.reloadTypelist();
+//            else if (toolview.getTabFolder().getSelectionIndex() == 2)
+//                toolview.reloadFieldList();
+//            else
                 toolview.refresh();
         }
         return back;
