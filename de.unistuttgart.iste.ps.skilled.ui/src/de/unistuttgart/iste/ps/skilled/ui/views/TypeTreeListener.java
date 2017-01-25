@@ -1,21 +1,21 @@
 package de.unistuttgart.iste.ps.skilled.ui.views;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import de.unistuttgart.iste.ps.skilled.sir.ClassType;
+import de.unistuttgart.iste.ps.skilled.sir.FieldLike;
 import de.unistuttgart.iste.ps.skilled.sir.Hint;
+import de.unistuttgart.iste.ps.skilled.sir.Tool;
 import de.unistuttgart.iste.ps.skilled.sir.Type;
 import de.unistuttgart.iste.ps.skilled.sir.UserdefinedType;
+import de.unistuttgart.iste.ps.skilled.tools.SIRCache;
+import de.unistuttgart.iste.ps.skilled.tools.SIRHelper;
 import de.unistuttgart.iste.ps.skilled.ui.tools.EditorUtil;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
 
@@ -24,6 +24,8 @@ import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
  * used in the {@link ToolView toolview}
  * 
  * @author Ken Singer
+ * @author Timm Felden
+ * 
  * @category GUI
  */
 public class TypeTreeListener {
@@ -86,82 +88,64 @@ public class TypeTreeListener {
         });
 
         // Listener for the checkboxes
-        typeTree.addListener(SWT.Selection, new Listener() {
+        typeTree.addListener(SWT.Selection, event -> {
+            if (event.detail == SWT.CHECK) {
+                // determine whether selection is a type or a hint
+                if (event.item.getData() instanceof Type) {
+                    final UserdefinedType type = (UserdefinedType) ((TreeItem) event.item).getData();
+                    final Tool tool = toolview.getActiveTool();
 
-            @Override
-            public void handleEvent(Event event) {
-                if (event.detail == SWT.CHECK) {
-                    UserdefinedType type = null;
-                    Hint hint = null;
+                    if (((TreeItem) event.item).getChecked()) {
+                        // if the user checks the checkbox, add the selected
+                        // type and all its fields and hints
+                        ToolUtil.addTypeToTool(type, tool);
+                        // TODO
+                        // ToolUtil.addAllTypeHints(toolview.getActiveProject(),
+                        // toolview.getActiveTool(), type);
 
-                    // determine whether selection is a type or a hint
-                    if (event.item.getData() instanceof Type)
-                        type = (UserdefinedType) ((TreeItem) event.item).getData();
-                    else if (event.item.getData() instanceof Hint)
-                        hint = (Hint) ((TreeItem) event.item).getData();
-
-                    if (null != type) {
-                        if (((TreeItem) event.item).getChecked()) {
-                            // if the user checks the checkbox, add the selected
-                            // type and all its fields and hints
-                            ToolUtil.addTypeToTool(toolview.getActiveTool().getName(), toolview.getActiveProject(),
-                                    ToolUtil.getActualName(type.getName()));
-                            ToolUtil.addAllTypeHints(toolview.getActiveProject(), toolview.getActiveTool(), type);
-                            ToolUtil.addAllFields(toolview.getActiveProject(), toolview.getActiveTool(), type);
-                            toolview.reloadTypelist();
-                        } else {
-                            // if the user unchecks the checkbox, remove the
-                            // selected type and all its fields and hints
-                            ToolUtil.removeAllFields(toolview.getActiveProject(), toolview.getActiveTool(), type);
-                            ToolUtil.removeAllTypeHints(toolview.getActiveProject(), toolview.getActiveTool(), type);
-                            ToolUtil.removeTypeAndAllSubtypes(toolview.getActiveProject(), toolview.getActiveTool(),
-                                    type);
-                            toolview.reloadTypelist();
+                        // add all fields by default
+                        for (FieldLike f : SIRHelper.fields(type)) {
+                            ToolUtil.addFieldToTool(f, type, tool);
                         }
-                    }
+                        // ToolUtil.addAllFields(toolview.getActiveProject(),
+                        // toolview.getActiveTool(), type);
+                        toolview.refreshTools();
 
-                    if (hint != null) {
-                        throw new NoSuchMethodError();
-                        // final String typeName = ((Type)
-                        // hint.getParent()).getName();
-                        // // if the user checks the checkbox, add the selected
-                        // // hint and its parenttype
-                        // if (((TreeItem) event.item).getChecked()) {
-                        // if
-                        // (toolview.getActiveTool().getSelectedUserTypes().stream()
-                        // .noneMatch(t -> t.getName().equals(typeName)))
-                        // ToolUtil.addTypeToTool(toolview.getActiveTool().getName(),
-                        // toolview.getActiveProject(),
-                        // typeName);
-                        // ToolUtil.addTypeHint(toolview.getActiveTool().getName(),
-                        // toolview.getActiveProject(),
-                        // typeName, hint.getName());
-                        // toolview.reloadTypelist();
-                        // } else {
-                        // // if the user unchecks the checkbox, remove the
-                        // // selected hint
-                        // ToolUtil.removeTypeHint(toolview.getActiveTool().getName(),
-                        // toolview.getActiveProject(),
-                        // typeName, hint.getName());
-                        // toolview.reloadTypelist();
-                        // }
+                    } else {
+                        // if the user unchecks the checkbox, remove the
+                        // selected type and all its fields and hints
+                        ToolUtil.removeAllFields(toolview.getActiveProject(), tool, type);
+                        ToolUtil.removeAllTypeHints(toolview.getActiveProject(), tool, type);
+                        ToolUtil.removeTypeAndAllSubtypes(toolview.getActiveProject(), tool, type);
+                        toolview.refreshTools();
                     }
+                } else if (event.item.getData() instanceof Hint) {
+                    Hint hint = (Hint) ((TreeItem) event.item).getData();
+                    throw new NoSuchMethodError();
+                    // final String typeName = ((Type)
+                    // hint.getParent()).getName();
+                    // // if the user checks the checkbox, add the selected
+                    // // hint and its parenttype
+                    // if (((TreeItem) event.item).getChecked()) {
+                    // if
+                    // (toolview.getActiveTool().getSelectedUserTypes().stream()
+                    // .noneMatch(t -> t.getName().equals(typeName)))
+                    // ToolUtil.addTypeToTool(toolview.getActiveTool().getName(),
+                    // toolview.getActiveProject(),
+                    // typeName);
+                    // ToolUtil.addTypeHint(toolview.getActiveTool().getName(),
+                    // toolview.getActiveProject(),
+                    // typeName, hint.getName());
+                    // toolview.reloadTypelist();
+                    // } else {
+                    // // if the user unchecks the checkbox, remove the
+                    // // selected hint
+                    // ToolUtil.removeTypeHint(toolview.getActiveTool().getName(),
+                    // toolview.getActiveProject(),
+                    // typeName, hint.getName());
+                    // toolview.reloadTypelist();
+                    // }
                 }
-            }
-        });
-
-        // enables to refresh on hitting the F5-key
-        typeTree.addKeyListener(new KeyListener() {
-
-            @Override
-            public void keyReleased(KeyEvent arg0) {
-                // not used
-            }
-
-            @Override
-            public void keyPressed(KeyEvent arg0) {
-                if (arg0.keyCode == SWT.F5)
-                    toolview.reloadTypelist();
             }
         });
     }

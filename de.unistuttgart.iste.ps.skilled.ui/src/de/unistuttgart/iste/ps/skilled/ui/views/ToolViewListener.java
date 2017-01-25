@@ -2,12 +2,8 @@ package de.unistuttgart.iste.ps.skilled.ui.views;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
@@ -40,19 +36,10 @@ public class ToolViewListener {
      * @param toolViewList
      */
     public void initToolListListener(List toolViewList) {
-        // selection listener to set the active tool
-        toolViewList.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                if (toolViewList.getSelectionCount() != 0 && toolViewList.getItemCount() > 0) {
-                    toolview.setActiveTool(
-                            toolview.getSkillFile().Tools().getByID(1 + toolViewList.getSelectionIndex()));
-                }
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // not used
+        // keep selected tool updated
+        toolViewList.addListener(SWT.Selection, e -> {
+            if (toolViewList.getSelectionCount() != 0 && toolViewList.getItemCount() > 0) {
+                toolview.setActiveTool(toolview.getSkillFile().Tools().getByID(1 + toolViewList.getSelectionIndex()));
             }
         });
 
@@ -75,22 +62,6 @@ public class ToolViewListener {
                     ToolUtil.generateTemporarySKilLFiles(toolview.getActiveTool().getName(),
                             toolview.getActiveProject());
                     editorUtil.openToolInEditor(toolview.getActiveTool(), toolview.getActiveProject());
-                }
-            }
-        });
-
-        // enables a refresh on hitting the F5-key
-        toolViewList.addKeyListener(new KeyListener() {
-
-            @Override
-            public void keyReleased(KeyEvent arg0) {
-                // not used
-            }
-
-            @Override
-            public void keyPressed(KeyEvent arg0) {
-                if (arg0.keyCode == SWT.F5) {
-                    toolview.refresh();
                 }
             }
         });
@@ -117,7 +88,7 @@ public class ToolViewListener {
 
             @Override
             public void partClosed(IWorkbenchPart part) {
-//                toolview.setdoIndexing(true);
+                // toolview.setdoIndexing(true);
                 toolview.refresh();
             }
 
@@ -142,7 +113,7 @@ public class ToolViewListener {
 
                     if (toolview.getActiveProject() == null
                             || !toolview.getActiveProject().getName().equals(newActiveProject.getName())) {
-//                        toolview.setdoIndexing(true);
+                        // toolview.setdoIndexing(true);
                         toolview.refresh();
                     }
                 }

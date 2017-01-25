@@ -8,8 +8,14 @@ import javax.xml.crypto.NoSuchMechanismException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
+import de.unistuttgart.iste.ps.skilled.sir.BuiltinType;
+import de.unistuttgart.iste.ps.skilled.sir.ClassType;
 import de.unistuttgart.iste.ps.skilled.sir.FieldLike;
+import de.unistuttgart.iste.ps.skilled.sir.GroundType;
 import de.unistuttgart.iste.ps.skilled.sir.Identifier;
+import de.unistuttgart.iste.ps.skilled.sir.InterfaceType;
+import de.unistuttgart.iste.ps.skilled.sir.MapType;
+import de.unistuttgart.iste.ps.skilled.sir.SingleBaseTypeContainer;
 import de.unistuttgart.iste.ps.skilled.sir.Tool;
 import de.unistuttgart.iste.ps.skilled.sir.Type;
 import de.unistuttgart.iste.ps.skilled.sir.UserdefinedType;
@@ -121,26 +127,42 @@ public final class ToolUtil {
     }
 
     /**
-     * Tries to add a new Tool to the project
-     * 
-     * @param toolName
-     *            the name of the tool
-     * @param project
-     *            the project containing tool
-     * @param typeName
-     *            the name of the type to be added
-     * @return true if adding was successful
+     * Ensure that a type is selected in a tool. This will also select base
+     * types and super types if required.
      */
-    public static boolean addTypeToTool(String toolName, IProject project, String typeName) {
-        String[] arguments = null;
-        if (project != null)
-            arguments = new String[] { "-e", project.getLocation().toPortableString(), toolName + ":2:" + typeName };
-        try {
-            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
-            return true;
-        } catch (@SuppressWarnings("unused") Throwable t) {
-            return false;
-        }
+    public static void addTypeToTool(Type type, Tool tool) {
+        // catch null for simple recursive adding
+        if (null == type)
+            return;
+
+        if (type instanceof UserdefinedType) {
+            HashSet<UserdefinedType> types = tool.getSelectedUserTypes();
+            if (types.contains(type))
+                return;
+            else {
+                // add type and follow super types
+                types.add((UserdefinedType) type);
+                if (type instanceof ClassType) {
+                    addTypeToTool(((ClassType) type).getSuper(), tool);
+                    for (InterfaceType i : ((ClassType) type).getInterfaces()) {
+                        addTypeToTool(i, tool);
+                    }
+                } else if (type instanceof InterfaceType) {
+                    addTypeToTool(((InterfaceType) type).getSuper(), tool);
+                    for (InterfaceType i : ((InterfaceType) type).getInterfaces()) {
+                        addTypeToTool(i, tool);
+                    }
+                }
+            }
+        } else if (type instanceof SingleBaseTypeContainer) {
+            addTypeToTool(((SingleBaseTypeContainer) type).getBase().self(), tool);
+        } else if (type instanceof MapType) {
+            for (GroundType t : ((MapType) type).getBase())
+                addTypeToTool(t.self(), tool);
+        } else if (type instanceof BuiltinType) {
+            // no action required
+        } else
+            throw new Error("failed to select Type " + type);
     }
 
     /**
@@ -179,17 +201,17 @@ public final class ToolUtil {
      *            the name of the field that should be added
      * @return true if adding was successful
      */
-    public static boolean addField(String toolName, IProject project, String typeName, String fieldName) {
-        String[] arguments = null;
-        if (project != null)
-            arguments = new String[] { "-e", project.getLocation().toPortableString(),
-                    toolName + ":4:" + typeName + ":" + fieldName };
-        try {
-            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
-            return true;
-        } catch (@SuppressWarnings("unused") Throwable t) {
-            return false;
+    public static void addFieldToTool(FieldLike field, UserdefinedType type, Tool tool) {
+        HashMap<UserdefinedType, HashMap<String, FieldLike>> selected = tool.getSelectedFields();
+        HashMap<String, FieldLike> fs = selected.get(type);
+        if (null == fs) {
+            fs = new HashMap<>();
+            selected.put(type, fs);
         }
+        fs.put(field.getName().getSkillname(), field);
+
+        addTypeToTool(type, tool);
+        addTypeToTool(field.getType(), tool);
     }
 
     /**
@@ -487,27 +509,6 @@ public final class ToolUtil {
     }
 
     /**
-     * add all field of a type to a tool
-     * 
-     * @param project-
-     *            the project, where the tool originates in
-     * @param tool
-     *            - the tool, where the fields should be added to
-     * @param type
-     *            - the type containing the fields
-     */
-    public static void addAllFields(IProject project, Tool tool, UserdefinedType type) {
-        throw new NoSuchMethodError();
-        // for (Field toAdd : type.getFields()) {
-        // if (toAdd != null) {
-        // addField(tool.getName(), project, getActualName(type.getName()),
-        // getActualName(toAdd.getName()));
-        // addAllFieldHints(project, tool, type, toAdd);
-        // }
-        // }
-    }
-
-    /**
      * remove all fields of a type from a tool
      * 
      * @param project
@@ -591,24 +592,6 @@ public final class ToolUtil {
         // ToolUtil.removeTypeFromTool(tool.getName(), project, type.getName());
         // }
 
-    }
-
-    /**
-     * adds every type, field and hint in the read {@link SkillFile} to a tool.
-     * 
-     * @param skillFile
-     *            - read in skillfile
-     * @param project
-     *            - the currently active project
-     * @param tool
-     *            - the tool, which should contain everything
-     */
-    public static void addAllToTool(SkillFile skillFile, IProject project, Tool tool) {
-        for (UserdefinedType type : skillFile.UserdefinedTypes()) {
-            ToolUtil.addTypeToTool(tool.getName(), project, getActualName(type.getName()));
-            ToolUtil.addAllTypeHints(project, tool, type);
-            ToolUtil.addAllFields(project, tool, type);
-        }
     }
 
     /**

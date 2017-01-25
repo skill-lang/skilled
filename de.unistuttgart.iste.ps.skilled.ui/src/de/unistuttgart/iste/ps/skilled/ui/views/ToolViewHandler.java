@@ -5,9 +5,9 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-
 /**
- * The handler which is needed to add the {@link ToolView toolview} to the SKilLEd menu
+ * The handler which is needed to add the {@link ToolView toolview} to the
+ * SKilLEd menu
  * 
  * @author Ken Singer
  * @category GUI
@@ -19,7 +19,7 @@ public class ToolViewHandler extends AbstractHandler {
         try {
             HandlerUtil.getActiveWorkbenchWindowChecked(event).getActivePage()
                     .showView("de.unistuttgart.iste.ps.skilled.ui.views.ToolView");
-        } catch (@SuppressWarnings("unused") Exception e) {
+        } catch (Exception e) {
             return null;
         }
         return null;

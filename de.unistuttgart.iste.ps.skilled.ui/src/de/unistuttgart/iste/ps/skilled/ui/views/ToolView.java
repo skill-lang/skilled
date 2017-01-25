@@ -1,5 +1,7 @@
 package de.unistuttgart.iste.ps.skilled.ui.views;
 
+import java.util.HashMap;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -18,7 +20,6 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.unistuttgart.iste.ps.skilled.sir.ClassType;
 import de.unistuttgart.iste.ps.skilled.sir.FieldLike;
-import de.unistuttgart.iste.ps.skilled.sir.Hint;
 import de.unistuttgart.iste.ps.skilled.sir.Identifier;
 import de.unistuttgart.iste.ps.skilled.sir.Tool;
 import de.unistuttgart.iste.ps.skilled.sir.Type;
@@ -52,7 +53,7 @@ public final class ToolView extends ViewPart {
     private IProject activeProject = null;
     private SkillFile skillFile = null;
 
-    private Tool activeTool = null;
+    private Tool selectedTool = null;
     private ClassType selectedType = null;
     private FieldLike selectedField = null;
 
@@ -134,31 +135,6 @@ public final class ToolView extends ViewPart {
     }
 
     /**
-     * reload the typelist after adding a {@link Type type} or {@link Hint
-     * typehinthint} to a tool and sets the {@link CTabFolder typetab} as the
-     * selected tab of the {@link CTabFolder tabfolder}.
-     * 
-     * @category GUI
-     */
-    void reloadTypelist() {
-        refresh();
-    }
-
-    /**
-     * Reload the fieldlist after adding a {@link FieldLike field} or
-     * {@link Hint fieldhint} to a {@link Tree fieldtab} and sets the
-     * {@link CTabFolder toolitem} as the selected tab of the {@link CTabFolder
-     * tabfolder}.
-     * 
-     * @category GUI
-     * 
-     */
-    void reloadFieldList() {
-        reloadTypelist();
-        // tabFolder.setSelection(fieldTabItem);
-    }
-
-    /**
      * Ensures that the .sir file used by this dialog is connected to
      * <code>{@link IProject activeProject}</code>.
      * 
@@ -189,14 +165,25 @@ public final class ToolView extends ViewPart {
      *         the <code>{@link IProject activeProject}</code>
      * @category Data Handling
      */
-    private void refreshTools() {
+    void refreshTools() {
         boolean hasProject = ensureActiveProjectandSIR();
 
         tools.setItems(new String[0]);
 
+        boolean sawSelectedTool = false;
+
         if (hasProject)
-            for (Tool t : skillFile.Tools())
+            for (Tool t : skillFile.Tools()) {
                 tools.add((t).getName());
+                if (t == selectedTool) {
+                    sawSelectedTool = true;
+                    tools.select(tools.getItemCount() - 1);
+                }
+            }
+
+        if (!sawSelectedTool)
+            selectedTool = null;
+        updateTypes();
     }
 
     /**
@@ -215,12 +202,14 @@ public final class ToolView extends ViewPart {
             item.setText(nameToText(type.getName()));
             item.setData(type);
 
-            if (null != activeTool && activeTool.getSelectedUserTypes().contains(type)) {
+            if (null != selectedTool && selectedTool.getSelectedUserTypes().contains(type)) {
                 item.setChecked(true);
             }
 
-            if (selectedType == type)
+            if (selectedType == type) {
                 sawSelectedType = true;
+                types.select(item);
+            }
         }
 
         if (!sawSelectedType) {
@@ -245,8 +234,13 @@ public final class ToolView extends ViewPart {
                 item.setText(nameToText(f.getName()));
                 item.setData(f);
 
-                if (null != activeTool && activeTool.getSelectedFields().containsKey(f)) {
-                    item.setChecked(true);
+                if (null != selectedTool) {
+                    HashMap<String, FieldLike> map = selectedTool.getSelectedFields().get(selectedType);
+                    item.setChecked(null != map && map.containsKey(f.getName().getSkillname()));
+
+                    if (f == selectedField) {
+                        fields.select(item);
+                    }
                 }
             }
         }
@@ -314,7 +308,7 @@ public final class ToolView extends ViewPart {
      * @return the active {@link Tool tool}.
      */
     Tool getActiveTool() {
-        return activeTool;
+        return selectedTool;
     }
 
     /**
@@ -325,7 +319,7 @@ public final class ToolView extends ViewPart {
      *            the active {@link Tool tool}.
      */
     void setActiveTool(Tool activeTool) {
-        this.activeTool = activeTool;
+        this.selectedTool = activeTool;
         updateTypes();
     }
 
