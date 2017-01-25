@@ -13,7 +13,7 @@
 							Default: ${projects.location}/de.unistuttgart.iste.ps.skilled.buckminster/commands.txt
 -->
 <project name="Buckminster Headless" default="deploy-skilled">
-	<property name="WORKSPACE" location="${ant.file}/../../" />
+	<property name="WORKSPACE" location="${ant.file}/../.." />
 	<property name="build.root" location="${WORKSPACE}/buildroot" />
 	<property name="buckminster.home" location="" />
 	<property name="projects.location" location="${WORKSPACE}" />
@@ -21,7 +21,7 @@
 	<property name="target.platform" value="target.platform" />
 	<property name="build.result" value="${build.root}/buckminster.output/de.unistuttgart.iste.ps.skilled.site_1.0.0-eclipse.feature/site.p2" />
 
-        <target name="buckminster" depends="cleanup" description="description">
+    <target name="buckminster" depends="cleanup">
 		<echo message="IMPORTANT: Populating an empty target platform may took over 10 minutes."/>
 		<condition property="executable.file" value="buckminster.bat" else="buckminster">
 			<os family="windows"/>
@@ -55,11 +55,11 @@
 		</delete>
 	</target>
 
-        <target name="do-zip-skilled">
-            <zip destfile="${build.result}/SKilLEd.zip" basedir="${build.result}"/>
-        </target>
+    <target name="do-zip-skilled">
+        <zip destfile="${build.result}/SKilLEd.zip" basedir="${build.result}"/>
+    </target>
 
-        <target name="deploy-skilled" depends="buckminster,do-zip-skilled"/>
+    <target name="deploy-skilled" depends="buckminster,do-zip-skilled"/>
 
 	<target name="reset.target-platform">
 		<delete includeemptydirs="true">

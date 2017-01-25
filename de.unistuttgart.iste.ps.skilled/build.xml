@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="de.unistuttgart.iste.ps.skilled" default="complete-build">
 
-    <property name="buckminster.home" value="../../buckminster"/>
+    <property name="buckminster.home" value="../buckminster"/>
 
     <condition property="buckminster.exists">
-        <available file="../../buckminster"/>
+        <available file="../buckminster"/>
     </condition>
 
     <target name="unpack-buckminster" unless="buckminster.exists">
-        <unzip src="lib/buckminster.zip" dest="../.."/>
+        <unzip src="lib/buckminster.zip" dest=".."/>
     </target>
 
     <target name="build-skilled">
