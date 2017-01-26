@@ -3,8 +3,6 @@ package de.unistuttgart.iste.ps.skilled.ui.views;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -14,7 +12,6 @@ import de.unistuttgart.iste.ps.skilled.sir.Hint;
 import de.unistuttgart.iste.ps.skilled.sir.Tool;
 import de.unistuttgart.iste.ps.skilled.sir.Type;
 import de.unistuttgart.iste.ps.skilled.sir.UserdefinedType;
-import de.unistuttgart.iste.ps.skilled.tools.SIRCache;
 import de.unistuttgart.iste.ps.skilled.tools.SIRHelper;
 import de.unistuttgart.iste.ps.skilled.ui.tools.EditorUtil;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
@@ -45,6 +42,8 @@ public class TypeTreeListener {
      *            - {@link Tree}
      */
     public void initTypeTreeListener(Tree typeTree) {
+        typeTree.addListener(SWT.Selection, e -> toolview.setSelectedType((ClassType) (((TreeItem) e.item).getData())));
+
         // add a mouse listener to the typetree
         typeTree.addMouseListener(new MouseListener() {
 
@@ -55,23 +54,7 @@ public class TypeTreeListener {
 
             @Override
             public void mouseDown(MouseEvent arg0) {
-                // on mouseclick select type at selection index and build the
-                // fieldtree
-                typeTree.addSelectionListener(new SelectionListener() {
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        try {
-                            toolview.setSelectedType((ClassType) (((TreeItem) e.item).getData()));
-                        } catch (@SuppressWarnings("unused") ClassCastException ex) {
-                            // selected treeitem was a hint
-                        }
-                    }
-
-                    @Override
-                    public void widgetDefaultSelected(SelectionEvent arg0) {
-                        // no default
-                    }
-                });
+                // unused
             }
 
             @Override
@@ -104,19 +87,18 @@ public class TypeTreeListener {
                         // toolview.getActiveTool(), type);
 
                         // add all fields by default
-//                        for (FieldLike f : SIRHelper.fields(type)) {
-//                            ToolUtil.addFieldToTool(f, type, tool);
-//                        }
-                        // ToolUtil.addAllFields(toolview.getActiveProject(),
-                        // toolview.getActiveTool(), type);
+                        for (FieldLike f : SIRHelper.fieldsOf(type)) {
+                            ToolUtil.addFieldToTool(f, type, tool);
+                        }
+                        toolview.getSkillFile().flush();
                         toolview.refreshTools();
 
                     } else {
-                        // if the user unchecks the checkbox, remove the
-                        // selected type and all its fields and hints
-                        ToolUtil.removeAllFields(toolview.getActiveProject(), tool, type);
-                        ToolUtil.removeAllTypeHints(toolview.getActiveProject(), tool, type);
-                        ToolUtil.removeTypeAndAllSubtypes(toolview.getActiveProject(), tool, type);
+                        // TODO
+                        // ToolUtil.removeAllTypeHints(toolview.getActiveProject(),
+                        // tool, type);
+                        ToolUtil.removeTypeFromTool(type, tool);
+                        toolview.getSkillFile().flush();
                         toolview.refreshTools();
                     }
                 } else if (event.item.getData() instanceof Hint) {

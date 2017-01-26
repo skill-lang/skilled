@@ -2,6 +2,7 @@ package de.unistuttgart.iste.ps.skilled.ui.tools;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 
 import javax.xml.crypto.NoSuchMechanismException;
 
@@ -166,26 +167,72 @@ public final class ToolUtil {
     }
 
     /**
-     * Tries to remove a type from a tool
-     * 
-     * @param toolName
-     *            name of the tool the type belongs to
-     * @param project
-     *            the project containing tool
-     * @param typeName
-     *            the type to be removed
-     * @return true if removing was successful
+     * Remove a type from a tool. This will also remove all its subtypes and all
+     * fields that require any of the removed types.
      */
-    public static boolean removeTypeFromTool(String toolName, IProject project, String typeName) {
-        String[] arguments = null;
-        if (project != null)
-            arguments = new String[] { "-e", project.getLocation().toPortableString(), toolName + ":3:" + typeName };
-        try {
-            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
-            return true;
-        } catch (@SuppressWarnings("unused") Throwable t) {
-            return false;
+    public static void removeTypeFromTool(UserdefinedType type, Tool tool) {
+        HashMap<UserdefinedType, HashSet<UserdefinedType>> subs = calculateSubtypes(tool.getSelectedUserTypes());
+        HashSet<UserdefinedType> removed = new HashSet<>();
+        removeRecursive(type, removed, subs);
+
+        // remove types
+        tool.getSelectedUserTypes().removeAll(removed);
+        // remove fields of removed types
+        for (UserdefinedType t : removed)
+            tool.getSelectedFields().remove(t);
+
+        // remove fields using removed types
+        for (HashMap<String, FieldLike> fs : tool.getSelectedFields().values()) {
+            for (Entry<String, FieldLike> p : fs.entrySet()) {
+                for (UserdefinedType t : removed)
+                    if (usesType(p.getValue().getType(), t))
+                        fs.remove(p.getKey());
+            }
         }
+    }
+
+    private static boolean usesType(Type type, UserdefinedType t) {
+        if (type == t) {
+            return true;
+        } else if (type instanceof SingleBaseTypeContainer) {
+            return usesType(((SingleBaseTypeContainer) type).getBase().self(), t);
+        } else if (type instanceof MapType) {
+            for (GroundType inner : ((MapType) type).getBase())
+                if (usesType(inner.self(), t))
+                    return true;
+        }
+        return false;
+    }
+
+    private static void removeRecursive(UserdefinedType type, HashSet<UserdefinedType> removed,
+            HashMap<UserdefinedType, HashSet<UserdefinedType>> subs) {
+        if (removed.contains(type))
+            return;
+
+        removed.add(type);
+        HashSet<UserdefinedType> subList = subs.get(type);
+        if (null != subList)
+            for (UserdefinedType sub : subList)
+                removeRecursive(sub, removed, subs);
+    }
+
+    /**
+     * Establish the subtypes relation.
+     */
+    private static HashMap<UserdefinedType, HashSet<UserdefinedType>> calculateSubtypes(
+            HashSet<UserdefinedType> selectedUserTypes) {
+        HashMap<UserdefinedType, HashSet<UserdefinedType>> rval = new HashMap<>();
+        for (UserdefinedType t : selectedUserTypes) {
+            for (UserdefinedType s : SIRHelper.superTypes(t)) {
+                HashSet<UserdefinedType> hs = rval.get(s);
+                if (null == hs) {
+                    rval.put(s, hs = new HashSet<>());
+                }
+                hs.add(t);
+            }
+        }
+
+        return rval;
     }
 
     /**
@@ -215,29 +262,16 @@ public final class ToolUtil {
     }
 
     /**
-     * Tries to remove a field from a tool
-     * 
-     * @param toolName
-     *            the name of the tool
-     * @param project
-     *            the project containing tool
-     * @param typeName
-     *            the type name of the type containing the field
-     * @param fieldName
-     *            the field to be removed
-     * @return true if removing was successful
+     * Remove a field from a tool
      */
-    public static boolean removeField(String toolName, IProject project, String typeName, String fieldName) {
-        String[] arguments = null;
-        if (project != null)
-            arguments = new String[] { "-e", project.getLocation().toPortableString(),
-                    toolName + ":5:" + typeName + ":" + fieldName };
-        try {
-            // TODO MainClass.start(Indexing.NO_INDEXING, arguments);
-            return true;
-        } catch (@SuppressWarnings("unused") Throwable t) {
-            return false;
+    public static void removeFieldFromTool(FieldLike field, UserdefinedType type, Tool tool) {
+        HashMap<UserdefinedType, HashMap<String, FieldLike>> selected = tool.getSelectedFields();
+        HashMap<String, FieldLike> fs = selected.get(type);
+        if (null == fs) {
+            // if no fields are present, we do not need to add them now
+            return;
         }
+        fs.remove(field.getName().getSkillname());
     }
 
     /**
@@ -450,23 +484,6 @@ public final class ToolUtil {
      */
     public static String getActualName(Identifier identifier) {
         return identifier.getSkillname();
-    }
-
-    /**
-     * delete all the tool-specific objects out of the .skillls file, when a
-     * tool is deleted
-     * 
-     * @param project
-     *            - the project, where the tool originates in
-     * @param tool
-     *            - the tool, which is deleted
-     */
-    public static void cleanUpAfterDeletion(IProject project, Tool tool) {
-        for (UserdefinedType toDelete : tool.getSelectedUserTypes()) {
-            removeAllTypeHints(project, tool, toDelete);
-            removeAllFields(project, tool, toDelete);
-            removeTypeFromTool(tool.getName(), project, getActualName(toDelete.getName()));
-        }
     }
 
     /**
