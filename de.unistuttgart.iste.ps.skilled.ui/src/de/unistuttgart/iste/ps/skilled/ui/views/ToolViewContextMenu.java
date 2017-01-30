@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Collections;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -47,6 +46,12 @@ final class ToolViewContextMenu {
 
         {
             MenuItem item = new MenuItem(menu, SWT.NONE);
+            item.setText("New Tool");
+            item.addListener(SWT.Selection, this::newTool);
+        }
+
+        {
+            MenuItem item = new MenuItem(menu, SWT.NONE);
             item.setText("Build");
             item.addListener(SWT.Selection, this::build);
         }
@@ -72,46 +77,63 @@ final class ToolViewContextMenu {
         toollist.setMenu(menu);
     }
 
+    void newTool(Event e) {
+        SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.CREATE,
+                SIRHelper.getTools(view.getActiveProject()));
+        WizardDialog wizardDialog = new WizardDialog(view.getShell(), newWizard);
+
+        if (wizardDialog.open() == Window.OK)
+            ToolUtil.createNewTool(view.getActiveProject(), newWizard.getToolNewName(),
+                    newWizard.getAddAllCheckboxState());
+
+        view.refresh();
+    }
+
     void build(Event e) {
         StringBuilder msg = new StringBuilder("The tool ");
         // build selected tool
         final Tool tool = view.getActiveTool();
-        StringBuilder output = new StringBuilder();
-        try {
-            File jarLocation = new File(
-                    FileLocator.resolve(FileLocator.find(Platform.getBundle("de.unistuttgart.iste.ps.skilled"),
-                            new Path("lib"), Collections.emptyMap())).toURI());
-            File projectLocation = new File(view.getActiveProject().getLocationURI());
+        if (null != tool.getBuildTargets() && !tool.getBuildTargets().isEmpty()) {
+            StringBuilder output = new StringBuilder();
+            try {
+                File jarLocation = new File(
+                        FileLocator.resolve(FileLocator.find(Platform.getBundle("de.unistuttgart.iste.ps.skilled"),
+                                new Path("lib"), Collections.emptyMap())).toURI());
+                File projectLocation = new File(view.getActiveProject().getLocationURI());
 
-            ProcessBuilder pb = new ProcessBuilder("java", "-jar", "skill-0.3.jar",
-                    projectLocation.getAbsolutePath() + "/.sir", "-t", tool.getName(), "-b");
+                ProcessBuilder pb = new ProcessBuilder("java", "-jar", "skill-0.3.jar",
+                        projectLocation.getAbsolutePath() + "/.sir", "-t", tool.getName(), "-b");
 
-            pb.directory(jarLocation);
-            Process process = pb.start();
-            process.waitFor();
+                pb.directory(jarLocation);
+                Process process = pb.start();
+                process.waitFor();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                output.append(line);
-                output.append(System.getProperty("line.separator"));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    output.append(line);
+                    output.append(System.getProperty("line.separator"));
+                }
+            } catch (IOException | InterruptedException | URISyntaxException e1) {
+                e1.printStackTrace();
+                return;
             }
-        } catch (IOException | InterruptedException | URISyntaxException e1) {
-            e1.printStackTrace();
-            return;
-        }
 
-        // create message
-        msg.append(tool.getName()).append(" was built for these targets:");
-        for (BuildInformation build : tool.getBuildTargets()) {
-            msg.append("\n  ").append(build.getLanguage()).append(": ");
-            for (String s : build.getOutput().getParts()) {
-                msg.append(s).append('/');
+            // create message
+            msg.append(tool.getName()).append(" was built for these targets:");
+            for (BuildInformation build : tool.getBuildTargets()) {
+                msg.append("\n  ").append(build.getLanguage()).append(": ");
+                for (String s : build.getOutput().getParts()) {
+                    msg.append(s).append('/');
+                }
             }
-        }
 
-        if (output.length() > 0) {
-            msg.append("\n\noutput:\n\n").append(output.toString());
+            if (output.length() > 0) {
+                msg.append("\n\noutput:\n\n").append(output.toString());
+            }
+        } else {
+            // create message for build without targets
+            msg.append(tool.getName()).append(" has no targets!");
         }
 
         // show success as some form of feedback
@@ -119,10 +141,8 @@ final class ToolViewContextMenu {
     }
 
     void configure(Event e) {
-        ToolConfigurationDialog dialog = new ToolConfigurationDialog(view.getShell(), view.getActiveTool(),
-                view.getSkillFile());
-
-        if (dialog.open() == Window.OK) {
+        if (new ToolConfigurationDialog(view.getShell(), view.getActiveTool(), view.getSkillFile())
+                .open() == Window.OK) {
             view.refresh();
         }
     }
