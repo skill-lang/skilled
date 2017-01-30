@@ -1,5 +1,17 @@
 package de.unistuttgart.iste.ps.skilled.ui.views;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Collections;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -8,6 +20,8 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import de.unistuttgart.iste.ps.skilled.sir.BuildInformation;
+import de.unistuttgart.iste.ps.skilled.sir.Tool;
 import de.unistuttgart.iste.ps.skilled.tools.SIRCache;
 import de.unistuttgart.iste.ps.skilled.tools.SIRHelper;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolConfigurationDialog;
@@ -59,13 +73,49 @@ final class ToolViewContextMenu {
     }
 
     void build(Event e) {
-        SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.RENAME, view.getActiveTool().getName());
-        WizardDialog wizardDialog = new WizardDialog(view.getShell(), newWizard);
+        StringBuilder msg = new StringBuilder("The tool ");
+        // build selected tool
+        final Tool tool = view.getActiveTool();
+        StringBuilder output = new StringBuilder();
+        try {
+            File jarLocation = new File(
+                    FileLocator.resolve(FileLocator.find(Platform.getBundle("de.unistuttgart.iste.ps.skilled"),
+                            new Path("lib"), Collections.emptyMap())).toURI());
+            File projectLocation = new File(view.getActiveProject().getLocationURI());
 
-        if (wizardDialog.open() == Window.OK)
-            ToolUtil.renameTool(view.getActiveTool().getName(), newWizard.getToolNewName(), view.getActiveProject());
+            ProcessBuilder pb = new ProcessBuilder("java", "-jar", "skill-0.3.jar",
+                    projectLocation.getAbsolutePath() + "/.sir", "-t", tool.getName(), "-b");
 
-        view.refresh();
+            pb.directory(jarLocation);
+            Process process = pb.start();
+            process.waitFor();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                output.append(line);
+                output.append(System.getProperty("line.separator"));
+            }
+        } catch (IOException | InterruptedException | URISyntaxException e1) {
+            e1.printStackTrace();
+            return;
+        }
+
+        // create message
+        msg.append(tool.getName()).append(" was built for these targets:");
+        for (BuildInformation build : tool.getBuildTargets()) {
+            msg.append("\n  ").append(build.getLanguage()).append(": ");
+            for (String s : build.getOutput().getParts()) {
+                msg.append(s).append('/');
+            }
+        }
+
+        if (output.length() > 0) {
+            msg.append("\n\noutput:\n\n").append(output.toString());
+        }
+
+        // show success as some form of feedback
+        MessageDialog.open(MessageDialog.INFORMATION, view.getShell(), "Build Tool", msg.toString(), 0);
     }
 
     void configure(Event e) {

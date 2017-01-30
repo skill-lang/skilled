@@ -3,43 +3,53 @@
  */
 package de.unistuttgart.iste.ps.skilled.generator
 
-import com.google.inject.Inject
-import de.unistuttgart.iste.ps.skilled.util.SKilLServices
+import java.io.File
+import java.util.Collections
+import org.eclipse.core.resources.IProject
+import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.core.runtime.FileLocator
+import org.eclipse.core.runtime.Path
+import org.eclipse.core.runtime.Platform
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
+import de.unistuttgart.iste.ps.skilled.tools.SIRCache
 
 /**
  * Generates code from your model files on save.
  * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
+ * 
+ * @author Timm Felden
+ * 
+ * @note this is what the others did, but I am quite certain that we need to update the sir-file before calling the generators
  */
 class SkillGenerator implements IGenerator {
-	@Inject SKilLServices ss;
+	private def IProject getProject(Resource resource) {
+		try {
+			val String platformString = resource.getURI.toPlatformString(false)
+			return ResourcesPlugin.getWorkspace.getRoot.getFile(new Path(platformString)).getProject
+		} catch (IllegalStateException e) {
+			return null
+		}
+	}
 
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
-		print("TODO auto code-generation")
-//		val String project = ss.getProject(resource).location.toFile.absolutePath;
-//		val ProjectScope scope = new ProjectScope(ss.getProject(resource))
-//		val IEclipsePreferences prefs = scope.getNode("de.unistuttgart.iste.ps.skilled.skill")
-//		var String language = prefs.get("languageselection", "")
-//		language = Character.toUpperCase(language.charAt(0)) + language.substring(1)
-//		var String all = ""
-//		if (prefs.get("generateoption", null).startsWith("Generate all")) {
-//			all = "--all"
-//		}
-//		val String genPath = prefs.get("generatorpath", "")
-//		val String exec = prefs.get("executionenvironment", "").toLowerCase
-//		val String output = prefs.get("targetprojectpath", "")
-//		val String module = prefs.get("modulename", "")
-//		var String[] args
-//		if (all.empty) {
-//			args = #["--path", project, "--lang", language, "--generator", genPath, "--exec", exec, "--output", output,
-//				"--module", module];
-//		} else {
-//			args = #[all, "--path", project, "--lang", language, "--generator", genPath, "--exec", exec, "--output",
-//				output, "--module", module];
-//		}
-//		SkillInstallation.run(args)
+		val project = getProject(resource);
+		if (null == project)
+			return;
+
+		val jarLocation = FileLocator.resolve(
+			FileLocator.find(Platform.getBundle("de.unistuttgart.iste.ps.skilled"), new Path("lib/skill-0.3.jar"),
+				Collections.emptyMap()));
+
+		val sf = SIRCache.ensureFile(project)
+
+		for (tool : sf.Tools) {
+			val pb = new ProcessBuilder("java", "-jar", jarLocation.getPath(), ".sir", "-t", tool.getName(), "-b");
+
+			pb.directory(new File(project.getLocationURI()));
+			pb.start().waitFor();
+		}
 	}
 }
