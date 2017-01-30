@@ -6,6 +6,8 @@
 ## generated products
 javadoc/
 buckminster/
+de.unistuttgart.iste.ps.skilled/src/de/unistuttgart/iste/ps/skilled/sir/
+de.unistuttgart.iste.ps.skilled/src/de/unistuttgart/iste/ps/skilled/sfparser/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

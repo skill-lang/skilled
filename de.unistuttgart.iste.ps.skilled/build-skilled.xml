@@ -23,6 +23,14 @@
         <delete dir="${sfparser.src.location}/sfparser"/>
     </target>
 
+	<target name="gen-sir">
+        <java jar="lib/skill-0.3.jar" fork="true">
+            <arg line="sir.sir"/>
+            <arg line="-t sir"/>
+            <arg line="-b"/>
+        </java>
+    </target>
+
 	<target name="gen-sfparser">
         <mkdir dir="lib/temp-esb"/>
         <touch file="lib/empty.skill"/>
@@ -33,7 +41,7 @@
             <arg line="-o temp-esb"/>
         </java>
         <copy todir="${sfparser.src.location}/sfparser">
-            <fileset dir="lib/temp-esb/de/unistuttgart/iste/ps/skilled/ui/sfparser"/>
+            <fileset dir="lib/temp-esb/de/unistuttgart/iste/ps/skilled/sfparser"/>
         </copy>
         <delete file="lib/empty.skill"/>
         <delete dir="lib/temp-esb"/>
@@ -94,6 +102,6 @@
         </copy>
     </target>
 
-    <target name="build-skilled" depends="generate-xtext-artifacts,compile-java,make-jar-skilled,prepare-xtend-gen"/>
+    <target name="build-skilled" depends="gen-sir,gen-sfparser,generate-xtext-artifacts,compile-java,make-jar-skilled,prepare-xtend-gen"/>
 
 </project>

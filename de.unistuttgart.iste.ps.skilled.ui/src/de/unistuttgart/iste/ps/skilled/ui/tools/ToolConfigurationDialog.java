@@ -267,6 +267,9 @@ final public class ToolConfigurationDialog extends Dialog {
         if (null != f.getParentFile()) {
             addParts(f.getParentFile(), parts);
             parts.add(f.getName());
+        } else if(!f.isAbsolute()){
+            // add base part of a relative part
+            parts.add(f.getName());
         }
     }
 }
