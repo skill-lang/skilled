@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.ps.skilled.ui.tools;
+package de.unistuttgart.iste.ps.skilled.ui.tools.dialogs;
 
 import java.io.File;
 import java.nio.file.Paths;

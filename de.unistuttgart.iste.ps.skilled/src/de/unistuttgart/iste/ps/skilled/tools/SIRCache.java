@@ -55,9 +55,10 @@ public enum SIRCache {
         // delete tool
         sf.delete(activeTool);
         // delete its build targets
-        for (BuildInformation b : activeTool.getBuildTargets()) {
-            sf.delete(b);
-        }
+        if (null != activeTool.getBuildTargets())
+            for (BuildInformation b : activeTool.getBuildTargets()) {
+                sf.delete(b);
+            }
         sf.flush();
     }
 }

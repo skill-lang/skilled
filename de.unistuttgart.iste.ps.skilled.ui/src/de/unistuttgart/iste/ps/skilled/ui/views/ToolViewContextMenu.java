@@ -23,8 +23,9 @@ import de.unistuttgart.iste.ps.skilled.sir.BuildInformation;
 import de.unistuttgart.iste.ps.skilled.sir.Tool;
 import de.unistuttgart.iste.ps.skilled.tools.SIRCache;
 import de.unistuttgart.iste.ps.skilled.tools.SIRHelper;
-import de.unistuttgart.iste.ps.skilled.ui.tools.ToolConfigurationDialog;
 import de.unistuttgart.iste.ps.skilled.ui.tools.ToolUtil;
+import de.unistuttgart.iste.ps.skilled.ui.tools.dialogs.ToolConfigurationDialog;
+import de.unistuttgart.iste.ps.skilled.ui.tools.dialogs.ToolCreationDialog;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.SKilLToolWizard;
 import de.unistuttgart.iste.ps.skilled.ui.wizards.toolWizard.WizardOption;
 
@@ -78,15 +79,9 @@ final class ToolViewContextMenu {
     }
 
     void newTool(Event e) {
-        SKilLToolWizard newWizard = new SKilLToolWizard(WizardOption.CREATE,
-                SIRHelper.getTools(view.getActiveProject()));
-        WizardDialog wizardDialog = new WizardDialog(view.getShell(), newWizard);
-
-        if (wizardDialog.open() == Window.OK)
-            ToolUtil.createNewTool(view.getActiveProject(), newWizard.getToolNewName(),
-                    newWizard.getAddAllCheckboxState());
-
-        view.refresh();
+        if (new ToolCreationDialog(view.getShell(), view.getSkillFile()).open() == Window.OK) {
+            view.refresh();
+        }
     }
 
     void build(Event e) {
